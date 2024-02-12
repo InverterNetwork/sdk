@@ -1,0 +1,86 @@
+{
+  "name": "@inverter-network/sdk",
+  "version": "0.0.0",
+  "description": "INVERTER typescript SDK",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "require": "./dist/cjs/index.js",
+    "import": "./dist/index.js"
+  },
+  "scripts": {
+    "dev": "nodemon",
+    "bundle": "bun run tools/compile/index.ts && prettier --write ./src/data.ts",
+    "watch": "tsc -w -p ./tsconfig.json",
+    "build": "node tools/cleanup && tsc -p ./tsconfig.json && tsc -p ./tsconfig.cjs.json",
+    "clean": "node tools/cleanup",
+    "package": "npm run build && npm pack",
+    "test": "bun test",
+    "test:cov": "bun test --coverage",
+    "addscope": "node tools/packagejson name @inverter-network/sdk",
+    "pre-commit": "lint-staged",
+    "pre-push": "npm run build",
+    "lint:fix": "eslint --ext .tsx --ext .ts ./src --fix",
+    "prettier:fix": "prettier --write ./src/.",
+    "use:npmReadme": "mv 'README.md' 'git.README.md' && mv 'npm.README.md' 'README.md'",
+    "use:gitReadme": "mv 'README.md' 'npm.README.md' && mv 'git.README.md' 'README.md'",
+    "prepublishOnly": "run-s build use:npmReadme && pinst --enable",
+    "postpublish": "npm run use:gitReadme && pinst --enable",
+    "prepare": "husky install",
+    "release": "standard-version",
+    "postRelease": "git push --follow-tags origin main"
+  },
+  "lint-staged": {
+    "src/**/*.{ts,tsx}": [
+      "npm run lint:fix",
+      "npm run prettier:fix"
+    ]
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "author": "InverterNetwork <github@InverterNetwork>",
+  "license": "LGPL-3.0",
+  "keywords": [
+    "InverterNetwork",
+    "npm",
+    "contracts",
+    "web3",
+    "ethereum",
+    "solidity",
+    "evm",
+    "sdk"
+  ],
+  "homepage": "https://github.com/InverterNetwork/sdk",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/InverterNetwork/sdk.git"
+  },
+  "bugs": {
+    "url": "https://github.com/InverterNetwork/sdk"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^18.4.3",
+    "@commitlint/config-conventional": "^18.4.3",
+    "@types/bun": "^1.0.4",
+    "@typescript-eslint/eslint-plugin": "^6.14.0",
+    "@typescript-eslint/parser": "^6.14.0",
+    "eslint": "^8.55.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.0.1",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.2.0",
+    "nodemon": "^3.0.2",
+    "npm-run-all": "^4.1.5",
+    "pinst": "^3.0.0",
+    "prettier": "^3.1.1",
+    "standard-version": "^9.5.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
