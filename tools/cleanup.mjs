@@ -1,14 +1,12 @@
-/* eslint-disable */
-const fs = require('fs')
-const Path = require('path')
-/* eslint-enable */
+import fs from 'fs'
+import path from 'path'
 
-const dirname = import.meta.dir
+const dirname = import.meta.dirname
 
 const deleteFolderRecursive = (path) => {
   if (fs.existsSync(path)) {
     fs.readdirSync(path).forEach((file) => {
-      const curPath = Path.join(path, file)
+      const curPath = path.join(path, file)
       if (fs.lstatSync(curPath).isDirectory()) {
         deleteFolderRecursive(curPath)
       } else {
@@ -22,8 +20,8 @@ const deleteFolderRecursive = (path) => {
 const folder = process.argv.slice(2)[0]
 
 if (folder) {
-  deleteFolderRecursive(Path.join(dirname, '../dist', folder))
+  deleteFolderRecursive(path.join(dirname, '../dist', folder))
 } else {
-  deleteFolderRecursive(Path.join(dirname, '../dist/esm'))
-  deleteFolderRecursive(Path.join(dirname, '../dist/types'))
+  deleteFolderRecursive(path.join(dirname, '../dist/esm'))
+  deleteFolderRecursive(path.join(dirname, '../dist/types'))
 }

@@ -13,12 +13,12 @@
     "dev": "nodemon",
     "bundle": "bun run tools/compile/index.ts && prettier --write ./src/data.ts",
     "watch": "tsc -w -p ./tsconfig.json",
-    "build": "node tools/cleanup && tsc -p ./tsconfig.json && tsc -p ./tsconfig.cjs.json",
-    "clean": "node tools/cleanup",
+    "build": "node tools/cleanup.mjs && tsc -p ./tsconfig.json && tsc -p ./tsconfig.cjs.json",
+    "clean": "node tools/cleanup.mjs",
     "package": "npm run build && npm pack",
     "test": "bun test",
     "test:cov": "bun test --coverage",
-    "addscope": "node tools/packagejson name @inverter-network/sdk",
+    "addscope": "node tools/packagejson.mjs name @inverter-network/abis",
     "pre-commit": "lint-staged",
     "pre-push": "npm run build",
     "lint:fix": "eslint --ext .tsx --ext .ts ./src --fix",
@@ -66,10 +66,9 @@
   "devDependencies": {
     "@commitlint/cli": "^18.4.3",
     "@commitlint/config-conventional": "^18.4.3",
-    "@types/bun": "^1.0.4",
+    "@types/bun": "^1.0.5",
     "@typescript-eslint/eslint-plugin": "^6.14.0",
     "@typescript-eslint/parser": "^6.14.0",
-    "eslint": "^8.55.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.0.1",
     "husky": "^8.0.3",
@@ -81,6 +80,10 @@
     "standard-version": "^9.5.0"
   },
   "peerDependencies": {
-    "typescript": "^5.0.0"
+    "eslint": "^8",
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "viem": "^2.7.8"
   }
 }

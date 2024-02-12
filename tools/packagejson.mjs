@@ -1,11 +1,9 @@
-/* eslint-disable */
-const fs = require('fs')
-const Path = require('path')
-const fileName = '../package.json'
-const file = require(fileName)
-/* eslint-enable */
+import fs from 'fs'
+import path from 'path'
+import file from '../package.json'
 
-const dirname = import.meta.dir
+const fileName = '../package.json'
+const dirname = import.meta.dirname
 
 const args = process.argv.slice(2)
 
@@ -16,7 +14,7 @@ for (let i = 0, l = args.length; i < l; i++) {
 }
 
 fs.writeFile(
-  Path.join(dirname, fileName),
+  path.join(dirname, fileName),
   JSON.stringify(file, null, 2),
   (err) => {
     if (err) {

@@ -1,9 +1,24 @@
 {
   "compilerOptions": {
-    "target": "ES6",
-    "strict": true,
+    // enable latest features
+    "lib": ["ESNext"],
+    "target": "ESNext",
     "module": "ESNext",
-    "moduleResolution": "Node",
+    "moduleDetection": "force",
+    "allowJs": true, // allow importing `.js` from `.ts`
+
+    // Best practices
+    "strict": true,
+    "skipLibCheck": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+
+    // Some stricter flags
+    "useUnknownInCatchVariables": true,
+    "noPropertyAccessFromIndexSignature": true,
+
+    "moduleResolution": "Node10",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "declaration": true /* Generates corresponding '.d.ts' file. */,
