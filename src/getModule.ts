@@ -1,4 +1,4 @@
-import type { AbiVersionKeys, AbiKeys } from '@inverter-network/abis'
+import type { AbiKeys, AbiVersionKeys } from '@inverter-network/abis'
 import { data } from '@inverter-network/abis'
 import { getContract } from 'viem'
 import type {
@@ -9,22 +9,30 @@ import type {
   Transport,
   Account,
 } from 'viem'
-import getAbiMethodMetas from './utlis/getAbiMethodMetas'
+import getAbiMethodMetas, { AbiMethodMeta } from './utlis/getAbiMethodMetas'
+import formatMethodStruct, { MethodStruct } from './utlis/formatMethodStruct'
 
-export default function getModule<K extends AbiKeys>({
+export default function getModule<
+  N extends AbiKeys,
+  V extends keyof (typeof data)[N],
+>({
   name,
   version,
   address,
   publicClient,
   walletClient,
 }: {
-  name: K
-  version: AbiVersionKeys
+  name: N
+  version: V
   address: Hex
   publicClient: PublicClient<Transport, Chain>
   walletClient: WalletClient<Transport, Chain, Account>
 }) {
-  const { moduletype, abi, description } = data[name][version]
+  // Get the moduletype, abi, description, and methodMetas from the data object
+  const { moduletype, abi, description, methodMetas } =
+    data[name][version as AbiVersionKeys]
+
+  // Construct a contract object using the address and clients
   const contract = getContract({
     abi,
     address,
@@ -34,27 +42,19 @@ export default function getModule<K extends AbiKeys>({
     },
   })
 
-  const metas = getAbiMethodMetas(abi)
-  type Meta = (typeof metas)[number]
+  // Get the abiMethodMetas from the abi
+  const abiMethodMetas = getAbiMethodMetas(abi)
 
-  const formatMethodStruct = ({ name, type, inputs, outputs }: Meta) => {
-    return {
-      type,
-      run: ({ args, simulate }: { args: any[]; simulate?: boolean }) => {
-        // @ts-expect-error too much magic
-        return contract[simulate ? 'simulate' : type][name](...args)
-      },
-      inputs,
-      outputs,
-    }
-  }
+  // Create a methods object
+  const methods = <Record<AbiMethodMeta['name'], MethodStruct>>{}
 
-  const methods = <
-    Record<Meta['name'], ReturnType<typeof formatMethodStruct>>
-  >{}
-
-  metas.forEach((meta) => {
-    methods[meta.name] = formatMethodStruct(meta)
+  // Iterate over the abiMethodMetas and add them to the methods object
+  abiMethodMetas.forEach((meta) => {
+    methods[meta.name] = formatMethodStruct({
+      ...meta,
+      contract,
+      methodMeta: methodMetas[meta.name],
+    })
   })
 
   return {
