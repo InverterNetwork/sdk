@@ -12,7 +12,7 @@
     "skipLibCheck": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
+    // "noFallthroughCasesInSwitch": true,
 
     // Some stricter flags
     "useUnknownInCatchVariables": true,
