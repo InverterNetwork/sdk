@@ -1,5 +1,5 @@
 import { MethodMeta, ReturnDescription } from '@inverter-network/abis'
-import { Entries, ValueOf, UnionToIntersection } from 'type-fest'
+import { Entries, UnionToIntersection } from 'type-fest'
 import { DecipherableOutput } from '../types/output'
 import { DecipherableInput } from '../types/input'
 
