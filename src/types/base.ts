@@ -6,6 +6,10 @@ export const ModuleFieldCrossType = {
   'tuple[]': 'objectArray',
 } as const
 
+export type Tuple = { type: 'tuple' | 'tuple[]' }
+
 export type FormatterValues = `0x${string}` | string | object[]
 
 export type FormatterTagValues = number
+
+export type DecipherableBase = { variant: 'input' | 'output' }

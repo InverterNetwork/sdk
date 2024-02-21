@@ -1,26 +1,26 @@
-import { MethodMeta } from '@inverter-network/abis'
+import { MethodMetas } from '@inverter-network/abis'
 import { AbiMethodMeta } from './getAbiMethodMetas'
 import useDecipher from './useDecipher'
 import prepare from './prepare'
 
-type FormayMethodStructProps = AbiMethodMeta & {
-  methodMeta: MethodMeta
+type NameKey = keyof MethodMetas
+
+type FormayMethodStructProps<N extends NameKey> = AbiMethodMeta & {
+  methodMeta: MethodMetas[N]
   contract: any
 }
 
-export default function formatMethodStruct({
+export default function formatMethodStruct<N extends NameKey>({
   name,
   type,
   inputs,
   contract,
   methodMeta,
   outputs,
-}: FormayMethodStructProps) {
+}: FormayMethodStructProps<N>) {
   const decipher = useDecipher(methodMeta),
-    preparedInputs = inputs.map((input) => prepare({ decipher, inout: input })),
-    preparedOutputs = outputs.map((output) =>
-      prepare({ decipher, inout: output })
-    )
+    preparedInputs = inputs.map((input) => prepare(decipher).input(input)),
+    preparedOutputs = outputs.map((output) => prepare(decipher).output(output))
 
   return {
     type,

@@ -1,25 +1,24 @@
 import { FunctionInputs } from '@inverter-network/abis'
-import { Prepared } from '../utlis/prepare'
+import { Prepare } from '../utlis/prepare'
+import { Tuple } from './base'
 
 export type FunctionInput = FunctionInputs[number]
 
-export type InputWithComponents = Extract<FunctionInput, { type: 'tuple[]' }>
+export type InputWithComponents<I extends FunctionInput = FunctionInput> =
+  Extract<I, Tuple>
 
-export type InputWithoutComponents = Omit<FunctionInput, 'components'>
-export type NonComponentInput = Exclude<FunctionInput, { type: 'tuple[]' }>
-export type ComponentInput = Extract<
-  FunctionInput,
-  { type: 'tuple[]' }
->['components'][number]
+export type NonComponentInput = Exclude<FunctionInput, Tuple>
+export type InputOmittedComponents = Omit<InputWithComponents, 'components'>
+export type ComponentInput = InputWithComponents['components'][number]
 
 export type DecipherableInput =
   | NonComponentInput
   | ComponentInput
-  | InputWithoutComponents
+  | InputOmittedComponents
 
-export type PreparedInput = Exclude<Prepared, { type: 'tuple[]' }>
+export type PreparedInput = Exclude<ReturnType<Prepare['input']>, Tuple>
 
 export type PreparedComponentInput = Extract<
-  Prepared,
-  { type: 'tuple[]' }
+  ReturnType<Prepare['input']>,
+  Tuple
 >['components'][number]

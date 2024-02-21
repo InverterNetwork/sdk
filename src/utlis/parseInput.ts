@@ -1,6 +1,6 @@
 import { isAddress, parseUnits, stringToHex } from 'viem'
 import { FormatterValues, FormatterTagValues } from '../types/base'
-import { PreparedInput } from '../types/output'
+import { PreparedInput } from '../types/input'
 import { isString } from '../types/guards'
 
 export default function parseInput({
