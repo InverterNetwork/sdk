@@ -1,6 +1,13 @@
-import type { Abi } from '@inverter-network/abis'
+import type { Abi, ModuleKeys, ModuleVersionKeys } from '@inverter-network/abis'
+import { isValidAbi } from '../types/guards'
 
-export default function getAbiMethodMetas<A extends Abi>(abi: A) {
+export default function getAbiMethodMetas<
+  K extends ModuleKeys,
+  V extends ModuleVersionKeys,
+  A extends Abi<K, V>,
+>(abi: A) {
+  if (!isValidAbi(abi)) throw new Error('Invalid abi')
+
   const result = abi
     .map((item) => {
       if (item.type !== 'function') return null

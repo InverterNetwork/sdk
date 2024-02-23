@@ -5,7 +5,7 @@ import { getTestConnectors } from './getTestConnectors'
 import writeToFile from '../tools/utils/writeLog'
 
 describe('Get A Module', () => {
-  let module: ReturnType<typeof getModule>
+  let module: ReturnType<typeof getModule<'BountyManager', 'v1.0'>>
 
   beforeAll(async () => {
     const { publicClient, walletClient } = getTestConnectors()
@@ -24,6 +24,7 @@ describe('Get A Module', () => {
   })
 
   it('Should test any method', async () => {
+    const t = module.methods.listBountyIds.inputs[0].description
     const res = await module.methods.listBountyIds.run({ args: [] })
 
     console.log('listBountyIds RES', res)

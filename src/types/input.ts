@@ -1,24 +1,39 @@
-import { FunctionInputs } from '@inverter-network/abis'
-import { Prepare } from '../utlis/prepare'
+import {
+  FunctionInput,
+  ModuleKeys,
+  ModuleVersionKeys,
+} from '@inverter-network/abis'
 import { Tuple } from './base'
+import { Input } from '../utlis/prepare'
 
-export type FunctionInput = FunctionInputs[number]
+type InputWithComponents<
+  K extends ModuleKeys,
+  V extends ModuleVersionKeys,
+> = Extract<FunctionInput<K, V>, Tuple>
 
-export type InputWithComponents<I extends FunctionInput = FunctionInput> =
-  Extract<I, Tuple>
+export type NonComponentInput<
+  K extends ModuleKeys,
+  V extends ModuleVersionKeys,
+> = Exclude<FunctionInput<K, V>, Tuple>
 
-export type NonComponentInput = Exclude<FunctionInput, Tuple>
-export type InputOmittedComponents = Omit<InputWithComponents, 'components'>
-export type ComponentInput = InputWithComponents['components'][number]
+export type InputOmittedComponents<
+  K extends ModuleKeys,
+  V extends ModuleVersionKeys,
+> = Omit<InputWithComponents<K, V>, 'components'>
 
-export type DecipherableInput =
-  | NonComponentInput
-  | ComponentInput
-  | InputOmittedComponents
+export type ComponentInput<
+  K extends ModuleKeys,
+  V extends ModuleVersionKeys,
+> = InputWithComponents<K, V>['components'][number]
 
-export type PreparedInput = Exclude<ReturnType<Prepare['input']>, Tuple>
+export type DecipherableInput<
+  K extends ModuleKeys,
+  V extends ModuleVersionKeys,
+> =
+  | NonComponentInput<K, V>
+  | ComponentInput<K, V>
+  | InputOmittedComponents<K, V>
 
-export type PreparedComponentInput = Extract<
-  ReturnType<Prepare['input']>,
-  Tuple
->['components'][number]
+export type PreparedInput = Exclude<Input, Tuple>
+
+export type PreparedComponentInput = Extract<Input, Tuple>

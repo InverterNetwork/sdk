@@ -1,4 +1,4 @@
-import type { AbiKey, AbiVersionKey } from '@inverter-network/abis'
+import type { ModuleKeys, ModuleVersionKeys } from '@inverter-network/abis'
 import { data } from '@inverter-network/abis'
 import { getContract } from 'viem'
 import type {
@@ -13,8 +13,8 @@ import getAbiMethodMetas, { AbiMethodMeta } from './utlis/getAbiMethodMetas'
 import formatMethodStruct, { MethodStruct } from './utlis/formatMethodStruct'
 
 export default function getModule<
-  N extends AbiKey,
-  V extends keyof (typeof data)[N],
+  K extends ModuleKeys,
+  V extends ModuleVersionKeys,
 >({
   name,
   version,
@@ -22,15 +22,16 @@ export default function getModule<
   publicClient,
   walletClient,
 }: {
-  name: N
+  name: K
   version: V
   address: Hex
   publicClient: PublicClient<Transport, Chain>
   walletClient: WalletClient<Transport, Chain, Account>
 }) {
+  const moduleData = data[name][version]
+
   // Get the moduletype, abi, description, and methodMetas from the data object
-  const { moduletype, abi, description, methodMetas } =
-    data[name][version as AbiVersionKey]
+  const { moduletype, abi, description, methodMetas } = moduleData
 
   // Construct a contract object using the address and clients
   const contract = getContract({

@@ -1,32 +1,47 @@
-import { MethodMeta, ReturnDescription } from '@inverter-network/abis'
-import { Entries, UnionToIntersection } from 'type-fest'
+import {
+  MethodKey,
+  MethodMeta,
+  ModuleKeys,
+  ModuleVersionKeys,
+} from '@inverter-network/abis'
+import { Entries, PickDeep } from 'type-fest'
 import { DecipherableOutput } from '../types/output'
 import { DecipherableInput } from '../types/input'
+import { isValidMethodMeta } from '../types/guards'
 
-export default function useDecipher<M extends MethodMeta>(methodMeta: M) {
-  const { descriptions, tags } = methodMeta
-  // Get the entries from the descriptions and tags
-  const descriptionsEntries = entriesFromObject(descriptions),
-    tagEntries = entriesFromObject(tags)
+export default function useDecipher<
+  K extends ModuleKeys,
+  V extends ModuleVersionKeys,
+  MK extends MethodKey<K, V>,
+>(methodMeta: MethodMeta<K, V>[MK]) {
+  if (!isValidMethodMeta(methodMeta))
+    throw new Error('Invalid methodMeta object')
 
-  const findTagEntry = (name: string) =>
-      tagEntries.find(([k]) => k === name) || [],
-    findDescEntry = (name: string) =>
-      descriptionsEntries.find(([k]) => k === name) || []
+  type OutputDescriptions = PickDeep<typeof descriptions, 'returns'>
+  const { descriptions, tags } = methodMeta,
+    // Get the entries from the descriptions and tags
+    tagEntries = entriesFromObject(tags),
+    findTagEntry = (name: string) => tagEntries.find(([k]) => k === name) || [],
+    inputDescriptions = entriesFromObject(descriptions).filter(
+      (i): i is Extract<typeof i, [string, string]> => typeof i[1] === 'string'
+    ),
+    outputDescriptionsPrep: OutputDescriptions['returns'] | undefined = (
+      descriptions as any
+    )?.returns,
+    outputDescriptions = !!outputDescriptionsPrep
+      ? entriesFromObject(outputDescriptionsPrep)
+      : undefined
 
-  const input = <I extends DecipherableInput>(input: I) => {
+  const input = <I extends DecipherableInput<K, V>>(input: I) => {
     const { name, type } = input,
       // Find the tag and description for the input
+      // as PickDeep<typeof descriptions, 'returns'>
       [tagKey, tagVal] = findTagEntry(name),
-      [descKey, descVal] = findDescEntry(name)
+      [descKey, descVal] = inputDescriptions.find(([k]) => k === name) || []
 
     // Set the description and tag to empty values
     const tag = tagKey === name ? tagVal : undefined
-    const description = (() => {
-      if (descKey === name) return descVal as Extract<typeof descVal, string>
-
-      return undefined
-    })()
+    const description = descKey === name ? descVal : undefined
 
     return {
       name,
@@ -36,27 +51,19 @@ export default function useDecipher<M extends MethodMeta>(methodMeta: M) {
     }
   }
 
-  const output = <O extends DecipherableOutput>(output: O) => {
+  const output = <O extends DecipherableOutput<K, V>>(output: O) => {
     const { name, type } = output,
       // Find the tag and description for the input
       [tagKey, tagVal] = findTagEntry(name),
-      returns = findDescEntry(
-        'returns'
-      )[1] as UnionToIntersection<ReturnDescription>,
-      returnsKeyName = name as keyof UnionToIntersection<ReturnDescription>
+      [descKey, descVal] =
+        outputDescriptions?.find(
+          ([k]) => (k as unknown as typeof name) === name
+        ) || []
 
     // Set the description and tag to empty values
-    const tag = tagKey === name ? tagVal : undefined
-    const description = (() => {
-      if (
-        !!returns &&
-        !!returnsKeyName &&
-        Object.hasOwn(returns, returnsKeyName)
-      )
-        return returns[returnsKeyName]
-
-      return undefined
-    })()
+    const tag = (tagKey as typeof name) === name ? tagVal : undefined
+    const description =
+      (descKey as unknown as typeof name) === name ? descVal : undefined
 
     return {
       name,
@@ -73,10 +80,6 @@ export default function useDecipher<M extends MethodMeta>(methodMeta: M) {
 }
 
 export type Decipher = ReturnType<typeof useDecipher>
-
-// export type Deciphered<T extends 'input' | 'output'> = T extends 'input'
-//   ? Extract<ReturnType<Decipher>, { variant: 'input' }>
-//   : Exclude<ReturnType<Decipher>, { variant: 'output' }>
 
 function entriesFromObject<T extends object>(object: T): Entries<T> {
   return Object.entries(object) as Entries<T>
