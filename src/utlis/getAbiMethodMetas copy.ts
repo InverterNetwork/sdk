@@ -4,18 +4,20 @@ import type {
   ModuleKeys,
   ModuleVersionKeys,
 } from '@inverter-network/abis'
+import type { ValueOf } from 'type-fest'
 
 export default function getAbiMethodMetas<
   K extends ModuleKeys,
   V extends ModuleVersionKeys,
->(abi: Abi<K, V>) {
+  A extends Abi<K, V>,
+>(abi: A) {
   const result = abi
     .map((item) => {
       if (item.type !== 'function') return null
       const type: 'read' | 'write' =
         item.stateMutability === 'view' ||
         // @ts-expect-error abis are missing modules
-        item.stateMutability === 'pureu'
+        item.stateMutability === 'pure'
           ? 'read'
           : 'write'
 
@@ -23,13 +25,19 @@ export default function getAbiMethodMetas<
     })
     .filter((item): item is NonNullable<typeof item> => Boolean(item))
 
-  return result
+  const redueced = result.reduce(
+    (acc, item) => {
+      acc[item.name] = item
+      return acc
+    },
+    {} as Record<(typeof result)[number]['name'], (typeof result)[number]>
+  )
+
+  return redueced
 }
 
 export type AbiMethodMeta<
   K extends ModuleKeys,
   V extends ModuleVersionKeys,
   MK extends MethodKey<K, V>,
-> = Extract<ReturnType<typeof getAbiMethodMetas<K, V>>[number], { name: MK }>
-
-// type t = AbiMethodMeta<'BountyManager', 'v1.0', 'addClaim'>
+> = Extract<ValueOf<ReturnType<typeof getAbiMethodMetas>>, { name: MK }>

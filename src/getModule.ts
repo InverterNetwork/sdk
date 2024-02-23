@@ -9,7 +9,7 @@ import type {
   Transport,
   Account,
 } from 'viem'
-import getAbiMethodMetas, { AbiMethodMeta } from './utlis/getAbiMethodMetas'
+import getAbiMethodMetas from './utlis/getAbiMethodMetas'
 import formatMethodStruct, { MethodStruct } from './utlis/formatMethodStruct'
 
 export default function getModule<
@@ -31,7 +31,7 @@ export default function getModule<
   const moduleData = data[name][version]
 
   // Get the moduletype, abi, description, and methodMetas from the data object
-  const { moduletype, abi, description, methodMetas } = moduleData
+  const { moduletype, abi, description } = moduleData
 
   // Construct a contract object using the address and clients
   const contract = getContract({
@@ -44,19 +44,23 @@ export default function getModule<
   })
 
   // Get the abiMethodMetas from the abi
-  const abiMethodMetas = getAbiMethodMetas(abi)
+  const abiMethodMetas = getAbiMethodMetas(abi),
+    methodMetas = moduleData.methodMetas
 
-  // Create a methods object
-  const methods = <Record<AbiMethodMeta['name'], MethodStruct>>{}
-
-  // Iterate over the abiMethodMetas and add them to the methods object
-  abiMethodMetas.forEach((meta) => {
-    methods[meta.name] = formatMethodStruct({
-      ...meta,
-      contract,
+  const structMap = abiMethodMetas.map((meta) => {
+    return formatMethodStruct({
+      abiMethodMeta: meta,
       methodMeta: methodMetas[meta.name],
+      contract,
     })
   })
+
+  const methods: {
+    [MK in (typeof structMap)[number]['name']]: MethodStruct<K, V, MK>
+  } = structMap.reduce((acc, item) => {
+    acc[item.name] = item
+    return acc
+  }, {} as any)
 
   return {
     name,

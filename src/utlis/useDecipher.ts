@@ -35,7 +35,6 @@ export default function useDecipher<
   const input = <I extends DecipherableInput<K, V>>(input: I) => {
     const { name, type } = input,
       // Find the tag and description for the input
-      // as PickDeep<typeof descriptions, 'returns'>
       [tagKey, tagVal] = findTagEntry(name),
       [descKey, descVal] = inputDescriptions.find(([k]) => k === name) || []
 
