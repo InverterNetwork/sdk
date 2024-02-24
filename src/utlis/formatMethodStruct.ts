@@ -1,32 +1,35 @@
 import {
+  AbiFunction,
+  Description,
   MethodKey,
   MethodMeta,
   ModuleKeys,
   ModuleVersionKeys,
 } from '@inverter-network/abis'
 import { input as prepareInput, output as preparedOutput } from './prepare'
-import { AbiMethodMeta } from './getAbiMethodMetas'
 import useDecipher from './useDecipher'
 
 export default function formatMethodStruct<
   K extends ModuleKeys,
   V extends ModuleVersionKeys,
   MK extends MethodKey<K, V>,
+  MM extends MethodMeta<K, V, MK> = MethodMeta<K, V, MK>,
 >(props: {
-  abiMethodMeta: AbiMethodMeta<K, V, MK>
-  methodMeta: MethodMeta<K, V>[MK]
+  abiMethod: AbiFunction<K, V, MK>
+  methodMeta: MM
+  type: 'write' | 'read'
   contract: any
 }) {
-  const { contract, methodMeta, abiMethodMeta } = props
-  const { name, type, inputs, outputs } = abiMethodMeta
+  const { contract, methodMeta, abiMethod, type } = props
+  const { name, inputs, outputs } = abiMethod
 
-  const decipher = useDecipher(methodMeta),
+  const decipher = useDecipher<K, V, MK>(methodMeta),
     preparedInputs = inputs.map((input) => prepareInput(decipher, input)),
     preparedOutputs = outputs.map((output) => preparedOutput(decipher, output))
 
   return {
     name,
-    type,
+    description: methodMeta.descriptions.method as MM['descriptions']['method'],
     run: ({ args, simulate }: { args: any[]; simulate?: boolean }) => {
       return contract[simulate ? 'simulate' : type][name](...args)
     },
@@ -39,6 +42,4 @@ export type MethodStruct<
   K extends ModuleKeys,
   V extends ModuleVersionKeys,
   MK extends MethodKey<K, V>,
-> = Extract<ReturnType<typeof formatMethodStruct<K, V, MK>>, { name: MK }>
-
-// type t = MethodStruct<'BountyManager', 'v1.0', 'addClaim'>
+> = ReturnType<typeof formatMethodStruct<K, V, MK>>

@@ -1,4 +1,9 @@
-import type { ModuleKeys, ModuleVersionKeys } from '@inverter-network/abis'
+import type {
+  AbiReadFunction,
+  AbiWriteFunction,
+  ModuleKeys,
+  ModuleVersionKeys,
+} from '@inverter-network/abis'
 import { data } from '@inverter-network/abis'
 import { getContract } from 'viem'
 import type {
@@ -9,7 +14,7 @@ import type {
   Transport,
   Account,
 } from 'viem'
-import getAbiMethodMetas from './utlis/getAbiMethodMetas'
+import { getAbiReadMethods, getAbiWriteMethods } from './utlis/getAbiMethods'
 import formatMethodStruct, { MethodStruct } from './utlis/formatMethodStruct'
 
 export default function getModule<
@@ -31,7 +36,7 @@ export default function getModule<
   const moduleData = data[name][version]
 
   // Get the moduletype, abi, description, and methodMetas from the data object
-  const { moduletype, abi, description } = moduleData
+  const { moduletype, abi, description, methodMetas } = moduleData
 
   // Construct a contract object using the address and clients
   const contract = getContract({
@@ -43,24 +48,37 @@ export default function getModule<
     },
   })
 
-  // Get the abiMethodMetas from the abi
-  const abiMethodMetas = getAbiMethodMetas(abi),
-    methodMetas = moduleData.methodMetas
-
-  const structMap = abiMethodMetas.map((meta) => {
-    return formatMethodStruct({
-      abiMethodMeta: meta,
-      methodMeta: methodMetas[meta.name],
-      contract,
+  const read: {
+    [MK in AbiReadFunction<K, V>['name']]: MethodStruct<K, V, MK>
+  } = getAbiReadMethods(abi)
+    .map((meta) => {
+      return formatMethodStruct({
+        abiMethod: meta,
+        methodMeta: methodMetas.find((i) => i.name === meta.name)!,
+        contract,
+        type: 'read',
+      })
     })
-  })
+    .reduce((acc, item) => {
+      acc[item.name] = item
+      return acc
+    }, {} as any)
 
-  const methods: {
-    [MK in (typeof structMap)[number]['name']]: MethodStruct<K, V, MK>
-  } = structMap.reduce((acc, item) => {
-    acc[item.name] = item
-    return acc
-  }, {} as any)
+  const write: {
+    [MK in AbiWriteFunction<K, V>['name']]: MethodStruct<K, V, MK>
+  } = getAbiWriteMethods(abi)
+    .map((meta) => {
+      return formatMethodStruct({
+        abiMethod: meta,
+        methodMeta: methodMetas.find((i) => i.name === meta.name)!,
+        contract,
+        type: 'write',
+      })
+    })
+    .reduce((acc, item) => {
+      acc[item.name] = item
+      return acc
+    }, {} as any)
 
   return {
     name,
@@ -68,6 +86,7 @@ export default function getModule<
     address,
     moduletype,
     description,
-    methods,
+    read,
+    write,
   }
 }

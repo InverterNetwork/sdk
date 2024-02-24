@@ -3,13 +3,18 @@ import { Tuple } from '../types/base'
 import {
   FunctionInput,
   FunctionOutput,
+  MethodKey,
   ModuleKeys,
   ModuleVersionKeys,
 } from '@inverter-network/abis'
 
-export const input = <K extends ModuleKeys, V extends ModuleVersionKeys>(
-  decipher: Decipher,
-  input: FunctionInput<K, V>
+export const input = <
+  K extends ModuleKeys,
+  V extends ModuleVersionKeys,
+  MK extends MethodKey<K, V>,
+>(
+  decipher: Decipher<K, V, MK>,
+  input: FunctionInput<K, V, MK>
 ) => {
   const tupleGuard = (i: typeof input): i is Extract<typeof input, Tuple> =>
     i.type === 'tuple[]'
@@ -26,12 +31,16 @@ export const input = <K extends ModuleKeys, V extends ModuleVersionKeys>(
   }
 
   // Decipher the item
-  return decipher.input(input)
+  return decipher.input(input as Exclude<typeof input, Tuple>)
 }
 
-export const output = <K extends ModuleKeys, V extends ModuleVersionKeys>(
-  decipher: Decipher,
-  output: FunctionOutput<K, V>
+export const output = <
+  K extends ModuleKeys,
+  V extends ModuleVersionKeys,
+  MK extends MethodKey<K, V>,
+>(
+  decipher: Decipher<K, V, MK>,
+  output: FunctionOutput<K, V, MK>
 ) => {
   // If the item is a tuple[] then we need to decipher the components
   const tupleGuard = (i: typeof output): i is Extract<typeof output, Tuple> =>
@@ -49,7 +58,7 @@ export const output = <K extends ModuleKeys, V extends ModuleVersionKeys>(
   }
 
   // Decipher the item
-  return decipher.output(output)
+  return decipher.output(output as Exclude<typeof output, Tuple>)
 }
 
 export type Input = ReturnType<typeof input>

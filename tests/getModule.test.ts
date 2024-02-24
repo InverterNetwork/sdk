@@ -24,8 +24,8 @@ describe('Get A Module', () => {
   })
 
   it('Should test any method', async () => {
-    const t = module.methods.listBountyIds.name
-    const res = await module.methods.listBountyIds.run({ args: [] })
+    const t = module.read.listClaimIdsForContributorAddress.inputs
+    const res = await module.read.listBountyIds.run({ args: [] })
 
     console.log('listBountyIds RES', res)
     expect(res).pass()

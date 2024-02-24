@@ -7,17 +7,14 @@ import {
 import { Entries, PickDeep } from 'type-fest'
 import { DecipherableOutput } from '../types/output'
 import { DecipherableInput } from '../types/input'
-import { isValidMethodMeta } from '../types/guards'
 
 export default function useDecipher<
   K extends ModuleKeys,
   V extends ModuleVersionKeys,
   MK extends MethodKey<K, V>,
->(methodMeta: MethodMeta<K, V>[MK]) {
-  if (!isValidMethodMeta(methodMeta))
-    throw new Error('Invalid methodMeta object')
-
+>(methodMeta: MethodMeta<K, V, MK>) {
   type OutputDescriptions = PickDeep<typeof descriptions, 'returns'>
+
   const { descriptions, tags } = methodMeta,
     // Get the entries from the descriptions and tags
     tagEntries = entriesFromObject(tags),
@@ -32,7 +29,7 @@ export default function useDecipher<
       ? entriesFromObject(outputDescriptionsPrep)
       : undefined
 
-  const input = <I extends DecipherableInput<K, V>>(input: I) => {
+  const input = <I extends DecipherableInput<K, V, MK>>(input: I) => {
     const { name, type } = input,
       // Find the tag and description for the input
       [tagKey, tagVal] = findTagEntry(name),
@@ -78,7 +75,11 @@ export default function useDecipher<
   }
 }
 
-export type Decipher = ReturnType<typeof useDecipher>
+export type Decipher<
+  K extends ModuleKeys,
+  V extends ModuleVersionKeys,
+  MK extends MethodKey<K, V>,
+> = ReturnType<typeof useDecipher<K, V, MK>>
 
 function entriesFromObject<T extends object>(object: T): Entries<T> {
   return Object.entries(object) as Entries<T>

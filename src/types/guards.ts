@@ -33,7 +33,7 @@ export function isValidMethodMeta<
   K extends ModuleKeys,
   V extends ModuleVersionKeys,
   MK extends MethodKey<K, V>,
->(obj: any): obj is MethodMeta<K, V>[MK] {
+>(obj: any): obj is MethodMeta<K, V, MK> {
   // Implement a check for the properties you expect in MethodMeta
   return 'tags' in obj && 'descriptions' in obj
 }
