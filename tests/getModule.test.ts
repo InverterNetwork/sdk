@@ -24,7 +24,7 @@ describe('Get A Module', () => {
   })
 
   it('Should test any method', async () => {
-    const t = module.read.listClaimIdsForContributorAddress.inputs
+    const t = module.write.addBounty.inputs
     const res = await module.read.listBountyIds.run({ args: [] })
 
     console.log('listBountyIds RES', res)

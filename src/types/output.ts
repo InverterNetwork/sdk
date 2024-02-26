@@ -4,7 +4,7 @@ import {
   ModuleVersionKeys,
 } from '@inverter-network/abis'
 import { Tuple } from './base'
-import { Output } from '../utlis/prepare'
+// import { Output } from '../utlis/prepare'
 
 type OutputWithComponents<
   K extends ModuleKeys,
@@ -34,6 +34,6 @@ export type DecipherableOutput<
   | ComponentOutput<K, V>
   | OutputOmittedComponents<K, V>
 
-export type PreparedOutput = Exclude<Output, Tuple>
+// export type PreparedOutput = Exclude<Output, Tuple>
 
-export type PreparedComponentOutput = Extract<Output, Tuple>['components']
+// export type PreparedComponentOutput = Extract<Output, Tuple>['components']

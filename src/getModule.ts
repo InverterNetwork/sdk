@@ -1,6 +1,6 @@
 import type {
-  AbiReadFunction,
-  AbiWriteFunction,
+  AbiFunctionReadName,
+  AbiFunctionWriteName,
   ModuleKeys,
   ModuleVersionKeys,
 } from '@inverter-network/abis'
@@ -14,8 +14,8 @@ import type {
   Transport,
   Account,
 } from 'viem'
-import { getAbiReadMethods, getAbiWriteMethods } from './utlis/getAbiMethods'
-import formatMethodStruct, { MethodStruct } from './utlis/formatMethodStruct'
+import getAbiMethods from './utlis/getAbiMethods'
+import formatMethodStruct from './utlis/formatMethodStruct'
 
 export default function getModule<
   K extends ModuleKeys,
@@ -49,14 +49,17 @@ export default function getModule<
   })
 
   const read: {
-    [MK in AbiReadFunction<K, V>['name']]: MethodStruct<K, V, MK>
-  } = getAbiReadMethods(abi)
-    .map((meta) => {
+    [MK in AbiFunctionReadName<K, V>]: ReturnType<
+      typeof formatMethodStruct<K, V, MK>
+    >
+  } = getAbiMethods
+    .readFunctions(abi)
+    .map((method) => {
       return formatMethodStruct({
-        abiMethod: meta,
-        methodMeta: methodMetas.find((i) => i.name === meta.name)!,
+        abiMethod: method,
+        methodMeta: methodMetas.find((i) => i.name === method.name)!,
         contract,
-        type: 'read',
+        variant: 'read',
       })
     })
     .reduce((acc, item) => {
@@ -65,14 +68,17 @@ export default function getModule<
     }, {} as any)
 
   const write: {
-    [MK in AbiWriteFunction<K, V>['name']]: MethodStruct<K, V, MK>
-  } = getAbiWriteMethods(abi)
-    .map((meta) => {
+    [MK in AbiFunctionWriteName<K, V>]: ReturnType<
+      typeof formatMethodStruct<K, V, MK>
+    >
+  } = getAbiMethods
+    .writeFunctions(abi)
+    .map((method) => {
       return formatMethodStruct({
-        abiMethod: meta,
-        methodMeta: methodMetas.find((i) => i.name === meta.name)!,
+        abiMethod: method,
+        methodMeta: methodMetas.find((i) => i.name === method.name)!,
         contract,
-        type: 'write',
+        variant: 'write',
       })
     })
     .reduce((acc, item) => {

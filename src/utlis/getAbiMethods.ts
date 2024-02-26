@@ -1,9 +1,8 @@
 import type { Abi, ModuleKeys, ModuleVersionKeys } from '@inverter-network/abis'
 
-export function getAbiReadMethods<
-  K extends ModuleKeys,
-  V extends ModuleVersionKeys,
->(abi: Abi<K, V>) {
+function readFunctions<K extends ModuleKeys, V extends ModuleVersionKeys>(
+  abi: Abi<K, V>
+) {
   return abi.filter(
     (
       item
@@ -19,10 +18,9 @@ export function getAbiReadMethods<
   )
 }
 
-export function getAbiWriteMethods<
-  K extends ModuleKeys,
-  V extends ModuleVersionKeys,
->(abi: Abi<K, V>) {
+function writeFunctions<K extends ModuleKeys, V extends ModuleVersionKeys>(
+  abi: Abi<K, V>
+) {
   return abi.filter(
     (
       item
@@ -38,7 +36,7 @@ export function getAbiWriteMethods<
   )
 }
 
-export function getAbiEvents<K extends ModuleKeys, V extends ModuleVersionKeys>(
+function getAbiEvents<K extends ModuleKeys, V extends ModuleVersionKeys>(
   abi: Abi<K, V>
 ) {
   return abi.filter(
@@ -47,7 +45,13 @@ export function getAbiEvents<K extends ModuleKeys, V extends ModuleVersionKeys>(
   )
 }
 
-export type AbiFunctionMethods<
+export default {
+  readFunctions,
+  writeFunctions,
+  getAbiEvents,
+}
+
+export type AbiFunctions<
   K extends ModuleKeys,
   V extends ModuleVersionKeys,
 > = Extract<
@@ -57,21 +61,3 @@ export type AbiFunctionMethods<
     stateMutability: 'view' | 'pure' | 'nonpayable' | 'payable'
   }
 >[number] & { outputs: [] | undefined }
-
-export type AbiReadMethod<
-  K extends ModuleKeys,
-  V extends ModuleVersionKeys,
-  MK extends ReturnType<typeof getAbiReadMethods<K, V>>[number]['name'],
-> = Extract<ReturnType<typeof getAbiReadMethods<K, V>>[number], { name: MK }>
-
-export type AbiWriteMethod<
-  K extends ModuleKeys,
-  V extends ModuleVersionKeys,
-  MK extends ReturnType<typeof getAbiWriteMethods<K, V>>[number]['name'],
-> = Extract<ReturnType<typeof getAbiWriteMethods<K, V>>[number], { name: MK }>
-
-export type AbiEvent<
-  K extends ModuleKeys,
-  V extends ModuleVersionKeys,
-  MK extends ReturnType<typeof getAbiEvents<K, V>>[number]['name'],
-> = Extract<ReturnType<typeof getAbiEvents<K, V>>[number], { name: MK }>
