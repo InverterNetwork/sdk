@@ -3,6 +3,7 @@ import { expect, describe, it, beforeAll } from 'bun:test'
 import getModule from '../src/getModule'
 import { getTestConnectors } from './getTestConnectors'
 import writeToFile from '../tools/utils/writeLog'
+import { AbiTypeToPrimitiveType } from 'abitype'
 
 describe('Get A Module', () => {
   let module: ReturnType<typeof getModule<'BountyManager', 'v1.0'>>
@@ -24,8 +25,8 @@ describe('Get A Module', () => {
   })
 
   it('Should test any method', async () => {
-    const t = module.write.addBounty.inputs
-    const res = await module.read.listBountyIds.run({ args: [] })
+    const t = module.write.addClaim.inputs[1]['components']
+    const res = await module.write.addClaim.run([])
 
     console.log('listBountyIds RES', res)
     expect(res).pass()

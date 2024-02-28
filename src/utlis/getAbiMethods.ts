@@ -1,6 +1,6 @@
-import type { Abi, ModuleKeys, ModuleVersionKeys } from '@inverter-network/abis'
+import type { Abi, ModuleKeys, ModuleVersionKey } from '@inverter-network/abis'
 
-function readFunctions<K extends ModuleKeys, V extends ModuleVersionKeys>(
+function readFunctions<K extends ModuleKeys, V extends ModuleVersionKey>(
   abi: Abi<K, V>
 ) {
   return abi.filter(
@@ -18,7 +18,7 @@ function readFunctions<K extends ModuleKeys, V extends ModuleVersionKeys>(
   )
 }
 
-function writeFunctions<K extends ModuleKeys, V extends ModuleVersionKeys>(
+function writeFunctions<K extends ModuleKeys, V extends ModuleVersionKey>(
   abi: Abi<K, V>
 ) {
   return abi.filter(
@@ -36,7 +36,7 @@ function writeFunctions<K extends ModuleKeys, V extends ModuleVersionKeys>(
   )
 }
 
-function getAbiEvents<K extends ModuleKeys, V extends ModuleVersionKeys>(
+function getAbiEvents<K extends ModuleKeys, V extends ModuleVersionKey>(
   abi: Abi<K, V>
 ) {
   return abi.filter(
@@ -53,7 +53,7 @@ export default {
 
 export type AbiFunctions<
   K extends ModuleKeys,
-  V extends ModuleVersionKeys,
+  V extends ModuleVersionKey,
 > = Extract<
   Abi<K, V>,
   {

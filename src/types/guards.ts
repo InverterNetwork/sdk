@@ -1,19 +1,16 @@
 import {
   ModuleKeys,
   ModuleVersion,
-  ModuleVersionKeys,
+  ModuleVersionKey,
   Abi,
-  MethodMeta,
-  MethodKey,
 } from '@inverter-network/abis'
 
 export const isString = (value: unknown): value is string =>
   typeof value === 'string'
 
-export function isValidModule<
-  K extends ModuleKeys,
-  V extends ModuleVersionKeys,
->(obj: any): obj is ModuleVersion<K, V> {
+export function isValidModule<K extends ModuleKeys, V extends ModuleVersionKey>(
+  obj: any
+): obj is ModuleVersion<K, V> {
   // Implement a check for the properties you expect in ModuleData
   return (
     'moduletype' in obj &&
@@ -23,17 +20,8 @@ export function isValidModule<
   )
 }
 
-export function isValidAbi<K extends ModuleKeys, V extends ModuleVersionKeys>(
+export function isValidAbi<K extends ModuleKeys, V extends ModuleVersionKey>(
   abi: any
 ): abi is Abi<K, V> {
   return Array.isArray(abi)
-}
-
-export function isValidMethodMeta<
-  K extends ModuleKeys,
-  V extends ModuleVersionKeys,
-  MK extends MethodKey<K, V>,
->(obj: any): obj is MethodMeta<K, V, MK> {
-  // Implement a check for the properties you expect in MethodMeta
-  return 'tags' in obj && 'descriptions' in obj
 }
