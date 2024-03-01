@@ -42,6 +42,8 @@ export default function getModule<
     },
   })
 
+  // const res = await contract.write.updateClaimDetails()
+
   const read = prepare(itterable, 'read', contract),
     write = prepare(itterable, 'write', contract)
 

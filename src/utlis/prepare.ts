@@ -20,7 +20,7 @@ export default function prepare<
   }
   return itterable
     .filter((i) => i.type === type)
-    .map((itterable) => formatMethod(itterable, contract))
+    .map((item) => formatMethod(item, contract))
     .reduce((acc, item) => {
       acc[item.name] = item
       return acc

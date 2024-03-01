@@ -24,6 +24,7 @@ export default function formatParameters<
       return {
         name: parameter.name,
         type: parameter.type,
+        ...('tag' in parameter && { tag: parameter.tag }),
         components: parameter.components.map(format),
       } as any
 
@@ -31,6 +32,7 @@ export default function formatParameters<
       if (parameter.tag === 'any(string)') {
         return {
           name: parameter.name,
+          tag: 'any(string)',
           type: 'any',
         } as any
       }
@@ -38,15 +40,16 @@ export default function formatParameters<
       if (parameter.tag === 'decimal') {
         return {
           name: parameter.name,
-          type: 'tuple[]',
+          type: 'tuple',
+          tag: 'decimal',
           components: [
             {
               name: 'value',
-              type: parameter.type,
+              type: 'string',
             },
             {
               name: 'decimals',
-              type: 'uint8',
+              type: 'number',
             },
           ],
         } as any
@@ -63,9 +66,3 @@ export default function formatParameters<
 
   return mapped as (typeof mapped)[0]
 }
-
-// type t = FormatParametersToPrimitiveTypes<
-//   ReturnType<
-//     typeof formatParameters<'BountyManager', 'v1.0', 'addClaim', 'inputs'>
-//   >
-// >

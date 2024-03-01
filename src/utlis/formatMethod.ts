@@ -5,7 +5,7 @@ import {
   ModuleVersionKey,
 } from '@inverter-network/abis'
 import formatParameters from './formatParameters'
-import { FormatParametersToPrimitiveTypes } from '../types/parameter'
+import { MethodArgs, MethodResult } from '../types/method'
 
 export default function formatMethod<
   K extends ModuleKeys,
@@ -16,25 +16,28 @@ export default function formatMethod<
   const name = itterable.name,
     description = itterable.description as T['description'],
     type = itterable.type as T['type'],
-    inputs = formatParameters<K, V, MK, 'inputs'>(
-      itterable.inputs as T['inputs']
-    ),
-    outputs = formatParameters<K, V, MK, 'outputs'>(
-      itterable.outputs as T['outputs']
-    )
+    inputs = itterable.inputs as T['inputs'],
+    outputs = itterable.outputs as T['outputs']
 
-  const run = (
-    args: FormatParametersToPrimitiveTypes<typeof inputs>,
+  const formattedInputs = formatParameters<K, V, MK, 'inputs'>(inputs),
+    formattedOutputs = formatParameters<K, V, MK, 'outputs'>(outputs)
+
+  const run = async (
+    args: MethodArgs<typeof formattedInputs>,
     simulate?: boolean
-  ): Promise<typeof outputs> => {
-    return contract[simulate ? 'simulate' : type][name](args)
+  ) => {
+    const res = await contract[simulate ? 'simulate' : type][name](args)
+
+    return (itterable.type === 'read' ? res[0] : res) as MethodResult<
+      typeof formattedOutputs
+    >
   }
 
   return {
     name,
     description,
     run,
-    inputs,
-    outputs,
+    inputs: formattedInputs,
+    outputs: formattedOutputs,
   }
 }
