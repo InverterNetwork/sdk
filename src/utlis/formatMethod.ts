@@ -6,6 +6,7 @@ import {
 } from '@inverter-network/abis'
 import formatParameters from './formatParameters'
 import { MethodArgs, MethodResult } from '../types/method'
+import parseInputs from './parseInputs'
 
 export default function formatMethod<
   K extends ModuleKeys,
@@ -26,7 +27,8 @@ export default function formatMethod<
     args: MethodArgs<typeof formattedInputs>,
     simulate?: boolean
   ) => {
-    const res = await contract[simulate ? 'simulate' : type][name](args)
+    const parsedInputs = parseInputs(formattedInputs, args)
+    const res = await contract[simulate ? 'simulate' : type][name](parsedInputs)
 
     return (itterable.type === 'read' ? res[0] : res) as MethodResult<
       typeof formattedOutputs

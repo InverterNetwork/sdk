@@ -23,9 +23,12 @@ describe('Get A Module', () => {
     expect(module).pass()
   })
 
-  it('Should test any method', async () => {
-    const inputs = module.write.addClaim.inputs
-    const res = await module.write.addClaim.run()
+  it('Should post a bounty', async () => {
+    const res = await module.write.addBounty.run([
+      { value: '100', decimals: 18 },
+      { value: '1000', decimals: 18 },
+      {},
+    ])
 
     console.log('listBountyIds RES', res)
     expect(res).pass()

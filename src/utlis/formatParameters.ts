@@ -32,7 +32,7 @@ export default function formatParameters<
       if (parameter.tag === 'any(string)') {
         return {
           name: parameter.name,
-          tag: 'any(string)',
+          tag: parameter.tag,
           type: 'any',
         } as any
       }
@@ -40,8 +40,8 @@ export default function formatParameters<
       if (parameter.tag === 'decimal') {
         return {
           name: parameter.name,
+          tag: parameter.tag,
           type: 'tuple',
-          tag: 'decimal',
           components: [
             {
               name: 'value',
@@ -54,6 +54,14 @@ export default function formatParameters<
           ],
         } as any
       }
+    }
+
+    if ('type' in parameter) {
+      if (parameter.type === 'uint256')
+        return { name: parameter.name, type: 'string' } as any
+
+      if (parameter.type === 'uint256[]')
+        return { name: parameter.name, type: 'string[]' } as any
     }
 
     return {

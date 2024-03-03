@@ -42,7 +42,7 @@ export default function getModule<
     },
   })
 
-  // const res = await contract.write.updateClaimDetails()
+  // const res = await contract.write.addBounty([])
 
   const read = prepare(itterable, 'read', contract),
     write = prepare(itterable, 'write', contract)
