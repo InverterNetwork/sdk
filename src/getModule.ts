@@ -46,6 +46,7 @@ export default function getModule<
   })
 
   // const t = await contract.read.getClaimInformation([1n])
+  // const tt = await contract.read.getClaimInformation([1n])
 
   const read = prepare(itterable, 'read', contract, extrasProp),
     write = prepare(itterable, 'write', contract, extrasProp)
@@ -58,5 +59,6 @@ export default function getModule<
     description,
     read,
     write,
+    // contract,
   }
 }

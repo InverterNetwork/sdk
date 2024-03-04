@@ -14,5 +14,7 @@ export type MethodReturn<O, T extends 'read' | 'write'> = T extends 'write'
   ? `0x${string}`
   : FormattedParametersToPrimitiveType<O> extends infer R extends
         readonly unknown[]
-    ? R[0]
+    ? R['length'] extends 1
+      ? R[0]
+      : R
     : never

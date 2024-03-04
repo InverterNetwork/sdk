@@ -8,6 +8,7 @@ import formatParameters from './formatParameters'
 import { MethodArgs, MethodReturn } from '../types/method'
 import parseInputs from './parseInputs'
 import { ExtrasProp } from '../types/base'
+import formatOutputs from './formatOutputs'
 
 export default function formatMethod<
   K extends ModuleKeys,
@@ -31,9 +32,11 @@ export default function formatMethod<
     const parsedInputs = parseInputs(formattedInputs, args, extrasProp)
     console.log('PARSED INPUTS', parsedInputs)
 
-    const res = await contract[simulate ? 'simulate' : type][name](parsedInputs)
+    const res =
+        await contract[simulate ? 'simulate' : type][name](parsedInputs),
+      formattedRes = formatOutputs(formattedOutputs, res, extrasProp)
 
-    return res as MethodReturn<typeof formattedOutputs, typeof type>
+    return formattedRes as MethodReturn<typeof formattedOutputs, typeof type>
   }
 
   return {

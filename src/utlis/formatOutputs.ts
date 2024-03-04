@@ -1,56 +1,78 @@
-// import { parseUnits, stringToHex } from 'viem'
-// import { FormattedParameter } from '../types/input'
+import { formatUnits, hexToString } from 'viem'
+import { FormattedParameter } from '../types/parameter'
+import { ExtrasProp } from '../types/base'
 
-// export default function parseInputs(inputsProp: any, argsProps: any) {
-//   const inputs = inputsProp as FormattedParameter[],
-//     args = argsProps as any[]
-//   const parse = (
-//     input: (typeof inputs)[number],
-//     arg: (typeof args)[number]
-//   ): any => {
-//     const anyString = (arg: any) => stringToHex(JSON.stringify(arg))
-//     const decimal = (value: any, decimals: any) => parseUnits(value, decimals)
+export default function formatOutputs(
+  outputsProp: any,
+  res: any,
+  extrasProp?: ExtrasProp
+) {
+  const outputs = outputsProp as FormattedParameter[]
 
-//     // if the input has a tag
-//     if ('tag' in input) {
-//       if (input.tag === 'any(string)') return anyString(arg)
+  const format = (output: (typeof outputs)[number], res: any): any => {
+    const anyString = (res: any) => {
+      try {
+        return JSON.parse(hexToString(res))
+      } catch {
+        return 'Data is not a valid JSON string'
+      }
+    }
+    const decimal = (value: bigint, decimals: number) =>
+      formatUnits(value, decimals)
 
-//       if (input.tag === 'decimal') return decimal(arg.value, arg.decimals)
-//     }
+    // if the output has a tag
+    if ('tag' in output) {
+      if (output.tag === 'any(string)') return anyString(res)
 
-//     // if the input is a string or a number, parse it to a big int
-//     if (['string', 'number'].includes(input.type)) return BigInt(arg)
+      if (output.tag === 'decimal') {
+        if (!extrasProp?.decimals) throw new Error('No decimals provided')
+        return decimal(res, extrasProp.decimals)
+      }
+    }
 
-//     // if the input is a string[], parse each string to a big int
-//     if (input.type === 'string[]') return arg.map((i: string) => BigInt(i))
+    // if the output is a string or a number, format it to a big int
+    if (output.type === 'string') return String(res)
+    if (output.type === 'number') return Number(res)
 
-//     // the tuple[] type is a special case
-//     if (input.type === 'tuple[]') {
-//       // initialize the tuple
-//       const parsedTuple: any = {}
-//       // iterate over the arguments
-//       return arg.map((a: any) => {
-//         // iterate over the components of the tuple constructor
-//         input.components.forEach((c) => {
-//           // parse the tuple and assign the parsed value to the constructor name
-//           parsedTuple[c.name] = parse(c, a[c.name])
-//         })
+    // if the output is a string[], format each string to a big int
+    if (output.type === 'string[]') return res.map((i: bigint) => String(i))
 
-//         return parsedTuple
-//       })
-//     }
+    if (output.type === 'tuple') {
+      const formattedTuple: any = {}
 
-//     // if all else fails, just return the argument
-//     return arg
-//   }
+      output.components.forEach((c) => {
+        formattedTuple[c.name] = format(c, res[c.name])
+      })
 
-//   // parse the inputs
-//   const parsedInputs = inputs.map((input, index) => {
-//     // get the argument of the same index
-//     const arg = args[index]
-//     // parse the input with the argument
-//     return parse(input, arg)
-//   })
+      return formattedTuple
+    }
 
-//   return parsedInputs
-// }
+    if (output.type === 'tuple[]') {
+      const mapped = res.map((a: any) => {
+        const formattedTuple: any = {}
+
+        output.components.forEach((c) => {
+          formattedTuple[c.name] = format(c, a[c.name])
+        })
+
+        return formattedTuple
+      })
+
+      return mapped
+    }
+
+    // if all else fails, just return the argument
+    return res
+  }
+
+  // format the outputs
+  const formattedOutputs = outputs.map((output) => {
+    const name = output.name
+    // get the argument of the same index
+    const selectedRes = res?.[name] ?? res
+    // format the output with the argument
+    return format(output, selectedRes)
+  })
+
+  return formattedOutputs.length === 1 ? formattedOutputs[0] : formattedOutputs
+}

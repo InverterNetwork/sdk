@@ -33,19 +33,28 @@ export default function parseInputs(
     // if the input is a string[], parse each string to a big int
     if (input.type === 'string[]') return arg.map((i: string) => BigInt(i))
 
-    // the tuple[] type is a special case
-    if (input.type === 'tuple[]') {
-      // initialize the tuple
-      const parsedTuple: any = {}
-      // iterate over the arguments
-      return arg.map((a: any) => {
-        // iterate over the components of the tuple constructor
-        input.components.forEach((c) => {
-          // parse the tuple and assign the parsed value to the constructor name
-          parsedTuple[c.name] = parse(c, a[c.name])
-        })
+    // the tuple type is a special case
+    if (input.type === 'tuple') {
+      const formattedTuple: any = {}
+      // iterate over the components of the tuple template
+      input.components.forEach((c) => {
+        formattedTuple[c.name] = parse(c, arg[c.name])
+      })
 
-        return parsedTuple
+      return formattedTuple
+    }
+
+    // the tuple[] type is a special case, too
+    if (input.type === 'tuple[]') {
+      // iterate over the array of tuples at the argument
+      return arg.map((a: any) => {
+        const formattedTuple: any = {}
+        // iterate over the components of the tuple template
+        input.components.forEach((c) => {
+          // parse the component with the argument
+          formattedTuple[c.name] = parse(c, a[c.name])
+        })
+        return formattedTuple
       })
     }
 
@@ -56,7 +65,7 @@ export default function parseInputs(
   // parse the inputs
   const parsedInputs = inputs.map((input, index) => {
     // get the argument of the same index
-    const arg = args[index]
+    const arg = Array.isArray(args) ? args[index] : args
     // parse the input with the argument
     return parse(input, arg)
   })

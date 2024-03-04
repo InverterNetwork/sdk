@@ -22,7 +22,7 @@ export type FormatParametersReturn<Parameters> = {
           }
         : // 4. check if the input is a tuple
           Parameters[K] extends {
-              type: 'tuple[]'
+              type: 'tuple[]' | 'tuple'
               components: infer Components
             }
           ? // 5. if the input is a tuple, recursively call the FormatReturn type

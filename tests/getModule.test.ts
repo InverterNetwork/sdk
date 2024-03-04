@@ -21,20 +21,24 @@ describe('Get A Module', () => {
     })
   })
 
-  it('Should Log The Compiled Module Object', () => {
-    writeToFile(module, 'FullModuleObject')
-    expect(module).pass()
-  })
+  // it('Should Log The Compiled Module Object', () => {
+  //   writeToFile(module, 'FullModuleObject')
+  //   expect(module).pass()
+  // })
 
-  it('Should post a bounty', async () => {
-    const res = await module.write.addBounty.run(['100', '1000', {}])
+  // it('Should post a bounty', async () => {
+  //   const res = await module.write.addBounty.run(['100', '1000', {}])
 
-    console.log('addBounty RES', res)
-    expect(res).pass()
-  })
+  //   console.log('addBounty RES', res)
+  //   expect(res).pass()
+  // })
 
   it('Should read a bounty', async () => {
-    const res = await module.read.getBountyInformation.run('1')
+    const claimIds = await module.read.listClaimIds.run()
+    console.log('Claim IDS', claimIds)
+
+    const res = await module.read.getClaimInformation.run('39')
+    // const res = await module.read.getBountyInformation.run('1')
 
     console.log('getBountyInformation RES', res)
     expect(res).pass()
