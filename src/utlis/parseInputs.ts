@@ -1,21 +1,30 @@
 import { parseUnits, stringToHex } from 'viem'
 import { FormattedParameter } from '../types/parameter'
+import { ExtrasProp } from '../types/base'
 
-export default function parseInputs(inputsProp: any, argsProps: any) {
+export default function parseInputs(
+  inputsProp: any,
+  argsProp: any,
+  extrasProp?: ExtrasProp
+) {
   const inputs = inputsProp as FormattedParameter[],
-    args = argsProps as any[]
+    args = argsProp as any[]
   const parse = (
     input: (typeof inputs)[number],
     arg: (typeof args)[number]
   ): any => {
     const anyString = (arg: any) => stringToHex(JSON.stringify(arg))
-    const decimal = (value: any, decimals: any) => parseUnits(value, decimals)
+    const decimal = (value: string, decimals: number) =>
+      parseUnits(value, decimals)
 
     // if the input has a tag
     if ('tag' in input) {
       if (input.tag === 'any(string)') return anyString(arg)
 
-      if (input.tag === 'decimal') return decimal(arg.value, arg.decimals)
+      if (input.tag === 'decimal') {
+        if (!extrasProp?.decimals) throw new Error('No decimals provided')
+        return decimal(arg, extrasProp.decimals)
+      }
     }
 
     // if the input is a string or a number, parse it to a big int

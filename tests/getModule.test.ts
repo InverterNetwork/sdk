@@ -15,6 +15,9 @@ describe('Get A Module', () => {
       address: '0xc24f66A74967c336c8Cd529308c193b05Ac3e02f',
       publicClient,
       walletClient,
+      extrasProp: {
+        decimals: 18,
+      },
     })
   })
 
@@ -24,20 +27,16 @@ describe('Get A Module', () => {
   })
 
   it('Should post a bounty', async () => {
-    const res = await module.write.addBounty.run([
-      { value: '100', decimals: 18 },
-      { value: '1000', decimals: 18 },
-      {},
-    ])
+    const res = await module.write.addBounty.run(['100', '1000', {}])
 
     console.log('addBounty RES', res)
     expect(res).pass()
   })
 
   it('Should read a bounty', async () => {
-    const res = await module.read.getClaimInformation.run('3')
+    const res = await module.read.getBountyInformation.run('1')
 
-    console.log('listBountyIds RES', res)
+    console.log('getBountyInformation RES', res)
     expect(res).pass()
   })
 })

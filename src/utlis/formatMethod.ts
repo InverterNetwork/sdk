@@ -4,16 +4,16 @@ import {
   ModuleKeys,
   ModuleVersionKey,
 } from '@inverter-network/abis'
-import formatInputs from './formatInputs'
-import { MethodArgs } from '../types/method'
+import formatParameters from './formatParameters'
+import { MethodArgs, MethodReturn } from '../types/method'
 import parseInputs from './parseInputs'
-import { AbiParametersToPrimitiveTypes } from 'abitype'
+import { ExtrasProp } from '../types/base'
 
 export default function formatMethod<
   K extends ModuleKeys,
   V extends ModuleVersionKey,
   MK extends MethodKey<K, V>,
->(itterable: Itterable<K, V, MK>, contract: any) {
+>(itterable: Itterable<K, V, MK>, contract: any, extrasProp?: ExtrasProp) {
   type T = typeof itterable
   const name = itterable.name,
     description = itterable.description as T['description'],
@@ -21,18 +21,19 @@ export default function formatMethod<
     inputs = itterable.inputs as T['inputs'],
     outputs = itterable.outputs as T['outputs']
 
-  const formattedInputs = formatInputs<K, V, MK>(inputs)
+  const formattedInputs = formatParameters<K, V, MK, 'inputs'>(inputs),
+    formattedOutputs = formatParameters<K, V, MK, 'outputs'>(outputs)
 
   const run = async (
     args: MethodArgs<typeof formattedInputs>,
     simulate?: boolean
   ) => {
-    const parsedInputs = parseInputs(formattedInputs, args)
+    const parsedInputs = parseInputs(formattedInputs, args, extrasProp)
+    console.log('PARSED INPUTS', parsedInputs)
+
     const res = await contract[simulate ? 'simulate' : type][name](parsedInputs)
 
-    return (
-      itterable.type === 'write' ? res[0] : res
-    ) as AbiParametersToPrimitiveTypes<typeof outputs, 'outputs'>[0]
+    return res as MethodReturn<typeof formattedOutputs, typeof type>
   }
 
   return {
@@ -40,6 +41,6 @@ export default function formatMethod<
     description,
     run,
     inputs: formattedInputs,
-    outputs: outputs,
+    outputs: formattedOutputs,
   }
 }
