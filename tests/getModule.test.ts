@@ -19,7 +19,7 @@ describe('Get A Module', () => {
   })
 
   it('Should Log The Compiled Module Object', () => {
-    writeToFile(module)
+    writeToFile(module, 'FullModuleObject')
     expect(module).pass()
   })
 
@@ -29,6 +29,13 @@ describe('Get A Module', () => {
       { value: '1000', decimals: 18 },
       {},
     ])
+
+    console.log('addBounty RES', res)
+    expect(res).pass()
+  })
+
+  it('Should read a bounty', async () => {
+    const res = await module.read.getClaimInformation.run('3')
 
     console.log('listBountyIds RES', res)
     expect(res).pass()

@@ -1,69 +1,7 @@
 import { Tags } from '@inverter-network/abis'
-import {
-  AbiParameter,
-  AbiParameterKind,
-  AbiParameterToPrimitiveType,
-} from 'abitype'
+import { AbiParameter, AbiParameterToPrimitiveType } from 'abitype'
 
-export type FormatParametersReturn<Parameter> = {
-  // 1. check if the input is a valid member of the tuple
-  [K in keyof Parameter]: Parameter[K] extends AbiParameter & {
-    tag?: Tags
-  }
-    ? // 2. check if the input is a decimal tag
-      Parameter[K]['tag'] extends 'decimal'
-      ? {
-          name: Parameter[K]['name']
-          tag: 'decimal'
-          type: 'tuple'
-          components: [
-            {
-              name: 'value'
-              type: 'string'
-            },
-            {
-              name: 'decimals'
-              type: 'number'
-            },
-          ]
-        }
-      : // 3. check if the input is a any(string) tag
-        Parameter[K]['tag'] extends 'any(string)'
-        ? {
-            name: Parameter[K]['name']
-            tag: 'any(string)'
-            type: 'any'
-          }
-        : // 4. check if the input is a tuple
-          Parameter[K] extends {
-              type: 'tuple[]'
-              components: infer Components
-            }
-          ? // 5. if the input is a tuple, recursively call the FormatReturn type
-            {
-              name: Parameter[K]['name']
-              type: Parameter[K]['type']
-              components: FormatParametersReturn<Components>
-            }
-          : // 6. if non of the above, return the default input
-            Parameter[K]
-    : never
-}
-
-export type FormattedParameter =
-  | {
-      name: string
-      type: 'string' | 'any' | 'number' | 'string[]'
-      tag?: Tags
-    }
-  | {
-      name: string
-      type: 'tuple[]' | 'tuple'
-      tag?: Tags
-      components: readonly FormattedParameter[]
-    }
-
-type Format<Parameters> = {
+export type FormattedParametersToPrimitiveType<Parameters> = {
   // 1. check if the input is a valid member of the tuple
   [K in keyof Parameters]: Parameters[K] extends
     | {
@@ -87,14 +25,14 @@ type Format<Parameters> = {
             : // 3. Check if the input type is a tuple
               Parameters[K]['type'] extends 'tuple'
               ? {
-                  [N in CA[number]['name']]: Format<
+                  [N in CA[number]['name']]: FormattedParametersToPrimitiveType<
                     [Extract<CA[number], { name: N }>]
                   >[0]
                 }
               : // 4. Check if the input type is a tuple[]
                 Parameters[K]['type'] extends 'tuple[]'
                 ? readonly {
-                    [N in CA[number]['name']]: Format<
+                    [N in CA[number]['name']]: FormattedParametersToPrimitiveType<
                       [Extract<CA[number], { name: N }>]
                     >[0]
                   }[]
@@ -104,15 +42,15 @@ type Format<Parameters> = {
       : unknown
 }
 
-export type FormatParametersToPrimitiveTypes<
-  Parameters,
-  T extends AbiParameterKind,
-> = Format<Parameters> extends infer R extends readonly unknown[]
-  ? R['length'] extends 0
-    ? void
-    : T extends 'inputs'
-      ? R['length'] extends 1
-        ? R[0]
-        : R
-      : `0x${string}`
-  : never
+export type FormattedParameter =
+  | {
+      name: string
+      type: 'string' | 'any' | 'number' | 'string[]'
+      tag?: Tags
+    }
+  | {
+      name: string
+      type: 'tuple[]' | 'tuple'
+      tag?: Tags
+      components: readonly FormattedParameter[]
+    }

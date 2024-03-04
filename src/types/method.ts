@@ -1,5 +1,3 @@
-import { FormatParametersToPrimitiveTypes } from './parameter'
+import { FormattedInputsToPrimitiveTypes } from './input'
 
-export type MethodArgs<I> = FormatParametersToPrimitiveTypes<I, 'inputs'>
-
-export type MethodResult<O> = FormatParametersToPrimitiveTypes<O, 'outputs'>
+export type MethodArgs<I> = FormattedInputsToPrimitiveTypes<I>
