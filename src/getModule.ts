@@ -10,7 +10,7 @@ import type {
   Account,
 } from 'viem'
 import prepare from './utlis/prepare'
-import { ExtrasProp } from './types/base'
+import { Extras } from './types/base'
 
 export default function getModule<
   K extends ModuleKeys,
@@ -21,14 +21,14 @@ export default function getModule<
   address,
   publicClient,
   walletClient,
-  extrasProp,
+  extras,
 }: {
   name: K
   version: V
   address: Hex
   publicClient: PublicClient<Transport, Chain>
   walletClient: WalletClient<Transport, Chain, Account>
-  extrasProp?: ExtrasProp
+  extras?: Extras
 }) {
   const moduleData = data[name][version]
 
@@ -45,11 +45,8 @@ export default function getModule<
     },
   })
 
-  // const t = await contract.read.getClaimInformation([1n])
-  // const tt = await contract.read.getClaimInformation([1n])
-
-  const read = prepare(itterable, 'read', contract, extrasProp),
-    write = prepare(itterable, 'write', contract, extrasProp)
+  const read = prepare(itterable, 'read', contract, extras),
+    write = prepare(itterable, 'write', contract, extras)
 
   return {
     name,
@@ -59,6 +56,5 @@ export default function getModule<
     description,
     read,
     write,
-    // contract,
   }
 }

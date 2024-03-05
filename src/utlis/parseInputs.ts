@@ -1,11 +1,11 @@
 import { parseUnits, stringToHex } from 'viem'
 import { FormattedParameter } from '../types/parameter'
-import { ExtrasProp } from '../types/base'
+import { Extras } from '../types/base'
 
 export default function parseInputs(
   inputsProp: any,
   argsProp: any,
-  extrasProp?: ExtrasProp
+  extras?: Extras
 ) {
   const inputs = inputsProp as FormattedParameter[],
     args = argsProp as any[]
@@ -22,8 +22,8 @@ export default function parseInputs(
       if (input.tag === 'any(string)') return anyString(arg)
 
       if (input.tag === 'decimal') {
-        if (!extrasProp?.decimals) throw new Error('No decimals provided')
-        return decimal(arg, extrasProp.decimals)
+        if (!extras?.decimals) throw new Error('No decimals provided')
+        return decimal(arg, extras.decimals)
       }
     }
 

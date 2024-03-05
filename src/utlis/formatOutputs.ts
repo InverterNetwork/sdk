@@ -1,11 +1,11 @@
 import { formatUnits, hexToString } from 'viem'
 import { FormattedParameter } from '../types/parameter'
-import { ExtrasProp } from '../types/base'
+import { Extras } from '../types/base'
 
 export default function formatOutputs(
   outputsProp: any,
   res: any,
-  extrasProp?: ExtrasProp
+  extras?: Extras
 ) {
   const outputs = outputsProp as FormattedParameter[]
 
@@ -25,8 +25,8 @@ export default function formatOutputs(
       if (output.tag === 'any(string)') return anyString(res)
 
       if (output.tag === 'decimal') {
-        if (!extrasProp?.decimals) throw new Error('No decimals provided')
-        return decimal(res, extrasProp.decimals)
+        if (!extras?.decimals) throw new Error('No decimals provided')
+        return decimal(res, extras.decimals)
       }
     }
 

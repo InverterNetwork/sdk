@@ -7,14 +7,14 @@ import {
 import formatParameters from './formatParameters'
 import { MethodArgs, MethodReturn } from '../types/method'
 import parseInputs from './parseInputs'
-import { ExtrasProp } from '../types/base'
+import { Extras } from '../types/base'
 import formatOutputs from './formatOutputs'
 
 export default function formatMethod<
   K extends ModuleKeys,
   V extends ModuleVersionKey,
   MK extends MethodKey<K, V>,
->(itterable: Itterable<K, V, MK>, contract: any, extrasProp?: ExtrasProp) {
+>(itterable: Itterable<K, V, MK>, contract: any, extras?: Extras) {
   type T = typeof itterable
   const name = itterable.name,
     description = itterable.description as T['description'],
@@ -29,12 +29,11 @@ export default function formatMethod<
     args: MethodArgs<typeof formattedInputs>,
     simulate?: boolean
   ) => {
-    const parsedInputs = parseInputs(formattedInputs, args, extrasProp)
-    console.log('PARSED INPUTS', parsedInputs)
+    const parsedInputs = parseInputs(formattedInputs, args, extras)
 
     const res =
         await contract[simulate ? 'simulate' : type][name](parsedInputs),
-      formattedRes = formatOutputs(formattedOutputs, res, extrasProp)
+      formattedRes = formatOutputs(formattedOutputs, res, extras)
 
     return formattedRes as MethodReturn<typeof formattedOutputs, typeof type>
   }

@@ -4,7 +4,7 @@ import {
   ModuleVersionKey,
 } from '@inverter-network/abis'
 import formatMethod from './formatMethod'
-import { ExtrasProp } from '../types/base'
+import { Extras } from '../types/base'
 
 export default function prepare<
   K extends ModuleKeys,
@@ -14,7 +14,7 @@ export default function prepare<
   itterable: ModuleVersion<K, V>['itterable'],
   type: T,
   contract: any,
-  extrasProp?: ExtrasProp
+  extras?: Extras
 ) {
   type Result = {
     [N in Extract<
@@ -26,7 +26,7 @@ export default function prepare<
   }
   return itterable
     .filter((i) => i.type === type)
-    .map((item) => formatMethod(item, contract, extrasProp))
+    .map((item) => formatMethod(item, contract, extras))
     .reduce((acc, item) => {
       acc[item.name] = item
       return acc

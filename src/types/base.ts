@@ -1,3 +1,3 @@
-export type ExtrasProp = {
+export type Extras = {
   decimals?: number
 }
