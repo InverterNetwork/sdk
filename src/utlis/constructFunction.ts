@@ -1,29 +1,30 @@
-import { Abi, ModuleKeys, ModuleVersionKey } from '@inverter-network/abis'
 import formatParameters from './formatParameters'
 import { MethodArgs, MethodReturn } from '../types/method'
 import parseInputs from './parseInputs'
 import { Extras } from '../types/base'
 import formatOutputs from './formatOutputs'
-import { ExtractAbiFunction, ExtractAbiFunctionNames } from 'abitype'
+import { AbiFunction } from 'abitype'
 
-export default function formatMethod<
-  K extends ModuleKeys,
-  V extends ModuleVersionKey,
-  FN extends ExtractAbiFunctionNames<Abi<K, V>>,
->(
-  abiFunction: ExtractAbiFunction<Abi<K, V>, FN>,
+type ExtendedAbiFunction = AbiFunction & {
+  description?: string
+}
+
+interface PreservedProps<F extends ExtendedAbiFunction> {
+  name: F['name']
+  description: F['description']
+  inputs: F['inputs']
+  outputs: F['outputs']
+  stateMutability: F['stateMutability']
+}
+
+export default function constructFunction<F extends ExtendedAbiFunction>(
+  abiFunction: F,
   contract: any,
   extras?: Extras
 ) {
   type T = typeof abiFunction
-  const { name, stateMutability, inputs, outputs } = abiFunction as unknown as {
-      name: T['name']
-      stateMutability: T['stateMutability']
-      inputs: T['inputs']
-      outputs: T['outputs']
-    },
-    description =
-      'description' in abiFunction ? abiFunction.description : undefined,
+  const { description, name, stateMutability, inputs, outputs } =
+      abiFunction as PreservedProps<T>,
     kind = ['view', 'pure'].includes(stateMutability) ? 'read' : 'write'
 
   const formattedInputs = formatParameters(inputs),

@@ -9,12 +9,13 @@ import type {
   Transport,
   Account,
 } from 'viem'
-import prepare from './utlis/prepare'
+import prepareFunction from './utlis/prepareFunction'
 import { Extras } from './types/base'
+import { isValidModule } from './types/guards'
 
 export default function getModule<
   K extends ModuleKeys,
-  V extends ModuleVersionKey,
+  V extends ModuleVersionKey<K>,
 >({
   name,
   version,
@@ -31,6 +32,7 @@ export default function getModule<
   extras?: Extras
 }) {
   const mv = data[name][version]
+  if (!isValidModule(mv)) throw new Error('Invalid module')
   type T = typeof mv
 
   // Get the moduletype, abi, description, and methodMetas from the data object
@@ -48,8 +50,8 @@ export default function getModule<
     },
   })
 
-  const read = prepare(abi, ['pure', 'view'], contract, extras),
-    write = prepare(abi, ['nonpayable', 'payable'], contract, extras)
+  const read = prepareFunction(abi, ['pure', 'view'], contract, extras),
+    write = prepareFunction(abi, ['nonpayable', 'payable'], contract, extras)
 
   return {
     name,

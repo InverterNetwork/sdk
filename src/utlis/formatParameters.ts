@@ -1,24 +1,17 @@
-import {
-  AbiParameterKind,
-  ExtractAbiFunction,
-  ExtractAbiFunctionNames,
-} from 'abitype'
+import { AbiFunction, AbiParameterKind } from 'abitype'
 import { FormatParametersReturn } from '../types/parameter'
-import {
-  Abi,
-  ModuleKeys,
-  ModuleVersionKey,
-  Tuple,
-} from '@inverter-network/abis'
 
 export default function formatParameters<
-  K extends ModuleKeys,
-  V extends ModuleVersionKey,
-  FN extends ExtractAbiFunctionNames<Abi<K, V>>,
+  F extends AbiFunction,
   PK extends AbiParameterKind,
->(parameters: ExtractAbiFunction<Abi<K, V>, FN>[PK]) {
+>(parameters: F[PK]) {
   type Parameters = typeof parameters
-  type ParameterComponents = Extract<Parameters[number], Tuple>['components']
+  type ParameterComponents = Extract<
+    Parameters[number],
+    {
+      components: Parameters
+    }
+  >['components']
 
   const format = (
     parameter: Parameters[number] | ParameterComponents[number]
