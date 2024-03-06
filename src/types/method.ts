@@ -1,3 +1,4 @@
+import { AbiStateMutability } from 'abitype'
 import { FormattedParametersToPrimitiveType } from './parameter'
 
 export type MethodArgs<I> =
@@ -10,7 +11,9 @@ export type MethodArgs<I> =
         : R
     : never
 
-export type MethodReturn<O, T extends 'read' | 'write'> = T extends 'write'
+export type MethodReturn<O, T extends AbiStateMutability> = T extends
+  | 'payable'
+  | 'nonpayable'
   ? `0x${string}`
   : FormattedParametersToPrimitiveType<O> extends infer R extends
         readonly unknown[]

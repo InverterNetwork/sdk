@@ -30,10 +30,13 @@ export default function getModule<
   walletClient: WalletClient<Transport, Chain, Account>
   extras?: Extras
 }) {
-  const moduleData = data[name][version]
+  const mv = data[name][version]
+  type T = typeof mv
 
   // Get the moduletype, abi, description, and methodMetas from the data object
-  const { moduletype, abi, description, itterable } = moduleData
+  const moduleType = mv.moduleType as T['moduleType'],
+    description = mv.description as T['description'],
+    abi = mv.abi as T['abi']
 
   // Construct a contract object using the address and clients
   const contract = getContract({
@@ -45,14 +48,14 @@ export default function getModule<
     },
   })
 
-  const read = prepare(itterable, 'read', contract, extras),
-    write = prepare(itterable, 'write', contract, extras)
+  const read = prepare(abi, ['pure', 'view'], contract, extras),
+    write = prepare(abi, ['nonpayable', 'payable'], contract, extras)
 
   return {
     name,
     version,
     address,
-    moduletype,
+    moduleType,
     description,
     read,
     write,

@@ -1,7 +1,11 @@
+import {
+  AbiParameterKind,
+  ExtractAbiFunction,
+  ExtractAbiFunctionNames,
+} from 'abitype'
 import { FormatParametersReturn } from '../types/parameter'
 import {
-  Itterable,
-  MethodKey,
+  Abi,
   ModuleKeys,
   ModuleVersionKey,
   Tuple,
@@ -10,9 +14,9 @@ import {
 export default function formatParameters<
   K extends ModuleKeys,
   V extends ModuleVersionKey,
-  MK extends MethodKey<K, V>,
-  PK extends 'inputs' | 'outputs',
->(parameters: Itterable<K, V, MK>[PK]) {
+  FN extends ExtractAbiFunctionNames<Abi<K, V>>,
+  PK extends AbiParameterKind,
+>(parameters: ExtractAbiFunction<Abi<K, V>, FN>[PK]) {
   type Parameters = typeof parameters
   type ParameterComponents = Extract<Parameters[number], Tuple>['components']
 
