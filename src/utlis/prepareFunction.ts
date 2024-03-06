@@ -11,10 +11,11 @@ import { TupleToUnion } from 'type-fest'
 export default function prepareFunction<
   A extends Abi,
   T extends AbiStateMutability[],
->(abi: A, type: T, contract: any, extras?: Extras) {
+  Simulate extends boolean = false,
+>(abi: A, type: T, contract: any, extras?: Extras, simulate?: Simulate) {
   type Result = {
-    [N in ExtractAbiFunctionNames<typeof abi, TupleToUnion<T>>]: ReturnType<
-      typeof constructFunction<ExtractAbiFunction<typeof abi, N>>
+    [N in ExtractAbiFunctionNames<A, TupleToUnion<T>>]: ReturnType<
+      typeof constructFunction<ExtractAbiFunction<A, N>, Simulate>
     >
   }
   return abi
@@ -25,7 +26,7 @@ export default function prepareFunction<
 
       return false
     })
-    .map((item: any) => constructFunction(item, contract, extras))
+    .map((item: any) => constructFunction(item, contract, extras, simulate))
     .reduce((acc, item) => {
       acc[item.name] = item
       return acc

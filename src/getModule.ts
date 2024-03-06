@@ -16,6 +16,7 @@ import { isValidModule } from './types/guards'
 export default function getModule<
   K extends ModuleKeys,
   V extends ModuleVersionKey<K>,
+  W extends WalletClient<Transport, Chain, Account> | undefined = undefined,
 >({
   name,
   version,
@@ -28,7 +29,7 @@ export default function getModule<
   version: V
   address: Hex
   publicClient: PublicClient<Transport, Chain>
-  walletClient: WalletClient<Transport, Chain, Account>
+  walletClient?: W
   extras?: Extras
 }) {
   const mv = data[name][version]
@@ -51,15 +52,27 @@ export default function getModule<
   })
 
   const read = prepareFunction(abi, ['pure', 'view'], contract, extras),
-    write = prepareFunction(abi, ['nonpayable', 'payable'], contract, extras)
+    simulate = prepareFunction(
+      abi,
+      ['nonpayable', 'payable'],
+      contract,
+      extras,
+      true
+    ),
+    write = !!walletClient
+      ? prepareFunction(abi, ['nonpayable', 'payable'], contract, extras)
+      : undefined
 
-  return {
+  const result = {
     name,
     version,
     address,
     moduleType,
     description,
     read,
-    write,
+    simulate,
+    write: write as W extends undefined ? undefined : NonNullable<typeof write>,
   }
+
+  return result
 }

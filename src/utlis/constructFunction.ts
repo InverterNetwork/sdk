@@ -17,11 +17,10 @@ interface PreservedProps<F extends ExtendedAbiFunction> {
   stateMutability: F['stateMutability']
 }
 
-export default function constructFunction<F extends ExtendedAbiFunction>(
-  abiFunction: F,
-  contract: any,
-  extras?: Extras
-) {
+export default function constructFunction<
+  F extends ExtendedAbiFunction,
+  Simulate extends boolean = false,
+>(abiFunction: F, contract: any, extras?: Extras, simulate?: Simulate) {
   type T = typeof abiFunction
   const { description, name, stateMutability, inputs, outputs } =
       abiFunction as PreservedProps<T>,
@@ -30,10 +29,7 @@ export default function constructFunction<F extends ExtendedAbiFunction>(
   const formattedInputs = formatParameters(inputs),
     formattedOutputs = formatParameters(outputs)
 
-  const run = async (
-    args: MethodArgs<typeof formattedInputs>,
-    simulate?: boolean
-  ) => {
+  const run = async (args: MethodArgs<typeof formattedInputs>) => {
     const parsedInputs = parseInputs(formattedInputs, args, extras)
 
     const res =
@@ -42,7 +38,8 @@ export default function constructFunction<F extends ExtendedAbiFunction>(
 
     return formattedRes as MethodReturn<
       typeof formattedOutputs,
-      typeof stateMutability
+      typeof stateMutability,
+      Simulate
     >
   }
 

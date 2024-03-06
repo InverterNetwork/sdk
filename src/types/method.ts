@@ -11,13 +11,20 @@ export type MethodArgs<I> =
         : R
     : never
 
-export type MethodReturn<O, T extends AbiStateMutability> = T extends
-  | 'payable'
-  | 'nonpayable'
-  ? `0x${string}`
-  : FormattedParametersToPrimitiveType<O> extends infer R extends
-        readonly unknown[]
+type InferReturn<O> = FormattedParametersToPrimitiveType<O> extends infer R
+  ? R extends readonly unknown[]
     ? R['length'] extends 1
       ? R[0]
       : R
     : never
+  : never
+
+export type MethodReturn<
+  O,
+  T extends AbiStateMutability,
+  Simulate extends boolean = false,
+> = Simulate extends true
+  ? InferReturn<O>
+  : T extends 'payable' | 'nonpayable'
+    ? `0x${string}`
+    : InferReturn<O>
