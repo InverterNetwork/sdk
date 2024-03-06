@@ -32,7 +32,25 @@ export type FormatParametersReturn<Parameters> = {
               components: FormatParametersReturn<Components>
             }
           : // 6. if non of the above, return the default input
-            Parameters[K]
+            Parameters[K]['type'] extends 'uint256'
+            ? {
+                name: Parameters[K]['name']
+                type: 'string'
+              }
+            : Parameters[K]['type'] extends 'uint256[]'
+              ? {
+                  name: Parameters[K]['name']
+                  type: 'string[]'
+                }
+              : Parameters[K]['type'] extends 'bool'
+                ? {
+                    name: Parameters[K]['name']
+                    type: 'boolean'
+                  }
+                : {
+                    name: Parameters[K]['name']
+                    type: Parameters[K]['type']
+                  }
     : never
 }
 
@@ -41,7 +59,7 @@ export type FormattedParametersToPrimitiveType<Parameters> = {
   [K in keyof Parameters]: Parameters[K] extends
     | {
         name: string
-        type: 'string' | 'any' | 'number' | 'uint256' | 'uint256[]'
+        type: 'string' | 'any' | 'number' | 'string[]' | 'boolean'
       }
     | {
         name: string
@@ -49,29 +67,31 @@ export type FormattedParametersToPrimitiveType<Parameters> = {
         components: infer CA extends readonly { name: string; type: unknown }[]
       }
     ? // 2. Check if the input type is format to a primitive integration type
-      Parameters[K]['type'] extends 'string' | 'uint256'
-      ? string
-      : Parameters[K]['type'] extends 'uint256[]'
-        ? readonly string[]
-        : Parameters[K]['type'] extends 'number'
-          ? number
-          : Parameters[K]['type'] extends 'any'
-            ? any
-            : // 3. Check if the input type is a tuple
-              Parameters[K]['type'] extends 'tuple'
-              ? {
-                  [N in CA[number]['name']]: FormattedParametersToPrimitiveType<
-                    [Extract<CA[number], { name: N }>]
-                  >[0]
-                }
-              : // 4. Check if the input type is a tuple[]
-                Parameters[K]['type'] extends 'tuple[]'
-                ? readonly {
+      Parameters[K]['type'] extends 'boolean'
+      ? boolean
+      : Parameters[K]['type'] extends 'string'
+        ? string
+        : Parameters[K]['type'] extends 'string[]'
+          ? readonly string[]
+          : Parameters[K]['type'] extends 'number'
+            ? number
+            : Parameters[K]['type'] extends 'any'
+              ? any
+              : // 3. Check if the input type is a tuple
+                Parameters[K]['type'] extends 'tuple'
+                ? {
                     [N in CA[number]['name']]: FormattedParametersToPrimitiveType<
                       [Extract<CA[number], { name: N }>]
                     >[0]
-                  }[]
-                : unknown
+                  }
+                : // 4. Check if the input type is a tuple[]
+                  Parameters[K]['type'] extends 'tuple[]'
+                  ? readonly {
+                      [N in CA[number]['name']]: FormattedParametersToPrimitiveType<
+                        [Extract<CA[number], { name: N }>]
+                      >[0]
+                    }[]
+                  : unknown
     : Parameters[K] extends AbiParameter
       ? AbiParameterToPrimitiveType<Parameters[K]>
       : unknown
