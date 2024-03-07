@@ -9,9 +9,9 @@ import type {
   Transport,
   Account,
 } from 'viem'
-import prepareFunction from './utlis/prepareFunction'
-import { Extras } from './types/base'
-import { isValidModule } from './types/guards'
+import prepareFunction from './prepareFunction'
+import { Extras } from '../types/base'
+import { isValidModule } from '../types/guards'
 
 // TODO make wallet client optional ( addopt the new client prop logic )
 export default function getModule<
