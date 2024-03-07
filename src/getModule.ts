@@ -13,10 +13,10 @@ import prepareFunction from './utlis/prepareFunction'
 import { Extras } from './types/base'
 import { isValidModule } from './types/guards'
 
+// TODO make wallet client optional ( addopt the new client prop logic )
 export default function getModule<
   K extends ModuleKeys,
   V extends ModuleVersionKey<K>,
-  W extends WalletClient<Transport, Chain, Account> | undefined = undefined,
 >({
   name,
   version,
@@ -29,7 +29,7 @@ export default function getModule<
   version: V
   address: Hex
   publicClient: PublicClient<Transport, Chain>
-  walletClient?: W
+  walletClient?: WalletClient<Transport, Chain, Account>
   extras?: Extras
 }) {
   const mv = data[name][version]
@@ -59,9 +59,13 @@ export default function getModule<
       extras,
       true
     ),
-    write = !!walletClient
-      ? prepareFunction(abi, ['nonpayable', 'payable'], contract, extras)
-      : undefined
+    write = prepareFunction(
+      abi,
+      ['nonpayable', 'payable'],
+      contract,
+      extras,
+      false
+    )
 
   const result = {
     name,
@@ -71,7 +75,7 @@ export default function getModule<
     description,
     read,
     simulate,
-    write: write as W extends undefined ? undefined : NonNullable<typeof write>,
+    write,
   }
 
   return result

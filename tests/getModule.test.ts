@@ -23,6 +23,12 @@ describe('Get A Module', () => {
   })
 
   it('Should post a bounty', async () => {
+    const simRes = await module.simulate.addBounty.run([
+      '100',
+      '1000',
+      ['this is an inverter project'],
+    ])
+
     const res = await module.write.addBounty.run([
       '100',
       '1000',

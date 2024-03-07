@@ -27,7 +27,7 @@ export default function constructFunction<
     kind = ['view', 'pure'].includes(stateMutability) ? 'read' : 'write'
 
   const formattedInputs = formatParameters(inputs),
-    formattedOutputs = formatParameters(outputs)
+    formattedOutputs = formatParameters(outputs, simulate)
 
   const run = async (args: MethodArgs<typeof formattedInputs>) => {
     const parsedInputs = parseInputs(formattedInputs, args, extras)

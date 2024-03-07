@@ -4,7 +4,8 @@ import { FormatParametersReturn } from '../types/parameter'
 export default function formatParameters<
   F extends AbiFunction,
   PK extends AbiParameterKind,
->(parameters: F[PK]) {
+  Simulate extends boolean = false,
+>(parameters: F[PK], simulate?: Simulate) {
   type Parameters = typeof parameters
   type ParameterComponents = Extract<
     Parameters[number],
@@ -53,6 +54,14 @@ export default function formatParameters<
       type: parameter.type,
     } as any
   }
+
+  if (simulate === false)
+    return [
+      {
+        name: 'txHash',
+        type: 'bytes32',
+      },
+    ] as never
 
   const mapped = parameters.map(format)
 
