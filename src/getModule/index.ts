@@ -36,6 +36,10 @@ export default function getModule<
   if (!isValidModule(mv)) throw new Error('Invalid module')
   type T = typeof mv
 
+  // If the walletClient is valid add walletAddress to the extras
+  if (!!walletClient)
+    extras = { ...extras, walletAddress: walletClient.account.address }
+
   // Get the moduletype, abi, description, and methodMetas from the data object
   const moduleType = mv.moduleType as T['moduleType'],
     description = mv.description as T['description'],
