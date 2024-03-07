@@ -13,7 +13,6 @@ export default function parseInputs(
     input: (typeof inputs)[number],
     arg: (typeof args)[number]
   ): any => {
-    console.log('INPUT', input, 'ARG', arg)
     const anyString = (arg: any) => stringToHex(JSON.stringify(arg))
     const decimal = (value: string, decimals: number) =>
       parseUnits(value, decimals)
@@ -29,10 +28,17 @@ export default function parseInputs(
     }
 
     // if the input is a string or a number, parse it to a big int
-    if (['string', 'number'].includes(input.type)) return BigInt(arg)
+    if (['string', 'number'].includes(input.type)) {
+      if (Number(arg) * 0 === 0) return BigInt(arg)
+      return arg
+    }
 
     // if the input is a string[], parse each string to a big int
-    if (input.type === 'string[]') return arg.map((i: string) => BigInt(i))
+    if (input.type === 'string[]')
+      return arg.map((i: string) => {
+        if (Number(arg) * 0 === 0) return BigInt(i)
+        return i
+      })
 
     // the tuple type is a special case
     if (input.type === 'tuple') {

@@ -19,24 +19,21 @@ type WorkflowOrientation = {
   }
 }
 
-export default async function getWorkflow<
-  O extends WorkflowOrientation,
-  W extends WalletClient<Transport, Chain, Account> | undefined = undefined,
->({
+export default async function getWorkflow<O extends WorkflowOrientation>({
   publicClient,
   walletClient,
   orchestratorAddress,
   workflowOrientation,
 }: {
   publicClient: PublicClient<Transport, Chain>
-  walletClient?: W
+  walletClient?: WalletClient<Transport, Chain, Account>
   orchestratorAddress: Hex
   workflowOrientation: O
 }) {
   if (!publicClient) throw new Error('Public client not initialized')
 
   // 1. initialize orchestrator
-  const Orchestrator = getModule({
+  const orchestrator = getModule({
     name: 'Orchestrator',
     version: 'v1.0',
     address: orchestratorAddress,
@@ -46,7 +43,7 @@ export default async function getWorkflow<
 
   // 2. gather extras
   const erc20Address = await getContract({
-      address: await Orchestrator.read.fundingManager.run(),
+      address: await orchestrator.read.fundingManager.run(),
       abi: FlatFundingManager_ABI,
       client: {
         public: publicClient,
@@ -65,7 +62,7 @@ export default async function getWorkflow<
     await Promise.all(
       Object.values(workflowOrientation).map(async ({ name, version }) => {
         const address =
-          await Orchestrator.read.findModuleAddressInOrchestrator.run(name)
+          await orchestrator.read.findModuleAddressInOrchestrator.run(name)
 
         return getModule({
           name,
@@ -84,14 +81,14 @@ export default async function getWorkflow<
     return acc
   }, {}) as {
     [K in keyof WorkflowOrientation]: ReturnType<
-      typeof getModule<O[K]['name'], O[K]['version'], W>
+      typeof getModule<O[K]['name'], O[K]['version']>
     >
   }
 
   // RETURN WORKFLOW CONFIG
   const returns = {
     ...modules,
-    Orchestrator,
+    orchestrator,
     erc20Contract,
     erc20Decimals,
     erc20Symbol,

@@ -31,7 +31,9 @@ describe('Get A Module', async () => {
   })
 
   it('Should Log The Compiled Workflow Object', () => {
-    writeToFile(workflow, 'WorkflowObject')
+    const { erc20Contract, ...rest } = workflow
+
+    writeToFile(rest, 'WorkflowObject')
     expect(workflow).pass()
   })
 })
