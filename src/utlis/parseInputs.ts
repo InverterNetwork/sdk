@@ -13,6 +13,7 @@ export default function parseInputs(
     input: (typeof inputs)[number],
     arg: (typeof args)[number]
   ): any => {
+    console.log('INPUT', input, 'ARG', arg)
     const anyString = (arg: any) => stringToHex(JSON.stringify(arg))
     const decimal = (value: string, decimals: number) =>
       parseUnits(value, decimals)
