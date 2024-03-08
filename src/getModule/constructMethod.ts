@@ -17,7 +17,7 @@ interface PreservedProps<F extends ExtendedAbiFunction> {
   stateMutability: F['stateMutability']
 }
 
-export default function constructFunction<
+export default function constructMethod<
   F extends ExtendedAbiFunction,
   Simulate extends boolean = false,
 >(abiFunction: F, contract: any, extras?: Extras, simulate?: Simulate) {

@@ -1,4 +1,4 @@
-import constructFunction from './constructFunction'
+import constructMethod from './constructMethod'
 import { Extras } from '../types/base'
 import {
   Abi,
@@ -15,7 +15,7 @@ export default function prepareFunction<
 >(abi: A, type: T, contract: any, extras?: Extras, simulate?: Simulate) {
   type Result = {
     [N in ExtractAbiFunctionNames<A, TupleToUnion<T>>]: ReturnType<
-      typeof constructFunction<ExtractAbiFunction<A, N>, Simulate>
+      typeof constructMethod<ExtractAbiFunction<A, N>, Simulate>
     >
   }
   return abi
@@ -26,7 +26,7 @@ export default function prepareFunction<
 
       return false
     })
-    .map((item: any) => constructFunction(item, contract, extras, simulate))
+    .map((item: any) => constructMethod(item, contract, extras, simulate))
     .reduce((acc, item) => {
       acc[item.name] = item
       return acc

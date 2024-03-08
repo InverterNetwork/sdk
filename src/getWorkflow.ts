@@ -9,8 +9,11 @@ import {
   erc20Abi,
 } from 'viem'
 import getModule from './getModule'
-import { ModuleType, ModuleVersion } from '@inverter-network/abis'
-import FlatFundingManager_ABI from './constants/FlatFundingManager_ABI'
+import {
+  ModuleType,
+  ModuleVersion,
+  FlatFundingManager_ABI,
+} from '@inverter-network/abis'
 
 type WorkflowOrientation = {
   [T in Exclude<ModuleType, 'orchestrator'>]: {
