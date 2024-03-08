@@ -13,6 +13,7 @@ import {
   ModuleType,
   ModuleVersion,
   FlatFundingManager_ABI,
+  FlatModule_ABI,
 } from '@inverter-network/abis'
 
 type WorkflowOrientation = {
@@ -22,7 +23,11 @@ type WorkflowOrientation = {
   }
 }
 
-export default async function getWorkflow<O extends WorkflowOrientation>({
+export default async function getWorkflow<
+  // with optional workflowOrientation TODO
+  // O extends WorkflowOrientation | undefined,
+  O extends WorkflowOrientation,
+>({
   publicClient,
   walletClient,
   orchestratorAddress,
@@ -31,9 +36,16 @@ export default async function getWorkflow<O extends WorkflowOrientation>({
   publicClient: PublicClient<Transport, Chain>
   walletClient?: WalletClient<Transport, Chain, Account>
   orchestratorAddress: Hex
+  // with optional workflowOrientation TODO
+  // workflowOrientation?: O
   workflowOrientation: O
 }) {
   if (!publicClient) throw new Error('Public client not initialized')
+
+  const client = {
+    public: publicClient,
+    wallet: walletClient,
+  }
 
   // 1. initialize orchestrator
   const orchestrator = getModule({
@@ -53,12 +65,40 @@ export default async function getWorkflow<O extends WorkflowOrientation>({
       },
     }).read.token(),
     erc20Contract = getContract({
-      client: { public: publicClient, wallet: walletClient },
+      client,
       address: erc20Address,
       abi: erc20Abi,
     }),
     erc20Decimals = await erc20Contract.read.decimals(),
     erc20Symbol = await erc20Contract.read.symbol()
+
+  // with optional workflowOrientation TODO
+  // const addressAndVersions = (async () => {
+  //   if (!workflowOrientation)
+  //     return await Promise.all(
+  //       (await orchestrator.read.listModules.run()).map(async (address) => {
+  //         const contract = getContract({
+  //           client,
+  //           address,
+  //           abi: FlatModule_ABI,
+  //         })
+
+  //         const name = await contract.read.title(),
+  //           version = await contract.read.version()
+
+  //         return { name, version, address }
+  //       })
+  //     )
+
+  //   return await Promise.all(
+  //     Object.values(workflowOrientation).map(async ({ name, version }) => {
+  //       const address =
+  //         await orchestrator.read.findModuleAddressInOrchestrator.run(name)
+
+  //       return { name, version, address }
+  //     })
+  //   )
+  // })()
 
   // 3. initialize modules with extras
   const modules = (
