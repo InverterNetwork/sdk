@@ -6,6 +6,7 @@ on:
       - 'v[0-9]+.[0-9]+.[0-9]+-alpha.[0-9]+'
       - 'v[0-9]+.[0-9]+.[0-9]+-beta.[0-9]+'
       - 'v[0-9]+.[0-9]+.[0-9]+'
+    workflow_dispatch:
 
 jobs:
   release:
@@ -31,7 +32,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 14
+          node-version: 21
           registry-url: 'https://registry.npmjs.org'
       - name: Install dependencies
         run: npm install

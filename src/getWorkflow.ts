@@ -13,7 +13,7 @@ import {
   ModuleType,
   ModuleVersion,
   FlatFundingManager_ABI,
-  FlatModule_ABI,
+  // FlatModule_ABI,
 } from '@inverter-network/abis'
 
 type WorkflowOrientation = {
