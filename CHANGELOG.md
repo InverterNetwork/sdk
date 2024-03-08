@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 0.0.1-alpha.0 (2024-03-08)
+
+
+### Features
+
+* format outputs ([c33f0bc](https://github.com/InverterNetwork/sdk/commit/c33f0bcf5e6419dbfc637f10330bf0a83f5664e5))
+* get workflow step 1 ([78a76ee](https://github.com/InverterNetwork/sdk/commit/78a76eec8ca3fc4c7b086c92ec26c931433652b9))
+* mapped types ([bdcb0c7](https://github.com/InverterNetwork/sdk/commit/bdcb0c70c4aa5d3866d33cf3d2c45275c0d494bf))
+* parse inputs ([d2cd09e](https://github.com/InverterNetwork/sdk/commit/d2cd09e13c6c1bb6ea6bdd40360836e60756893f))
+* simulate ([d67541a](https://github.com/InverterNetwork/sdk/commit/d67541a269d617f32e82a04c4a951636eddc720c))
+* simulate with address ([546c942](https://github.com/InverterNetwork/sdk/commit/546c9424ad8666551e95867feb51942531a8d94d))
+
+
+### Bug Fixes
+
+* map type index preserve ([9d94f28](https://github.com/InverterNetwork/sdk/commit/9d94f288cce83310e94bb04567dbeed99563da6f))
+* tools dup var use ([91f35f0](https://github.com/InverterNetwork/sdk/commit/91f35f0a12240f8a7d32b52a51eab13cbba58cc6))
+
 ### [0.0.2](https://github.com/InverterNetwork/abis/compare/v0.0.1...v0.0.2) (2023-12-15)
 
 ### [0.0.1](https://github.com/InverterNetwork/abis/compare/v0.0.1-beta.1...v0.0.1) (2023-12-13)
