@@ -1,4 +1,8 @@
-import type { ModuleKeys, ModuleVersionKey } from '@inverter-network/abis'
+import type {
+  ModuleKeys,
+  ModuleVersionKey,
+  ModuleVersion,
+} from '@inverter-network/abis'
 import { data } from '@inverter-network/abis'
 import { getContract } from 'viem'
 import type {
@@ -11,12 +15,14 @@ import type {
 } from 'viem'
 import prepareFunction from './prepareFunction'
 import { Extras } from '../types/base'
-import { isValidModule } from '../types/guards'
+// import { isValidModule } from '../types/guards'
 
 // TODO make wallet client optional ( addopt the new client prop logic )
 export default function getModule<
   K extends ModuleKeys,
-  V extends ModuleVersionKey<K>,
+  V extends ModuleVersionKey,
+  MV extends ModuleVersion<K, V> = ModuleVersion<K, V>,
+  W extends WalletClient<Transport, Chain, Account> | undefined = undefined,
 >({
   name,
   version,
@@ -29,21 +35,20 @@ export default function getModule<
   version: V
   address: Hex
   publicClient: PublicClient<Transport, Chain>
-  walletClient?: WalletClient<Transport, Chain, Account>
+  walletClient?: W
   extras?: Extras
 }) {
   const mv = data[name][version]
-  if (!isValidModule(mv)) throw new Error('Invalid module')
-  type T = typeof mv
+  // if (!isValidModule(mv)) throw new Error('Invalid module')
 
   // If the walletClient is valid add walletAddress to the extras
   if (!!walletClient)
     extras = { ...extras, walletAddress: walletClient.account.address }
 
   // Get the moduletype, abi, description, and methodMetas from the data object
-  const moduleType = mv.moduleType as T['moduleType'],
-    description = mv.description as T['description'],
-    abi = mv.abi as T['abi']
+  const moduleType = mv.moduleType as MV['moduleType'],
+    description = mv.description as MV['description'],
+    abi = mv.abi as MV['abi']
 
   // Construct a contract object using the address and clients
   const contract = getContract({
@@ -63,13 +68,9 @@ export default function getModule<
       extras,
       true
     ),
-    write = prepareFunction(
-      abi,
-      ['nonpayable', 'payable'],
-      contract,
-      extras,
-      false
-    )
+    write = !!walletClient
+      ? prepareFunction(abi, ['nonpayable', 'payable'], contract, extras, false)
+      : undefined
 
   const result = {
     name,
@@ -79,7 +80,7 @@ export default function getModule<
     description,
     read,
     simulate,
-    write,
+    write: write as W extends undefined ? undefined : NonNullable<typeof write>,
   }
 
   return result
