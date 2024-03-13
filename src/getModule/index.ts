@@ -1,9 +1,5 @@
-import type {
-  ModuleKeys,
-  ModuleVersionKey,
-  ModuleVersion,
-} from '@inverter-network/abis'
-import { data } from '@inverter-network/abis'
+import type { ModuleKeys, ModuleVersionKey } from '@inverter-network/abis'
+import { getModuleVersion } from '@inverter-network/abis'
 import { getContract } from 'viem'
 import type {
   Hex,
@@ -21,7 +17,6 @@ import { Extras } from '../types/base'
 export default function getModule<
   K extends ModuleKeys,
   V extends ModuleVersionKey,
-  MV extends ModuleVersion<K, V> = ModuleVersion<K, V>,
   W extends WalletClient<Transport, Chain, Account> | undefined = undefined,
 >({
   name,
@@ -38,7 +33,8 @@ export default function getModule<
   walletClient?: W
   extras?: Extras
 }) {
-  const mv = data[name][version]
+  const mv = getModuleVersion(name, version)
+  type MV = typeof mv
   // if (!isValidModule(mv)) throw new Error('Invalid module')
 
   // If the walletClient is valid add walletAddress to the extras

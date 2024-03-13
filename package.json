@@ -1,6 +1,6 @@
 {
   "name": "@inverter-network/sdk",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "INVERTER typescript SDK",
   "main": "./dist/cjs/index.js",
   "module": "./dist/index.js",
@@ -10,7 +10,6 @@
     "import": "./dist/index.js"
   },
   "scripts": {
-    "compile": "bun run tools/compile/index.ts && prettier --write ./src/data.ts",
     "watch": "tsc -w -p ./tsconfig.json",
     "build": "npm run clean && tsc -p ./tsconfig.json && tsc -p ./tsconfig.cjs.json",
     "clean": "rm -rf dist tsconfig.tsbuildinfo tsconfig.build.tsbuildinfo",
@@ -24,8 +23,7 @@
     "prettier:fix": "prettier --write ./src/.",
     "release": "standard-version -a",
     "release:alpha": "standard-version -a --prerelease alpha --skip.changelog",
-    "release:beta": "standard-version -a --prerelease beta --skip.changelog",
-    "postrelease": "git push --follow-tags origin main"
+    "release:beta": "standard-version -a --prerelease beta --skip.changelog"
   },
   "lint-staged": {
     "src/**/*.{ts,tsx}": [
@@ -80,7 +78,7 @@
     "abitype": "^1"
   },
   "dependencies": {
-    "@inverter-network/abis": "^0.0.3",
+    "@inverter-network/abis": "^0.0.4",
     "viem": "^2.7.8"
   }
 }

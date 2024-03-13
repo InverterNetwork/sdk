@@ -6,7 +6,6 @@ import {
   Account,
   Chain,
   Transport,
-  erc20Abi,
 } from 'viem'
 import getModule from './getModule'
 import {
@@ -17,16 +16,16 @@ import {
 } from '@inverter-network/abis'
 
 type WorkflowOrientation = {
-  [T in Exclude<ModuleType, 'orchestrator'>]: {
+  [T in Exclude<ModuleType, 'orchestrator' | 'external'>]: {
     name: Extract<ModuleVersion, { moduleType: T }>['name']
     version: Extract<ModuleVersion, { moduleType: T }>['version']
   }
 }
 
 export default async function getWorkflow<
-  // with optional workflowOrientation TODO
   // O extends WorkflowOrientation | undefined,
   O extends WorkflowOrientation,
+  W extends WalletClient<Transport, Chain, Account> | undefined = undefined,
 >({
   publicClient,
   walletClient,
@@ -34,18 +33,13 @@ export default async function getWorkflow<
   workflowOrientation,
 }: {
   publicClient: PublicClient<Transport, Chain>
-  walletClient?: WalletClient<Transport, Chain, Account>
+  walletClient?: W
   orchestratorAddress: Hex
   // with optional workflowOrientation TODO
   // workflowOrientation?: O
   workflowOrientation: O
 }) {
   if (!publicClient) throw new Error('Public client not initialized')
-
-  const client = {
-    public: publicClient,
-    wallet: walletClient,
-  }
 
   // 1. initialize orchestrator
   const orchestrator = getModule({
@@ -64,41 +58,15 @@ export default async function getWorkflow<
         public: publicClient,
       },
     }).read.token(),
-    erc20Contract = getContract({
-      client,
+    erc20Module = getModule({
+      publicClient,
+      walletClient,
       address: erc20Address,
-      abi: erc20Abi,
+      name: 'ERC20',
+      version: 'v1.0',
     }),
-    erc20Decimals = await erc20Contract.read.decimals(),
-    erc20Symbol = await erc20Contract.read.symbol()
-
-  // with optional workflowOrientation TODO
-  // const addressAndVersions = (async () => {
-  //   if (!workflowOrientation)
-  //     return await Promise.all(
-  //       (await orchestrator.read.listModules.run()).map(async (address) => {
-  //         const contract = getContract({
-  //           client,
-  //           address,
-  //           abi: FlatModule_ABI,
-  //         })
-
-  //         const name = await contract.read.title(),
-  //           version = await contract.read.version()
-
-  //         return { name, version, address }
-  //       })
-  //     )
-
-  //   return await Promise.all(
-  //     Object.values(workflowOrientation).map(async ({ name, version }) => {
-  //       const address =
-  //         await orchestrator.read.findModuleAddressInOrchestrator.run(name)
-
-  //       return { name, version, address }
-  //     })
-  //   )
-  // })()
+    erc20Decimals = await erc20Module.read.decimals.run(),
+    erc20Symbol = await erc20Module.read.symbol.run()
 
   // 3. initialize modules with extras
   const modules = (
@@ -124,7 +92,7 @@ export default async function getWorkflow<
     return acc
   }, {}) as {
     [K in keyof WorkflowOrientation]: ReturnType<
-      typeof getModule<O[K]['name'], O[K]['version']>
+      typeof getModule<O[K]['name'], O[K]['version'], W>
     >
   }
 
@@ -132,10 +100,38 @@ export default async function getWorkflow<
   const returns = {
     ...modules,
     orchestrator,
-    erc20Contract,
+    erc20Module,
     erc20Decimals,
     erc20Symbol,
   }
 
   return returns
 }
+
+// with optional workflowOrientation TODO
+// const addressAndVersions = (async () => {
+//   if (!workflowOrientation)
+//     return await Promise.all(
+//       (await orchestrator.read.listModules.run()).map(async (address) => {
+//         const contract = getContract({
+//           client,
+//           address,
+//           abi: FlatModule_ABI,
+//         })
+
+//         const name = await contract.read.title(),
+//           version = await contract.read.version()
+
+//         return { name, version, address }
+//       })
+//     )
+
+//   return await Promise.all(
+//     Object.values(workflowOrientation).map(async ({ name, version }) => {
+//       const address =
+//         await orchestrator.read.findModuleAddressInOrchestrator.run(name)
+
+//       return { name, version, address }
+//     })
+//   )
+// })()
