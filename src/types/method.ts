@@ -11,13 +11,14 @@ export type MethodArgs<I> =
         : R
     : never
 
-type InferReturn<O> = FormattedParametersToPrimitiveType<O> extends infer R
-  ? R extends readonly unknown[]
-    ? R['length'] extends 1
-      ? R[0]
-      : R
+type InferReturn<O> =
+  FormattedParametersToPrimitiveType<O> extends infer R
+    ? R extends readonly unknown[]
+      ? R['length'] extends 1
+        ? R[0]
+        : R
+      : never
     : never
-  : never
 
 export type MethodReturn<
   O,

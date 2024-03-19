@@ -75,10 +75,11 @@
   "peerDependencies": {
     "eslint": "^8",
     "typescript": "^5",
-    "abitype": "^1"
+    "abitype": "^1",
+    "viem": "^1.19.13"
   },
   "dependencies": {
-    "@inverter-network/abis": "^0.0.4",
-    "viem": "^2.7.8"
+    "@inverter-network/abis": "^0.0.5",
+    "viem": "^1.19.13"
   }
 }

@@ -50,10 +50,8 @@ export default function getModule<
   const contract = getContract({
     abi,
     address,
-    client: {
-      public: publicClient,
-      wallet: walletClient,
-    },
+    publicClient,
+    walletClient,
   })
 
   const read = prepareFunction(abi, ['pure', 'view'], contract, extras),
