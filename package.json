@@ -73,9 +73,9 @@
     "type-fest": "^4"
   },
   "peerDependencies": {
+    "abitype": "^1",
     "eslint": "^8",
     "typescript": "^5",
-    "abitype": "^1",
     "viem": "^1.19.13"
   },
   "dependencies": {
