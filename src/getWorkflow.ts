@@ -12,8 +12,8 @@ import {
   ModuleType,
   ModuleVersion,
   FlatFundingManager_ABI,
-  // FlatModule_ABI,
 } from '@inverter-network/abis'
+import { ERC20 } from '@inverter-network/abis/dist/data'
 
 type WorkflowOrientation = {
   [T in Exclude<ModuleType, 'orchestrator' | 'external'>]: {
@@ -56,15 +56,23 @@ export default async function getWorkflow<
       abi: FlatFundingManager_ABI,
       publicClient,
     }).read.token(),
+    erc20Contract = getContract({
+      address: erc20Address,
+      abi: ERC20['v1.0'].abi,
+      publicClient,
+    }),
+    erc20Decimals = await erc20Contract.read.decimals(),
+    erc20Symbol = await erc20Contract.read.symbol(),
     erc20Module = getModule({
       publicClient,
       walletClient,
       address: erc20Address,
       name: 'ERC20',
       version: 'v1.0',
-    }),
-    erc20Decimals = await erc20Module.read.decimals.run(),
-    erc20Symbol = await erc20Module.read.symbol.run()
+      extras: {
+        decimals: erc20Decimals,
+      },
+    })
 
   // 3. initialize modules with extras
   const modules = (
