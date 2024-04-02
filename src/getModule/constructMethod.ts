@@ -32,10 +32,18 @@ export default function constructMethod<
   const run = async (args: MethodArgs<typeof formattedInputs>) => {
     const parsedInputs = parseInputs(formattedInputs, args, extras)
 
-    const res = await contract[simulate ? 'simulate' : kind][name](
-        parsedInputs,
-        ...(simulate ? [{ account: extras?.walletAddress }] : [])
-      ),
+    const res = await (() => {
+        if (simulate) {
+          if (!!extras?.walletAddress)
+            return contract['simulate'][name](parsedInputs, {
+              account: extras.walletAddress,
+            })
+
+          return contract['simulate'][name](parsedInputs)
+        }
+
+        return contract[kind][name](parsedInputs)
+      })(),
       formattedRes = formatOutputs(formattedOutputs, res, extras)
 
     return formattedRes as MethodReturn<

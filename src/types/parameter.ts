@@ -6,51 +6,53 @@ export type FormatParametersReturn<Parameters> = {
   [K in keyof Parameters]: Parameters[K] extends AbiParameter & {
     tag?: Tags
   }
-    ? // 2. check if the input is a decimal tag
-      Parameters[K]['tag'] extends 'decimal'
+    ? // 2. check if the input is a decimals tag
+      // prettier-ignore
+      Parameters[K]['tag'] extends 'decimals'
       ? {
           name: Parameters[K]['name']
-          tag: 'decimal'
+          tag: 'decimals'
           type: 'string'
         }
-      : // 3. check if the input is a any(string) tag
-        Parameters[K]['tag'] extends 'any(string)'
-        ? {
-            name: Parameters[K]['name']
-            tag: 'any(string)'
-            type: 'any'
+      : // 3. check if the input is a any tag
+      // prettier-ignore
+      Parameters[K]['tag'] extends 'any'
+      ? {
+          name: Parameters[K]['name']
+          tag: 'any'
+          type: 'any'
+        }
+      : // 4. check if the input is a tuple
+        Parameters[K] extends {
+            type: 'tuple[]' | 'tuple'
+            components: infer Components
           }
-        : // 4. check if the input is a tuple
-          Parameters[K] extends {
-              type: 'tuple[]' | 'tuple'
-              components: infer Components
-            }
-          ? // 5. if the input is a tuple, recursively call the FormatReturn type
-            {
+        ? // 5. if the input is a tuple, recursively call the FormatReturn type
+          {
+            name: Parameters[K]['name']
+            type: Parameters[K]['type']
+            components: FormatParametersReturn<Components>
+          }
+        : // 6. if non of the above, return the default input
+          Parameters[K]['type'] extends 'uint256'
+          ? {
               name: Parameters[K]['name']
-              type: Parameters[K]['type']
-              components: FormatParametersReturn<Components>
+              type: 'string'
             }
-          : // 6. if non of the above, return the default input
-            Parameters[K]['type'] extends 'uint256'
+          : Parameters[K]['type'] extends 'uint256[]'
             ? {
                 name: Parameters[K]['name']
-                type: 'string'
+                type: 'string[]'
               }
-            : Parameters[K]['type'] extends 'uint256[]'
+            : Parameters[K]['type'] extends 'bool'
               ? {
                   name: Parameters[K]['name']
-                  type: 'string[]'
+                  type: 'boolean'
                 }
-              : Parameters[K]['type'] extends 'bool'
-                ? {
-                    name: Parameters[K]['name']
-                    type: 'boolean'
-                  }
-                : {
-                    name: Parameters[K]['name']
-                    type: Parameters[K]['type']
-                  }
+              : {
+                  name: Parameters[K]['name']
+                  type: Parameters[K]['type']
+                }
     : never
 }
 

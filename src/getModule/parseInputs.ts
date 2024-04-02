@@ -13,17 +13,17 @@ export default function parseInputs(
     input: (typeof inputs)[number],
     arg: (typeof args)[number]
   ): any => {
-    const anyString = (arg: any) => stringToHex(JSON.stringify(arg))
-    const decimal = (value: string, decimals: number) =>
+    const any = (arg: any) => stringToHex(JSON.stringify(arg))
+    const decimals = (value: string, decimals: number) =>
       parseUnits(value, decimals)
 
     // if the input has a tag
     if ('tag' in input) {
-      if (input.tag === 'any(string)') return anyString(arg)
+      if (input.tag === 'any') return any(arg)
 
-      if (input.tag === 'decimal') {
+      if (input.tag === 'decimals') {
         if (!extras?.decimals) throw new Error('No decimals provided')
-        return decimal(arg, extras.decimals)
+        return decimals(arg, extras.decimals)
       }
     }
 

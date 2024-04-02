@@ -25,14 +25,14 @@ export default function formatParameters<
       } as any
 
     if ('tag' in parameter) {
-      if (parameter.tag === 'any(string)')
+      if (parameter.tag === 'any')
         return {
           name: parameter.name,
           tag: parameter.tag,
           type: 'any',
         } as any
 
-      if (parameter.tag === 'decimal')
+      if (parameter.tag === 'decimals')
         return {
           name: parameter.name,
           tag: parameter.tag,

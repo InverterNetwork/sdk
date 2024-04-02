@@ -10,23 +10,23 @@ export default function formatOutputs(
   const outputs = outputsProp as FormattedParameter[]
 
   const format = (output: (typeof outputs)[number], res: any): any => {
-    const anyString = (res: any) => {
+    const any = (res: any) => {
       try {
         return JSON.parse(hexToString(res))
       } catch {
         return 'Data is not a valid JSON string'
       }
     }
-    const decimal = (value: bigint, decimals: number) =>
+    const decimals = (value: bigint, decimals: number) =>
       formatUnits(value, decimals)
 
     // if the output has a tag
     if ('tag' in output) {
-      if (output.tag === 'any(string)') return anyString(res)
+      if (output.tag === 'any') return any(res)
 
-      if (output.tag === 'decimal') {
+      if (output.tag === 'decimals') {
         if (!extras?.decimals) throw new Error('No decimals provided')
-        return decimal(res, extras.decimals)
+        return decimals(res, extras.decimals)
       }
     }
 
