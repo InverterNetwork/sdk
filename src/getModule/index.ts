@@ -46,12 +46,15 @@ export default function getModule<
     description = mv.description as MV['description'],
     abi = mv.abi as MV['abi']
 
+  const client = {
+    public: publicClient,
+    wallet: walletClient,
+  }
   // Construct a contract object using the address and clients
   const contract = getContract({
     abi,
     address,
-    publicClient,
-    walletClient,
+    client,
   })
 
   const read = prepareFunction(abi, ['pure', 'view'], contract, extras),

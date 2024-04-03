@@ -53,9 +53,9 @@ npm install @inverter-network/sdk
 2. Merge PR into main
 3. Checkout main
 4. `git pull`
-5. `npm run release`
+5. `bun release`
 6. Make sure everything looks good (e.g. in CHANGELOG.md)
-7. `npm run postRelease`
+7. Lastly follow the instructions given by release log
 8. Done
 
 ## Summary

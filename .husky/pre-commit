@@ -1,1 +1,1 @@
-npm run pre-commit
+bun pre-commit

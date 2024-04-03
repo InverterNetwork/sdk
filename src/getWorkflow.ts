@@ -53,7 +53,9 @@ export default async function getWorkflow<
   const erc20Address = await getContract({
       address: await orchestrator.read.fundingManager.run(),
       abi: FlatFundingManager_ABI,
-      publicClient,
+      client: {
+        public: publicClient,
+      },
     }).read.token(),
     erc20Base = getModule({
       address: erc20Address,

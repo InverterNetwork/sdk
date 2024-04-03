@@ -13,7 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -28,19 +29,22 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
         with:
-          node-version: 21
-          registry-url: 'https://registry.npmjs.org'
+          bun-version: latest
+
       - name: Install dependencies
-        run: npm install
+        run: bun install
+
       - name: Build
-        run: npm run build
+        run: bun run build
+
       - name: Publish to npm
-        run: |
-          npm publish --access public \
-          ${{ contains(github.ref_name, 'alpha') && '--tag alpha' || contains(github.ref_name, 'beta') && '--tag beta' || '' }}
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        uses: JS-DevTools/npm-publish@v3
+        with:
+          token: ${{ secrets.NPM_TOKEN }}
+          tag: ${{ contains(github.ref_name, 'alpha') && 'alpha' || contains(github.ref_name, 'beta') && 'beta' || 'latest' }}

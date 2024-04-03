@@ -11,14 +11,14 @@
   },
   "scripts": {
     "watch": "tsc -w -p ./tsconfig.json",
-    "build": "npm run clean && tsc -p ./tsconfig.json && tsc -p ./tsconfig.cjs.json",
+    "build": "bun clean && tsc -p ./tsconfig.json && tsc -p ./tsconfig.cjs.json",
     "clean": "rm -rf dist tsconfig.tsbuildinfo tsconfig.build.tsbuildinfo",
     "postinstall": "husky",
     "prepack": "pinst --disable",
-    "package": "npm run build && npm pack",
+    "package": "bun run build && npm pack",
     "postpack": "pinst --enable",
     "pre-commit": "lint-staged",
-    "pre-push": "npm run build",
+    "pre-push": "bun run build",
     "lint:fix": "eslint --ext .tsx --ext .ts ./src --fix",
     "prettier:fix": "prettier --write ./src/.",
     "release": "standard-version -a",
@@ -28,8 +28,8 @@
   },
   "lint-staged": {
     "src/**/*.{ts,tsx}": [
-      "npm run lint:fix",
-      "npm run prettier:fix"
+      "bun lint:fix",
+      "bun prettier:fix"
     ]
   },
   "files": [
@@ -59,28 +59,28 @@
     "url": "https://github.com/InverterNetwork/sdk"
   },
   "devDependencies": {
-    "@commitlint/cli": "^18.4.3",
-    "@commitlint/config-conventional": "^18.4.3",
-    "@types/bun": "^1.0.5",
-    "@typescript-eslint/eslint-plugin": "^6.14.0",
-    "@typescript-eslint/parser": "^6.14.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-prettier": "^5.0.1",
+    "@commitlint/cli": "^18",
+    "@commitlint/config-conventional": "^18",
+    "@types/bun": "^1",
+    "@typescript-eslint/eslint-plugin": "^6",
+    "@typescript-eslint/parser": "^6",
+    "eslint-config-prettier": "^9",
+    "eslint-plugin-prettier": "^5",
     "husky": "^9",
-    "lint-staged": "^15.2.0",
-    "pinst": "^3.0.0",
-    "prettier": "^3.1.1",
-    "standard-version": "^9.5.0",
+    "lint-staged": "^15",
+    "pinst": "^3",
+    "prettier": "^3",
+    "standard-version": "^9",
     "type-fest": "^4"
   },
   "peerDependencies": {
     "abitype": "^1",
     "eslint": "^8",
     "typescript": "^5",
-    "viem": "^1.19.13"
+    "viem": "^2.7.6"
   },
   "dependencies": {
     "@inverter-network/abis": "^0.0.5",
-    "viem": "^1.19.13"
+    "viem": "^2.7.6"
   }
 }
