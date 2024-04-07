@@ -9,13 +9,13 @@ import {
 } from 'viem'
 import getModule from './getModule'
 import {
-  ModuleType,
+  UserFacingModuleType,
   ModuleVersion,
   FlatFundingManager_ABI,
 } from '@inverter-network/abis'
 
 type WorkflowOrientation = {
-  [T in Exclude<ModuleType, 'orchestrator' | 'external'>]: {
+  [T in UserFacingModuleType]: {
     name: Extract<ModuleVersion, { moduleType: T }>['name']
     version: Extract<ModuleVersion, { moduleType: T }>['version']
   }

@@ -1,10 +1,10 @@
-import { Tags } from '@inverter-network/abis'
+import { Tag } from '@inverter-network/abis'
 import { AbiParameter, AbiParameterToPrimitiveType } from 'abitype'
 
 export type FormatParametersReturn<Parameters> = {
   // 1. check if the input is a valid member of the tuple
   [K in keyof Parameters]: Parameters[K] extends AbiParameter & {
-    tag?: Tags
+    tag?: Tag
   }
     ? // 2. check if the input is a decimals tag
       // prettier-ignore
@@ -103,11 +103,11 @@ export type FormattedParameter =
   | {
       name: string
       type: 'string' | 'any' | 'number' | 'string[]'
-      tag?: Tags
+      tag?: Tag
     }
   | {
       name: string
       type: 'tuple[]' | 'tuple'
-      tag?: Tags
+      tag?: Tag
       components: readonly FormattedParameter[]
     }

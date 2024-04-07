@@ -77,10 +77,9 @@
     "abitype": "^1",
     "eslint": "^8",
     "typescript": "^5",
-    "viem": "^2.7.6"
+    "viem": "2.7.6"
   },
   "dependencies": {
-    "@inverter-network/abis": "^0.0.5",
-    "viem": "^2.7.6"
+    "@inverter-network/abis": "0.0.6"
   }
 }
