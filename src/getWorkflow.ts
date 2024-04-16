@@ -22,8 +22,7 @@ type WorkflowOrientation = {
 }
 
 export default async function getWorkflow<
-  // O extends WorkflowOrientation | undefined,
-  O extends WorkflowOrientation,
+  O extends WorkflowOrientation | undefined = undefined,
   W extends WalletClient<Transport, Chain, Account> | undefined = undefined,
 >({
   publicClient,
@@ -34,9 +33,7 @@ export default async function getWorkflow<
   publicClient: PublicClient<Transport, Chain>
   walletClient?: W
   orchestratorAddress: Hex
-  // with optional workflowOrientation TODO
-  // workflowOrientation?: O
-  workflowOrientation: O
+  workflowOrientation?: O
 }) {
   if (!publicClient) throw new Error('Public client not initialized')
 
@@ -77,32 +74,78 @@ export default async function getWorkflow<
     })
 
   // 3. initialize modules with extras
-  const modules = (
-    await Promise.all(
-      Object.values(workflowOrientation).map(async ({ name, version }) => {
-        const address =
-          await orchestrator.read.findModuleAddressInOrchestrator.run(name)
+  const modules = await (async () => {
+    // 0. Define the source data based on the optional workflowOrientation
+    const source =
+      // 1. Check if workflowOrientation is defined
+      !!workflowOrientation
+        ? // 2. If defined, map over the values and find the address of the module
+          await Promise.all(
+            Object.values(workflowOrientation).map(async (i) => ({
+              ...i,
+              address:
+                await orchestrator.read.findModuleAddressInOrchestrator.run(
+                  i.name
+                ),
+            }))
+          )
+        : // 3. If not defined, list all modules from the orchestrator for their-
+          // address then get the title and version
+          await Promise.all(
+            (await orchestrator.read.listModules.run()).map(async (address) => {
+              const flatModule = getModule({
+                  publicClient,
+                  walletClient,
+                  address,
+                  name: 'Module',
+                  version: 'v1.0',
+                }),
+                name = <ModuleVersion['name']>await flatModule.read.title.run(),
+                [major, minor] = await flatModule.read.version.run(),
+                version = <ModuleVersion['version']>(() => {
+                  const initialRes = `v${major}.${minor}`
+                  if (initialRes.length > 4) return 'v1.0'
+                  return initialRes
+                })()
 
-        return getModule({
-          name,
-          version,
-          address,
-          publicClient,
-          walletClient,
-          extras: {
-            decimals: erc20Decimals,
-          },
-        })
+              return { name, version, address }
+            })
+          )
+
+    console.log('SOURCE: \n', source)
+    // 4. Map the module array using the source data
+    const modulesArray = source.map(({ name, version, address }) =>
+      getModule({
+        name,
+        version,
+        address,
+        publicClient,
+        walletClient,
+        extras: {
+          decimals: erc20Decimals,
+        },
       })
     )
-  ).reduce((acc: any, curr) => {
-    acc[curr.moduleType] = curr
-    return acc
-  }, {}) as {
-    [K in keyof WorkflowOrientation]: ReturnType<
-      typeof getModule<O[K]['name'], O[K]['version'], W>
-    >
-  }
+
+    console.log('MODULES ARRAY: \n', modulesArray)
+    // 5. Reduce the array to an object with the moduleType as key
+    const result = modulesArray.reduce((acc: any, curr) => {
+      acc[curr.moduleType] = curr
+      return acc
+    }, {}) as {
+      [K in keyof WorkflowOrientation]: O extends NonNullable<O>
+        ? ReturnType<typeof getModule<O[K]['name'], O[K]['version'], W>>
+        : ReturnType<
+            typeof getModule<
+              WorkflowOrientation[K]['name'],
+              WorkflowOrientation[K]['version'],
+              W
+            >
+          >
+    }
+
+    return result
+  })()
 
   // RETURN WORKFLOW CONFIG
   const returns = {
@@ -115,31 +158,3 @@ export default async function getWorkflow<
 
   return returns
 }
-
-// with optional workflowOrientation TODO
-// const addressAndVersions = (async () => {
-//   if (!workflowOrientation)
-//     return await Promise.all(
-//       (await orchestrator.read.listModules.run()).map(async (address) => {
-//         const contract = getContract({
-//           client,
-//           address,
-//           abi: FlatModule_ABI,
-//         })
-
-//         const name = await contract.read.title(),
-//           version = await contract.read.version()
-
-//         return { name, version, address }
-//       })
-//     )
-
-//   return await Promise.all(
-//     Object.values(workflowOrientation).map(async ({ name, version }) => {
-//       const address =
-//         await orchestrator.read.findModuleAddressInOrchestrator.run(name)
-
-//       return { name, version, address }
-//     })
-//   )
-// })()
