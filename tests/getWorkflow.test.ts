@@ -2,7 +2,7 @@ import { expect, describe, it } from 'bun:test'
 
 import getWorkflow from '../src/getWorkflow'
 import { getTestConnectors } from './getTestConnectors'
-import writeToFile from '../tools/utils/writeLog'
+import utils from '../tools'
 
 describe('Get A Module', async () => {
   const { publicClient, walletClient } = getTestConnectors()
@@ -29,10 +29,15 @@ describe('Get A Module', async () => {
       },
     },
   })
-  const { logicModule, authorizer, fundingManager, paymentProcessor } = workflow
+
+  // const { logicModule, authorizer, fundingManager, paymentProcessor } = workflow
 
   it('Should Log The Compiled Workflow Object', () => {
-    writeToFile(workflow, 'WorkflowObject')
+    utils.writeLog({
+      content: workflow,
+      label: 'WorkflowObject',
+      format: 'json',
+    })
     expect(workflow).pass()
   })
 

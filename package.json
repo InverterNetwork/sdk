@@ -10,7 +10,7 @@
     "import": "./dist/index.js"
   },
   "scripts": {
-    "watch": "tsc -w -p ./tsconfig.json",
+    "watch": "tsc -w -p ./tsconfig.dev.json",
     "build": "bun clean && tsc -p ./tsconfig.json && tsc -p ./tsconfig.cjs.json",
     "clean": "rm -rf dist tsconfig.tsbuildinfo tsconfig.build.tsbuildinfo",
     "postinstall": "husky",

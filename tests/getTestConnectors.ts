@@ -2,7 +2,7 @@ import { createPublicClient, http, createWalletClient } from 'viem'
 import { privateKeyToAccount } from 'viem/accounts'
 import { sepolia } from 'viem/chains'
 
-const privKey = process.env.TEST_PRIVATE_KEY as `0x${string}` | undefined
+const privKey = process.env['TEST_PRIVATE_KEY'] as `0x${string}` | undefined
 
 if (!privKey) throw new Error('Error: please add priv key to .env')
 

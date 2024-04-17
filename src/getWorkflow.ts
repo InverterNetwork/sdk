@@ -74,6 +74,8 @@ export default async function getWorkflow<
       },
     })
 
+  await orchestrator.read.listModules.run().then(console.log)
+
   // 3. initialize modules with extras
   const modules = await (async () => {
     // 0. Define the source data based on the optional workflowOrientation
@@ -105,6 +107,7 @@ export default async function getWorkflow<
                 [major, minor] = await flatModule.read.version.run(),
                 version = <ModuleVersion['version']>(() => {
                   const initialRes = `v${major}.${minor}`
+                  console.log('initialRes', initialRes)
                   if (initialRes.length > 4) return 'v1.0'
                   return initialRes
                 })()

@@ -24,6 +24,5 @@
     "declaration": true /* Generates corresponding '.d.ts' file. */,
     "outDir": "./dist" /* Redirect output structure to the directory. */
   },
-  "include": ["src/**/*", "tests/**/*", "tools/**/*"],
-  "exclude": ["tests/**/*", "tools/**/*"]
+  "include": ["src/**/*"]
 }

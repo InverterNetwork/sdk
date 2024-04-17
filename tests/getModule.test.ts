@@ -2,7 +2,7 @@ import { expect, describe, it } from 'bun:test'
 
 import getModule from '../src/getModule'
 import { getTestConnectors } from './getTestConnectors'
-import writeToFile from '../tools/utils/writeLog'
+import utils from '../tools'
 
 describe('Get A Module', () => {
   const { publicClient, walletClient } = getTestConnectors()
@@ -18,7 +18,11 @@ describe('Get A Module', () => {
   })
 
   it('Should Log The Compiled Module Object', () => {
-    writeToFile(module, 'FullModuleObject')
+    utils.writeLog({
+      content: module,
+      label: 'FullModuleObject',
+      format: 'json',
+    })
     expect(module).pass()
   })
 
@@ -28,7 +32,7 @@ describe('Get A Module', () => {
       '1000',
       ['this is an inverter project'],
     ])
-
+    console.log('addBounty SIM RES', simRes)
     const res = await module.write.addBounty.run([
       '100',
       '1000',

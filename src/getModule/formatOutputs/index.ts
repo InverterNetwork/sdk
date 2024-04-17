@@ -15,7 +15,9 @@ export default function formatOutputs(
     // get the argument of the same index
     const selectedRes = (() => {
       if (res[name]) return res[name]
-      if (isNamelessArray(output, res)) return res[Number(name[1])]
+      if (isDefinedArray(output, res)) {
+        return res[Number(name[1])]
+      }
       return res
     })()
     // format the output with the argument
@@ -25,9 +27,7 @@ export default function formatOutputs(
   return formattedOutputs.length === 1 ? formattedOutputs[0] : formattedOutputs
 }
 
-// check if the output is not a tuple or an array of tuples-
+// check if the output is not a array type-
 // and the result is an array, with a output name that starts with '_'
-const isNamelessArray = ({ name, type }: FormattedParameter, res: any) =>
-  !['tuple', 'tuple[]'].includes(type) &&
-  Array.isArray(res) &&
-  name.startsWith('_')
+const isDefinedArray = ({ name, type }: FormattedParameter, res: any) =>
+  !type.endsWith('[]') && Array.isArray(res) && name.startsWith('_')
