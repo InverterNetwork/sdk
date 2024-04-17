@@ -11,11 +11,11 @@ import getModule from './getModule'
 import {
   UserFacingModuleType,
   ModuleVersion,
-  FlatFundingManager_ABI,
+  getModuleVersion,
 } from '@inverter-network/abis'
 
 type WorkflowOrientation = {
-  [T in UserFacingModuleType]: {
+  [T in Exclude<UserFacingModuleType, 'orchestrator'>]: {
     name: Extract<ModuleVersion, { moduleType: T }>['name']
     version: Extract<ModuleVersion, { moduleType: T }>['version']
   }
@@ -46,22 +46,23 @@ export default async function getWorkflow<
     walletClient,
   })
 
+  const fundingManagerAddress = await orchestrator.read.fundingManager.run()
   // 2. gather extras
   const erc20Address = await getContract({
-      address: await orchestrator.read.fundingManager.run(),
-      abi: FlatFundingManager_ABI,
-      client: {
-        public: publicClient,
-      },
-    }).read.token(),
-    erc20Base = getModule({
+    address: fundingManagerAddress,
+    abi: getModuleVersion('RebasingFundingManager', 'v1.0').abi,
+    client: {
+      public: publicClient,
+    },
+  }).read.token()
+
+  const erc20Contract = getContract({
       address: erc20Address,
-      name: 'ERC20',
-      version: 'v1.0',
-      publicClient,
+      abi: getModuleVersion('ERC20', 'v1.0').abi,
+      client: { public: publicClient },
     }),
-    erc20Decimals = await erc20Base.read.decimals.run(),
-    erc20Symbol = await erc20Base.read.symbol.run(),
+    erc20Decimals = await erc20Contract.read.decimals(),
+    erc20Symbol = await erc20Contract.read.symbol(),
     erc20Module = getModule({
       publicClient,
       walletClient,
@@ -112,7 +113,6 @@ export default async function getWorkflow<
             })
           )
 
-    console.log('SOURCE: \n', source)
     // 4. Map the module array using the source data
     const modulesArray = source.map(({ name, version, address }) =>
       getModule({
@@ -127,7 +127,6 @@ export default async function getWorkflow<
       })
     )
 
-    console.log('MODULES ARRAY: \n', modulesArray)
     // 5. Reduce the array to an object with the moduleType as key
     const result = modulesArray.reduce((acc: any, curr) => {
       acc[curr.moduleType] = curr

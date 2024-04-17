@@ -56,6 +56,12 @@ export type FormatParametersReturn<Parameters> = {
     : never
 }
 
+type Tuple<CA extends readonly any[]> = {
+  [N in CA[number]['name']]: FormattedParametersToPrimitiveType<
+    [Extract<CA[number], { name: N }>]
+  >[0]
+}
+
 export type FormattedParametersToPrimitiveType<Parameters> = {
   // 1. check if the input is a valid member of the tuple
   [K in keyof Parameters]: Parameters[K] extends
@@ -81,18 +87,10 @@ export type FormattedParametersToPrimitiveType<Parameters> = {
               ? any
               : // 3. Check if the input type is a tuple
                 Parameters[K]['type'] extends 'tuple'
-                ? {
-                    [N in CA[number]['name']]: FormattedParametersToPrimitiveType<
-                      [Extract<CA[number], { name: N }>]
-                    >[0]
-                  }
+                ? Tuple<CA>
                 : // 4. Check if the input type is a tuple[]
                   Parameters[K]['type'] extends 'tuple[]'
-                  ? readonly {
-                      [N in CA[number]['name']]: FormattedParametersToPrimitiveType<
-                        [Extract<CA[number], { name: N }>]
-                      >[0]
-                    }[]
+                  ? readonly Tuple<CA>[]
                   : unknown
     : Parameters[K] extends AbiParameter
       ? AbiParameterToPrimitiveType<Parameters[K]>
