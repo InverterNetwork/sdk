@@ -29,6 +29,7 @@ export default function constructMethod<
   const formattedInputs = formatParameters(inputs),
     formattedOutputs = formatParameters(outputs, simulate)
 
+  // TODO ========== MAKE THIS EXTERNAL ==========
   const run = async (args: MethodArgs<typeof formattedInputs>) => {
     const parsedInputs = parseInputs(formattedInputs, args, extras)
 
@@ -52,6 +53,7 @@ export default function constructMethod<
       Simulate
     >
   }
+  // END TODO ========== MAKE THIS EXTERNAL ==========
 
   return {
     name,
