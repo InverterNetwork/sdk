@@ -1,7 +1,7 @@
 import { AbiStateMutability } from 'abitype'
 import { FormattedParametersToPrimitiveType } from './parameter'
 
-export type MethodArgs<I> =
+export type GetMethodArgs<I> =
   FormattedParametersToPrimitiveType<I> extends infer R extends
     readonly unknown[]
     ? R['length'] extends 0
@@ -20,7 +20,7 @@ type InferReturn<O> =
       : never
     : never
 
-export type MethodReturn<
+export type GetMethodResponse<
   O,
   T extends AbiStateMutability,
   Simulate extends boolean = false,

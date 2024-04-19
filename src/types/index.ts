@@ -1,3 +1,4 @@
 export * from './base'
-export * from './method'
 export * from './parameter'
+export * from './utils'
+export * from './guards'

@@ -11,9 +11,7 @@ import type {
 } from 'viem'
 import prepareFunction from './prepareFunction'
 import { Extras } from '../types/base'
-// import { isValidModule } from '../types/guards'
 
-// TODO make wallet client optional ( addopt the new client prop logic )
 export default function getModule<
   K extends ModuleKeys,
   V extends ModuleVersionKey,
@@ -35,29 +33,31 @@ export default function getModule<
 }) {
   const mv = getModuleVersion(name, version)
   type MV = typeof mv
-  // if (!isValidModule(mv)) throw new Error('Invalid module')
 
-  // If the walletClient is valid add walletAddress to the extras
+  // If the walletClient is valid add walletAddress to the extras-
+  // this is used to simulate transactions with the wallet address
   if (!!walletClient)
     extras = { ...extras, walletAddress: walletClient.account.address }
 
-  // Get the moduletype, abi, description, and methodMetas from the data object
+  // Get the moduletype, abi, description, and methodMetas from the module version
   const moduleType = mv.moduleType as MV['moduleType'],
     description = mv.description as MV['description'],
     abi = mv.abi as MV['abi']
 
+  // Construct the clients object and the contract object
   const client = {
-    public: publicClient,
-    wallet: walletClient,
-  }
-  // Construct a contract object using the address and clients
-  const contract = getContract({
-    abi,
-    address,
-    client,
-  })
+      public: publicClient,
+      wallet: walletClient,
+    },
+    contract = getContract({
+      abi,
+      address,
+      client,
+    })
 
+  // Prepare the read functions
   const read = prepareFunction(abi, ['pure', 'view'], contract, extras),
+    // Prepare the simulate functions
     simulate = prepareFunction(
       abi,
       ['nonpayable', 'payable'],
@@ -65,10 +65,12 @@ export default function getModule<
       extras,
       true
     ),
+    // Prepare the write functions if the walletClient is valid
     write = !!walletClient
       ? prepareFunction(abi, ['nonpayable', 'payable'], contract, extras, false)
       : undefined
 
+  // The result object, covers the whole module
   const result = {
     name,
     version,
@@ -80,5 +82,6 @@ export default function getModule<
     write: write as W extends undefined ? undefined : NonNullable<typeof write>,
   }
 
+  // Return the result object
   return result
 }
