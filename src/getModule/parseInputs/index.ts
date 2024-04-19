@@ -1,4 +1,4 @@
-import { FormattedParameter } from '../../types/parameter'
+import { FormattedAbiParameter } from '../../types/parameter'
 import { Extras } from '../../types/base'
 import parse from './parse'
 
@@ -7,7 +7,7 @@ export default function parseInputs(
   argsProp: any,
   extras?: Extras
 ) {
-  const inputs = inputsProp as FormattedParameter[],
+  const inputs = inputsProp as FormattedAbiParameter[],
     args = argsProp as any[]
 
   // parse the inputs

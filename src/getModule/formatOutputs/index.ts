@@ -1,13 +1,12 @@
-import { FormattedParameter } from '../../types/parameter'
-import { Extras } from '../../types/base'
+import { FormattedAbiParameter, Extras } from '../../types'
 import format from './format'
 
-export default function formatOutputs(
+export default function formatOutputs<T>(
   outputsProp: any,
   res: any,
   extras?: Extras
-) {
-  const outputs = outputsProp as FormattedParameter[]
+): T {
+  const outputs = outputsProp as FormattedAbiParameter[]
 
   // format the outputs
   const formattedOutputs = outputs.map((output) => {
@@ -29,5 +28,5 @@ export default function formatOutputs(
 
 // check if the output is not a array type-
 // and the result is an array, with a output name that starts with '_'
-const isDefinedArray = ({ name, type }: FormattedParameter, res: any) =>
+const isDefinedArray = ({ name, type }: FormattedAbiParameter, res: any) =>
   !type.endsWith('[]') && Array.isArray(res) && name.startsWith('_')

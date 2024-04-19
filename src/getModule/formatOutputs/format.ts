@@ -1,15 +1,15 @@
-import { Extras, FormattedParameter } from '../../types'
+import { Extras, FormattedAbiParameter } from '../../types'
 import tag from './tag'
 
 type TupleOutput = Extract<
-  FormattedParameter,
+  FormattedAbiParameter,
   {
     type: 'tuple' | 'tuple[]'
   }
 >
 
 export default function format(
-  o: FormattedParameter,
+  o: FormattedAbiParameter,
   res: any,
   extras?: Extras
 ): any {
