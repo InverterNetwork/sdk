@@ -61,6 +61,7 @@ export const formatParameter = <Parameters extends any[]>(
   if (parameter.type === 'uint256') result.type = 'string'
   if (parameter.type === 'uint256[]') result.type = 'string[]'
   if (parameter.type === 'bool') result.type = 'boolean'
+  if (parameter.type.startsWith('bytes')) result.type = '0xstring'
 
   return result
 }
