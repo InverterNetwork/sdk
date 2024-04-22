@@ -1,16 +1,37 @@
 import { Tag } from '@inverter-network/abis'
+import {
+  SolidityArray,
+  SolidityAddress,
+  SolidityBool,
+  SolidityBytes,
+  SolidityInt,
+  SolidityString,
+  SolidityTuple,
+  SolidityArrayWithTuple,
+} from 'abitype'
 
-export type NonTupleType =
+export type NonTupleType = Exclude<
+  | SolidityArray
+  | SolidityAddress
+  | SolidityBool
+  | SolidityBytes
+  | SolidityInt
+  | SolidityString,
+  SolidityTuple | SolidityArrayWithTuple
+>
+
+export type JsType =
   | 'string'
-  | '0xstring'
-  | 'any'
-  | 'number'
-  | 'string[]'
   | 'boolean'
+  | '0xstring'
+  | 'string[]'
+  | '0xstring[]'
+  | 'any'
 
 export type NonTupleFormattedAbiParameter = {
   name: string
   type: NonTupleType
+  jsType?: JsType
   tag?: Tag
   description?: string
 }
@@ -18,7 +39,6 @@ export type NonTupleFormattedAbiParameter = {
 export type TupleFormattedAbiParameter = {
   name: string
   type: 'tuple[]' | 'tuple'
-  tag?: Tag
   description?: string
   components: readonly FormattedAbiParameter[]
 }

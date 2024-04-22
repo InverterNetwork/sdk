@@ -1,58 +1,36 @@
 import { Extras, FormattedAbiParameter } from '../../types'
-import tag from './tag'
-
-type TupleInput = Extract<
-  FormattedAbiParameter,
-  {
-    type: 'tuple' | 'tuple[]'
-  }
->
+import { tuple, tupleArray, stringNumber, decimals, any } from './utils'
 
 export default function parse(
   input: FormattedAbiParameter,
   arg: any,
   extras?: Extras
 ): any {
+  const { type } = input
+  // These first two cases are for the recursive tuple types
+  if (type === 'tuple') return tuple({ input, arg, extras })
+  if (type === 'tuple[]') return tupleArray({ arg, input, extras })
+
   // if the input has a tag
   if ('tag' in input) {
-    if (input.tag === 'any') return tag.any(arg)
+    const { tag } = input
+    if (tag === 'any') return any(arg)
 
-    if (input.tag === 'decimals') return decimals(arg, extras)
+    if (tag === 'decimals') return decimals(arg, extras)
   }
 
-  // if the input is a string or a number, parse it to a big int
-  if (['string', 'number'].includes(input.type)) stringNumber(arg)
+  // if the input has a jsType property
+  if ('jsType' in input) {
+    const { jsType } = input
 
-  // if the input is a string[], parse each string to a big int
-  if (input.type === 'string[]') return arg.map((i: string) => stringNumber(i))
+    // if the input is a string or a number, parse it to a big int
+    if (jsType === 'string') return stringNumber(arg)
 
-  // the tuple type is a special case
-  if (input.type === 'tuple') return tuple(input, arg, extras)
-
-  // the tuple[] type is a special case, too
-  if (input.type === 'tuple[]')
-    arg.map((argI: any) => tuple(input, argI, extras))
+    // if the input is a string[], parse each string to a big int
+    if (input.type === 'string[]')
+      return arg.map((i: string) => stringNumber(i))
+  }
 
   // if all else fails, just return the argument
   return arg
-}
-
-const tuple = (input: TupleInput, arg: any, extras?: Extras) => {
-  const formattedTuple: any = {}
-  // iterate over the components of the tuple template
-  input.components.forEach((c) => {
-    formattedTuple[c.name] = parse(c, arg[c.name], extras)
-  })
-
-  return formattedTuple
-}
-
-const stringNumber = (arg: any) => {
-  if (Number(arg) * 0 === 0) return BigInt(arg)
-  return arg
-}
-
-const decimals = (arg: any, extras?: Extras) => {
-  if (!extras?.decimals) throw new Error('No decimals provided')
-  return tag.decimals(arg, extras.decimals)
 }

@@ -1,6 +1,7 @@
 import { AbiStateMutability } from 'abitype'
 import { FormattedParametersToPrimitiveType } from './parameter'
 
+// Decides on the arguments orders
 export type GetMethodArgs<I> =
   FormattedParametersToPrimitiveType<I> extends infer R extends
     readonly unknown[]
@@ -11,6 +12,7 @@ export type GetMethodArgs<I> =
         : R
     : never
 
+// Deduper util for getting the return type
 type InferReturn<O> =
   FormattedParametersToPrimitiveType<O> extends infer R
     ? R extends readonly unknown[]
@@ -20,6 +22,7 @@ type InferReturn<O> =
       : never
     : never
 
+// Get the return type of the method, based on read, write or simulate
 export type GetMethodResponse<
   O,
   T extends AbiStateMutability,

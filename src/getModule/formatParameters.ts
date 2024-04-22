@@ -1,5 +1,11 @@
 import { AbiFunction, AbiParameterKind } from 'abitype'
-import { FormatParameters } from '../types'
+import {
+  FormatParameters,
+  FormattedAbiParameter,
+  NonTupleFormattedAbiParameter,
+  TupleFormattedAbiParameter,
+} from '../types'
+import { ExtendedAbiParameter } from '@inverter-network/abis'
 
 // This function is used to format the parameters of a function
 export default function formatParameters<
@@ -9,8 +15,8 @@ export default function formatParameters<
   PK extends AbiParameterKind,
   Simulate extends boolean = false,
 >(parameters: F[PK], simulate?: Simulate) {
-  // If the function is not to be simulated-
-  // write functions always return a txHash
+  // If the function is not to be simulated, write functions always return a txHash
+  // if simulate flag is not undefined and is false it means the function is a write function
   if (simulate === false)
     return [
       {
@@ -29,39 +35,45 @@ export default function formatParameters<
 }
 
 // Base case for recursion
-export const formatParameter = <Parameters extends any[]>(
+export const formatParameter = <Parameter extends ExtendedAbiParameter>(
   // The parameter to format / format recursively if it has components
-  parameter: Parameters[number]
+  parameter: Parameter
 ) => {
-  // The result object // TODO: Fix any type
-  const result = <any>{
+  const result = {
     name: parameter.name,
     type: parameter.type,
     ...('description' in parameter && { description: parameter.description }),
-  }
+    ...('tag' in parameter && { tag: parameter.tag }),
+  } as FormattedAbiParameter
 
   // If the parameter has components, format them
-  if ('components' in parameter)
+  if (hasComponents(result) && 'components' in parameter)
     result.components = parameter.components.map(formatParameter)
 
-  // If the parameter has a tag, format it
-  if ('tag' in parameter) {
-    if (parameter.tag === 'any') {
-      result.tag = parameter.tag
-      result.type = 'any'
+  // If the parameter does not have components, format it
+  if (doesNotHaveComponents(result)) {
+    // If the parameter has a tag, format it
+    if ('tag' in parameter) {
+      if (parameter.tag === 'any') result.jsType = 'any'
     }
 
-    if (parameter.tag === 'decimals') {
-      result.tag = parameter.tag
-      result.type = 'string'
-    }
+    // Simplify the type of the parameter, to typescript types, into the jsType property
+    if (parameter.type === 'bool') result.jsType = 'boolean'
+    if (/^u?int/.test(parameter.type)) result.jsType = 'string'
+    if (/^u?int.*\[\]$/.test(parameter.type)) result.jsType = 'string[]'
+    if (/^bytes/.test(parameter.type)) result.jsType = '0xstring'
+    if (/^bytes.*\[\]$/.test(parameter.type)) result.jsType = '0xstring[]'
   }
 
-  // Simplify the type of the parameter, to typescript types
-  if (parameter.type === 'uint256') result.type = 'string'
-  if (parameter.type === 'uint256[]') result.type = 'string[]'
-  if (parameter.type === 'bool') result.type = 'boolean'
-  if (parameter.type.startsWith('bytes')) result.type = '0xstring'
-
   return result
+}
+
+const hasComponents = (result: any): result is TupleFormattedAbiParameter => {
+  return result.type === 'tuple' || result.type === 'tuple[]'
+}
+
+const doesNotHaveComponents = (
+  result: any
+): result is NonTupleFormattedAbiParameter => {
+  return !hasComponents(result)
 }
