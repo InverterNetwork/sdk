@@ -12,8 +12,8 @@ export const getDeploymentConfig = <
   TGenericModuleName extends GenericModuleName,
   TModuleVersionKey extends ModuleVersionKey,
 >(
-  name?: TGenericModuleName,
-  version?: TModuleVersionKey
+  name: TGenericModuleName,
+  version: TModuleVersionKey
 ) => {
   const { moduleType, deploymentArgs } = data[name][version]
   return { deploymentArgs, moduleType }

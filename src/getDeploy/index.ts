@@ -1,11 +1,6 @@
 import { WalletClient } from 'viem'
 import { encodeAbiParameters, AbiParameter } from 'viem'
-import {
-  EMPTY_ENCODED_VAL,
-  MANDATORY_MODULES,
-  OPTIONAL_MODULES_IDX,
-  ORCHESTRATOR_CONFIG,
-} from './constants'
+import { EMPTY_ENCODED_VAL, ORCHESTRATOR_CONFIG } from './constants'
 import {
   ModuleInputs,
   ModuleSpec,
@@ -71,8 +66,8 @@ const getInputSchema = (modules: ModuleSpec[]) => {
 
 // returns the formatted orchestrator params to be passed to the deploy function
 const getOrchestratorParams = (orchestrator: OrchestratorInputs) => ({
-  owner: orchestrator.params[0].value,
-  token: orchestrator.params[1].value,
+  owner: orchestrator.params[0],
+  token: orchestrator.params[1],
 })
 
 // takes in ALL params passed for a given module
@@ -100,7 +95,7 @@ const getModuleInputs = <TModuleType extends ModuleType>(
   module: ModuleInputs<TModuleType>
 ) => {
   const { name, version, params } = module
-  const { deploymentArgs } = getDeploymentConfig(name, version)
+  const { deploymentArgs } = getDeploymentConfig(name as any, version)
   const { configData, dependencyData } = deploymentArgs
   const encodedConfigData = encodeUserInputs(params, 0, configData.length)
   const encodedDependencyData = encodeUserInputs(
@@ -118,7 +113,7 @@ const getModuleInputs = <TModuleType extends ModuleType>(
 
 // takes in the inputs submitted by a user and parses & encodes
 // them into the format requested by the deploy function
-const parseInputs = (argsConfig) => {
+const parseInputs = (argsConfig: any) => {
   const {
     orchestrator,
     fundingManager,
@@ -136,7 +131,7 @@ const parseInputs = (argsConfig) => {
   const paymentProcessorInputs = getModuleInputs(paymentProcessor)
 
   // Optional Modules
-  const optionalModuleInputs = logicModules.map((m) => getModuleInputs(m))
+  const optionalModuleInputs = logicModules.map((m: any) => getModuleInputs(m))
 
   return [
     orchestratorInputs,
@@ -147,24 +142,31 @@ const parseInputs = (argsConfig) => {
   ]
 }
 
-const fillSchema = (clientInputs, inputSchema) => {
+const fillSchema = (clientInputs: any, inputSchema: any) => {
   const filledInputSchema = { ...inputSchema }
   Object.keys(inputSchema).forEach((moduleType) => {
     if (moduleType === 'logicModules') {
-      filledInputSchema[moduleType].forEach((_, i) => {
+      filledInputSchema[moduleType].forEach((_: any, i: any) => {
         filledInputSchema[moduleType][i] = {
           ...filledInputSchema[moduleType][i],
-          params: filledInputSchema[moduleType].params.map((param, idx) => {
-            return { ...param, value: clientInputs[moduleType].params[i][idx] }
-          }),
+          params: filledInputSchema[moduleType].params.map(
+            (param: any, idx: any) => {
+              return {
+                ...param,
+                value: clientInputs[moduleType].params[i][idx],
+              }
+            }
+          ),
         }
       })
     } else {
       filledInputSchema[moduleType] = {
         ...filledInputSchema[moduleType],
-        params: filledInputSchema[moduleType].params.map((param, idx) => {
-          return { ...param, value: clientInputs[moduleType].params[idx] }
-        }),
+        params: filledInputSchema[moduleType].params.map(
+          (param: any, idx: any) => {
+            return { ...param, value: clientInputs[moduleType].params[idx] }
+          }
+        ),
       }
     }
   })
