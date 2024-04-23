@@ -9,7 +9,7 @@ import {
 import { TupleToUnion } from 'type-fest'
 
 // The prepareFunction function is used to prepare the functions from the abi
-export default function <
+export default function prepareFunction<
   A extends Abi,
   T extends AbiStateMutability[],
   Simulate extends boolean = false,
