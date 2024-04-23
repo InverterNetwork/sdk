@@ -1,6 +1,63 @@
 import { getContract, WalletClient } from 'viem'
-import { encodeAbiParameters } from 'viem'
+import { encodeAbiParameters, TypedData, AbiParameter } from 'viem'
 import { data, getModuleVersion } from '@inverter-network/abis'
+
+type DataKeys = keyof typeof data
+type ModuleTypes =
+  | 'fundingManager'
+  | 'authorizer'
+  | 'paymentProcessor'
+  | 'logicModule'
+interface Params {
+  name: string
+  type: TypedData
+  description: string
+  value: string
+}
+type ModuleNames<T extends ModuleTypes> = {
+  [K in DataKeys]: (typeof data)[K]['v1.0']['moduleType'] extends T ? K : never
+}[DataKeys]
+
+interface ModuleInputs<T extends ModuleTypes> {
+  name: ModuleNames<T>
+  version: 'v1.0'
+  params: Params[]
+}
+type FundingManagerNames = ModuleNames<'fundingManager'>
+type AuthorizerNames = ModuleNames<'authorizer'>
+type PaymentProcessorNames = ModuleNames<'paymentProcessor'>
+type LogicModuleNames = ModuleNames<'logicModule'>
+type GenericModuleNames =
+  | FundingManagerNames
+  | AuthorizerNames
+  | PaymentProcessorNames
+  | LogicModuleNames
+type FundingManagerInputs = ModuleInputs<'fundingManager'>
+type AuthorizerInputs = ModuleInputs<'authorizer'>
+type PaymentProcessorInputs = ModuleInputs<'paymentProcessor'>
+type LogicModuleInputs = ModuleInputs<'logicModule'>
+type GenericModuleInputs =
+  | FundingManagerInputs
+  | AuthorizerInputs
+  | PaymentProcessorInputs
+  | LogicModuleInputs
+type OrchestratorInputs = typeof ORCHESTRATOR_CONFIG
+type UserInputs = [
+  OrchestratorInputs,
+  FundingManagerInputs,
+  AuthorizerInputs,
+  PaymentProcessorInputs,
+  LogicModuleInputs[],
+]
+type Version = 'v1.0'
+interface ModuleSpec {
+  name:
+    | FundingManagerNames
+    | AuthorizerNames
+    | PaymentProcessorNames
+    | LogicModuleNames
+  version: Version
+}
 
 const MANDATORY_MODULES = 3
 const OPTIONAL_MODULES_IDX = 4
@@ -38,23 +95,27 @@ const getPrefilledDeploymentArgs = () => {
 // uses the deploymentArgs from the config and transforms them into a flattened
 // array as well as injects a value property of type string which is supposed to
 // be filled with a user input through the client side
-const getFlattenedParams = (deploymentArgs) => {
-  const flattenedParams = []
+const getFlattenedParams = (deploymentArgs: any) => {
+  const flattenedParams: any = []
 
   Object.keys(deploymentArgs).forEach((key) => {
     const params = deploymentArgs[key]
     if (params.length > 0) {
-      params.forEach((p) => flattenedParams.push(p))
+      params.forEach((p: any) => flattenedParams.push(p))
     }
   })
-  const withInjectedValues = flattenedParams.map((p) => ({ ...p, value: '' }))
+  const withInjectedValues = flattenedParams.map((p: any) => ({
+    ...p,
+    value: '',
+  }))
 
   return withInjectedValues
 }
 
-const getModuleConfig = (name, version) => data[name][version].deploymentArgs
+const getModuleConfig = (name: GenericModuleNames, version: Version) =>
+  data[name][version].deploymentArgs
 
-const getModuleSchema = (module: Module) => {
+const getModuleSchema = (module: ModuleSpec) => {
   const { name, version } = module
   // get deployment arg info from configs (abis package)
   const rawModuleConfig = getModuleConfig(name, version)
@@ -70,7 +131,7 @@ const getModuleSchema = (module: Module) => {
 // based on the module names and versions passed to it
 // retrieves from the abi config the required deployment inputs
 // for the requested modules
-const getInputSchema = (modules: Module[]) => {
+const getInputSchema = (modules: ModuleSpec[]) => {
   // get array that holds deployment args prefilled w/ orchestrator config
   const deploymentArgs = getPrefilledDeploymentArgs()
   // iterate over modules
@@ -89,14 +150,17 @@ const getInputSchema = (modules: Module[]) => {
 }
 
 //TODO: validate mandatory modules
-const validateModule = (moduleName, moduleType) => {
-  if (moduleType === 'FundingManager') {
-  } else if (moduleType === 'Authorizer') {
-  } else if (moduleType === 'PaymentProcessor') {
+const validateModule = (
+  moduleName: GenericModuleNames,
+  moduleType: ModuleTypes
+) => {
+  if (moduleType === 'fundingManager') {
+  } else if (moduleType === 'authorizer') {
+  } else if (moduleType === 'paymentProcessor') {
   }
 }
 
-const extractMajorMinorVersion = (versionString) => {
+const extractMajorMinorVersion = (versionString: Version) => {
   const version = versionString
     .substring(1)
     .split('.')
@@ -105,7 +169,7 @@ const extractMajorMinorVersion = (versionString) => {
 }
 
 // returns the MetaData struct that the deploy function requires for each module
-const assembleMetadata = (name, version) => {
+const assembleMetadata = (name: GenericModuleNames, version: Version) => {
   const majorMinorVersion = extractMajorMinorVersion(version)
   return {
     title: name,
@@ -115,20 +179,25 @@ const assembleMetadata = (name, version) => {
 }
 
 // returns the formatted orchestrator params to be passed to the deploy function
-const getOrchestratorParams = (orchestrator) => ({
-  owner: orchestrator.params.find((p) => p.name === 'owner').value,
-  token: orchestrator.params.find((p) => p.name === 'token').value,
+const getOrchestratorParams = (orchestrator: OrchestratorInputs) => ({
+  owner: orchestrator.params[0].value,
+  token: orchestrator.params[1].value,
 })
 
 // takes in ALL params passed for a given module
 // and encodes slices of those params (representing configData & dependencyData)
-const encodeUserInputs = (params, startIdx, endIdx) => {
+const encodeUserInputs = (
+  params: Params[],
+  startIdx: number,
+  endIdx: number
+) => {
   if (startIdx > params.length) {
     return EMPTY_ENCODED_VAL
   }
-  const abiEncoderParams = [[], []]
+  const abiEncoderParams: [AbiParameter[], any] = [[], []]
   params.slice(startIdx, endIdx).forEach(({ name, type, value }) => {
-    abiEncoderParams[0].push({ name, type })
+    // TODO
+    abiEncoderParams[0].push({ name, type } as any)
     abiEncoderParams[1].push(value)
   })
   return encodeAbiParameters(...abiEncoderParams)
@@ -137,8 +206,11 @@ const encodeUserInputs = (params, startIdx, endIdx) => {
 // for a given module validates if the module
 // is of moduleType (necessary for validation of mandatory modules)
 // and encodes and formats the inputs
-const getModuleInputs = (module, moduleType = '') => {
-  if (moduleType) validateModule(module, moduleType)
+const getModuleInputs = (
+  module: GenericModuleInputs,
+  moduleType: ModuleTypes | '' = ''
+) => {
+  if (moduleType) validateModule(module.name, moduleType)
   const { name, version, params } = module
   const moduleConfigTemplate = getModuleConfig(name, version)
   const { configData, dependencyData } = moduleConfigTemplate
@@ -158,7 +230,7 @@ const getModuleInputs = (module, moduleType = '') => {
 
 // takes in the inputs submitted by a user and parses & encodes
 // them into the format requested by the deploy function
-const parseInputs = (argsConfig) => {
+const parseInputs = (argsConfig: UserInputs) => {
   const [
     orchestrator,
     fundingManager,
@@ -171,16 +243,16 @@ const parseInputs = (argsConfig) => {
   const orchestratorInputs = getOrchestratorParams(orchestrator)
 
   // Mandatory Modules
-  const fundingManagerInputs = getModuleInputs(fundingManager, 'FundingManager')
-  const authorizerInputs = getModuleInputs(authorizer, 'Authorizer')
+  const fundingManagerInputs = getModuleInputs(fundingManager, 'fundingManager')
+  const authorizerInputs = getModuleInputs(authorizer, 'authorizer')
   const paymentProcessorInputs = getModuleInputs(
     paymentProcessor,
-    'PaymentProcessor'
+    'paymentProcessor'
   )
 
   // Optional Modules
   const optionalModuleInputs = optionalModules.map((m) =>
-    getModuleInputs(paymentProcessor)
+    getModuleInputs(m, 'logicModule')
   )
 
   return [
@@ -207,15 +279,15 @@ const getWriteFn = (walletClient: WalletClient) => {
 
 export const getDeploy = async (
   walletClient: WalletClient,
-  modules: Module[]
+  modules: ModuleSpec[]
 ) => {
   const inputSchema = getInputSchema(modules)
 
   // get deploy function
-  const deployFunction = async (clientInputs) => {
+  const deployFunction = async (clientInputs: UserInputs) => {
     const parsedInputs = parseInputs(clientInputs)
     const writeFn = getWriteFn(walletClient)
-    return writeFn(parsedInputs, {})
+    return writeFn(parsedInputs as any, {} as any)
       .then((r) => r)
       .catch((e) => e)
   }

@@ -3,7 +3,7 @@ import { expect, describe, it } from 'bun:test'
 import { getTestConnectors } from './getTestConnectors'
 import { getDeploy } from '../src/getDeployFunction'
 
-describe('#getDeployFunction', () => {
+describe('#getDeploy', () => {
   const { walletClient } = getTestConnectors()
   const requestedModules = [
     { name: 'RebasingFundingManager', version: 'v1.0' },
@@ -71,7 +71,10 @@ describe('#getDeployFunction', () => {
     ]
 
     it('has the correct format', async () => {
-      const { inputSchema } = await getDeploy(walletClient, requestedModules)
+      const { inputSchema } = await getDeploy(
+        walletClient,
+        requestedModules as any
+      )
       expect(inputSchema).toEqual(expectedInputSchema)
     })
   })
@@ -94,8 +97,9 @@ describe('#getDeployFunction', () => {
     it('submits a tx', async () => {
       const { inputSchema, deployFunction } = await getDeploy(
         walletClient,
-        requestedModules
+        requestedModules as any
       )
+
       const filledInputSchema = [...inputSchema]
       const [orchestrator, fundingManager, authorizer, paymentProcessor] =
         filledInputSchema
@@ -106,7 +110,7 @@ describe('#getDeployFunction', () => {
       authorizer.params[0].value = userInputs.roleAuthorizer.initialOwner
       authorizer.params[1].value = userInputs.roleAuthorizer.initialManager
 
-      const txHash = await deployFunction(filledInputSchema)
+      const txHash = await deployFunction(filledInputSchema as any)
       expect(txHash).pass()
     })
   })
