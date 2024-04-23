@@ -1,84 +1,27 @@
-import { getContract, WalletClient } from 'viem'
-import { encodeAbiParameters, TypedData, AbiParameter } from 'viem'
+import { WalletClient } from 'viem'
+import { encodeAbiParameters, AbiParameter } from 'viem'
+import { ModuleVersionKey } from '@inverter-network/abis'
 import {
-  data,
-  getModuleVersion,
-  UserFacingModuleType,
-  ModuleVersion,
-  ModuleVersionKey,
-} from '@inverter-network/abis'
-import { Pretty } from './types'
-
-// ========HARDCODED CONFIGS========
-const ORCHESTRATOR_CONFIG = {
-  name: 'Orchestrator',
-  version: 'v1.0',
-  params: [
-    {
-      name: 'owner',
-      type: 'string',
-      description: 'The owner address of the workflow',
-      value: '',
-    },
-    {
-      name: 'token',
-      type: 'string',
-      description: 'The payment token associated with the workflow',
-      value: '',
-    },
-  ],
-}
-const MANDATORY_MODULES = 3
-const OPTIONAL_MODULES_IDX = 4
-const EMPTY_ENCODED_VAL = '0x'
-const ORCHESTRATOR_FACTORY_ADDRESS =
-  '0x690d5000D278f90B167354975d019c747B78032e'
-const METADATA_URL = 'https://github.com/InverterNetwork'
-// =================================
-
-type ModuleType = Exclude<UserFacingModuleType, 'orchestrator'>
-
-type NameByModuleType<T extends ModuleType> = Extract<
-  ModuleVersion,
-  { moduleType: T }
->['name']
-
-type ModuleInputs<T extends ModuleType> = {
-  name: NameByModuleType<T>
-  version: ModuleVersionKey
-  params: Params[]
-}
-
-type GenericModuleNames = NameByModuleType<ModuleType>
-
-type GenericModuleInputs = ModuleInputs<ModuleType>
-
-type OrchestratorInputs = typeof ORCHESTRATOR_CONFIG
-
-type UserInputs = [
+  EMPTY_ENCODED_VAL,
+  MANDATORY_MODULES,
+  METADATA_URL,
+  OPTIONAL_MODULES_IDX,
+  ORCHESTRATOR_CONFIG,
+} from '../constants'
+import {
+  GenericModuleName,
+  ModuleInputs,
+  ModuleSpec,
+  ModuleType,
   OrchestratorInputs,
-  ModuleInputs<'fundingManager'>,
-  ModuleInputs<'authorizer'>,
-  ModuleInputs<'paymentProcessor'>,
-  ModuleInputs<'logicModule'>[],
-]
-
-type ModuleSpec = {
-  name: Pretty<
-    | NameByModuleType<'fundingManager'>
-    | NameByModuleType<'authorizer'>
-    | NameByModuleType<'paymentProcessor'>
-    | NameByModuleType<'logicModule'>
-  >
-  version: ModuleVersionKey
-}
-
-type Params = {
-  name: string
-  type: TypedData
-  description: string
-  value: string
-}
+  Params,
+  UserInputs,
+} from '../types'
+import {
+  extractMajorMinorVersion,
+  getDeploymentArgs,
+  getWriteFn,
+} from '../utils'
 
 // creates an array of length = 5 to fill in the inputs for the deploy function
 const getPrefilledDeploymentArgs = () => {
@@ -107,11 +50,6 @@ const getFlattenedParams = (deploymentArgs: any) => {
 
   return withInjectedValues
 }
-
-const getDeploymentArgs = (
-  name: GenericModuleNames,
-  version: ModuleVersionKey
-) => data[name][version].deploymentArgs
 
 const getModuleSchema = (module: ModuleSpec) => {
   const { name, version } = module
@@ -147,31 +85,9 @@ const getInputSchema = (modules: ModuleSpec[]) => {
   return deploymentArgs
 }
 
-// validates that modules are passed correctly:
-// 1. FundingManager, 2. Authorizer, 3. PaymentProcessor, 4. Array of logic modules
-const validateModule = (
-  moduleName: GenericModuleNames,
-  moduleType: ModuleType
-) => {
-  const actualModuleType = data[moduleName]['v1.0'].moduleType
-  if (actualModuleType !== moduleType) {
-    throw Error(
-      `Invalid module type: expected ${moduleType} but received ${moduleName} which is of type ${actualModuleType}`
-    )
-  }
-}
-
-const extractMajorMinorVersion = (versionString: ModuleVersionKey) => {
-  const version = versionString
-    .substring(1)
-    .split('.')
-    .map((v) => parseInt(v))
-  return { majorVersion: version[0], minorVersion: version[1] }
-}
-
 // returns the MetaData struct that the deploy function requires for each module
 const assembleMetadata = (
-  name: GenericModuleNames,
+  name: GenericModuleName,
   version: ModuleVersionKey
 ) => {
   const majorMinorVersion = extractMajorMinorVersion(version)
@@ -210,11 +126,9 @@ const encodeUserInputs = (
 // for a given module validates if the module
 // is of moduleType (necessary for validation of mandatory modules)
 // and encodes and formats the inputs
-const getModuleInputs = (
-  module: GenericModuleInputs,
-  moduleType: ModuleType
+const getModuleInputs = <TModuleType extends ModuleType>(
+  module: ModuleInputs<TModuleType>
 ) => {
-  validateModule(module.name, moduleType)
   const { name, version, params } = module
   const moduleConfigTemplate = getDeploymentArgs(name, version)
   const { configData, dependencyData } = moduleConfigTemplate
@@ -247,17 +161,12 @@ const parseInputs = (argsConfig: UserInputs) => {
   const orchestratorInputs = getOrchestratorParams(orchestrator)
 
   // Mandatory Modules
-  const fundingManagerInputs = getModuleInputs(fundingManager, 'fundingManager')
-  const authorizerInputs = getModuleInputs(authorizer, 'authorizer')
-  const paymentProcessorInputs = getModuleInputs(
-    paymentProcessor,
-    'paymentProcessor'
-  )
+  const fundingManagerInputs = getModuleInputs(fundingManager)
+  const authorizerInputs = getModuleInputs(authorizer)
+  const paymentProcessorInputs = getModuleInputs(paymentProcessor)
 
   // Optional Modules
-  const optionalModuleInputs = optionalModules.map((m) =>
-    getModuleInputs(m, 'logicModule')
-  )
+  const optionalModuleInputs = optionalModules.map((m) => getModuleInputs(m))
 
   return [
     orchestratorInputs,
@@ -266,20 +175,6 @@ const parseInputs = (argsConfig: UserInputs) => {
     paymentProcessorInputs,
     optionalModuleInputs,
   ]
-}
-
-// retrieves the deployment function via viem
-const getWriteFn = (walletClient: WalletClient) => {
-  const { abi } = getModuleVersion('OrchestratorFactory', 'v1.0')
-  const orchestratorFactory = getContract({
-    address: ORCHESTRATOR_FACTORY_ADDRESS,
-    abi: abi,
-    client: {
-      wallet: walletClient,
-    },
-  })
-
-  return orchestratorFactory.write.createOrchestrator
 }
 
 export default async function (
