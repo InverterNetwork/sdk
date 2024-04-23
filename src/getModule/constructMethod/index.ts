@@ -1,12 +1,7 @@
 import formatParameters from '../formatParameters'
 import { Extras } from '../../types'
-import { AbiFunction } from 'abitype'
 import getRun from './getRun'
-
-// The ExtendedAbiFunction type is used to extend the AbiFunction type with a description property
-type ExtendedAbiFunction = AbiFunction & {
-  description?: string
-}
+import { ExtendedAbiFunction } from '@inverter-network/abis'
 
 // The PreservedProps type is used to preserve the properties of the abiFunction
 interface PreservedProps<F extends ExtendedAbiFunction> {
