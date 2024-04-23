@@ -95,14 +95,13 @@ const encodeUserInputs = (
 }
 
 // for a given module validates if the module
-// is of moduleType (necessary for validation of mandatory modules)
 // and encodes and formats the inputs
 const getModuleInputs = <TModuleType extends ModuleType>(
   module: ModuleInputs<TModuleType>
 ) => {
   const { name, version, params } = module
-  const moduleConfigTemplate = getDeploymentArgs(name, version)
-  const { configData, dependencyData } = moduleConfigTemplate
+  const { deploymentArgs } = getDeploymentConfig(name, version)
+  const { configData, dependencyData } = deploymentArgs
   const encodedConfigData = encodeUserInputs(params, 0, configData.length)
   const encodedDependencyData = encodeUserInputs(
     params,
@@ -119,14 +118,14 @@ const getModuleInputs = <TModuleType extends ModuleType>(
 
 // takes in the inputs submitted by a user and parses & encodes
 // them into the format requested by the deploy function
-const parseInputs = (argsConfig: UserInputs) => {
-  const [
+const parseInputs = (argsConfig) => {
+  const {
     orchestrator,
     fundingManager,
     authorizer,
     paymentProcessor,
-    optionalModules,
-  ] = argsConfig
+    logicModules,
+  } = argsConfig
 
   // Orchestrator
   const orchestratorInputs = getOrchestratorParams(orchestrator)
@@ -137,7 +136,7 @@ const parseInputs = (argsConfig: UserInputs) => {
   const paymentProcessorInputs = getModuleInputs(paymentProcessor)
 
   // Optional Modules
-  const optionalModuleInputs = optionalModules.map((m) => getModuleInputs(m))
+  const optionalModuleInputs = logicModules.map((m) => getModuleInputs(m))
 
   return [
     orchestratorInputs,
@@ -148,6 +147,30 @@ const parseInputs = (argsConfig: UserInputs) => {
   ]
 }
 
+const fillSchema = (clientInputs, inputSchema) => {
+  const filledInputSchema = { ...inputSchema }
+  Object.keys(inputSchema).forEach((moduleType) => {
+    if (moduleType === 'logicModules') {
+      filledInputSchema[moduleType].forEach((_, i) => {
+        filledInputSchema[moduleType][i] = {
+          ...filledInputSchema[moduleType][i],
+          params: filledInputSchema[moduleType].params.map((param, idx) => {
+            return { ...param, value: clientInputs[moduleType].params[i][idx] }
+          }),
+        }
+      })
+    } else {
+      filledInputSchema[moduleType] = {
+        ...filledInputSchema[moduleType],
+        params: filledInputSchema[moduleType].params.map((param, idx) => {
+          return { ...param, value: clientInputs[moduleType].params[idx] }
+        }),
+      }
+    }
+  })
+  return filledInputSchema
+}
+
 export default async function (
   walletClient: WalletClient,
   modules: ModuleSpec[]
@@ -156,7 +179,8 @@ export default async function (
 
   // get deploy function
   const deployFunction = async (clientInputs: UserInputs) => {
-    const parsedInputs = parseInputs(clientInputs)
+    const filledSchema = fillSchema(clientInputs, inputSchema)
+    const parsedInputs = parseInputs(filledSchema)
     const writeFn = getWriteFn(walletClient)
     return writeFn(parsedInputs as any, {} as any)
       .then((r) => r)

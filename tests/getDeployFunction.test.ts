@@ -95,25 +95,25 @@ describe.only('#getDeploy', () => {
         requestedModules as any
       )
 
-      const args = [...inputSchema]
-      let [orchestrator, fundingManager, authorizer, paymentProcessor] = args
-      orchestrator = {
+      const args = { ...inputSchema }
+      args.orchestrator = {
         params: [userInputs.orchestrator.owner, userInputs.orchestrator.token],
       }
-      fundingManager = {
+      args.fundingManager = {
         params: [userInputs.rebasingFundingManager.orchestratorTokenAddress],
       }
-      authorizer = {
+      args.authorizer = {
         params: [
           userInputs.roleAuthorizer.initialOwner,
           userInputs.roleAuthorizer.initialManager,
         ],
       }
-      paymentProcessor = {
+      args.paymentProcessor = {
         params: [],
       }
-      // const txHash = await deployFunction(args as any)
-      // expect(txHash).pass()
+
+      const txHash = deployFunction(args as any)
+      expect(txHash).pass()
     })
   })
 })
