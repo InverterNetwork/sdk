@@ -4,7 +4,7 @@ import formatOutputs from '../formatOutputs'
 import parseInputs from '../parseInputs'
 
 // Construct the run function
-export default function <
+export default function getRun<
   FormattedInputs,
   FormattedOutputs,
   StateMutability extends AbiStateMutability,
@@ -27,15 +27,19 @@ export default function <
 
     // Get the result from the contract, based on the kind and simulate params
     const res = await (() => {
+      // If simulate is true
       if (simulate) {
+        // If extras has a wallet address, use it
         if (!!extras?.walletAddress)
           return contract['simulate'][name](parsedInputs, {
             account: extras.walletAddress,
           })
 
+        // Else, just use the parsed inputs
         return contract['simulate'][name](parsedInputs)
       }
 
+      // defaults to non simulate, read or write function
       return contract[kind][name](parsedInputs)
     })()
 

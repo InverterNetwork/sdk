@@ -1,59 +1,40 @@
 import { Extras, FormattedAbiParameter } from '../../types'
-import tag from './tag'
-
-type TupleOutput = Extract<
-  FormattedAbiParameter,
-  {
-    type: 'tuple' | 'tuple[]'
-  }
->
+import { tuple, tupleArray, decimals, any } from './utils'
 
 export default function format(
-  o: FormattedAbiParameter,
+  output: FormattedAbiParameter,
   res: any,
   extras?: Extras
 ): any {
-  // if the output has a tag
-  if ('tag' in o) {
-    if (o.tag === 'any') return tag.any(res)
+  const { type } = output
+  // These first two cases are for the recursive tuple types
+  if (type === 'tuple') return tuple({ output, res, extras })
+  if (type === 'tuple[]') return tupleArray({ output, res, extras })
 
-    if (o.tag === 'decimals') return decimals(res, extras)
+  // If the output is not a tuple,
+
+  // If it also has jsType property
+  if ('jsType' in output) {
+    const { jsType } = output
+
+    // if the output is a string or a number, format it to a big int
+    if (jsType === 'string') return String(res)
+
+    // if the output is a string[], format each string to a big int
+    if (jsType === 'string[]') return res.map((i: bigint) => String(i))
   }
 
-  // if the output is a string or a number, format it to a big int
-  if (o.type === 'string') return String(res)
-  if (o.type === 'number') return Number(res)
+  // if the output has a tag
+  if ('tag' in output) {
+    const { tag } = output
+    // if the output has a tag
+    if (tag === 'any') return any(res)
 
-  // if the output is a string[], format each string to a big int
-  if (o.type === 'string[]') return res.map((i: bigint) => String(i))
+    if (tag === 'decimals') return decimals(res, extras)
+  }
 
-  if (o.type === 'tuple') return tuple(o, res, extras)
-
-  if (o.type === 'tuple[]') return tupleArray(o, res, extras)
-
-  // if all else fails, just return the argument
+  // if all else fails, just return the initial res
   return res
 }
 
 export type TFormat = typeof format
-
-// The case for tuple outputs
-const tuple = (o: TupleOutput, res: any, extras?: Extras) => {
-  const formattedTuple: any = {}
-
-  o.components.forEach((c) => {
-    formattedTuple[c.name] = format(c, res[c.name], extras)
-  })
-
-  return formattedTuple
-}
-
-// The case for tuple[] outputs
-const tupleArray = (o: TupleOutput, res: any, extras?: Extras) =>
-  res.map((resI: any) => tuple(o, resI, extras))
-
-// The case for decimal outputs
-const decimals = (res: any, extras?: Extras) => {
-  if (!extras?.decimals) throw new Error('No decimals provided')
-  return tag.decimals(res, extras.decimals)
-}
