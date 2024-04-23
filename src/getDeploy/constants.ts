@@ -6,13 +6,11 @@ export const ORCHESTRATOR_CONFIG = {
         name: 'owner',
         type: 'string',
         description: 'The owner address of the workflow',
-        value: '',
       },
       {
         name: 'token',
         type: 'string',
         description: 'The payment token associated with the workflow',
-        value: '',
       },
     ],
   },

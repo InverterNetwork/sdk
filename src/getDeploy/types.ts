@@ -51,6 +51,11 @@ export type Params = {
   value: string
 }
 
+export type SmallParams = {
+  type: AbiType
+  value: string
+}
+
 export type ModuleSchema = {
   name: string
   version: string
@@ -76,11 +81,8 @@ export type ModuleArg<T extends ModuleType> = {
 
 export type DeployArguments = {
   orchestrator: OrchestratorArg
-  fundingManager: ModuleArg<'fundingManager'>
-  authorizer: ModuleArg<'authorizer'>
-  paymentProcessor: ModuleArg<'paymentProcessor'>
-  logicModules?: {
-    name: NameByModuleType<'logicModule'>
-    params: ModuleArg<'logicModule'>
-  }[]
+  fundingManager: SmallParams[]
+  authorizer: SmallParams[]
+  paymentProcessor: SmallParams[]
+  logicModules?: SmallParams[]
 }

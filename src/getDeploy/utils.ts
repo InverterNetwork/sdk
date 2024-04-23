@@ -8,13 +8,16 @@ import { WalletClient, getContract } from 'viem'
 import { METADATA_URL, ORCHESTRATOR_FACTORY_ADDRESS } from './constants'
 
 // retrieves the deployment arguments from the module version
-export const getDeploymentArgs = <
+export const getDeploymentConfig = <
   TGenericModuleName extends GenericModuleName,
   TModuleVersionKey extends ModuleVersionKey,
 >(
   name: TGenericModuleName,
   version: TModuleVersionKey
-) => data[name][version].deploymentArgs
+) => {
+  const { moduleType, deploymentArgs } = data[name][version]
+  return { deploymentArgs, moduleType }
+}
 
 // retrieves the deployment function via viem
 export const getWriteFn = (walletClient: WalletClient) => {

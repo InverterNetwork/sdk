@@ -14,13 +14,13 @@ import {
   Params,
   UserInputs,
 } from './types'
-import { assembleMetadata, getDeploymentArgs, getWriteFn } from './utils'
+import { assembleMetadata, getDeploymentConfig, getWriteFn } from './utils'
 
 // creates an array of length = 5 to fill in the inputs for the deploy function
 const getPrefilledDeploymentArgs = () => {
-  const deploymentArgs = Array(4)
-  deploymentArgs[0] = ORCHESTRATOR_CONFIG
-  deploymentArgs[4] = [] //optional modules
+  const deploymentArgs = {} as any
+  deploymentArgs.orchestrator = ORCHESTRATOR_CONFIG
+  deploymentArgs.logicModules = [] //optional modules
   return deploymentArgs
 }
 
@@ -36,45 +36,36 @@ const getFlattenedParams = (deploymentArgs: any) => {
       params.forEach((p: any) => flattenedParams.push(p))
     }
   })
-  const withInjectedValues = flattenedParams.map((p: any) => ({
-    ...p,
-    value: '',
-  }))
 
-  return withInjectedValues
+  return flattenedParams
 }
 
 const getModuleSchema = (module: ModuleSpec) => {
   const { name, version } = module
   // get deployment arg info from configs (abis package)
-  const rawModuleConfig = getDeploymentArgs(name, version)
+  const { deploymentArgs: rawModuleConfig, moduleType } = getDeploymentConfig(
+    name,
+    version
+  )
   const params = getFlattenedParams(rawModuleConfig)
   const moduleSchema = {
     name,
     version,
     params,
   }
-  return moduleSchema
+  return { [moduleType]: moduleSchema }
 }
 
 // based on the module names and versions passed to it
 // retrieves from the abi config the required deployment inputs
 // for the requested modules
 const getInputSchema = (modules: ModuleSpec[]) => {
-  // get array that holds deployment args prefilled w/ orchestrator config
-  const deploymentArgs = getPrefilledDeploymentArgs()
-  // iterate over modules
+  // get object that holds deployment args prefilled w/ orchestrator config
+  let deploymentArgs = getPrefilledDeploymentArgs()
   for (let i = 0; i < modules.length; i++) {
     const moduleConfigInfo = getModuleSchema(modules[i])
-    if (i <= MANDATORY_MODULES) {
-      deploymentArgs[i + 1] = moduleConfigInfo
-    } else {
-      // if it's an optional module store it in the array at idx = 4
-      // of the input params for the deploy function
-      deploymentArgs[OPTIONAL_MODULES_IDX].push(moduleConfigInfo)
-    }
+    deploymentArgs = { ...deploymentArgs, ...moduleConfigInfo }
   }
-
   return deploymentArgs
 }
 
