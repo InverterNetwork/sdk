@@ -15,8 +15,13 @@ export const any = (arg: any) => stringToHex(JSON.stringify(arg))
 export const tuple = ({ input, arg, extras }: TupleCaseParams) => {
   const formattedTuple: any = {}
   // iterate over the components of the tuple template
-  input.components.forEach((c) => {
-    formattedTuple[c.name] = parse(c, arg[c.name], extras)
+  input.components.forEach((c, index) => {
+    // try the name of the component, if it doesn't exist, use the index
+    formattedTuple[c.name ?? `_${index}`] = parse(
+      c,
+      arg[c.name ?? index],
+      extras
+    )
   })
 
   return formattedTuple
