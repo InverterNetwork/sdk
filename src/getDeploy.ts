@@ -280,10 +280,7 @@ const getWriteFn = (walletClient: WalletClient) => {
   return orchestratorFactory.write.createOrchestrator
 }
 
-export const getDeploy = async (
-  walletClient: WalletClient,
-  modules: ModuleSpec[]
-) => {
+export default async (walletClient: WalletClient, modules: ModuleSpec[]) => {
   const inputSchema = getInputSchema(modules)
 
   // get deploy function

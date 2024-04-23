@@ -1,7 +1,7 @@
 import { expect, describe, it } from 'bun:test'
 
 import { getTestConnectors } from './getTestConnectors'
-import { getDeploy } from '../src/getDeployFunction'
+import { getDeploy } from '../src'
 
 describe('#getDeploy', () => {
   const { walletClient } = getTestConnectors()
