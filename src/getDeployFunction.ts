@@ -149,14 +149,17 @@ const getInputSchema = (modules: ModuleSpec[]) => {
   return deploymentArgs
 }
 
-//TODO: validate mandatory modules
+// validates that modules are passed correctly:
+// 1. FundingManager, 2. Authorizer, 3. PaymentProcessor, 4. Array of logic modules
 const validateModule = (
   moduleName: GenericModuleNames,
   moduleType: ModuleTypes
 ) => {
-  if (moduleType === 'fundingManager') {
-  } else if (moduleType === 'authorizer') {
-  } else if (moduleType === 'paymentProcessor') {
+  const actualModuleType = data[moduleName]['v1.0'].moduleType
+  if (actualModuleType !== moduleType) {
+    throw Error(
+      `Invalid module type: expected ${moduleType} but received ${moduleName} which is of type ${actualModuleType}`
+    )
   }
 }
 
@@ -208,9 +211,9 @@ const encodeUserInputs = (
 // and encodes and formats the inputs
 const getModuleInputs = (
   module: GenericModuleInputs,
-  moduleType: ModuleTypes | '' = ''
+  moduleType: ModuleTypes
 ) => {
-  if (moduleType) validateModule(module.name, moduleType)
+  validateModule(module.name, moduleType)
   const { name, version, params } = module
   const moduleConfigTemplate = getModuleConfig(name, version)
   const { configData, dependencyData } = moduleConfigTemplate
