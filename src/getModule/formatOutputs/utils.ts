@@ -27,8 +27,13 @@ export const any = (res: any) => {
 export const tuple = ({ output, res, extras }: TupleCaseParams) => {
   const formattedTuple: any = {}
 
-  output.components.forEach((c) => {
-    formattedTuple[c.name] = format(c, res[c.name], extras)
+  output.components.forEach((c, index) => {
+    // try the name of the component, if it doesn't exist, use the index
+    formattedTuple[c.name ?? `_${index}`] = format(
+      c,
+      res[c.name ?? index],
+      extras
+    )
   })
 
   return formattedTuple
