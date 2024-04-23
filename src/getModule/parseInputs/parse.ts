@@ -34,3 +34,5 @@ export default function parse(
   // if all else fails, just return the argument
   return arg
 }
+
+export type TParse = typeof parse

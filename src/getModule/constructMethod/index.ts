@@ -13,7 +13,7 @@ interface PreservedProps<F extends ExtendedAbiFunction> {
 }
 
 // This function is used to construct a method from an abiFunction
-export default function <
+export default function constructMethod<
   TAbiFunction extends ExtendedAbiFunction,
   Simulate extends boolean = false,
 >(

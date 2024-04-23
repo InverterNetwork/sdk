@@ -2,7 +2,7 @@ import { FormattedAbiParameter } from '../../types/parameter'
 import { Extras } from '../../types/base'
 import parse from './parse'
 
-export default function parseInputs(
+export default function parsedInputs(
   inputsProp: any,
   argsProp: any,
   extras?: Extras

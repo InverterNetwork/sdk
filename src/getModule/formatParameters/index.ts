@@ -4,7 +4,7 @@ import format from './format'
 import { ExtendedAbiFunction } from '@inverter-network/abis'
 
 // This function is used to format the parameters of a function
-export default function <
+export default function formatParameters<
   AbiFunction extends ExtendedAbiFunction,
   ParameterKind extends AbiParameterKind,
   Simulate extends boolean = false,
