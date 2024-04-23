@@ -1,11 +1,7 @@
 import { FormattedAbiParameter, Extras } from '../../types'
 import format from './format'
 
-export default function formatOutputs<T>(
-  outputsProp: any,
-  res: any,
-  extras?: Extras
-): T {
+export default function <T>(outputsProp: any, res: any, extras?: Extras): T {
   const outputs = outputsProp as FormattedAbiParameter[]
 
   // format the outputs
