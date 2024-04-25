@@ -35,7 +35,7 @@ const getFlattenedParams = (deploymentArgs: any) => {
   return flattenedParams
 }
 
-const getJsType = (type) => {
+const getJsType = (type: any) => {
   if (['bytes32', 'string', 'address'].includes(type)) {
     return 'string'
   } else if (
@@ -59,8 +59,8 @@ const getJsType = (type) => {
   }
 }
 
-const injectJsTypes = (params) => {
-  return params.map((p) => {
+const injectJsTypes = (params: any) => {
+  return params.map((p: any) => {
     const jsType = getJsType(p.type)
     return { ...p, jsType }
   })
