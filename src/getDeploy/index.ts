@@ -28,11 +28,42 @@ const getFlattenedParams = (deploymentArgs: any) => {
   Object.keys(deploymentArgs).forEach((key) => {
     const params = deploymentArgs[key]
     if (params.length > 0) {
-      params.forEach((p: any) => flattenedParams.push({ ...p, jsType: '' }))
+      params.forEach((p: any) => flattenedParams.push({ ...p }))
     }
   })
 
   return flattenedParams
+}
+
+const getJsType = (type) => {
+  if (['bytes32', 'string', 'address'].includes(type)) {
+    return 'string'
+  } else if (
+    [
+      'uint',
+      'uint256',
+      'uint128',
+      'uint64',
+      'uint32',
+      'uint16',
+      'uint8',
+      'int256',
+      'int128',
+      'int64',
+      'int32',
+      'int16',
+      'int8',
+    ].includes(type)
+  ) {
+    return 'number'
+  }
+}
+
+const injectJsTypes = (params) => {
+  return params.map((p) => {
+    const jsType = getJsType(p.type)
+    return { ...p, jsType }
+  })
 }
 
 const getModuleSchema = (module: ModuleSpec) => {
@@ -43,10 +74,11 @@ const getModuleSchema = (module: ModuleSpec) => {
     version
   )
   const params = getFlattenedParams(rawModuleConfig)
+  const jsParams = injectJsTypes(params)
   const moduleSchema = {
     name,
     version,
-    params,
+    params: jsParams,
   }
   return { [moduleType]: moduleSchema }
 }
