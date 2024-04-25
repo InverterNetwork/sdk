@@ -15,7 +15,7 @@ import { assembleMetadata, getDeploymentConfig, getWriteFn } from './utils'
 const getPrefilledDeploymentArgs = () => {
   const deploymentArgs = {} as any
   deploymentArgs.orchestrator = ORCHESTRATOR_CONFIG
-  deploymentArgs.logicModules = [] //optional modules
+  deploymentArgs.optionalModules = [] //optional modules
   return deploymentArgs
 }
 
@@ -56,6 +56,8 @@ const getJsType = (type: any) => {
     ].includes(type)
   ) {
     return 'number'
+  } else if (['string[], address[], bytes32[]'].includes(type)) {
+    return 'string[]'
   }
 }
 
@@ -80,7 +82,7 @@ const getModuleSchema = (module: ModuleSpec) => {
     version,
     params: jsParams,
   }
-  return { [moduleType]: moduleSchema }
+  return { moduleType, moduleSchema }
 }
 
 // based on the module names and versions passed to it
@@ -90,16 +92,20 @@ const getInputSchema = (modules: ModuleSpec[]) => {
   // get object that holds deployment args prefilled w/ orchestrator config
   let deploymentArgs = getPrefilledDeploymentArgs()
   for (let i = 0; i < modules.length; i++) {
-    const moduleConfigInfo = getModuleSchema(modules[i])
-    deploymentArgs = { ...deploymentArgs, ...moduleConfigInfo }
+    const { moduleType, moduleSchema } = getModuleSchema(modules[i])
+    if (['utils', 'logicModule'].includes(moduleType)) {
+      deploymentArgs.optionalModules.push(moduleSchema)
+    } else {
+      deploymentArgs = { ...deploymentArgs, [moduleType]: moduleSchema }
+    }
   }
   return deploymentArgs
 }
 
 // returns the formatted orchestrator params to be passed to the deploy function
 const getOrchestratorParams = (orchestrator: OrchestratorInputs) => ({
-  owner: orchestrator.params[0],
-  token: orchestrator.params[1],
+  owner: orchestrator.params[0].value,
+  token: orchestrator.params[1].value,
 })
 
 // takes in ALL params passed for a given module
@@ -151,7 +157,7 @@ const parseInputs = (argsConfig: any) => {
     fundingManager,
     authorizer,
     paymentProcessor,
-    logicModules,
+    optionalModules,
   } = argsConfig
 
   // Orchestrator
@@ -163,7 +169,9 @@ const parseInputs = (argsConfig: any) => {
   const paymentProcessorInputs = getModuleInputs(paymentProcessor)
 
   // Optional Modules
-  const optionalModuleInputs = logicModules.map((m: any) => getModuleInputs(m))
+  const optionalModuleInputs = optionalModules.map((m: any) => {
+    return getModuleInputs(m)
+  })
 
   return [
     orchestratorInputs,
@@ -176,21 +184,29 @@ const parseInputs = (argsConfig: any) => {
 
 const fillSchema = (clientInputs: any, inputSchema: any) => {
   const filledInputSchema = { ...inputSchema }
+  // iterate over modules that were requested by client
   Object.keys(inputSchema).forEach((moduleType) => {
-    if (moduleType === 'logicModules') {
-      filledInputSchema[moduleType].forEach((_: any, i: any) => {
-        filledInputSchema[moduleType][i] = {
-          ...filledInputSchema[moduleType][i],
-          params: filledInputSchema[moduleType].params.map(
-            (param: any, idx: any) => {
-              return {
-                ...param,
-                value: clientInputs[moduleType].params[i][idx],
-              }
+    if (moduleType === 'optionalModules') {
+      // iterate over requested optional modules
+      filledInputSchema.optionalModules.forEach(
+        (currentModule: any, schemaIdx: any) => {
+          // find user inputs for requested module
+          const userInputs = clientInputs.optionalModules.find(
+            (m: any) => m.name === currentModule.name
+          ).params
+          // copy params schema object from schema
+          const copy = { ...filledInputSchema.optionalModules[schemaIdx] }
+          // fill in the user input as value
+          copy.params = copy.params.map((p: any, idx: any) => {
+            return {
+              ...p,
+              value: userInputs[idx],
             }
-          ),
+          })
+          // overwrite the "empty" params schema object with the now filled one
+          filledInputSchema.optionalModules[schemaIdx] = copy
         }
-      })
+      )
     } else {
       filledInputSchema[moduleType] = {
         ...filledInputSchema[moduleType],
@@ -214,7 +230,6 @@ export default async function (
 ) {
   const inputSchema = getInputSchema(modules)
 
-  // get deploy function
   const deployFunction = async (clientInputs: UserInputs) => {
     const filledSchema = fillSchema(clientInputs, inputSchema)
     const parsedInputs = parseInputs(filledSchema)

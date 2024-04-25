@@ -50,7 +50,7 @@ export const assembleMetadata = <ModuleName extends GenericModuleName>(
   const majorMinorVersion = extractMajorMinorVersion(version)
   return {
     title: name,
-    METADATA_URL,
+    url: METADATA_URL,
     ...majorMinorVersion,
   }
 }
