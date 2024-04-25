@@ -31,58 +31,47 @@ describe('#getDeploy', () => {
       orchestrator: {
         name: 'Orchestrator',
         version: 'v1.0',
-        params: [
-          {
-            name: 'owner',
+        params: {
+          owner: {
             type: 'address',
             jsType: 'string',
             description: 'The owner address of the workflow',
           },
-          {
-            name: 'token',
+          token: {
             type: 'address',
             jsType: 'string',
             description: 'The payment token associated with the workflow',
           },
-        ],
+        },
       },
       fundingManager: {
         name: 'RebasingFundingManager',
         version: 'v1.0',
-        params: [
-          {
-            name: 'orchestratorTokenAddress',
+        params: {
+          orchestratorTokenAddress: {
             type: 'address',
             jsType: 'string',
             description:
               'The address of the token that will be deposited to the funding manager',
           },
-        ],
+        },
       },
       authorizer: {
         name: 'RoleAuthorizer',
         version: 'v1.0',
-        params: [
-          {
-            name: 'initialOwner',
+        params: {
+          initialOwner: {
             type: 'address',
             jsType: 'string',
             description: 'The initial owner of the workflow',
           },
-          {
-            name: 'initialManager',
+          initialManager: {
             type: 'address',
             jsType: 'string',
             description: 'The initial manager of the workflow',
           },
-        ],
+        },
       },
-      paymentProcessor: {
-        name: 'SimplePaymentProcessor',
-        version: 'v1.0',
-        params: [],
-      },
-      optionalModules: [],
     }
 
     let args: any
@@ -94,19 +83,16 @@ describe('#getDeploy', () => {
       )
       args = { ...inputSchema }
       args.orchestrator = {
-        params: [userInputs.orchestrator.owner, userInputs.orchestrator.token],
+        owner: userInputs.orchestrator.owner,
+        token: userInputs.orchestrator.token,
       }
       args.fundingManager = {
-        params: [userInputs.rebasingFundingManager.orchestratorTokenAddress],
+        orchestratorTokenAddress:
+          userInputs.rebasingFundingManager.orchestratorTokenAddress,
       }
       args.authorizer = {
-        params: [
-          userInputs.roleAuthorizer.initialOwner,
-          userInputs.roleAuthorizer.initialManager,
-        ],
-      }
-      args.paymentProcessor = {
-        params: [],
+        initialOwner: userInputs.roleAuthorizer.initialOwner,
+        initialManager: userInputs.roleAuthorizer.initialManager,
       }
     })
 
@@ -120,6 +106,7 @@ describe('#getDeploy', () => {
           expect(inputSchema).toEqual(expectedBaseInputSchema)
         })
       })
+
       describe('deploymentFunction', () => {
         it('submits a tx', async () => {
           const { deployFunction } = await getDeploy(
