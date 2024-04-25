@@ -4,12 +4,14 @@ export const ORCHESTRATOR_CONFIG = {
     params: [
       {
         name: 'owner',
-        type: 'string',
+        type: 'address',
+        jsType: '',
         description: 'The owner address of the workflow',
       },
       {
         name: 'token',
-        type: 'string',
+        type: 'address',
+        jsType: '',
         description: 'The payment token associated with the workflow',
       },
     ],

@@ -19,12 +19,14 @@ describe.only('#getDeploy', () => {
         params: [
           {
             name: 'owner',
-            type: 'string',
+            type: 'address',
+            jsType: '',
             description: 'The owner address of the workflow',
           },
           {
             name: 'token',
-            type: 'string',
+            type: 'address',
+            jsType: '',
             description: 'The payment token associated with the workflow',
           },
         ],
@@ -36,6 +38,7 @@ describe.only('#getDeploy', () => {
           {
             name: 'orchestratorTokenAddress',
             type: 'address',
+            jsType: '',
             description:
               'The address of the token that will be deposited to the funding manager',
           },
@@ -48,11 +51,13 @@ describe.only('#getDeploy', () => {
           {
             name: 'initialOwner',
             type: 'address',
+            jsType: '',
             description: 'The initial owner of the workflow',
           },
           {
             name: 'initialManager',
             type: 'address',
+            jsType: '',
             description: 'The initial manager of the workflow',
           },
         ],

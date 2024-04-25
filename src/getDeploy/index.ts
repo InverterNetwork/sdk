@@ -28,7 +28,7 @@ const getFlattenedParams = (deploymentArgs: any) => {
   Object.keys(deploymentArgs).forEach((key) => {
     const params = deploymentArgs[key]
     if (params.length > 0) {
-      params.forEach((p: any) => flattenedParams.push(p))
+      params.forEach((p: any) => flattenedParams.push({ ...p, jsType: '' }))
     }
   })
 
@@ -164,7 +164,10 @@ const fillSchema = (clientInputs: any, inputSchema: any) => {
         ...filledInputSchema[moduleType],
         params: filledInputSchema[moduleType].params.map(
           (param: any, idx: any) => {
-            return { ...param, value: clientInputs[moduleType].params[idx] }
+            return {
+              ...param,
+              value: clientInputs[moduleType].params[idx],
+            }
           }
         ),
       }
