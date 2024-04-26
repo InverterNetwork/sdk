@@ -14,6 +14,7 @@ import {
 } from './types'
 import { assembleMetadata, getDeploymentConfig, getWriteFn } from './utils'
 import { getModuleVersion } from '@inverter-network/abis'
+import { getJsType } from '../utils'
 
 // uses the deploymentArgs from the config and transforms them into a flattened
 // array as well as injects a value property of type string which is supposed to
@@ -31,32 +32,6 @@ const parseParams = (deploymentArgs: any) => {
     }
   })
   return flattenedParams
-}
-
-const getJsType = (type: any) => {
-  if (['bytes32', 'string', 'address'].includes(type)) {
-    return 'string'
-  } else if (
-    [
-      'uint',
-      'uint256',
-      'uint128',
-      'uint64',
-      'uint32',
-      'uint16',
-      'uint8',
-      'int256',
-      'int128',
-      'int64',
-      'int32',
-      'int16',
-      'int8',
-    ].includes(type)
-  ) {
-    return 'number'
-  } else if (['string[], address[], bytes32[]'].includes(type)) {
-    return 'string[]'
-  }
 }
 
 const getModuleSchema = (module: RequestedModule) => {

@@ -6,6 +6,7 @@ import {
   ClientInputs,
   ModuleSchema,
   DeploySchema,
+  RequestedModules,
 } from '../src/getDeploy/types'
 
 describe('#getDeploy', () => {
@@ -35,13 +36,13 @@ describe('#getDeploy', () => {
           {
             name: 'owner',
             type: 'address',
-            jsType: 'string',
+            jsType: '0xstring',
             description: 'The owner address of the workflow',
           },
           {
             name: 'token',
             type: 'address',
-            jsType: 'string',
+            jsType: '0xstring',
             description: 'The payment token associated with the workflow',
           },
         ],
@@ -53,7 +54,7 @@ describe('#getDeploy', () => {
           {
             name: 'orchestratorTokenAddress',
             type: 'address',
-            jsType: 'string',
+            jsType: '0xstring',
             description:
               'The address of the token that will be deposited to the funding manager',
           },
@@ -66,13 +67,13 @@ describe('#getDeploy', () => {
           {
             name: 'initialOwner',
             type: 'address',
-            jsType: 'string',
+            jsType: '0xstring',
             description: 'The initial owner of the workflow',
           },
           {
             name: 'initialManager',
             type: 'address',
-            jsType: 'string',
+            jsType: '0xstring',
             description: 'The initial manager of the workflow',
           },
         ],
@@ -98,7 +99,7 @@ describe('#getDeploy', () => {
         it('has the correct format', async () => {
           const { inputSchema } = await getDeploy(
             walletClient,
-            requestedModules
+            requestedModules as RequestedModules
           )
           expect(inputSchema).toEqual(expectedBaseInputSchema as any)
         })
@@ -108,7 +109,7 @@ describe('#getDeploy', () => {
         it('submits a tx', async () => {
           const { deployFunction } = await getDeploy(
             walletClient,
-            requestedModules
+            requestedModules as RequestedModules
           )
           const txHash = (await deployFunction(args)) as string
           expect(txHash.length).toEqual(66)
@@ -132,7 +133,7 @@ describe('#getDeploy', () => {
               name: 'managerAccount',
               type: 'address',
               description: 'The address of the manager',
-              jsType: 'string',
+              jsType: '0xstring',
             },
             {
               name: 'managerTwitterHandle',
@@ -162,13 +163,13 @@ describe('#getDeploy', () => {
               name: 'externalMedias',
               type: 'string[]',
               description: 'An array of links to external medias',
-              jsType: undefined,
+              jsType: 'string[]',
             },
             {
               name: 'categories',
               type: 'string[]',
               description: 'An array of categories of the workflow/orchestator',
-              jsType: undefined,
+              jsType: 'string[]',
             },
             {
               name: 'memberName',
@@ -180,7 +181,7 @@ describe('#getDeploy', () => {
               name: 'memberAccount',
               type: 'address',
               description: 'The address of the member',
-              jsType: 'string',
+              jsType: '0xstring',
             },
             {
               name: 'memberUrl',
@@ -268,7 +269,7 @@ describe('#getDeploy', () => {
             name: 'epochLength',
             description:
               'The length of an epoch in seconds. This will be the common denominator for all payments, as these are specified in epochs (i.e. if an epoch is 1 week, vestings can be done for 1 week, 2 week, 3 week, etc.). Epoch needs to be greater than 1 week and smaller than 52 weeks',
-            jsType: 'number',
+            jsType: 'string',
             type: 'uint256',
           },
         ],
