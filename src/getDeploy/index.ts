@@ -4,6 +4,7 @@ import { ORCHESTRATOR_CONFIG, ARGS_TEMPLATE } from './constants'
 import { ModuleSpec, UserInputs } from './types'
 import { assembleMetadata, getDeploymentConfig, getWriteFn } from './utils'
 import { getModuleVersion } from '@inverter-network/abis'
+import { getJsType } from '../utils'
 
 // creates an array of length = 5 to fill in the inputs for the deploy function
 const getPrefilledDeploymentArgs = () => {
@@ -30,32 +31,6 @@ const flattenParams = (deploymentArgs: any) => {
     }
   })
   return flattenedParams
-}
-
-const getJsType = (type: any) => {
-  if (['bytes32', 'string', 'address'].includes(type)) {
-    return 'string'
-  } else if (
-    [
-      'uint',
-      'uint256',
-      'uint128',
-      'uint64',
-      'uint32',
-      'uint16',
-      'uint8',
-      'int256',
-      'int128',
-      'int64',
-      'int32',
-      'int16',
-      'int8',
-    ].includes(type)
-  ) {
-    return 'number'
-  } else if (['string[], address[], bytes32[]'].includes(type)) {
-    return 'string[]'
-  }
 }
 
 const injectJsTypes = ({ ...params }: any) => {
