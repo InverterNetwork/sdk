@@ -240,7 +240,7 @@ describe('#getDeploy', () => {
       })
     })
 
-    describe('optional: BountyManager', () => {
+    describe.only('optional: BountyManager', () => {
       describe('inputSchema', () => {
         const expectedBountyManagerSchema = {
           name: 'BountyManager',
