@@ -1,6 +1,6 @@
 import { WalletClient } from 'viem'
 import { encodeAbiParameters } from 'viem'
-import { ORCHESTRATOR_CONFIG, ARGS_TEMPLATE } from './constants'
+import { ORCHESTRATOR_CONFIG } from './constants'
 import { ModuleSpec, UserInputs } from './types'
 import { assembleMetadata, getDeploymentConfig, getWriteFn } from './utils'
 import { getModuleVersion } from '@inverter-network/abis'
@@ -108,55 +108,49 @@ const getInputSchema = (modules: ModuleSpec[]) => {
   return deploymentArgs
 }
 
-const injectEncodedParams = (
-  args: any,
-  clientInputs: any,
-  moduleConfig: any
-) => {
+const getEncodedParams = (clientInputs: any, moduleConfig: any) => {
+  const encodedModuleParams = {}
   const { moduleType, deploymentArgs } = moduleConfig
   const userModuleParams = clientInputs[moduleType]
   const { configData, dependencyData } = deploymentArgs
-  const paramValueContainer = [
-    Array(configData.length),
-    Array(dependencyData.length),
-  ]
-  const paramTypeContainer = [
-    Array(configData.length),
-    Array(dependencyData.length),
-  ]
   // iterate over userModuleParams
   ;[configData, dependencyData].forEach((dataArr, index) => {
-    if (dataArr.length === 0) return
+    const paramValueContainer = Array(dataArr.length)
+    const paramTypeContainer = Array(dataArr.length)
     for (const paramName in userModuleParams) {
       // find index in config
       const idx = dataArr.findIndex((config: any) => config.name === paramName)
-      const { type } = dataArr[idx]
-      // put param in correct idx in param container
-      paramValueContainer[index][idx] = userModuleParams[paramName]
-      paramTypeContainer[index][idx] = { type }
+      if (idx >= 0) {
+        const { type } = dataArr[idx]
+        // put param in correct idx in param container
+        paramValueContainer[idx] = userModuleParams[paramName]
+        paramTypeContainer[idx] = { type }
+      }
     }
-    args[moduleType][index === 0 ? 'configData' : 'dependencyData'] =
-      encodeAbiParameters(paramTypeContainer[index], paramValueContainer[index])
+    const key = index === 0 ? 'configData' : 'dependencyData'
+    encodedModuleParams[key] = encodeAbiParameters(
+      paramTypeContainer,
+      paramValueContainer
+    )
   })
-  return args
+  return encodedModuleParams
 }
 
-const injectMetadataParams = (args: any, moduleConfig: any) => {
-  const { moduleType, name, version } = moduleConfig
-  const metadata = assembleMetadata(name, version)
-  args[moduleType].metadata = metadata
-  return args
-}
-
-const constructArgs = (args: any, modules: any, clientInputs: any) => {
-  args.orchestrator = clientInputs.orchestrator
+const constructArgs = (modules: any, clientInputs: any) => {
+  const args = { Orchestrator: clientInputs.orchestrator, optionalModules: [] }
   // removing orchestrator makes the rest easier because all other
   // clientInputs can assumed to be models then
   delete clientInputs.orchestrator
   modules.forEach(({ name, version }: any) => {
     const moduleConfig = getModuleVersion(name, version)
-    args = { ...injectEncodedParams(args, clientInputs, moduleConfig) }
-    args = { ...injectMetadataParams(args, moduleConfig) }
+    const { moduleType } = moduleConfig
+    const moduleArgs = { ...getEncodedParams(clientInputs, moduleConfig) }
+    moduleArgs.metadata = assembleMetadata(name, version)
+    if (['logicModule', 'util'].includes(moduleType)) {
+      args.optionalModules.push(moduleArgs)
+    } else {
+      args[moduleType] = moduleArgs
+    }
   })
   return args
 }
@@ -168,26 +162,28 @@ export default async function (
   const inputSchema = getInputSchema(modules)
 
   const deployFunction = async (clientInputs: UserInputs) => {
-    const {
-      orchestrator,
-      fundingManager,
-      authorizer,
-      paymentProcessor,
-      optionalModules,
-    } = constructArgs(ARGS_TEMPLATE, modules, clientInputs)
-    const writeFn = getWriteFn(walletClient)
-    return writeFn(
-      [
-        orchestrator,
-        fundingManager,
-        authorizer,
-        paymentProcessor,
-        optionalModules,
-      ],
-      {} as any
-    )
-      .then((r) => r)
-      .catch((e) => e)
+    // const {
+    //   orchestrator,
+    //   fundingManager,
+    //   authorizer,
+    //   paymentProcessor,
+    //   optionalModules,
+    // } = constructArgs(ARGS_TEMPLATE, modules, clientInputs)
+    const args = constructArgs(modules, clientInputs)
+    console.log(args)
+    // const writeFn = getWriteFn(walletClient)
+    // return writeFn(
+    //   [
+    //     orchestrator,
+    //     fundingManager,
+    //     authorizer,
+    //     paymentProcessor,
+    //     optionalModules,
+    //   ],
+    //   {} as any
+    // )
+    //   .then((r) => r)
+    //   .catch((e) => e)
   }
 
   return { inputSchema, deployFunction }
