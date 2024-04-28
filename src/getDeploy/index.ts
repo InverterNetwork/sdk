@@ -8,8 +8,7 @@ import { getModuleVersion } from '@inverter-network/abis'
 // creates an array of length = 5 to fill in the inputs for the deploy function
 const getPrefilledDeploymentArgs = () => {
   const deploymentArgs = {} as any
-  deploymentArgs.orchestrator = ORCHESTRATOR_CONFIG
-  deploymentArgs.optionalModules = [] //optional modules
+  deploymentArgs.Orchestrator = ORCHESTRATOR_CONFIG
   return deploymentArgs
 }
 
@@ -70,18 +69,14 @@ const injectJsTypes = ({ ...params }: any) => {
 const getModuleSchema = (module: ModuleSpec) => {
   const { name, version } = module
   // get deployment arg info from configs (abis package)
-  const { deploymentArgs: rawModuleConfig, moduleType } = getDeploymentConfig(
-    name,
-    version
-  )
+  const { deploymentArgs: rawModuleConfig } = getDeploymentConfig(name, version)
   const params = flattenParams(rawModuleConfig)
   const jsParams = injectJsTypes(params)
   const moduleSchema = {
-    name,
     version,
     params: jsParams,
   }
-  return { moduleType, moduleSchema }
+  return { moduleSchema, moduleName: name }
 }
 
 // based on the module names and versions passed to it
@@ -89,29 +84,20 @@ const getModuleSchema = (module: ModuleSpec) => {
 // for the requested modules
 const getInputSchema = (modules: ModuleSpec[]) => {
   // get object that holds deployment args prefilled w/ orchestrator config
-  let deploymentArgs = getPrefilledDeploymentArgs()
+  const deploymentArgs = getPrefilledDeploymentArgs()
   for (let i = 0; i < modules.length; i++) {
-    const { moduleType, moduleSchema } = getModuleSchema(modules[i])
+    const { moduleName, moduleSchema } = getModuleSchema(modules[i])
     // don't add module to schema if it doesn't require any user inputs
     if (Object.keys(moduleSchema.params).length === 0) continue
-    if (['utils', 'logicModule'].includes(moduleType)) {
-      deploymentArgs.optionalModules.push(moduleSchema)
-    } else {
-      deploymentArgs = { ...deploymentArgs, [moduleType]: moduleSchema }
-    }
-  }
-  // remove optionalModules from schema if there are no modules requested
-  // (or if the ones requested don't require any user inputs)
-  if (deploymentArgs.optionalModules.length === 0) {
-    delete deploymentArgs.optionalModules
+    deploymentArgs[moduleName] = moduleSchema
   }
   return deploymentArgs
 }
 
 const getEncodedParams = (clientInputs: any, moduleConfig: any) => {
-  const encodedModuleParams = {}
-  const { moduleType, deploymentArgs } = moduleConfig
-  const userModuleParams = clientInputs[moduleType]
+  const encodedModuleParams: any = {}
+  const { deploymentArgs, name } = moduleConfig
+  const userModuleParams = clientInputs[name]
   const { configData, dependencyData } = deploymentArgs
   // iterate over userModuleParams
   ;[configData, dependencyData].forEach((dataArr, index) => {
@@ -137,7 +123,13 @@ const getEncodedParams = (clientInputs: any, moduleConfig: any) => {
 }
 
 const constructArgs = (modules: any, clientInputs: any) => {
-  const args = { Orchestrator: clientInputs.orchestrator, optionalModules: [] }
+  const args = {
+    orchestrator: clientInputs.Orchestrator,
+    fundingManager: {},
+    authorizer: {},
+    paymentProcessor: {},
+    optionalModules: [] as any,
+  }
   // removing orchestrator makes the rest easier because all other
   // clientInputs can assumed to be models then
   delete clientInputs.orchestrator
@@ -146,10 +138,10 @@ const constructArgs = (modules: any, clientInputs: any) => {
     const { moduleType } = moduleConfig
     const moduleArgs = { ...getEncodedParams(clientInputs, moduleConfig) }
     moduleArgs.metadata = assembleMetadata(name, version)
-    if (['logicModule', 'util'].includes(moduleType)) {
+    if (['logicModule', 'utils'].includes(moduleType)) {
       args.optionalModules.push(moduleArgs)
     } else {
-      args[moduleType] = moduleArgs
+      args[moduleType as keyof typeof args] = moduleArgs
     }
   })
   return args
@@ -160,30 +152,30 @@ export default async function (
   modules: ModuleSpec[]
 ) {
   const inputSchema = getInputSchema(modules)
-
   const deployFunction = async (clientInputs: UserInputs) => {
-    // const {
-    //   orchestrator,
-    //   fundingManager,
-    //   authorizer,
-    //   paymentProcessor,
-    //   optionalModules,
-    // } = constructArgs(ARGS_TEMPLATE, modules, clientInputs)
-    const args = constructArgs(modules, clientInputs)
-    console.log(args)
-    // const writeFn = getWriteFn(walletClient)
-    // return writeFn(
-    //   [
-    //     orchestrator,
-    //     fundingManager,
-    //     authorizer,
-    //     paymentProcessor,
-    //     optionalModules,
-    //   ],
-    //   {} as any
-    // )
-    //   .then((r) => r)
-    //   .catch((e) => e)
+    const {
+      orchestrator,
+      fundingManager,
+      authorizer,
+      paymentProcessor,
+      optionalModules,
+    } = constructArgs(modules, clientInputs)
+    const writeFn = getWriteFn(walletClient)
+    return writeFn(
+      [
+        orchestrator,
+        fundingManager,
+        authorizer,
+        paymentProcessor,
+        optionalModules,
+      ],
+      {} as any
+    )
+      .then((r: any) => r)
+      .catch((e: any) => {
+        console.log(e)
+        return e
+      })
   }
 
   return { inputSchema, deployFunction }

@@ -1,5 +1,4 @@
 export const ORCHESTRATOR_CONFIG = {
-    name: 'Orchestrator',
     version: 'v1.0',
     params: {
       owner: {
