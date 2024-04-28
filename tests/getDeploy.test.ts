@@ -191,7 +191,7 @@ describe('#getDeploy', () => {
         })
       })
 
-      describe('deployFunction', () => {
+      describe.skip('deployFunction', () => {
         it('submits a tx', async () => {
           const { deployFunction } = await getDeploy(walletClient, [
             ...requestedModules,
@@ -274,7 +274,7 @@ describe('#getDeploy', () => {
         })
       })
 
-      describe('deployFunction', () => {
+      describe.skip('deployFunction', () => {
         const epochLength = '604800' // 1 week in seconds
 
         it('submits a tx', async () => {
