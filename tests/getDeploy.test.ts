@@ -28,8 +28,7 @@ describe('#getDeploy', () => {
     }
 
     const expectedBaseInputSchema = {
-      orchestrator: {
-        name: 'Orchestrator',
+      Orchestrator: {
         version: 'v1.0',
         params: {
           owner: {
@@ -44,8 +43,7 @@ describe('#getDeploy', () => {
           },
         },
       },
-      fundingManager: {
-        name: 'RebasingFundingManager',
+      RebasingFundingManager: {
         version: 'v1.0',
         params: {
           orchestratorTokenAddress: {
@@ -56,8 +54,7 @@ describe('#getDeploy', () => {
           },
         },
       },
-      authorizer: {
-        name: 'RoleAuthorizer',
+      RoleAuthorizer: {
         version: 'v1.0',
         params: {
           initialOwner: {
@@ -82,15 +79,15 @@ describe('#getDeploy', () => {
         requestedModules as any
       )
       args = { ...inputSchema }
-      args.orchestrator = {
+      args.Orchestrator = {
         owner: userInputs.orchestrator.owner,
         token: userInputs.orchestrator.token,
       }
-      args.fundingManager = {
+      args.RebasingFundingManager = {
         orchestratorTokenAddress:
           userInputs.rebasingFundingManager.orchestratorTokenAddress,
       }
-      args.authorizer = {
+      args.RoleAuthorizer = {
         initialOwner: userInputs.roleAuthorizer.initialOwner,
         initialManager: userInputs.roleAuthorizer.initialManager,
       }
@@ -114,84 +111,72 @@ describe('#getDeploy', () => {
             requestedModules as any
           )
           const txHash = await deployFunction(args as any)
-          expect(txHash).pass()
+          expect(txHash.length).toEqual(66)
         })
       })
     })
 
-    describe.skip('optionalModules: MetadataManager', () => {
+    describe('optionalModules: MetadataManager', () => {
       describe('inputSchema', () => {
         const expectedMetadataManagerSchema = {
-          name: 'MetadataManager',
           version: 'v1.0',
-          params: [
-            {
-              name: 'name',
+          params: {
+            managerName: {
               type: 'string',
               description: 'The (user-) name of the manager',
               jsType: 'string',
             },
-            {
-              name: 'account',
+            managerAccount: {
               type: 'address',
               description: 'The address of the manager',
               jsType: 'string',
             },
-            {
-              name: 'twitterHandle',
+            managerTwitterHandle: {
               type: 'string',
               description: 'The twitter handle of the manager',
               jsType: 'string',
             },
-            {
-              name: 'title',
+            title: {
               type: 'string',
               description: 'The name of the workflow/orchestrator',
               jsType: 'string',
             },
-            {
-              name: 'descriptionShort',
+            descriptionShort: {
               type: 'string',
               description: 'The short description of the workflow/orchestrator',
               jsType: 'string',
             },
-            {
-              name: 'descriptionLong',
+            descriptionLong: {
               type: 'string',
               description: 'The long description of the workflow/orchestrator',
               jsType: 'string',
             },
-            {
-              name: 'externalMedias',
+            externalMedias: {
               type: 'string[]',
               description: 'An array of links to external medias',
               jsType: undefined,
             },
-            {
-              name: 'categories',
+            categories: {
               type: 'string[]',
               description: 'An array of categories of the workflow/orchestator',
               jsType: undefined,
             },
-            {
-              name: 'name',
+            memberName: {
               type: 'string',
               description: 'The (user-) name of the member',
               jsType: 'string',
             },
-            {
-              name: 'account',
+            memberAccount: {
               type: 'address',
               description: 'The address of the member',
               jsType: 'string',
             },
-            {
-              name: 'url',
+            memberUrl: {
               type: 'string',
               description: 'A url of the member',
               jsType: 'string',
             },
-          ],
+          },
         }
 
         it('has the correct format', async () => {
@@ -201,53 +186,42 @@ describe('#getDeploy', () => {
           ] as any)
           expect(inputSchema).toEqual({
             ...expectedBaseInputSchema,
-            optionalModules: [expectedMetadataManagerSchema],
+            MetadataManager: expectedMetadataManagerSchema,
           })
         })
       })
 
       describe('deployFunction', () => {
-        const metadataManagerParams = [
-          'example manager name',
-          '0x7AcaF5360474b8E40f619770c7e8803cf3ED1053', // manager address
-          '@twitter_handle',
-          'example workflow name',
-          'example short description',
-          'example long description',
-          ['example external media 1', 'example external media 2'],
-          ['example category 1', 'example category 2'],
-          'example member name',
-          '0x7AcaF5360474b8E40f619770c7e8803cf3ED1053', // member address
-          'example member url',
-        ]
-
         it('submits a tx', async () => {
           const { deployFunction } = await getDeploy(walletClient, [
             ...requestedModules,
             { name: 'MetadataManager', version: 'v1.0' },
           ] as any)
           const argsCopy = { ...args }
-          argsCopy.optionalModules = [
-            {
-              name: 'MetadataManager',
-              version: 'v1.0',
-              params: metadataManagerParams,
-            },
-          ]
+          argsCopy.MetadataManager = {
+            managerName: 'example manager name',
+            managerAccount: '0x7AcaF5360474b8E40f619770c7e8803cf3ED1053',
+            managerTwitterHandle: '@twitter_handle',
+            title: 'example workflow name',
+            descriptionShort: 'example short description',
+            descriptionLong: 'example long description',
+            externalMedias: [
+              'example external media 1',
+              'example external media 2',
+            ],
+            categories: ['example category 1', 'example category 2'],
+            memberName: 'example member name',
+            memberAccount: '0x7AcaF5360474b8E40f619770c7e8803cf3ED1053',
+            memberUrl: 'example member url',
+          }
           const txHash = await deployFunction(argsCopy as any)
-          expect(txHash).pass()
+          expect(txHash.length).toEqual(66)
         })
       })
     })
 
-    describe.only('optional: BountyManager', () => {
+    describe('optional: BountyManager', () => {
       describe('inputSchema', () => {
-        const expectedBountyManagerSchema = {
-          name: 'BountyManager',
-          version: 'v1.0',
-          params: [],
-        }
-
         it('has the correct format', async () => {
           const { inputSchema } = await getDeploy(walletClient, [
             ...requestedModules,
@@ -256,50 +230,34 @@ describe('#getDeploy', () => {
 
           expect(inputSchema).toEqual({
             ...expectedBaseInputSchema,
-            optionalModules: [expectedBountyManagerSchema],
           })
         })
       })
 
       describe('deployFunction', () => {
-        const expectedSchema = {
-          name: 'BountyManager',
-          version: 'v1.0',
-          params: [],
-        }
-
         it('has the correct format', async () => {
           const { deployFunction } = await getDeploy(walletClient, [
             ...requestedModules,
             { name: 'BountyManager', version: 'v1.0' },
           ] as any)
           const argsCopy = { ...args }
-          argsCopy.optionalModules = [
-            {
-              name: 'BountyManager',
-              version: 'v1.0',
-              params: [],
-            },
-          ]
           const txHash = await deployFunction(argsCopy as any)
-          expect(txHash).pass()
+          expect(txHash.length).toEqual(66)
         })
       })
     })
 
-    describe.skip('optional: RecurringPaymentManager', () => {
+    describe('optional: RecurringPaymentManager', () => {
       const expectedSchema = {
-        name: 'RecurringPaymentManager',
         version: 'v1.0',
-        params: [
-          {
+        params: {
+          epochLength: {
             description:
               'The length of an epoch in seconds. This will be the common denominator for all payments, as these are specified in epochs (i.e. if an epoch is 1 week, vestings can be done for 1 week, 2 week, 3 week, etc.). Epoch needs to be greater than 1 week and smaller than 52 weeks',
             jsType: 'number',
-            name: 'epochLength',
             type: 'uint256',
           },
-        ],
+        },
       }
 
       describe('inputSchema', () => {
@@ -311,7 +269,7 @@ describe('#getDeploy', () => {
 
           expect(inputSchema).toEqual({
             ...expectedBaseInputSchema,
-            optionalModules: [expectedSchema],
+            RecurringPaymentManager: expectedSchema,
           })
         })
       })
@@ -319,21 +277,17 @@ describe('#getDeploy', () => {
       describe('deployFunction', () => {
         const epochLength = '604800' // 1 week in seconds
 
-        it('has the correct format', async () => {
+        it('submits a tx', async () => {
           const { deployFunction } = await getDeploy(walletClient, [
             ...requestedModules,
             { name: 'RecurringPaymentManager', version: 'v1.0' },
           ] as any)
           const argsCopy = { ...args }
-          argsCopy.optionalModules = [
-            {
-              name: 'RecurringPaymentManager',
-              version: 'v1.0',
-              params: [epochLength],
-            },
-          ]
+          argsCopy.RecurringPaymentManager = {
+            epochLength: epochLength,
+          }
           const txHash = await deployFunction(argsCopy as any)
-          expect(txHash).pass()
+          expect(txHash.length).toEqual(66)
         })
       })
     })
