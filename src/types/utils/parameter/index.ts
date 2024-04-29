@@ -1,14 +1,18 @@
-import { Tag } from '@inverter-network/abis'
-import { AbiParameter, SolidityBytes, SolidityInt } from 'abitype'
+import { ExtendedAbiParameter, Tag, TupleType } from '@inverter-network/abis'
+import { SolidityBytes, SolidityInt } from 'abitype'
 import { FormattedParameterToPrimitiveType } from './primitive'
+
+type JsTypeWithTag<P extends readonly Tag[] | undefined> =
+  P extends readonly Tag[]
+    ? P[number] extends 'any'
+      ? 'any'
+      : unknown
+    : unknown
 
 // Format the AbiParameter type from solidity to typscript type and-
 // add the description and tag to the parameter
-export type FormatParameter<P> = P extends AbiParameter & {
-  tag?: Tag
-  description?: string
-}
-  ? P extends { type: 'tuple[]' | 'tuple'; components: infer Components }
+export type FormatParameter<P> = P extends ExtendedAbiParameter
+  ? P extends { type: TupleType; components: infer Components }
     ? {
         name: P['name']
         type: P['type']
@@ -18,8 +22,8 @@ export type FormatParameter<P> = P extends AbiParameter & {
     : {
         name: P['name']
         type: P['type']
-        jsType: P['tag'] extends 'any'
-          ? 'any'
+        jsType: JsTypeWithTag<P['tags']> extends string
+          ? JsTypeWithTag<P['tags']>
           : P['type'] extends 'bool'
             ? 'boolean'
             : P['type'] extends SolidityInt
@@ -31,8 +35,9 @@ export type FormatParameter<P> = P extends AbiParameter & {
                   : P['type'] extends `${SolidityBytes}[]`
                     ? '0xstring[]'
                     : unknown
+
         description: P['description']
-        tag: P['tag']
+        tags: P['tags']
       }
   : never
 

@@ -12,11 +12,11 @@ export default function parse(
   if (type === 'tuple[]') return tupleArray({ arg, input, extras })
 
   // if the input has a tag
-  if ('tag' in input) {
-    const { tag } = input
-    if (tag === 'any') return any(arg)
+  if ('tags' in input) {
+    const { tags } = input
+    if (tags?.includes('any')) return any(arg)
 
-    if (tag === 'decimals') return decimals(arg, extras)
+    if (tags?.includes('decimals')) return decimals(arg, extras)
   }
 
   // if the input has a jsType property

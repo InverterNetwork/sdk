@@ -4,7 +4,7 @@ import {
   isTupleFormattedAbiParameter,
   isNonTupleFormattedAbiParameter,
 } from '../../types'
-import { getJsType } from '../../utils'
+import { getJsType } from '..'
 
 // Base case for recursion
 export default function format<Parameter extends ExtendedAbiParameter>(
@@ -15,7 +15,7 @@ export default function format<Parameter extends ExtendedAbiParameter>(
     name: parameter.name,
     type: parameter.type,
     ...('description' in parameter && { description: parameter.description }),
-    ...('tag' in parameter && { tag: parameter.tag }),
+    ...('tags' in parameter && { tags: parameter.tags }),
   } as FormattedAbiParameter
 
   // If the parameter is tuple or tuple[], format them
