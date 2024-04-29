@@ -2,9 +2,10 @@ import { expect, describe, it, beforeEach } from 'bun:test'
 
 import { getTestConnectors } from './getTestConnectors'
 import { getDeploy } from '../src'
+import { getDecimals } from '../src/getDeploy/utils'
 
 describe('#getDeploy', () => {
-  const { walletClient } = getTestConnectors()
+  const { walletClient, publicClient } = getTestConnectors()
 
   describe('Modules: RebasingFundingManager, RoleAuthorizer, SimplePaymentProcessor', () => {
     const requestedModules = [
@@ -288,6 +289,40 @@ describe('#getDeploy', () => {
           }
           const txHash = await deployFunction(argsCopy as any)
           expect(txHash.length).toEqual(66)
+        })
+      })
+    })
+  })
+
+  describe('utils', () => {
+    describe('#getDecimals', () => {
+      const daiSepolia = '0x68194a729c2450ad26072b3d33adacbcef39d574'
+
+      describe('with valid token contract addresses', () => {
+        const usdcSepolia = '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238'
+
+        it('returns the decimals', async () => {
+          const usdcDecimals = 6
+          const daiDecimals = 18
+
+          const decimals = await getDecimals(publicClient, [
+            usdcSepolia,
+            daiSepolia,
+          ])
+          expect(decimals).toEqual([usdcDecimals, daiDecimals])
+        })
+      })
+
+      describe('with one invalid token contract address', () => {
+        const invalidToken = '0x86fda565A5E96f4232f8136141C92Fd79F2BE950'
+
+        it('throws', async () => {
+          expect(
+            async () =>
+              await getDecimals(publicClient, [invalidToken, daiSepolia])
+          ).toThrowError(
+            'Could not retrieve token decimals, invalid token contract?'
+          )
         })
       })
     })

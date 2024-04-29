@@ -54,3 +54,27 @@ export const assembleMetadata = <ModuleName extends GenericModuleName>(
     ...majorMinorVersion,
   }
 }
+
+export const getDecimals = async (publicClient, tokens) => {
+  const { multicall } = publicClient
+  const abi = [
+    {
+      inputs: [],
+      name: 'decimals',
+      outputs: [{ name: '', type: 'uint8' }],
+      stateMutability: 'view',
+      type: 'function',
+    },
+  ]
+  const contracts = tokens.map((token) => ({
+    address: token,
+    functionName: 'decimals',
+    abi,
+  }))
+
+  const response = await multicall({ contracts })
+  if (response.filter((r) => r.status !== 'success').length > 0) {
+    throw Error('Could not retrieve token decimals, invalid token contract?')
+  }
+  return response.map(({ result }) => result)
+}
