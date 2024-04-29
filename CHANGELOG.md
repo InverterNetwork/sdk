@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.8](https://github.com/InverterNetwork/sdk/compare/v0.0.7...v0.0.8) (2024-04-29)
+
+
+### Features
+
+* tags ar array ([f4057e1](https://github.com/InverterNetwork/sdk/commit/f4057e1e123e759a005fd0cf671293ec47c51d92))
+
 ### [0.0.7](https://github.com/InverterNetwork/sdk/compare/v0.0.7-alpha.7...v0.0.7) (2024-04-24)
 
 ### [0.0.6](https://github.com/InverterNetwork/sdk/compare/v0.0.5...v0.0.6) (2024-04-07)
