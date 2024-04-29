@@ -38,7 +38,7 @@ export const extractMajorMinorVersion = (versionString: ModuleVersionKey) => {
   const version = versionString
     .substring(1)
     .split('.')
-    .map((v) => parseInt(v))
+    .map((v: any) => parseInt(v))
   return { majorVersion: version[0], minorVersion: version[1] }
 }
 
@@ -55,7 +55,7 @@ export const assembleMetadata = <ModuleName extends GenericModuleName>(
   }
 }
 
-export const getDecimals = async (publicClient, tokens) => {
+export const getDecimals = async (publicClient: any, tokens: any) => {
   const { multicall } = publicClient
   const abi = [
     {
@@ -66,7 +66,7 @@ export const getDecimals = async (publicClient, tokens) => {
       type: 'function',
     },
   ]
-  const contracts = tokens.map((token) => ({
+  const contracts = tokens.map((token: any) => ({
     address: token,
     functionName: 'decimals',
     abi,
@@ -76,5 +76,5 @@ export const getDecimals = async (publicClient, tokens) => {
   if (response.filter((r) => r.status !== 'success').length > 0) {
     throw Error('Could not retrieve token decimals, invalid token contract?')
   }
-  return response.map(({ result }) => result)
+  return response.map(({ result }: any) => result)
 }
