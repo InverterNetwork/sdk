@@ -1,16 +1,16 @@
 import constructMethod from './constructMethod'
 import { Extras } from '../types/base'
 import {
-  Abi,
   AbiStateMutability,
-  ExtractAbiFunction,
   ExtractAbiFunctionNames,
+  ExtractAbiFunction,
 } from 'abitype'
 import { TupleToUnion } from 'type-fest'
+import { ExtendedAbi } from '@inverter-network/abis'
 
 // The prepareFunction function is used to prepare the functions from the abi
 export default function prepareFunction<
-  A extends Abi,
+  A extends ExtendedAbi,
   T extends AbiStateMutability[],
   Simulate extends boolean = false,
 >(abi: A, type: T, contract: any, extras?: Extras, simulate?: Simulate) {
