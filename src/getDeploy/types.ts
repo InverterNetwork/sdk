@@ -22,7 +22,7 @@ type ModuleNamesByType<T extends string> = {
 }[keyof typeof data]
 
 type GetRequestedModule<T extends ModuleType | 'utils'> = {
-  name: string // TODO: ModuleType specific name union
+  name: ModuleNamesByType<T>
   version: string // TODO: ModuleType specific version union
 }
 
