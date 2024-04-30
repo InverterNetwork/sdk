@@ -39,7 +39,7 @@ export const extractMajorMinorVersion = (versionString: ModuleVersionKey) => {
     .substring(1)
     .split('.')
     .map((v) => parseInt(v))
-  return { majorVersion: version[0], minorVersion: version[1] }
+  return { majorVersion: BigInt(version[0]), minorVersion: BigInt(version[1]) }
 }
 
 // returns the MetaData struct that the deploy function requires for each module

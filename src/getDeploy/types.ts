@@ -2,12 +2,49 @@ import {
   UserFacingModuleType,
   ModuleVersion,
   ModuleVersionKey,
+  data,
 } from '@inverter-network/abis'
 import { AbiType } from 'abitype'
 import { ORCHESTRATOR_CONFIG } from './constants'
-import { Pretty } from '../types'
+import { Pretty, FormattedAbiParameter } from '../types'
+
+type ParamNames<T extends keyof typeof data> =
+  (typeof data)[T]['v1.0']['deploymentArgs']['configData'][number]['name']
+
+type ParamsObject<T extends keyof typeof data> = {
+  [K in ParamNames<T>]: string | number | string[]
+}
+
+type ModuleNamesByType<T extends string> = {
+  [K in keyof typeof data]: (typeof data)[K]['v1.0']['moduleType'] extends T
+    ? (typeof data)[K]['v1.0']['name']
+    : never
+}[keyof typeof data]
+
+type GetRequestedModule<T extends ModuleType | 'utils'> = {
+  name: string // TODO: ModuleType specific name union
+  version: string // TODO: ModuleType specific version union
+}
+
+type Params = {
+  name: string
+  type: AbiType
+  description: string
+  value: string
+}
+
+type Metadata = {
+  majorVersion: bigint
+  minorVersion: bigint
+  url: string
+  title: string
+}
 
 export type ModuleType = Exclude<UserFacingModuleType, 'orchestrator'>
+export type MandatoryModuleType = Exclude<
+  UserFacingModuleType,
+  'orchestrator' | 'logicModule' | 'utils'
+>
 
 export type NameByModuleType<T extends ModuleType> = Extract<
   ModuleVersion,
@@ -17,7 +54,7 @@ export type NameByModuleType<T extends ModuleType> = Extract<
 export type ModuleInputs<T extends ModuleType> = {
   name: NameByModuleType<T>
   version: ModuleVersionKey
-  params: Params[]
+  inputs: Params[]
 }
 
 export type GenericModuleName = NameByModuleType<ModuleType>
@@ -34,7 +71,7 @@ export type UserInputs = [
   ModuleInputs<'logicModule'>[],
 ]
 
-export type ModuleSpec = {
+export type RequestedModule = {
   name: Pretty<
     | NameByModuleType<'fundingManager'>
     | NameByModuleType<'authorizer'>
@@ -44,45 +81,65 @@ export type ModuleSpec = {
   version: ModuleVersionKey
 }
 
-export type Params = {
-  name: string
-  type: AbiType
-  description: string
-  value: string
+export type RequestedModules = {
+  paymentProcessor: GetRequestedModule<'paymentProcessor'>
+  fundingManager: GetRequestedModule<'fundingManager'>
+  authorizer: GetRequestedModule<'authorizer'>
+  optionalModules?: GetRequestedModule<'logicModule' | 'utils'>[]
 }
 
-export type SmallParams = {
-  type: AbiType
-  value: string
-}
+export type GenericRequestedMandatoryModule =
+  | GetRequestedModule<'paymentProcessor'>
+  | GetRequestedModule<'fundingManager'>
+  | GetRequestedModule<'authorizer'>
+
+// Util to construct params of getDeployFunction
 
 export type ModuleSchema = {
   name: string
   version: string
-  params: Params[]
+  inputs: FormattedAbiParameter[]
 }
 
-// ==================================================================
-// Arguments section not present in the original code
+export type DeploySchema = {
+  orchestrator: ModuleSchema
+  paymentProcessor: ModuleSchema
+  fundingManager: ModuleSchema
+  authorizer: ModuleSchema
+  optionalModules?: ModuleSchema[]
+}
 
 export type OrchestratorArg = {
-  ownerAddress: `0x${string}`
-  tokenAddress: `0x${string}`
+  owner: `0x${string}`
+  token: `0x${string}`
 }
 
-export type ModuleArg<T extends ModuleType> = {
-  name: NameByModuleType<T>
-  version: ModuleVersionKey
-  params: {
-    name: string
-    value: any
-  }[]
+export type ClientInputs = {
+  Orchestrator: OrchestratorArg
+} & Partial<{
+  [K in
+    | ModuleNamesByType<'authorizer'>
+    | ModuleNamesByType<'paymentProcessor'>
+    | ModuleNamesByType<'fundingManager'>
+    | ModuleNamesByType<'utils'>
+    | ModuleNamesByType<'logicModule'>]: ParamsObject<K>
+}>
+
+export type GenericModuleParams = {
+  metadata: Metadata
+  configData: `0x${string}`
+  dependencyData: `0x${string}`
 }
 
-export type DeployArguments = {
+export type EncodedParams = {
+  configData: `0x${string}`
+  dependencyData: `0x${string}`
+}
+
+export type FinalArgs = {
   orchestrator: OrchestratorArg
-  fundingManager: SmallParams[]
-  authorizer: SmallParams[]
-  paymentProcessor: SmallParams[]
-  logicModules?: SmallParams[]
+  fundingManager: GenericModuleParams
+  authorizer: GenericModuleParams
+  paymentProcessor: GenericModuleParams
+  optionalModules: GenericModuleParams[]
 }

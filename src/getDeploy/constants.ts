@@ -1,20 +1,21 @@
 export const ORCHESTRATOR_CONFIG = {
+    name: 'Orchestrator',
     version: 'v1.0',
-    params: {
-      owner: {
+    inputs: [
+      {
+        name: 'owner',
         type: 'address',
         jsType: 'string',
         description: 'The owner address of the workflow',
       },
-      token: {
+      {
+        name: 'token',
         type: 'address',
         jsType: 'string',
         description: 'The payment token associated with the workflow',
       },
-    },
+    ],
   },
-  MANDATORY_MODULES = 3,
-  OPTIONAL_MODULES_IDX = 4,
-  EMPTY_ENCODED_VAL = '0x',
+  MANDATORY_MODULES = ['authorizer', 'paymentProcessor', 'fundingManager'],
   ORCHESTRATOR_FACTORY_ADDRESS = '0x690d5000D278f90B167354975d019c747B78032e',
   METADATA_URL = 'https://github.com/InverterNetwork'
