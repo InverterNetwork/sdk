@@ -6,7 +6,6 @@ import {
 import { GenericModuleName } from './types'
 import { PublicClient, WalletClient, getContract } from 'viem'
 import { METADATA_URL, ORCHESTRATOR_FACTORY_ADDRESS } from './constants'
-import { simulateContract } from 'viem/_types/actions/public/simulateContract'
 
 // retrieves the deployment arguments from the module version
 export const getDeploymentConfig = <
