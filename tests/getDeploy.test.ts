@@ -107,11 +107,11 @@ describe('#getDeploy', () => {
 
       describe('deploymentFunction', () => {
         it('submits a tx', async () => {
-          const { deployFunction } = await getDeploy(
+          const { deploy } = await getDeploy(
             walletClient,
             requestedModules as RequestedModules
           )
-          const txHash = (await deployFunction(args)) as string
+          const txHash = (await deploy(args)) as string
           expect(txHash.length).toEqual(66)
         })
       })
@@ -204,9 +204,9 @@ describe('#getDeploy', () => {
         })
       })
 
-      describe.skip('deployFunction', () => {
+      describe.skip('deploy', () => {
         it('submits a tx', async () => {
-          const { deployFunction } = await getDeploy(walletClient, {
+          const { deploy } = await getDeploy(walletClient, {
             ...requestedModules,
             optionalModules: [{ name: 'MetadataManager', version: 'v1.0' }],
           } as any)
@@ -226,7 +226,7 @@ describe('#getDeploy', () => {
             memberAccount: '0x7AcaF5360474b8E40f619770c7e8803cf3ED1053',
             memberUrl: 'example member url',
           }
-          const txHash = (await deployFunction({
+          const txHash = (await deploy({
             ...args,
             MetadataManager: metadataManagerArgs,
           })) as string
@@ -248,13 +248,13 @@ describe('#getDeploy', () => {
         })
       })
 
-      describe('deployFunction', () => {
+      describe('deploy', () => {
         it('has the correct format', async () => {
-          const { deployFunction } = await getDeploy(walletClient, {
+          const { deploy } = await getDeploy(walletClient, {
             ...requestedModules,
             optionalModules: [{ name: 'BountyManager', version: 'v1.0' }],
           } as any)
-          const txHash = (await deployFunction(args)) as string
+          const txHash = (await deploy(args)) as string
           expect(txHash.length).toEqual(66)
         })
       })
@@ -291,17 +291,17 @@ describe('#getDeploy', () => {
         })
       })
 
-      describe.skip('deployFunction', () => {
+      describe.skip('deploy', () => {
         const epochLength = '604800' // 1 week in seconds
 
         it('submits a tx', async () => {
-          const { deployFunction } = await getDeploy(walletClient, {
+          const { deploy } = await getDeploy(walletClient, {
             ...requestedModules,
             optionalModules: [
               { name: 'RecurringPaymentManager', version: 'v1.0' },
             ],
           } as any)
-          const txHash = (await deployFunction({
+          const txHash = (await deploy({
             ...args,
             RecurringPaymentManager: {
               epochLength: epochLength,

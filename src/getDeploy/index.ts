@@ -151,7 +151,7 @@ export default async function (
 ) {
   const inputSchema = getInputSchema(requestedModules)
 
-  const deployFunction = async (clientInputs: ClientInputs) => {
+  const deploy = async (clientInputs: ClientInputs) => {
     const {
       orchestrator,
       fundingManager,
@@ -178,5 +178,5 @@ export default async function (
       })
   }
 
-  return { inputSchema, deployFunction }
+  return { inputSchema, deploy }
 }
