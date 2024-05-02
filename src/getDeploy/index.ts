@@ -177,8 +177,6 @@ export default async function (
   const inputSchema = getInputSchema(requestedModules)
 
   const deployFunction = async (clientInputs: ClientInputs) => {
-    const args = constructArgs(requestedModules, clientInputs)
-    console.log(args)
     const {
       orchestrator,
       fundingManager,
