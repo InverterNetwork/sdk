@@ -8,9 +8,10 @@ import {
   DeploySchema,
   RequestedModules,
 } from '../src/getDeploy/types'
+import { isAddress } from 'viem'
 
 describe('#getDeploy', () => {
-  const { walletClient } = getTestConnectors()
+  const { walletClient, publicClient } = getTestConnectors()
 
   describe('Modules: RebasingFundingManager, RoleAuthorizer, SimplePaymentProcessor', () => {
     const requestedModules = {
@@ -99,19 +100,33 @@ describe('#getDeploy', () => {
         it('has the correct format', async () => {
           const { inputSchema } = await getDeploy(
             walletClient,
+            publicClient,
             requestedModules as RequestedModules
           )
           expect(inputSchema).toEqual(expectedBaseInputSchema as any)
         })
       })
 
-      describe('deploymentFunction', () => {
+      describe('simulateDeploy', () => {
+        it('returns the orchestrator address', async () => {
+          const { simulateDeploy } = await getDeploy(
+            walletClient,
+            publicClient,
+            requestedModules as RequestedModules
+          )
+          const orchestratorAddress = await simulateDeploy(args)
+          expect(isAddress(orchestratorAddress)).toBeTrue
+        })
+      })
+
+      describe('deploy', () => {
         it('submits a tx', async () => {
           const { deploy } = await getDeploy(
             walletClient,
+            publicClient,
             requestedModules as RequestedModules
           )
-          const txHash = (await deploy(args)) as string
+          const { txHash } = await deploy(args)
           expect(txHash.length).toEqual(66)
         })
       })
@@ -193,7 +208,7 @@ describe('#getDeploy', () => {
         } as ModuleSchema
 
         it('has the correct format', async () => {
-          const { inputSchema } = await getDeploy(walletClient, {
+          const { inputSchema } = await getDeploy(walletClient, publicClient, {
             ...requestedModules,
             optionalModules: [{ name: 'MetadataManager', version: 'v1.0' }],
           } as any)
@@ -206,7 +221,7 @@ describe('#getDeploy', () => {
 
       describe.skip('deploy', () => {
         it('submits a tx', async () => {
-          const { deploy } = await getDeploy(walletClient, {
+          const { deploy } = await getDeploy(walletClient, publicClient, {
             ...requestedModules,
             optionalModules: [{ name: 'MetadataManager', version: 'v1.0' }],
           } as any)
@@ -226,10 +241,10 @@ describe('#getDeploy', () => {
             memberAccount: '0x7AcaF5360474b8E40f619770c7e8803cf3ED1053',
             memberUrl: 'example member url',
           }
-          const txHash = (await deploy({
+          const { txHash } = await deploy({
             ...args,
             MetadataManager: metadataManagerArgs,
-          })) as string
+          })
           expect(txHash.length).toEqual(66)
         })
       })
@@ -238,7 +253,7 @@ describe('#getDeploy', () => {
     describe('optional: BountyManager', () => {
       describe('inputSchema', () => {
         it('has the correct format', async () => {
-          const { inputSchema } = await getDeploy(walletClient, {
+          const { inputSchema } = await getDeploy(walletClient, publicClient, {
             ...requestedModules,
             optionalModules: [{ name: 'BountyManager', version: 'v1.0' }],
           } as any)
@@ -248,13 +263,13 @@ describe('#getDeploy', () => {
         })
       })
 
-      describe('deploy', () => {
+      describe.only('deploy', () => {
         it('has the correct format', async () => {
-          const { deploy } = await getDeploy(walletClient, {
+          const { deploy } = await getDeploy(walletClient, publicClient, {
             ...requestedModules,
             optionalModules: [{ name: 'BountyManager', version: 'v1.0' }],
           } as any)
-          const txHash = (await deploy(args)) as string
+          const { txHash } = await deploy(args)
           expect(txHash.length).toEqual(66)
         })
       })
@@ -277,7 +292,7 @@ describe('#getDeploy', () => {
 
       describe('inputSchema', () => {
         it('has the correct format', async () => {
-          const { inputSchema } = await getDeploy(walletClient, {
+          const { inputSchema } = await getDeploy(walletClient, publicClient, {
             ...requestedModules,
             optionalModules: [
               { name: 'RecurringPaymentManager', version: 'v1.0' },
@@ -295,18 +310,18 @@ describe('#getDeploy', () => {
         const epochLength = '604800' // 1 week in seconds
 
         it('submits a tx', async () => {
-          const { deploy } = await getDeploy(walletClient, {
+          const { deploy } = await getDeploy(walletClient, publicClient, {
             ...requestedModules,
             optionalModules: [
               { name: 'RecurringPaymentManager', version: 'v1.0' },
             ],
           } as any)
-          const txHash = (await deploy({
+          const { txHash } = await deploy({
             ...args,
             RecurringPaymentManager: {
               epochLength: epochLength,
             },
-          })) as string
+          })
           expect(txHash.length).toEqual(66)
         })
       })

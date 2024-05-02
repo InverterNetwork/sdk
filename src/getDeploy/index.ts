@@ -1,4 +1,4 @@
-import { WalletClient } from 'viem'
+import { PublicClient, WalletClient } from 'viem'
 import { encodeAbiParameters } from 'viem'
 import { MANDATORY_MODULES, ORCHESTRATOR_CONFIG } from './constants'
 import {
@@ -12,7 +12,11 @@ import {
   OrchestratorArg,
   MandatoryModuleType,
 } from './types'
-import { assembleMetadata, getDeploymentConfig, getWriteFn } from './utils'
+import {
+  assembleMetadata,
+  getDeploymentConfig,
+  getDeployInteraction,
+} from './utils'
 import { getModuleVersion } from '@inverter-network/abis'
 import { getJsType } from '../utils'
 
@@ -145,38 +149,59 @@ const constructArgs = (
   return args
 }
 
+const getArrayifiedArgs = (
+  requestedModules: RequestedModules,
+  clientInputs: ClientInputs
+) => {
+  const {
+    orchestrator,
+    fundingManager,
+    authorizer,
+    paymentProcessor,
+    optionalModules,
+  } = constructArgs(requestedModules, clientInputs)
+
+  return [
+    orchestrator,
+    fundingManager,
+    authorizer,
+    paymentProcessor,
+    optionalModules,
+  ] as [
+    OrchestratorArg,
+    GenericModuleParams,
+    GenericModuleParams,
+    GenericModuleParams,
+    GenericModuleParams[],
+  ]
+}
+
 export default async function (
   walletClient: WalletClient,
+  publicClient: PublicClient,
   requestedModules: RequestedModules
 ) {
   const inputSchema = getInputSchema(requestedModules)
+  const { run, simulate } = getDeployInteraction(walletClient, publicClient)
 
   const deploy = async (clientInputs: ClientInputs) => {
-    const {
-      orchestrator,
-      fundingManager,
-      authorizer,
-      paymentProcessor,
-      optionalModules,
-    } = constructArgs(requestedModules, clientInputs)
+    const args = getArrayifiedArgs(requestedModules, clientInputs)
 
-    const writeFn = getWriteFn(walletClient)
-    return writeFn(
-      [
-        orchestrator,
-        fundingManager,
-        authorizer,
-        paymentProcessor,
-        optionalModules,
-      ],
-      {} as any
-    )
-      .then((r: string) => r)
-      .catch((e: Error) => {
-        console.log(e)
-        return e
-      })
+    try {
+      const { result } = await simulate(args, {} as any)
+      const txHash = await run(args, {} as any)
+      return { txHash, orchestratorAddress: result }
+    } catch (e) {
+      console.log(e)
+      return e
+    }
   }
 
-  return { inputSchema, deploy }
+  const simulateDeploy = async (clientInputs: ClientInputs) => {
+    const args = getArrayifiedArgs(requestedModules, clientInputs)
+    const { result } = await simulate(args, {} as any)
+    return result
+  }
+
+  return { inputSchema, deploy, simulateDeploy }
 }
