@@ -1,4 +1,5 @@
 import { expect, describe, it } from 'bun:test'
+import { isAddress } from 'viem'
 
 import { getTestConnectors } from './getTestConnectors'
 import { getDeploy } from '../src'
@@ -8,7 +9,6 @@ import {
   DeploySchema,
   RequestedModules,
 } from '../src/getDeploy/types'
-import { isAddress } from 'viem'
 
 describe('#getDeploy', () => {
   const { walletClient, publicClient } = getTestConnectors()
