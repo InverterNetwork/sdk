@@ -1,10 +1,10 @@
-import formatParameters from '../formatParameters'
+import formatParameters from '../../utils/formatParameters'
 import { Extras } from '../../types'
 import getRun from './getRun'
 import { ExtendedAbiFunction } from '@inverter-network/abis'
 
 // The PreservedProps type is used to preserve the properties of the abiFunction
-interface PreservedProps<F extends ExtendedAbiFunction> {
+type PreservedProps<F extends ExtendedAbiFunction> = {
   name: F['name']
   description: F['description']
   inputs: F['inputs']

@@ -1,5 +1,6 @@
 import { AbiParameter, AbiParameterToPrimitiveType } from 'abitype'
-import { JsType, Pretty } from '../..'
+import { JsType } from '../..'
+import { Pretty } from '@inverter-network/abis'
 
 // Non Tuple types Formatter
 type SimplePrimitive<P> = P extends {

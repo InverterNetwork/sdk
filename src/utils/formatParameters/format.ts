@@ -4,6 +4,7 @@ import {
   isTupleFormattedAbiParameter,
   isNonTupleFormattedAbiParameter,
 } from '../../types'
+import { getJsType } from '..'
 
 // Base case for recursion
 export default function format<Parameter extends ExtendedAbiParameter>(
@@ -14,7 +15,7 @@ export default function format<Parameter extends ExtendedAbiParameter>(
     name: parameter.name,
     type: parameter.type,
     ...('description' in parameter && { description: parameter.description }),
-    ...('tag' in parameter && { tag: parameter.tag }),
+    ...('tags' in parameter && { tags: parameter.tags }),
   } as FormattedAbiParameter
 
   // If the parameter is tuple or tuple[], format them
@@ -23,17 +24,9 @@ export default function format<Parameter extends ExtendedAbiParameter>(
 
   // If the parameter is not a tuple or tuple[], format it
   if (isNonTupleFormattedAbiParameter(result)) {
-    // If the parameter has a tag, format it
-    if ('tag' in parameter) {
-      if (parameter.tag === 'any') result.jsType = 'any'
-    }
+    const jsType = getJsType(parameter)
 
-    // Simplify the type of the parameter, to typescript types, into the jsType property
-    if (parameter.type === 'bool') result.jsType = 'boolean'
-    if (/^u?int/.test(parameter.type)) result.jsType = 'string'
-    if (/^u?int.*\[\]$/.test(parameter.type)) result.jsType = 'string[]'
-    if (/^bytes/.test(parameter.type)) result.jsType = '0xstring'
-    if (/^bytes.*\[\]$/.test(parameter.type)) result.jsType = '0xstring[]'
+    if (jsType) result.jsType = jsType
   }
 
   return result

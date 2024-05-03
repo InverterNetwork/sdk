@@ -25,12 +25,12 @@ export default function format(
   }
 
   // if the output has a tag
-  if ('tag' in output) {
-    const { tag } = output
+  if ('tags' in output) {
+    const { tags } = output
     // if the output has a tag
-    if (tag === 'any') return any(res)
+    if (tags?.includes('any')) return any(res)
 
-    if (tag === 'decimals') return decimals(res, extras)
+    if (tags?.includes('decimals')) return decimals(res, extras)
   }
 
   // if all else fails, just return the initial res

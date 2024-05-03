@@ -3,10 +3,11 @@ import {
   ModuleVersion,
   ModuleVersionKey,
   data,
+  Pretty,
 } from '@inverter-network/abis'
 import { AbiType } from 'abitype'
 import { ORCHESTRATOR_CONFIG } from './constants'
-import { Pretty, FormattedAbiParameter } from '../types'
+import { FormattedAbiParameter } from '../types'
 
 type ParamNames<T extends keyof typeof data> =
   (typeof data)[T]['v1.0']['deploymentArgs']['configData'][number]['name']
