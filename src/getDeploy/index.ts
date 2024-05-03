@@ -1,58 +1,48 @@
 import { WalletClient } from 'viem'
-import { encodeAbiParameters, AbiParameter } from 'viem'
+import { encodeAbiParameters } from 'viem'
+import { MANDATORY_MODULES, ORCHESTRATOR_CONFIG } from './constants'
 import {
-  EMPTY_ENCODED_VAL,
-  MANDATORY_MODULES,
-  OPTIONAL_MODULES_IDX,
-  ORCHESTRATOR_CONFIG,
-} from './constants'
-import {
-  ModuleInputs,
-  ModuleSpec,
-  ModuleType,
-  OrchestratorInputs,
-  Params,
-  UserInputs,
+  RequestedModule,
+  RequestedModules,
+  DeploySchema,
+  ClientInputs,
+  EncodedParams,
+  GenericModuleParams,
+  FinalArgs,
+  OrchestratorArg,
+  MandatoryModuleType,
 } from './types'
-import { assembleMetadata, getDeploymentArgs, getWriteFn } from './utils'
-
-// creates an array of length = 5 to fill in the inputs for the deploy function
-const getPrefilledDeploymentArgs = () => {
-  const deploymentArgs = Array(4)
-  deploymentArgs[0] = ORCHESTRATOR_CONFIG
-  deploymentArgs[4] = [] //optional modules
-  return deploymentArgs
-}
+import { assembleMetadata, getDeploymentConfig, getWriteFn } from './utils'
+import { getModuleVersion } from '@inverter-network/abis'
+import { getJsType } from '../utils'
 
 // uses the deploymentArgs from the config and transforms them into a flattened
 // array as well as injects a value property of type string which is supposed to
 // be filled with a user input through the client side
-const getFlattenedParams = (deploymentArgs: any) => {
+const parseParams = (deploymentArgs: any) => {
   const flattenedParams: any = []
 
   Object.keys(deploymentArgs).forEach((key) => {
     const params = deploymentArgs[key]
     if (params.length > 0) {
-      params.forEach((p: any) => flattenedParams.push(p))
+      params.forEach(({ description, name, type }: any) => {
+        const jsType = getJsType(type)
+        flattenedParams.push({ description, name, type, jsType })
+      })
     }
   })
-  const withInjectedValues = flattenedParams.map((p: any) => ({
-    ...p,
-    value: '',
-  }))
-
-  return withInjectedValues
+  return flattenedParams
 }
 
-const getModuleSchema = (module: ModuleSpec) => {
+const getModuleSchema = (module: RequestedModule) => {
   const { name, version } = module
   // get deployment arg info from configs (abis package)
-  const rawModuleConfig = getDeploymentArgs(name, version)
-  const params = getFlattenedParams(rawModuleConfig)
+  const { deploymentArgs: rawModuleConfig } = getDeploymentConfig(name, version)
+  const inputs = parseParams(rawModuleConfig)
   const moduleSchema = {
-    name,
     version,
-    params,
+    inputs,
+    name,
   }
   return moduleSchema
 }
@@ -60,116 +50,132 @@ const getModuleSchema = (module: ModuleSpec) => {
 // based on the module names and versions passed to it
 // retrieves from the abi config the required deployment inputs
 // for the requested modules
-const getInputSchema = (modules: ModuleSpec[]) => {
-  // get array that holds deployment args prefilled w/ orchestrator config
-  const deploymentArgs = getPrefilledDeploymentArgs()
-  // iterate over modules
-  for (let i = 0; i < modules.length; i++) {
-    const moduleConfigInfo = getModuleSchema(modules[i])
-    if (i <= MANDATORY_MODULES) {
-      deploymentArgs[i + 1] = moduleConfigInfo
-    } else {
-      // if it's an optional module store it in the array at idx = 4
-      // of the input params for the deploy function
-      deploymentArgs[OPTIONAL_MODULES_IDX].push(moduleConfigInfo)
+const getInputSchema = (moduleSpecs: RequestedModules) => {
+  const inputSchema: any = { orchestrator: ORCHESTRATOR_CONFIG }
+  MANDATORY_MODULES.forEach((moduleType) => {
+    const moduleSchema = getModuleSchema(
+      moduleSpecs[moduleType as keyof typeof moduleSpecs] as RequestedModule
+    )
+    if (moduleSchema.inputs.length > 0) {
+      inputSchema[moduleType] = moduleSchema
     }
-  }
-
-  return deploymentArgs
-}
-
-// returns the formatted orchestrator params to be passed to the deploy function
-const getOrchestratorParams = (orchestrator: OrchestratorInputs) => ({
-  owner: orchestrator.params[0].value,
-  token: orchestrator.params[1].value,
-})
-
-// takes in ALL params passed for a given module
-// and encodes slices of those params (representing configData & dependencyData)
-const encodeUserInputs = (
-  params: Params[],
-  startIdx: number,
-  endIdx: number
-) => {
-  if (startIdx > params.length) {
-    return EMPTY_ENCODED_VAL
-  }
-  const abiEncoderParams: [AbiParameter[], any] = [[], []]
-  params.slice(startIdx, endIdx).forEach(({ name, type, value }) => {
-    // TODO
-    abiEncoderParams[0].push({ name, type } as any)
-    abiEncoderParams[1].push(value)
   })
-  return encodeAbiParameters(...abiEncoderParams)
-}
-
-// for a given module validates if the module
-// is of moduleType (necessary for validation of mandatory modules)
-// and encodes and formats the inputs
-const getModuleInputs = <TModuleType extends ModuleType>(
-  module: ModuleInputs<TModuleType>
-) => {
-  const { name, version, params } = module
-  const moduleConfigTemplate = getDeploymentArgs(name, version)
-  const { configData, dependencyData } = moduleConfigTemplate
-  const encodedConfigData = encodeUserInputs(params, 0, configData.length)
-  const encodedDependencyData = encodeUserInputs(
-    params,
-    configData.length,
-    configData.length + dependencyData.length
-  )
-  const metadata = assembleMetadata(name, version)
-  return {
-    metadata,
-    configData: encodedConfigData,
-    dependencyData: encodedDependencyData,
+  if (moduleSpecs.optionalModules && moduleSpecs.optionalModules.length > 0) {
+    moduleSpecs.optionalModules.forEach((m) => {
+      const moduleSchema = getModuleSchema(m as RequestedModule)
+      if (moduleSchema.inputs.length > 0) {
+        if (!inputSchema.optionalModules) {
+          inputSchema.optionalModules = []
+        }
+        inputSchema.optionalModules.push(getModuleSchema(m as RequestedModule))
+      }
+    })
   }
+  return inputSchema as DeploySchema
 }
 
-// takes in the inputs submitted by a user and parses & encodes
-// them into the format requested by the deploy function
-const parseInputs = (argsConfig: UserInputs) => {
-  const [
-    orchestrator,
-    fundingManager,
-    authorizer,
-    paymentProcessor,
-    optionalModules,
-  ] = argsConfig
+const getEncodedParams = (clientInputs: any, moduleConfig: any) => {
+  const encodedModuleParams: any = {}
+  const { deploymentArgs, name } = moduleConfig
+  const userModuleParams = clientInputs[name]
+  const { configData, dependencyData } = deploymentArgs
+  // iterate over userModuleParams
+  ;[configData, dependencyData].forEach((dataArr, index) => {
+    const paramValueContainer = Array(dataArr.length)
+    const paramTypeContainer = Array(dataArr.length)
+    for (const paramName in userModuleParams) {
+      // find index in config
+      const idx = dataArr.findIndex((config: any) => config.name === paramName)
+      if (idx >= 0) {
+        const { type } = dataArr[idx]
+        // put param in correct idx in param container
+        paramValueContainer[idx] = userModuleParams[paramName]
+        paramTypeContainer[idx] = { type }
+      }
+    }
+    const key = index === 0 ? 'configData' : 'dependencyData'
+    encodedModuleParams[key] = encodeAbiParameters(
+      paramTypeContainer,
+      paramValueContainer
+    )
+  })
+  return encodedModuleParams as EncodedParams
+}
 
-  // Orchestrator
-  const orchestratorInputs = getOrchestratorParams(orchestrator)
+const assembleModuleArgs = (requestedModule: any, clientInputs: any) => {
+  const { name, version } = requestedModule
+  const moduleConfig = getModuleVersion(name, version)
+  const { moduleType } = moduleConfig
+  const moduleArgs = {
+    ...getEncodedParams(clientInputs, moduleConfig),
+  } as GenericModuleParams
+  moduleArgs.metadata = assembleMetadata(name, version)
+  return { moduleType, moduleArgs }
+}
 
-  // Mandatory Modules
-  const fundingManagerInputs = getModuleInputs(fundingManager)
-  const authorizerInputs = getModuleInputs(authorizer)
-  const paymentProcessorInputs = getModuleInputs(paymentProcessor)
+const constructArgs = (
+  requestedModules: RequestedModules,
+  clientInputs: ClientInputs
+) => {
+  const args = {
+    orchestrator: clientInputs.Orchestrator as OrchestratorArg,
+    fundingManager: {} as GenericModuleParams,
+    authorizer: {} as GenericModuleParams,
+    paymentProcessor: {} as GenericModuleParams,
+    optionalModules: [] as GenericModuleParams[],
+  } as FinalArgs
+  // mandatory modules
+  ;(MANDATORY_MODULES as MandatoryModuleType[]).forEach((type) => {
+    const userChoice = requestedModules[type]
+    const { moduleType, moduleArgs } = assembleModuleArgs(
+      userChoice,
+      clientInputs
+    )
+    args[moduleType as MandatoryModuleType] = moduleArgs
+  })
+  // optional modules
+  const { optionalModules } = requestedModules
+  if (optionalModules && optionalModules?.length > 0) {
+    optionalModules.forEach((module) => {
+      const { moduleArgs } = assembleModuleArgs(module, clientInputs)
+      args.optionalModules.push(moduleArgs)
+    })
+  }
 
-  // Optional Modules
-  const optionalModuleInputs = optionalModules.map((m) => getModuleInputs(m))
-
-  return [
-    orchestratorInputs,
-    fundingManagerInputs,
-    authorizerInputs,
-    paymentProcessorInputs,
-    optionalModuleInputs,
-  ]
+  return args
 }
 
 export default async function (
   walletClient: WalletClient,
-  modules: ModuleSpec[]
+  requestedModules: RequestedModules
 ) {
-  const inputSchema = getInputSchema(modules)
+  const inputSchema = getInputSchema(requestedModules)
 
-  // get deploy function
-  const deployFunction = async (clientInputs: UserInputs) => {
-    const parsedInputs = parseInputs(clientInputs)
+  const deployFunction = async (clientInputs: ClientInputs) => {
+    const {
+      orchestrator,
+      fundingManager,
+      authorizer,
+      paymentProcessor,
+      optionalModules,
+    } = constructArgs(requestedModules, clientInputs)
+
     const writeFn = getWriteFn(walletClient)
-    return writeFn(parsedInputs as any, {} as any)
-      .then((r) => r)
-      .catch((e) => e)
+    return writeFn(
+      [
+        orchestrator,
+        fundingManager,
+        authorizer,
+        paymentProcessor,
+        optionalModules,
+      ],
+      {} as any
+    )
+      .then((r: string) => r)
+      .catch((e: Error) => {
+        console.log(e)
+        return e
+      })
   }
 
   return { inputSchema, deployFunction }
