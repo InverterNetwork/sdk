@@ -1,6 +1,6 @@
 import { MANDATORY_MODULES, ORCHESTRATOR_CONFIG } from './constants'
 import {
-  GetDeploymentArgs,
+  FomrattedDeploymentParameters,
   MendatoryDeploySchema,
   OptionalDeploySchema,
   RequestedModule,
@@ -9,21 +9,16 @@ import {
 import formatParameters from '../utils/formatParameters'
 import { getModuleData } from '@inverter-network/abis'
 
-export const getModuleSchema = <T extends RequestedModule>(
+export const getModuleSchema = <
+  T extends RequestedModule,
+  // @ts-expect-error - This is a hack to get around the fact that we can't resolve version
+  Inputs = FomrattedDeploymentParameters<T['name'], T['version']>,
+>(
   module: T
 ): {
   name: T['name']
   version: T['version']
-  inputs: ReturnType<
-    typeof formatParameters<
-      [
-        // @ts-expect-error - TS doesn't resolve version
-        ...GetDeploymentArgs<T['name'], T['version']>['configData'],
-        // @ts-expect-error - TS doesn't resolve version
-        ...GetDeploymentArgs<T['name'], T['version']>['dependencyData'],
-      ]
-    >
-  >
+  inputs: Inputs
 } => {
   const { name, version, deploymentArgs } = getModuleData(
     module.name,
@@ -40,7 +35,11 @@ export const getModuleSchema = <T extends RequestedModule>(
   return { name, version, inputs }
 }
 
-export default function <T extends RequestedModules>(requestedModules: T) {
+export default function <T extends RequestedModules>(
+  requestedModules: T
+): {
+  orchestrator: typeof ORCHESTRATOR_CONFIG
+} {
   const mandatoryResult = {} as MendatoryDeploySchema
   const optionalResult = [] as NonNullable<
     OptionalDeploySchema['optionalModules']

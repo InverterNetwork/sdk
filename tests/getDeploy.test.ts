@@ -120,77 +120,66 @@ describe('#getDeploy', () => {
     describe('optionalModules: MetadataManager', () => {
       describe('inputSchema', () => {
         const expectedMetadataManagerSchema = {
-          version: 'v1.0',
+          version: '1',
           name: 'MetadataManager',
           inputs: [
             {
               name: 'managerName',
               type: 'string',
               description: 'The (user-) name of the manager',
-              jsType: 'string',
             },
             {
               name: 'managerAccount',
               type: 'address',
               description: 'The address of the manager',
-              jsType: '0xstring',
             },
             {
               name: 'managerTwitterHandle',
               type: 'string',
               description: 'The twitter handle of the manager',
-              jsType: 'string',
             },
             {
               name: 'title',
               type: 'string',
               description: 'The name of the workflow/orchestrator',
-              jsType: 'string',
             },
             {
               name: 'descriptionShort',
               type: 'string',
               description: 'The short description of the workflow/orchestrator',
-              jsType: 'string',
             },
             {
               name: 'descriptionLong',
               type: 'string',
               description: 'The long description of the workflow/orchestrator',
-              jsType: 'string',
             },
             {
               name: 'externalMedias',
               type: 'string[]',
               description: 'An array of links to external medias',
-              jsType: 'string[]',
             },
             {
               name: 'categories',
               type: 'string[]',
               description: 'An array of categories of the workflow/orchestator',
-              jsType: 'string[]',
             },
             {
               name: 'memberName',
               type: 'string',
               description: 'The (user-) name of the member',
-              jsType: 'string',
             },
             {
               name: 'memberAccount',
               type: 'address',
               description: 'The address of the member',
-              jsType: '0xstring',
             },
             {
               name: 'memberUrl',
               type: 'string',
               description: 'A url of the member',
-              jsType: 'string',
             },
           ],
-        } as ModuleSchema
+        } as ModuleSchema<'MetadataManager', '1'>
 
         it('has the correct format', async () => {
           const { inputSchema } = await getDeploy(walletClient, {

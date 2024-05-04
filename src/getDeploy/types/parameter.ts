@@ -1,5 +1,6 @@
 import { ModuleName, GetModuleVersion } from '@inverter-network/abis'
 import { GetDeploymentArgs } from '.'
+import { FormatParameters } from '../../types'
 
 export type ConfigDataParameters<
   N extends ModuleName,
@@ -12,3 +13,13 @@ export type ConfigDataParameters<
     }
   >
 }
+
+export type FomrattedDeploymentParameters<
+  N extends ModuleName,
+  V extends GetModuleVersion<N>,
+> = FormatParameters<
+  [
+    ...GetDeploymentArgs<N, V>['configData'],
+    ...GetDeploymentArgs<N, V>['dependencyData'],
+  ]
+>

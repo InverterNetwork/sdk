@@ -1,11 +1,14 @@
-import { Pretty } from '@inverter-network/abis'
-import { FormattedAbiParameter } from '../../types'
+import { GetModuleVersion, ModuleName, Pretty } from '@inverter-network/abis'
 import { OrchestratorInputs } from './generic'
+import { FomrattedDeploymentParameters } from './parameter'
 
-export type ModuleSchema = {
-  name: string
-  version: string
-  inputs: readonly FormattedAbiParameter[]
+export type ModuleSchema<
+  N extends ModuleName = ModuleName,
+  V extends GetModuleVersion<N> = GetModuleVersion<N>,
+> = {
+  name: N
+  version: V
+  inputs: FomrattedDeploymentParameters<N, V>
 }
 
 export type MendatoryDeploySchema = {
