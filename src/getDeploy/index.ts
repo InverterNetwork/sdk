@@ -7,13 +7,13 @@ import {
   DeploySchema,
   ClientInputs,
   EncodedParams,
-  GenericModuleParams,
+  ModuleParams,
   FinalArgs,
-  OrchestratorArg,
-  MandatoryModuleType,
+  OrchestratorArgs,
+  MendatoryModuleType,
 } from './types'
 import { assembleMetadata, getDeploymentConfig, getWriteFn } from './utils'
-import { getModuleVersion } from '@inverter-network/abis'
+import { getModuleData } from '@inverter-network/abis'
 import { getJsType } from '../utils'
 
 // uses the deploymentArgs from the config and transforms them into a flattened
@@ -50,18 +50,23 @@ const getModuleSchema = (module: RequestedModule) => {
 // based on the module names and versions passed to it
 // retrieves from the abi config the required deployment inputs
 // for the requested modules
-const getInputSchema = (moduleSpecs: RequestedModules) => {
+const getInputSchema = (requestedModules: RequestedModules) => {
   const inputSchema: any = { orchestrator: ORCHESTRATOR_CONFIG }
   MANDATORY_MODULES.forEach((moduleType) => {
     const moduleSchema = getModuleSchema(
-      moduleSpecs[moduleType as keyof typeof moduleSpecs] as RequestedModule
+      requestedModules[
+        moduleType as keyof typeof requestedModules
+      ] as RequestedModule
     )
     if (moduleSchema.inputs.length > 0) {
       inputSchema[moduleType] = moduleSchema
     }
   })
-  if (moduleSpecs.optionalModules && moduleSpecs.optionalModules.length > 0) {
-    moduleSpecs.optionalModules.forEach((m) => {
+  if (
+    requestedModules.optionalModules &&
+    requestedModules.optionalModules.length > 0
+  ) {
+    requestedModules.optionalModules.forEach((m) => {
       const moduleSchema = getModuleSchema(m as RequestedModule)
       if (moduleSchema.inputs.length > 0) {
         if (!inputSchema.optionalModules) {
@@ -104,11 +109,11 @@ const getEncodedParams = (clientInputs: any, moduleConfig: any) => {
 
 const assembleModuleArgs = (requestedModule: any, clientInputs: any) => {
   const { name, version } = requestedModule
-  const moduleConfig = getModuleVersion(name, version)
+  const moduleConfig = getModuleData(name, version)
   const { moduleType } = moduleConfig
   const moduleArgs = {
     ...getEncodedParams(clientInputs, moduleConfig),
-  } as GenericModuleParams
+  } as ModuleParams
   moduleArgs.metadata = assembleMetadata(name, version)
   return { moduleType, moduleArgs }
 }
@@ -118,20 +123,20 @@ const constructArgs = (
   clientInputs: ClientInputs
 ) => {
   const args = {
-    orchestrator: clientInputs.Orchestrator as OrchestratorArg,
-    fundingManager: {} as GenericModuleParams,
-    authorizer: {} as GenericModuleParams,
-    paymentProcessor: {} as GenericModuleParams,
-    optionalModules: [] as GenericModuleParams[],
+    orchestrator: clientInputs.Orchestrator as OrchestratorArgs,
+    fundingManager: {} as ModuleParams,
+    authorizer: {} as ModuleParams,
+    paymentProcessor: {} as ModuleParams,
+    optionalModules: [] as ModuleParams[],
   } as FinalArgs
   // mandatory modules
-  ;(MANDATORY_MODULES as MandatoryModuleType[]).forEach((type) => {
+  MANDATORY_MODULES.forEach((type) => {
     const userChoice = requestedModules[type]
     const { moduleType, moduleArgs } = assembleModuleArgs(
       userChoice,
       clientInputs
     )
-    args[moduleType as MandatoryModuleType] = moduleArgs
+    args[moduleType as MendatoryModuleType] = moduleArgs
   })
   // optional modules
   const { optionalModules } = requestedModules

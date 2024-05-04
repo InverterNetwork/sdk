@@ -10,15 +10,24 @@ import {
 import getModule from './getModule'
 import {
   UserFacingModuleType,
-  ModuleVersion,
-  getModuleVersion,
+  GetModuleVersion,
+  getModuleData,
+  ModuleName,
+  GetModuleNameByType,
 } from '@inverter-network/abis'
 
+type ModuleType = Exclude<UserFacingModuleType, 'orchestrator'>
+
+type OrientationPart<
+  MT extends ModuleType,
+  N extends GetModuleNameByType<MT> = GetModuleNameByType<MT>,
+  V extends GetModuleVersion<N> = GetModuleVersion<N>,
+> = {
+  name: N
+  version: V
+}
 type WorkflowOrientation = {
-  [T in Exclude<UserFacingModuleType, 'orchestrator'>]: {
-    name: Extract<ModuleVersion, { moduleType: T }>['name']
-    version: Extract<ModuleVersion, { moduleType: T }>['version']
-  }
+  [T in ModuleType]: OrientationPart<T>
 }
 
 export default async function getWorkflow<
@@ -40,7 +49,7 @@ export default async function getWorkflow<
   // 1. initialize orchestrator
   const orchestrator = getModule({
     name: 'Orchestrator',
-    version: 'v1.0',
+    version: '1',
     address: orchestratorAddress,
     publicClient,
     walletClient,
@@ -50,7 +59,7 @@ export default async function getWorkflow<
   // 2. gather extras
   const erc20Address = await getContract({
     address: fundingManagerAddress,
-    abi: getModuleVersion('RebasingFundingManager', 'v1.0').abi,
+    abi: getModuleData('RebasingFundingManager', '1')!.abi,
     client: {
       public: publicClient,
     },
@@ -58,7 +67,7 @@ export default async function getWorkflow<
 
   const erc20Contract = getContract({
       address: erc20Address,
-      abi: getModuleVersion('ERC20', 'v1.0').abi,
+      abi: getModuleData('ERC20', '1')!.abi,
       client: { public: publicClient },
     }),
     erc20Decimals = await erc20Contract.read.decimals(),
@@ -68,7 +77,7 @@ export default async function getWorkflow<
       walletClient,
       address: erc20Address,
       name: 'ERC20',
-      version: 'v1.0',
+      version: '1',
       extras: {
         decimals: erc20Decimals,
       },
@@ -94,21 +103,17 @@ export default async function getWorkflow<
           // address then get the title and version
           await Promise.all(
             (await orchestrator.read.listModules.run()).map(async (address) => {
+              type Name = Exclude<ModuleName, 'Orchestrator' | 'ERC20'>
               const flatModule = getModule({
                   publicClient,
                   walletClient,
                   address,
                   name: 'Module',
-                  version: 'v1.0',
+                  version: '1',
                 }),
-                name = <ModuleVersion['name']>await flatModule.read.title.run(),
-                [major, minor] = await flatModule.read.version.run(),
-                version = <ModuleVersion['version']>(() => {
-                  const initialRes = `v${major}.${minor}`
-                  // TODO: Contract version should match ( contract team )
-                  if (Number(minor) > 0) return 'v1.0'
-                  return initialRes
-                })()
+                name = <Name>await flatModule.read.title.run(),
+                [major] = await flatModule.read.version.run(),
+                version = <GetModuleVersion<Name>>major
 
               return { name, version, address }
             })
@@ -134,11 +139,13 @@ export default async function getWorkflow<
       return acc
     }, {}) as {
       [K in keyof WorkflowOrientation]: O extends NonNullable<O>
-        ? ReturnType<typeof getModule<O[K]['name'], O[K]['version'], W>>
+        ? ReturnType<
+            typeof getModule<O[K]['name'], GetModuleVersion<O[K]['name']>, W>
+          >
         : ReturnType<
             typeof getModule<
               WorkflowOrientation[K]['name'],
-              WorkflowOrientation[K]['version'],
+              GetModuleVersion<WorkflowOrientation[K]['name']>,
               W
             >
           >

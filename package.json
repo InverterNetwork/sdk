@@ -80,6 +80,6 @@
     "viem": "^2.7.6"
   },
   "dependencies": {
-    "@inverter-network/abis": "^0.0.7"
+    "@inverter-network/abis": "0.1.0-alpha.1"
   }
 }

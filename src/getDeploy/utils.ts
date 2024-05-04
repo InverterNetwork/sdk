@@ -1,27 +1,26 @@
 import {
-  ModuleVersionKey,
-  data,
-  getModuleVersion,
+  GetModuleVersion,
+  getModuleData,
+  ModuleName,
 } from '@inverter-network/abis'
-import { GenericModuleName } from './types'
 import { WalletClient, getContract } from 'viem'
 import { METADATA_URL, ORCHESTRATOR_FACTORY_ADDRESS } from './constants'
 
 // retrieves the deployment arguments from the module version
 export const getDeploymentConfig = <
-  TGenericModuleName extends GenericModuleName,
-  TModuleVersionKey extends ModuleVersionKey,
+  N extends ModuleName,
+  V extends GetModuleVersion<N>,
 >(
-  name: TGenericModuleName,
-  version: TModuleVersionKey
+  name: N,
+  version: V
 ) => {
-  const { moduleType, deploymentArgs } = data[name][version]
+  const { moduleType, deploymentArgs } = getModuleData(name, version)!
   return { deploymentArgs, moduleType }
 }
 
 // retrieves the deployment function via viem
 export const getWriteFn = (walletClient: WalletClient) => {
-  const { abi } = getModuleVersion('OrchestratorFactory', 'v1.0')
+  const { abi } = getModuleData('OrchestratorFactory', '1')!
   const orchestratorFactory = getContract({
     address: ORCHESTRATOR_FACTORY_ADDRESS,
     abi,
@@ -34,7 +33,7 @@ export const getWriteFn = (walletClient: WalletClient) => {
 }
 
 // extracts the major and minor version from the version string
-export const extractMajorMinorVersion = (versionString: ModuleVersionKey) => {
+export const extractMajorMinorVersion = (versionString: ModuleVersion) => {
   const version = versionString
     .substring(1)
     .split('.')
@@ -43,9 +42,9 @@ export const extractMajorMinorVersion = (versionString: ModuleVersionKey) => {
 }
 
 // returns the MetaData struct that the deploy function requires for each module
-export const assembleMetadata = <ModuleName extends GenericModuleName>(
-  name: ModuleName,
-  version: ModuleVersionKey
+export const assembleMetadata = <N extends ModuleName>(
+  name: N,
+  version: GetModuleVersion<N>
 ) => {
   const majorMinorVersion = extractMajorMinorVersion(version)
   return {
