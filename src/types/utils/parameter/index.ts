@@ -6,8 +6,8 @@ type JsTypeWithTag<P extends readonly Tag[] | undefined> =
   P extends readonly Tag[]
     ? P[number] extends 'any'
       ? 'any'
-      : unknown
-    : unknown
+      : undefined
+    : undefined
 
 // Format the AbiParameter type from solidity to typscript type and-
 // add the description and tag to the parameter
@@ -34,10 +34,10 @@ export type FormatParameter<P> = P extends ExtendedAbiParameter
                   ? '0xstring'
                   : P['type'] extends `${SolidityBytes}[]`
                     ? '0xstring[]'
-                    : unknown
+                    : undefined
 
         description: P['description']
-        tags: P['tags']
+        tags: P['tags'] extends unknown ? undefined : P['tags']
       }
   : never
 

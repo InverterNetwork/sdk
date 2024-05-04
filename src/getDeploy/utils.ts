@@ -6,18 +6,6 @@ import {
 import { WalletClient, getContract } from 'viem'
 import { METADATA_URL, ORCHESTRATOR_FACTORY_ADDRESS } from './constants'
 
-// retrieves the deployment arguments from the module version
-export const getDeploymentConfig = <
-  N extends ModuleName,
-  V extends GetModuleVersion<N>,
->(
-  name: N,
-  version: V
-) => {
-  const { moduleType, deploymentArgs } = getModuleData(name, version)!
-  return { deploymentArgs, moduleType }
-}
-
 // retrieves the deployment function via viem
 export const getWriteFn = (walletClient: WalletClient) => {
   const { abi } = getModuleData('OrchestratorFactory', '1')!
@@ -32,13 +20,10 @@ export const getWriteFn = (walletClient: WalletClient) => {
   return orchestratorFactory.write.createOrchestrator
 }
 
-// extracts the major and minor version from the version string
-export const extractMajorMinorVersion = (versionString: ModuleVersion) => {
-  const version = versionString
-    .substring(1)
-    .split('.')
-    .map((v) => parseInt(v))
-  return { majorVersion: BigInt(version[0]), minorVersion: BigInt(version[1]) }
+export const getMajorMinorVersion = (majorVersion: `${number}`) => {
+  const majorBigint = BigInt(majorVersion),
+    minorBigint = BigInt(0) // TODO: find a way to get the latest minor version
+  return { majorVersion: majorBigint, minorVersion: minorBigint }
 }
 
 // returns the MetaData struct that the deploy function requires for each module
@@ -46,7 +31,7 @@ export const assembleMetadata = <N extends ModuleName>(
   name: N,
   version: GetModuleVersion<N>
 ) => {
-  const majorMinorVersion = extractMajorMinorVersion(version)
+  const majorMinorVersion = getMajorMinorVersion(version)
   return {
     title: name,
     url: METADATA_URL,

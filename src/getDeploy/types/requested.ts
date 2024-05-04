@@ -1,5 +1,9 @@
-import { GetModuleNameByType, GetModuleVersion } from '@inverter-network/abis'
-import { ModuleType } from '.'
+import {
+  GetModuleNameByType,
+  GetModuleVersion,
+  Pretty,
+} from '@inverter-network/abis'
+import { MendatoryModuleType, ModuleType } from '.'
 
 export type RequestedModule<
   MT extends ModuleType = ModuleType,
@@ -9,11 +13,10 @@ export type RequestedModule<
   version: GetModuleVersion<N>
 }
 
-export type RequestedModules = {
-  [K in
-    | 'paymentProcessor'
-    | 'fundingManager'
-    | 'authorizer']: RequestedModule<K>
-} & {
-  optionalModules?: RequestedModule<'logicModule' | 'utils'>[]
-}
+export type RequestedModules = Pretty<
+  {
+    [K in MendatoryModuleType]: RequestedModule<K>
+  } & {
+    optionalModules?: RequestedModule<'logicModule' | 'utils'>[]
+  }
+>

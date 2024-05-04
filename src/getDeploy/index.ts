@@ -1,10 +1,8 @@
 import { WalletClient } from 'viem'
 import { encodeAbiParameters } from 'viem'
-import { MANDATORY_MODULES, ORCHESTRATOR_CONFIG } from './constants'
+import { MANDATORY_MODULES } from './constants'
 import {
-  RequestedModule,
   RequestedModules,
-  DeploySchema,
   ClientInputs,
   EncodedParams,
   ModuleParams,
@@ -12,72 +10,9 @@ import {
   OrchestratorArgs,
   MendatoryModuleType,
 } from './types'
-import { assembleMetadata, getDeploymentConfig, getWriteFn } from './utils'
+import { assembleMetadata, getWriteFn } from './utils'
 import { getModuleData } from '@inverter-network/abis'
-import { getJsType } from '../utils'
-
-// uses the deploymentArgs from the config and transforms them into a flattened
-// array as well as injects a value property of type string which is supposed to
-// be filled with a user input through the client side
-const parseParams = (deploymentArgs: any) => {
-  const flattenedParams: any = []
-
-  Object.keys(deploymentArgs).forEach((key) => {
-    const params = deploymentArgs[key]
-    if (params.length > 0) {
-      params.forEach(({ description, name, type }: any) => {
-        const jsType = getJsType(type)
-        flattenedParams.push({ description, name, type, jsType })
-      })
-    }
-  })
-  return flattenedParams
-}
-
-const getModuleSchema = (module: RequestedModule) => {
-  const { name, version } = module
-  // get deployment arg info from configs (abis package)
-  const { deploymentArgs: rawModuleConfig } = getDeploymentConfig(name, version)
-  const inputs = parseParams(rawModuleConfig)
-  const moduleSchema = {
-    version,
-    inputs,
-    name,
-  }
-  return moduleSchema
-}
-
-// based on the module names and versions passed to it
-// retrieves from the abi config the required deployment inputs
-// for the requested modules
-const getInputSchema = (requestedModules: RequestedModules) => {
-  const inputSchema: any = { orchestrator: ORCHESTRATOR_CONFIG }
-  MANDATORY_MODULES.forEach((moduleType) => {
-    const moduleSchema = getModuleSchema(
-      requestedModules[
-        moduleType as keyof typeof requestedModules
-      ] as RequestedModule
-    )
-    if (moduleSchema.inputs.length > 0) {
-      inputSchema[moduleType] = moduleSchema
-    }
-  })
-  if (
-    requestedModules.optionalModules &&
-    requestedModules.optionalModules.length > 0
-  ) {
-    requestedModules.optionalModules.forEach((m) => {
-      const moduleSchema = getModuleSchema(m as RequestedModule)
-      if (moduleSchema.inputs.length > 0) {
-        if (!inputSchema.optionalModules) {
-          inputSchema.optionalModules = []
-        }
-        inputSchema.optionalModules.push(getModuleSchema(m as RequestedModule))
-      }
-    })
-  }
-  return inputSchema as DeploySchema
-}
+import getDeploySchema from './getDeploySchema'
 
 const getEncodedParams = (clientInputs: any, moduleConfig: any) => {
   const encodedModuleParams: any = {}
@@ -109,7 +44,7 @@ const getEncodedParams = (clientInputs: any, moduleConfig: any) => {
 
 const assembleModuleArgs = (requestedModule: any, clientInputs: any) => {
   const { name, version } = requestedModule
-  const moduleConfig = getModuleData(name, version)
+  const moduleConfig = getModuleData(name, version)!
   const { moduleType } = moduleConfig
   const moduleArgs = {
     ...getEncodedParams(clientInputs, moduleConfig),
@@ -150,13 +85,13 @@ const constructArgs = (
   return args
 }
 
-export default async function (
+export default async function <T extends RequestedModules>(
   walletClient: WalletClient,
-  requestedModules: RequestedModules
+  requestedModules: T
 ) {
-  const inputSchema = getInputSchema(requestedModules)
+  const inputSchema = getDeploySchema(requestedModules)
 
-  const deployFunction = async (clientInputs: ClientInputs) => {
+  const run = async (clientInputs: ClientInputs) => {
     const {
       orchestrator,
       fundingManager,
@@ -183,5 +118,5 @@ export default async function (
       })
   }
 
-  return { inputSchema, deployFunction }
+  return { inputSchema, run }
 }

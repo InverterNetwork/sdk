@@ -6,15 +6,15 @@ import {
 } from '@inverter-network/abis'
 import { OrchestratorArgs, ModuleParams, ModuleType } from './generic'
 
-export type ConfigData<
-  N extends ModuleName,
-  V extends GetModuleVersion<N>,
-> = GetModuleData<N, V>['deploymentArgs']['configData'][number]
+export type GetDeploymentArgs<
+  N extends ModuleName = ModuleName,
+  V extends GetModuleVersion<N> = GetModuleVersion<N>,
+> = GetModuleData<N, V>['deploymentArgs']
 
 export type ClientInputs = {
   Orchestrator: OrchestratorArgs
 } & Partial<{
-  [K in GetModuleNameByType<ModuleType>]: ParamsObject<K>
+  [K in GetModuleNameByType<ModuleType>]: any
 }>
 
 export type FinalArgs = {

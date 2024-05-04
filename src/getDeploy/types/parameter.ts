@@ -1,12 +1,12 @@
 import { ModuleName, GetModuleVersion } from '@inverter-network/abis'
-import { ConfigData } from '.'
+import { GetDeploymentArgs } from '.'
 
 export type ConfigDataParameters<
   N extends ModuleName,
   V extends GetModuleVersion<N>,
 > = {
-  [K in ConfigData<N, V>['name']]: Extract<
-    ConfigData<N, V>,
+  [K in GetDeploymentArgs<N, V>['configData'][number]['name']]: Extract<
+    GetDeploymentArgs<N, V>['configData'][number],
     {
       name: K
     }
