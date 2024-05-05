@@ -20,3 +20,7 @@ export type RequestedModules = Pretty<
     optionalModules?: RequestedModule<'logicModule' | 'utils'>[]
   }
 >
+
+export type RequestedMandatoryModule = RequestedModule<
+  'paymentProcessor' | 'authorizer' | 'fundingManager'
+>

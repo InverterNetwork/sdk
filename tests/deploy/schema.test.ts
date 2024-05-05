@@ -1,10 +1,12 @@
 import { expect, describe, it } from 'bun:test'
-import getDeploySchema from '../../src/getDeploy/getDeploySchema'
 import writeLog from '../../tools/writeLog'
+import { getDeploy } from '../../src'
+import { getTestConnectors } from '../getTestConnectors'
 
 describe('main', async () => {
+  const { walletClient } = getTestConnectors()
   it('Should log the Deploy Function possible inputs', async () => {
-    const res = getDeploySchema({
+    const res = getDeploy(walletClient, {
       authorizer: {
         name: 'RoleAuthorizer',
         version: '1',
@@ -24,6 +26,8 @@ describe('main', async () => {
         },
       ],
     })
+
+    // const t = (await res).inputs.fundingManager.name
 
     writeLog({
       content: res,

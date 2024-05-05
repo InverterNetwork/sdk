@@ -95,13 +95,13 @@ describe('#getDeploy', () => {
     } as ClientInputs
 
     describe('optionalModules: none', () => {
-      describe('inputSchema', () => {
+      describe('inputs', () => {
         it('has the correct format', async () => {
-          const { inputSchema } = await getDeploy(
+          const { inputs } = await getDeploy(
             walletClient,
             requestedModules as RequestedModules
           )
-          expect(inputSchema).toEqual(expectedBaseInputSchema as any)
+          expect(inputs).toEqual(expectedBaseInputSchema as any)
         })
       })
 
@@ -118,7 +118,7 @@ describe('#getDeploy', () => {
     })
 
     describe('optionalModules: MetadataManager', () => {
-      describe('inputSchema', () => {
+      describe('inputs', () => {
         const expectedMetadataManagerSchema = {
           version: '1',
           name: 'MetadataManager',
@@ -182,11 +182,11 @@ describe('#getDeploy', () => {
         } as ModuleSchema<'MetadataManager', '1'>
 
         it('has the correct format', async () => {
-          const { inputSchema } = await getDeploy(walletClient, {
+          const { inputs } = await getDeploy(walletClient, {
             ...requestedModules,
             optionalModules: [{ name: 'MetadataManager', version: 'v1.0' }],
           } as any)
-          expect(inputSchema).toEqual({
+          expect(inputs).toEqual({
             ...expectedBaseInputSchema,
             optionalModules: [expectedMetadataManagerSchema],
           } as any) // TODO: fix type to DeploySchema
@@ -225,13 +225,13 @@ describe('#getDeploy', () => {
     })
 
     describe('optional: BountyManager', () => {
-      describe('inputSchema', () => {
+      describe('inputs', () => {
         it('has the correct format', async () => {
-          const { inputSchema } = await getDeploy(walletClient, {
+          const { inputs } = await getDeploy(walletClient, {
             ...requestedModules,
             optionalModules: [{ name: 'BountyManager', version: 'v1.0' }],
           } as any)
-          expect(inputSchema).toEqual({
+          expect(inputs).toEqual({
             ...(expectedBaseInputSchema as any),
           })
         })
@@ -264,16 +264,16 @@ describe('#getDeploy', () => {
         ],
       }
 
-      describe('inputSchema', () => {
+      describe('inputs', () => {
         it('has the correct format', async () => {
-          const { inputSchema } = await getDeploy(walletClient, {
+          const { inputs } = await getDeploy(walletClient, {
             ...requestedModules,
             optionalModules: [
               { name: 'RecurringPaymentManager', version: 'v1.0' },
             ],
           } as any)
 
-          expect(inputSchema).toEqual({
+          expect(inputs).toEqual({
             ...expectedBaseInputSchema,
             optionalModules: [expectedSchema],
           } as any) // TODO: fix type to DeploySchema

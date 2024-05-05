@@ -1,5 +1,5 @@
 import { expect, describe, it } from 'bun:test'
-import { getModuleSchema } from '../../src/getDeploy/getDeploySchema'
+import { getModuleSchema } from '../../src/getDeploy/getInputs'
 import writeLog from '../../tools/writeLog'
 
 describe('main', async () => {

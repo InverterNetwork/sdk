@@ -12,7 +12,7 @@ import {
 } from './types'
 import { assembleMetadata, getWriteFn } from './utils'
 import { getModuleData } from '@inverter-network/abis'
-import getDeploySchema from './getDeploySchema'
+import getInputs from './getInputs'
 
 const getEncodedParams = (clientInputs: any, moduleConfig: any) => {
   const encodedModuleParams: any = {}
@@ -85,11 +85,11 @@ const constructArgs = (
   return args
 }
 
-export default async function <T extends RequestedModules>(
+export default async function getDeploy<T extends RequestedModules>(
   walletClient: WalletClient,
   requestedModules: T
 ) {
-  const inputSchema = getDeploySchema(requestedModules)
+  const inputs = getInputs(requestedModules)
 
   const run = async (clientInputs: ClientInputs) => {
     const {
@@ -118,5 +118,28 @@ export default async function <T extends RequestedModules>(
       })
   }
 
-  return { inputSchema, run }
+  return { inputs, run }
 }
+
+// const { inputs } = await getDeploy('w' as any, {
+//   authorizer: {
+//     name: 'RoleAuthorizer',
+//     version: '1',
+//   },
+//   fundingManager: {
+//     name: 'RebasingFundingManager',
+//     version: '1',
+//   },
+//   paymentProcessor: {
+//     name: 'SimplePaymentProcessor',
+//     version: '1',
+//   },
+//   optionalModules: [
+//     {
+//       name: 'BountyManager',
+//       version: '1',
+//     },
+//   ],
+// })
+
+// const t = inputs.authorizer.inputs

@@ -7,6 +7,7 @@ import {
 } from '@inverter-network/abis'
 import { SolidityBytes, SolidityInt } from 'abitype'
 import { FormattedParameterToPrimitiveType } from './primitive'
+import { ExcludeNeverFields } from '..'
 
 type JsTypeWithTag<P extends readonly Tag[] | undefined> =
   P extends readonly Tag[]
@@ -31,12 +32,7 @@ type GetJsType<
             ? '0xstring'
             : T extends `${SolidityBytes}[]`
               ? '0xstring[]'
-              : undefined
-
-// prettier-ignore
-type FilteredKeys<T> = {[P in keyof T]: T[P] extends undefined ? never : P}[keyof T]
-// prettier-ignore
-type ExcludeUndefinedFields<O> = {[K in FilteredKeys<O>]: O[K]}
+              : never
 
 // Format the AbiParameter type from solidity to typscript type and-
 // add the description and tag to the parameter
@@ -49,12 +45,12 @@ export type FormatParameter<P> = P extends ExtendedAbiParameter
         components: FormatParameters<Components>
       }
     : Pretty<
-        ExcludeUndefinedFields<{
+        ExcludeNeverFields<{
           name: P['name']
           type: P['type']
           description: P['description']
           jsType: GetJsType<P['type'], P['tags']>
-          tags: P['tags'] extends unknown ? undefined : P['tags']
+          tags: P['tags'] extends unknown ? never : P['tags']
         }>
       >
   : never

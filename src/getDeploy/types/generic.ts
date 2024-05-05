@@ -2,14 +2,10 @@ import {
   GetModuleNameByType,
   UserFacingModuleType,
 } from '@inverter-network/abis'
-import { RequestedModule } from '.'
 import { ORCHESTRATOR_CONFIG } from '../constants'
 
 // Module Types Start
 export type ModuleType = Exclude<UserFacingModuleType, 'orchestrator'> | 'utils'
-export type RequestedMandatoryModule = RequestedModule<
-  'paymentProcessor' | 'authorizer' | 'fundingManager'
->
 export type MendatoryModuleType =
   | 'fundingManager'
   | 'paymentProcessor'
