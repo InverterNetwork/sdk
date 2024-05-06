@@ -3,21 +3,28 @@ import {
   getModuleData,
   ModuleName,
 } from '@inverter-network/abis'
-import { WalletClient, getContract } from 'viem'
+import { PublicClient, WalletClient, getContract } from 'viem'
 import { METADATA_URL, ORCHESTRATOR_FACTORY_ADDRESS } from './constants'
 
 // retrieves the deployment function via viem
-export const getWriteFn = (walletClient: WalletClient) => {
+export const getViemMethods = (
+  walletClient: WalletClient,
+  publicClient: PublicClient
+) => {
   const { abi } = getModuleData('OrchestratorFactory', '1')
-  const orchestratorFactory = getContract({
+  const { write, simulate } = getContract({
     address: ORCHESTRATOR_FACTORY_ADDRESS,
     abi,
     client: {
       wallet: walletClient,
+      public: publicClient,
     },
   })
 
-  return orchestratorFactory.write.createOrchestrator
+  return {
+    simulate: simulate.createOrchestrator,
+    write: write.createOrchestrator,
+  }
 }
 
 export const getMajorMinorVersion = (majorVersion: `${number}`) => {

@@ -1,5 +1,5 @@
 import { getModuleData } from '@inverter-network/abis'
-import { WalletClient, encodeAbiParameters } from 'viem'
+import { PublicClient, WalletClient, encodeAbiParameters } from 'viem'
 import { GetDeploymentArgs } from '../types'
 import { MANDATORY_MODULES } from './constants'
 import {
@@ -12,12 +12,12 @@ import {
   UserModuleArg,
   UserArgs,
 } from './types'
-import { assembleMetadata, getWriteFn } from './utils'
+import { assembleMetadata, getViemMethods } from './utils'
 import { Entries } from 'type-fest'
 
 const getEncodedArgs = (
-  userModuleArgs: UserModuleArg,
-  deploymentArgs: GetDeploymentArgs
+  deploymentArgs: GetDeploymentArgs,
+  userModuleArgs?: UserModuleArg
 ) => {
   // Initialize empty encodedArgs
   const encodedArgs = {} as EncodedArgs
@@ -54,11 +54,11 @@ const getEncodedArgs = (
 
 const assembleModuleArgs = (
   { name, version }: RequestedModule,
-  userModuleArgs: UserModuleArg
+  userModuleArgs?: UserModuleArg
 ): ModuleArgs => {
   const { deploymentArgs } = getModuleData(name, version)
   const moduleArgs = {
-    ...getEncodedArgs(userModuleArgs, deploymentArgs),
+    ...getEncodedArgs(deploymentArgs, userModuleArgs),
     metadata: assembleMetadata(name, version),
   }
   return moduleArgs
@@ -92,7 +92,7 @@ const constructArgs = (
     optionalModules.forEach((optionalModule) => {
       const moduleArgs = assembleModuleArgs(
         optionalModule,
-        userArgs.optionalModules![optionalModule.name]
+        userArgs.optionalModules?.[optionalModule.name]
       )
       args.optionalModules.push(moduleArgs)
     })
@@ -102,6 +102,7 @@ const constructArgs = (
 }
 
 export default function getRun<T extends RequestedModules>(
+  publicClient: PublicClient,
   walletClient: WalletClient,
   requestedModules: T
 ) {
@@ -115,17 +116,30 @@ export default function getRun<T extends RequestedModules>(
       optionalModules,
     } = constructArgs(requestedModules, userArgs)
 
+    const { write, simulate } = getViemMethods(walletClient, publicClient)
+
+    const arr = [
+      orchestrator,
+      fundingManager,
+      authorizer,
+      paymentProcessor,
+      optionalModules,
+    ] as const
+
     // Return the write function with the args
-    return getWriteFn(walletClient)(
-      [
-        orchestrator,
-        fundingManager,
-        authorizer,
-        paymentProcessor,
-        optionalModules,
-      ],
-      {} as any
-    )
+    return (async () => {
+      // prettier-ignore
+      const orchestratorAddress = (await simulate(arr, {
+        // @ts-expect-error - TODO: add Account and Chain to wallet client type props
+        account: walletClient.account.walletAddress,
+      })).result
+      const transactionHash = await write(arr, {} as any)
+
+      return {
+        orchestratorAddress,
+        transactionHash,
+      }
+    })()
   }
 
   return run
