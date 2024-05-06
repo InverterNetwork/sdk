@@ -92,11 +92,12 @@ const constructArgs = <T extends RequestedModules>(
   const { optionalModules } = requestedModules
   if (optionalModules && optionalModules?.length > 0) {
     optionalModules.forEach((optionalModule) => {
-      const optionalModuleIndex = optionalModules.indexOf(optionalModule)
       const moduleArgs = assembleModuleArgs(
         optionalModule,
         // @ts-expect-error - TS doesn't resolve union
-        userArgs.optionalModules[optionalModuleIndex]
+        userArgs.optionalModules
+          ? userArgs.optionalModules[optionalModule.name]
+          : {}
       )
       args.optionalModules.push(moduleArgs)
     })

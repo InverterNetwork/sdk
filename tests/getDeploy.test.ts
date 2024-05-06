@@ -214,7 +214,7 @@ describe('#getDeploy', () => {
           const txHash = (await run({
             ...args,
             // @ts-expect-error: metadataManager is not in RequestedModules
-            optionalModules: [metadataManagerArgs],
+            optionalModules: { MetadataManager: metadataManagerArgs },
           })) as string
           expect(txHash.length).toEqual(66)
         })
@@ -232,7 +232,7 @@ describe('#getDeploy', () => {
         })
       })
 
-      describe.only('run', () => {
+      describe('run', () => {
         it('submits a tx', async () => {
           const { run } = await getDeploy(walletClient, {
             ...requestedModules,
@@ -276,7 +276,7 @@ describe('#getDeploy', () => {
         })
       })
 
-      describe.skip('run', () => {
+      describe('run', () => {
         const epochLength = '604800' // 1 week in seconds
 
         it('submits a tx', async () => {
@@ -288,11 +288,8 @@ describe('#getDeploy', () => {
           } as any)
           const txHash = (await run({
             ...args,
-            // @ts-expect-error: recurringPaymentManager is not in RequestedModules
-            paymentProcessor: {
-              epochLength: BigInt(epochLength),
-            },
-          })) as string
+            optionalModules: { RecurringPaymentManager: { epochLength } },
+          } as any)) as string
           expect(txHash.length).toEqual(66)
         })
       })
