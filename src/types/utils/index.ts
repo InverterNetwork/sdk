@@ -1,3 +1,9 @@
+import {
+  GetModuleData,
+  GetModuleVersion,
+  ModuleName,
+} from '@inverter-network/abis'
+
 export * from './parameter'
 export * from './method'
 
@@ -5,3 +11,8 @@ export * from './method'
 export type FilteredKeys<T> = {[P in keyof T]: T[P] extends never ? never : P}[keyof T]
 // prettier-ignore
 export type ExcludeNeverFields<O> = {[K in FilteredKeys<O>]: O[K]}
+
+export type GetDeploymentArgs<
+  N extends ModuleName = ModuleName,
+  V extends GetModuleVersion<N> = GetModuleVersion<N>,
+> = GetModuleData<N, V>['deploymentArgs']

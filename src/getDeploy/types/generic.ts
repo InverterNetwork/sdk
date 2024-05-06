@@ -15,32 +15,3 @@ export type MendatoryModuleType =
 export type OrchestratorInputs = typeof ORCHESTRATOR_CONFIG
 
 export type ModuleNameByType = GetModuleNameByType<ModuleType>
-
-export type EncodedParams = {
-  configData: `0x${string}`
-  dependencyData: `0x${string}`
-}
-
-export type OrchestratorArgs = {
-  owner: `0x${string}`
-  token: `0x${string}`
-}
-
-export type Metadata = {
-  majorVersion: bigint
-  minorVersion: bigint
-  url: string
-  title: string
-}
-
-export type ModuleArgs = {
-  metadata: Metadata
-  configData: `0x${string}`
-  dependencyData: `0x${string}`
-}
-
-export type ModuleParams = {
-  metadata: Metadata
-  configData: `0x${string}`
-  dependencyData: `0x${string}`
-}

@@ -2,12 +2,7 @@ import { expect, describe, it } from 'bun:test'
 
 import { getTestConnectors } from './getTestConnectors'
 import { getDeploy } from '../src'
-import {
-  ClientInputs,
-  ModuleSchema,
-  // DeploySchema,
-  RequestedModules,
-} from '../src/getDeploy/types'
+import { UserArgs, ModuleSchema } from '../src/getDeploy/types'
 
 describe('#getDeploy', () => {
   const { walletClient } = getTestConnectors()
@@ -16,17 +11,17 @@ describe('#getDeploy', () => {
     const requestedModules = {
       fundingManager: {
         name: 'RebasingFundingManager',
-        version: 'v1.0',
+        version: '1',
       },
       paymentProcessor: {
         name: 'SimplePaymentProcessor',
-        version: 'v1.0',
+        version: '1',
       },
       authorizer: {
         name: 'RoleAuthorizer',
-        version: 'v1.0',
+        version: '1',
       },
-    }
+    } as const
 
     const expectedBaseInputSchema = {
       orchestrator: {
@@ -80,37 +75,41 @@ describe('#getDeploy', () => {
       },
     }
 
-    const args = {
-      Orchestrator: {
+    const args: UserArgs<{
+      fundingManager: { name: 'RebasingFundingManager'; version: '1' }
+      authorizer: { name: 'RoleAuthorizer'; version: '1' }
+      paymentProcessor: { name: 'SimplePaymentProcessor'; version: '1' }
+    }> = {
+      orchestrator: {
         owner: '0x5eb14c2e7D0cD925327d74ae4ce3fC692ff8ABEF' as `0x${string}`,
         token: '0x7AcaF5360474b8E40f619770c7e8803cf3ED1053' as `0x${string}`,
       },
-      RebasingFundingManager: {
-        orchestratorTokenAddress: '0x5eb14c2e7D0cD925327d74ae4ce3fC692ff8ABEF',
+      fundingManager: {
+        orchestratorTokenAddress:
+          '0x5eb14c2e7D0cD925327d74ae4ce3fC692ff8ABEF' as `0x${string}`,
       },
-      RoleAuthorizer: {
-        initialOwner: '0x7AcaF5360474b8E40f619770c7e8803cf3ED1053',
-        initialManager: '0x7AcaF5360474b8E40f619770c7e8803cf3ED1053',
+      authorizer: {
+        initialOwner:
+          '0x7AcaF5360474b8E40f619770c7e8803cf3ED1053' as `0x${string}`,
+        initialManager:
+          '0x7AcaF5360474b8E40f619770c7e8803cf3ED1053' as `0x${string}`,
       },
-    } as ClientInputs
+      paymentProcessor: {
+        epochLength: BigInt(604800), // 1 week in seconds
+      },
+    }
 
     describe('optionalModules: none', () => {
       describe('inputs', () => {
         it('has the correct format', async () => {
-          const { inputs } = await getDeploy(
-            walletClient,
-            requestedModules as RequestedModules
-          )
+          const { inputs } = await getDeploy(walletClient, requestedModules)
           expect(inputs).toEqual(expectedBaseInputSchema as any)
         })
       })
 
       describe('deploymentFunction', () => {
         it('submits a tx', async () => {
-          const { run } = await getDeploy(
-            walletClient,
-            requestedModules as RequestedModules
-          )
+          const { run } = await getDeploy(walletClient, requestedModules)
           const txHash = (await run(args)) as string
           expect(txHash.length).toEqual(66)
         })
@@ -214,10 +213,11 @@ describe('#getDeploy', () => {
             memberName: 'example member name',
             memberAccount: '0x7AcaF5360474b8E40f619770c7e8803cf3ED1053',
             memberUrl: 'example member url',
-          }
+          } as const
           const txHash = (await run({
             ...args,
-            MetadataManager: metadataManagerArgs,
+            // @ts-expect-error: metadataManager is not in RequestedModules
+            optionalModules: [metadataManagerArgs],
           })) as string
           expect(txHash.length).toEqual(66)
         })
@@ -231,9 +231,7 @@ describe('#getDeploy', () => {
             ...requestedModules,
             optionalModules: [{ name: 'BountyManager', version: 'v1.0' }],
           } as any)
-          expect(inputs).toEqual({
-            ...(expectedBaseInputSchema as any),
-          })
+          expect(inputs).toEqual(expectedBaseInputSchema as any)
         })
       })
 
@@ -243,6 +241,7 @@ describe('#getDeploy', () => {
             ...requestedModules,
             optionalModules: [{ name: 'BountyManager', version: 'v1.0' }],
           } as any)
+          // @ts-expect-error: bountyManager is not in RequestedModules
           const txHash = (await run(args)) as string
           expect(txHash.length).toEqual(66)
         })
@@ -292,8 +291,9 @@ describe('#getDeploy', () => {
           } as any)
           const txHash = (await run({
             ...args,
-            RecurringPaymentManager: {
-              epochLength: epochLength,
+            // @ts-expect-error: recurringPaymentManager is not in RequestedModules
+            paymentProcessor: {
+              epochLength: BigInt(epochLength),
             },
           })) as string
           expect(txHash.length).toEqual(66)

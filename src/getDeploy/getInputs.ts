@@ -67,24 +67,3 @@ export default function getParameters<T extends RequestedModules>(
     optionalModules,
   }
 }
-
-// const t = getParameters({
-//   authorizer: {
-//     name: 'RoleAuthorizer',
-//     version: '1',
-//   },
-//   fundingManager: {
-//     name: 'RebasingFundingManager',
-//     version: '1',
-//   },
-//   paymentProcessor: {
-//     name: 'SimplePaymentProcessor',
-//     version: '1',
-//   },
-//   optionalModules: [
-//     {
-//       name: 'BountyManager',
-//       version: '1',
-//     },
-//   ],
-// })
