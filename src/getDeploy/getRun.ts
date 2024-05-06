@@ -35,7 +35,6 @@ const getEncodedArgs = <T extends RequestedModule>(
       if (idx >= 0) {
         const { type } = dataArr[idx]
         // put param in correct idx in param container
-        // @ts-expect-error - TODO: fix type
         paramValueContainer[idx] = userModuleArgs[paramName]
         paramTypeContainer[idx] = { type }
       }

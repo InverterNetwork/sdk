@@ -34,7 +34,7 @@ export const getModuleSchema = <
   return { name, version, inputs }
 }
 
-export default function getParameters<T extends RequestedModules>(
+export default function getInputs<T extends RequestedModules>(
   requestedModules: T
 ): DeploySchema<T> {
   const mandatoryResult = MANDATORY_MODULES.reduce(
@@ -48,7 +48,7 @@ export default function getParameters<T extends RequestedModules>(
     },
     {
       orchestrator: ORCHESTRATOR_CONFIG,
-    } as Omit<DeploySchema<T>, 'optionalModules'>
+    } as DeploySchema<T>
   )
 
   if (!requestedModules.optionalModules?.length) return mandatoryResult as any

@@ -89,13 +89,6 @@ describe('#getDeploy', () => {
         initialManager:
           '0x7AcaF5360474b8E40f619770c7e8803cf3ED1053' as `0x${string}`,
       },
-      optionalModules: [
-        {
-          name: 'PaymentProcessor',
-          version: '1',
-          params: { epochLength: BigInt(604800) },
-        },
-      ],
     }
 
     describe('optionalModules: none', () => {

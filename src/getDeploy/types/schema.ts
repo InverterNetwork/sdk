@@ -1,8 +1,9 @@
-import { GetModuleVersion, ModuleName, Pretty } from '@inverter-network/abis'
+import { GetModuleVersion, ModuleName } from '@inverter-network/abis'
 import { OrchestratorInputs } from './generic'
 import { FomrattedDeploymentParameters } from './parameter'
 import { RequestedModules } from './requested'
-import { ExcludeNeverFields } from '../../types'
+import { OmitNever } from '../../types'
+import { Simplify } from 'type-fest'
 
 export type ModuleSchema<
   N extends ModuleName = ModuleName,
@@ -16,7 +17,7 @@ export type ModuleSchema<
 export type OptionalModules<T extends RequestedModules['optionalModules']> =
   T extends infer U
     ? U extends RequestedModules['optionalModules']
-      ? Pretty<{
+      ? Simplify<{
           [K in keyof U]: ModuleSchema<
             // @ts-expect-error - TS cant resolve name
             U[K]['name'],
@@ -28,8 +29,8 @@ export type OptionalModules<T extends RequestedModules['optionalModules']> =
     : never
 
 export type DeploySchema<T extends RequestedModules = RequestedModules> =
-  Pretty<
-    ExcludeNeverFields<{
+  Simplify<
+    OmitNever<{
       orchestrator: OrchestratorInputs
       paymentProcessor: ModuleSchema<
         T['paymentProcessor']['name'],

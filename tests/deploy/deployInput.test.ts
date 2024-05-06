@@ -20,15 +20,8 @@ describe('main', async () => {
         name: 'SimplePaymentProcessor',
         version: '1',
       },
-      optionalModules: [
-        {
-          name: 'RecurringPaymentManager',
-          version: '1',
-        },
-      ],
     })
 
-    // @ts-ignore
     const t = run({
       authorizer: {
         initialManager: '0x' as Hex,
@@ -41,15 +34,9 @@ describe('main', async () => {
         owner: '0x' as Hex,
         token: '0x' as Hex,
       },
-      paymentProcessor: {
-        author: '0x' as Hex,
-      },
-      optionalModules: [
-        {
-          epochLength: BigInt(0),
-        },
-      ],
     })
+
+    console.log(t)
 
     writeLog({
       content: inputs,

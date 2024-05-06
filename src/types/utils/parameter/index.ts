@@ -1,13 +1,13 @@
 import {
   ExtendedAbiParameter,
   NonTupleType,
-  Pretty,
   Tag,
   TupleType,
 } from '@inverter-network/abis'
 import { SolidityBytes, SolidityInt } from 'abitype'
 import { FormattedParameterToPrimitiveType } from './primitive'
-import { ExcludeNeverFields } from '..'
+import { OmitNever } from '..'
+import { IfUnknown, Simplify } from 'type-fest'
 
 type JsTypeWithTag<P extends readonly Tag[] | undefined> =
   P extends readonly Tag[]
@@ -44,13 +44,13 @@ export type FormatParameter<P> = P extends ExtendedAbiParameter
         description: P['description']
         components: FormatParameters<Components>
       }
-    : Pretty<
-        ExcludeNeverFields<{
+    : Simplify<
+        OmitNever<{
           name: P['name']
           type: P['type']
-          description: P['description']
+          description: IfUnknown<P['description'], never, P['description']>
           jsType: GetJsType<P['type'], P['tags']>
-          tags: P['tags'] extends unknown ? never : P['tags']
+          tags: IfUnknown<P['tags'], never, P['tags']>
         }>
       >
   : never
