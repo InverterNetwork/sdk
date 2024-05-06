@@ -15,7 +15,7 @@ export type ConfigDataParameters<
 
 export type FomrattedDeploymentParameters<
   N extends ModuleName,
-  V extends GetModuleVersion<N>,
+  V extends string,
 > = FormatParameters<
   [
     ...GetDeploymentArgs<N, V>['configData'],

@@ -1,4 +1,4 @@
-import { GetModuleVersion, ModuleName } from '@inverter-network/abis'
+import { ModuleName } from '@inverter-network/abis'
 import { OrchestratorArgs } from './static'
 import { RequestedModules } from '../requested'
 import {
@@ -13,27 +13,24 @@ export * from './static'
 // User arguments per module name and version
 export type UserModuleArg<
   N extends ModuleName = ModuleName,
-  V extends GetModuleVersion<N> = GetModuleVersion<N>,
+  V extends string = string,
   CD = GetDeploymentArgs<N, V>['configData'][number],
 > = EmptyObjectToNever<{
-  // @ts-expect-error - TS doesn't resolve name and type
+  // @ts-expect-error - TS cant resolve name
   [PN in CD['name']]: FormattedParameterToPrimitiveType<
     Extract<CD, { name: PN }>
   >
 }>
 
 type UserOptionalArgsBase<T extends RequestedModules['optionalModules']> =
-  T extends infer U
-    ? U extends RequestedModules['optionalModules']
-      ? {
-          [K in NonNullable<U>[number]['name']]: UserModuleArg<
-            K,
-            // @ts-expect-error - TS doesn't resolve version
-            Extract<NonNullable<U>[number], { name: K }>['version']
-          >
-        }
-      : never
-    : never
+  T extends undefined
+    ? never
+    : {
+        [K in NonNullable<T>[number]['name']]: UserModuleArg<
+          K,
+          Extract<NonNullable<T>[number], { name: K }>['version']
+        >
+      }
 
 export type UserOptionalArgs<
   T extends RequestedModules['optionalModules'],
@@ -49,17 +46,14 @@ export type UserArgs<T extends RequestedModules = RequestedModules> = Simplify<
     orchestrator: OrchestratorArgs
     fundingManager: UserModuleArg<
       T['fundingManager']['name'],
-      // @ts-expect-error - TS doesn't resolve version
       T['fundingManager']['version']
     >
     authorizer: UserModuleArg<
       T['authorizer']['name'],
-      // @ts-expect-error - TS doesn't resolve version
       T['authorizer']['version']
     >
     paymentProcessor: UserModuleArg<
       T['paymentProcessor']['name'],
-      // @ts-expect-error - TS doesn't resolve version
       T['paymentProcessor']['version']
     >
     optionalModules: UserOptionalArgs<T['optionalModules']>

@@ -14,11 +14,7 @@ import {
 import { assembleMetadata, getWriteFn } from './utils'
 
 const getEncodedArgs = <T extends RequestedModule>(
-  userModuleArgs: UserModuleArg<
-    T['name'],
-    // @ts-expect-error - TS doesn't resolve version
-    T['version']
-  >,
+  userModuleArgs: UserModuleArg<T['name'], T['version']>,
   deploymentArgs: GetDeploymentArgs
 ) => {
   // Initialize empty encodedArgs
@@ -51,11 +47,7 @@ const getEncodedArgs = <T extends RequestedModule>(
 
 const assembleModuleArgs = <T extends RequestedModule>(
   requestedModule: RequestedModule,
-  userModuleArgs: UserModuleArg<
-    T['name'],
-    // @ts-expect-error - TS doesn't resolve version
-    T['version']
-  >
+  userModuleArgs: UserModuleArg<T['name'], T['version']>
 ) => {
   const { name, version } = requestedModule
   const { deploymentArgs } = getModuleData(name, version)!
