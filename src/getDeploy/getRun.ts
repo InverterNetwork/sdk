@@ -8,60 +8,67 @@ import {
   ModuleArgs,
   RequestedModule,
   RequestedModules,
-  UserArgs,
+  GetUserArgs,
   UserModuleArg,
+  UserArgs,
 } from './types'
 import { assembleMetadata, getWriteFn } from './utils'
+import { Entries } from 'type-fest'
 
-const getEncodedArgs = <T extends RequestedModule>(
-  userModuleArgs: UserModuleArg<T['name'], T['version']>,
+const getEncodedArgs = (
+  userModuleArgs: UserModuleArg,
   deploymentArgs: GetDeploymentArgs
 ) => {
   // Initialize empty encodedArgs
   const encodedArgs = {} as EncodedArgs
-  // Get module deployment args and name
-  const { configData, dependencyData } = deploymentArgs
+
   // iterate over config and dependency data
-  ;[configData, dependencyData].forEach((dataArr, index) => {
-    const paramValueContainer = Array(dataArr.length)
-    const paramTypeContainer = Array(dataArr.length)
-    for (const paramName in userModuleArgs) {
-      // find index in config
-      const idx = dataArr.findIndex((config: any) => config.name === paramName)
-      if (idx >= 0) {
-        const { type } = dataArr[idx]
-        // put param in correct idx in param container
-        paramValueContainer[idx] = userModuleArgs[paramName]
-        paramTypeContainer[idx] = { type }
+  ;(Object.entries(deploymentArgs) as Entries<typeof deploymentArgs>).forEach(
+    ([key, dataArr]) => {
+      const paramValueContainer = Array(dataArr.length)
+      const paramTypeContainer = Array(dataArr.length)
+
+      for (const argName in userModuleArgs) {
+        // find index in config
+        const idx = dataArr.findIndex((config) => config.name === argName)
+        // if index is found
+        if (idx >= 0) {
+          // put arg in the correct idx in param container
+          paramValueContainer[idx] = userModuleArgs[argName]
+          // put type in the correct idx in type container
+          paramTypeContainer[idx] = { type: dataArr[idx].type }
+        }
       }
+
+      // set encodedArgs[key] to the encoded value of the args
+      encodedArgs[key] = encodeAbiParameters(
+        paramTypeContainer,
+        paramValueContainer
+      )
     }
-    const key = index === 0 ? 'configData' : 'dependencyData'
-    encodedArgs[key] = encodeAbiParameters(
-      paramTypeContainer,
-      paramValueContainer
-    )
-  })
+  )
+
   // Return encodedArgs
   return encodedArgs
 }
 
-const assembleModuleArgs = <T extends RequestedModule>(
-  requestedModule: RequestedModule,
-  userModuleArgs: UserModuleArg<T['name'], T['version']>
-) => {
-  const { name, version } = requestedModule
+const assembleModuleArgs = (
+  { name, version }: RequestedModule,
+  userModuleArgs: UserModuleArg
+): ModuleArgs => {
   const { deploymentArgs } = getModuleData(name, version)!
-  const moduleArgs: ModuleArgs = {
+  const moduleArgs = {
     ...getEncodedArgs(userModuleArgs, deploymentArgs),
     metadata: assembleMetadata(name, version),
   }
   return moduleArgs
 }
 
-const constructArgs = <T extends RequestedModules>(
-  requestedModules: T,
-  userArgs: UserArgs<T>
+const constructArgs = (
+  requestedModules: RequestedModules,
+  userArgs: UserArgs
 ) => {
+  // Initialize args
   const args = {
     orchestrator: userArgs.orchestrator,
     fundingManager: {},
@@ -70,12 +77,11 @@ const constructArgs = <T extends RequestedModules>(
     optionalModules: [],
   } as unknown as ConstructedArgs
 
-  // mandatory modules
+  // itterate mandatory modules
   MANDATORY_MODULES.forEach((moduleType) => {
     const moduleArgs = assembleModuleArgs(
       requestedModules[moduleType],
-      // @ts-expect-error - TS doesn't resolve union
-      userArgs[moduleType]
+      userArgs[moduleType]!
     )
     args[moduleType] = moduleArgs
   })
@@ -84,11 +90,9 @@ const constructArgs = <T extends RequestedModules>(
   const { optionalModules } = requestedModules
   if (optionalModules && optionalModules?.length > 0) {
     optionalModules.forEach((optionalModule) => {
-      const optionalModuleIndex = optionalModules.indexOf(optionalModule)
       const moduleArgs = assembleModuleArgs(
         optionalModule,
-        // @ts-expect-error - TS doesn't resolve union
-        userArgs.optionalModules[optionalModuleIndex]
+        userArgs.optionalModules![optionalModule.name]
       )
       args.optionalModules.push(moduleArgs)
     })
@@ -101,7 +105,7 @@ export default function getRun<T extends RequestedModules>(
   walletClient: WalletClient,
   requestedModules: T
 ) {
-  const run = (userArgs: UserArgs<T>) => {
+  const run = (userArgs: GetUserArgs<T>) => {
     // Construct the args
     const {
       orchestrator,

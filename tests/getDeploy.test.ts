@@ -2,7 +2,7 @@ import { expect, describe, it } from 'bun:test'
 
 import { getTestConnectors } from './getTestConnectors'
 import { getDeploy } from '../src'
-import { UserArgs, ModuleSchema } from '../src/getDeploy/types'
+import { GetUserArgs, ModuleSchema } from '../src/getDeploy/types'
 
 describe('#getDeploy', () => {
   const { walletClient } = getTestConnectors()
@@ -70,7 +70,7 @@ describe('#getDeploy', () => {
       },
     }
 
-    const args: UserArgs<{
+    const args: GetUserArgs<{
       fundingManager: { name: 'RebasingFundingManager'; version: '1' }
       authorizer: { name: 'RoleAuthorizer'; version: '1' }
       paymentProcessor: { name: 'SimplePaymentProcessor'; version: '1' }

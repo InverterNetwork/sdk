@@ -11,7 +11,7 @@ import { IsEmptyObject, Simplify } from 'type-fest'
 export * from './static'
 
 // User arguments per module name and version
-export type UserModuleArg<
+export type GetUserModuleArg<
   N extends ModuleName = ModuleName,
   V extends string = string,
   CD = GetDeploymentArgs<N, V>['configData'][number],
@@ -22,40 +22,41 @@ export type UserModuleArg<
   >
 }>
 
-type UserOptionalArgsBase<T extends RequestedModules['optionalModules']> =
+type GetUserOptionalArgsBase<T extends RequestedModules['optionalModules']> =
   T extends undefined
     ? never
     : {
-        [K in NonNullable<T>[number]['name']]: UserModuleArg<
+        [K in NonNullable<T>[number]['name']]: GetUserModuleArg<
           K,
           Extract<NonNullable<T>[number], { name: K }>['version']
         >
       }
 
-export type UserOptionalArgs<
+export type GetUserOptionalArgs<
   T extends RequestedModules['optionalModules'],
-  R = UserOptionalArgsBase<T>,
+  R = GetUserOptionalArgsBase<T>,
 > = EmptyObjectToNever<
   OmitNever<{
     [K in keyof R]: IsEmptyObject<R[K]> extends true ? never : R[K]
   }>
 >
 
-export type UserArgs<T extends RequestedModules = RequestedModules> = Simplify<
-  OmitNever<{
-    orchestrator: OrchestratorArgs
-    fundingManager: UserModuleArg<
-      T['fundingManager']['name'],
-      T['fundingManager']['version']
-    >
-    authorizer: UserModuleArg<
-      T['authorizer']['name'],
-      T['authorizer']['version']
-    >
-    paymentProcessor: UserModuleArg<
-      T['paymentProcessor']['name'],
-      T['paymentProcessor']['version']
-    >
-    optionalModules: UserOptionalArgs<T['optionalModules']>
-  }>
->
+export type GetUserArgs<T extends RequestedModules = RequestedModules> =
+  Simplify<
+    OmitNever<{
+      orchestrator: OrchestratorArgs
+      fundingManager: GetUserModuleArg<
+        T['fundingManager']['name'],
+        T['fundingManager']['version']
+      >
+      authorizer: GetUserModuleArg<
+        T['authorizer']['name'],
+        T['authorizer']['version']
+      >
+      paymentProcessor: GetUserModuleArg<
+        T['paymentProcessor']['name'],
+        T['paymentProcessor']['version']
+      >
+      optionalModules: GetUserOptionalArgs<T['optionalModules']>
+    }>
+  >
