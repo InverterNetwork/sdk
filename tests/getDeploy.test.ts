@@ -26,30 +26,27 @@ describe('#getDeploy', () => {
     const expectedBaseInputSchema = {
       orchestrator: {
         name: 'Orchestrator',
-        version: 'v1.0',
+        version: '1',
         inputs: [
           {
             name: 'owner',
             type: 'address',
-            jsType: '0xstring',
             description: 'The owner address of the workflow',
           },
           {
             name: 'token',
             type: 'address',
-            jsType: '0xstring',
             description: 'The payment token associated with the workflow',
           },
         ],
       },
       fundingManager: {
         name: 'RebasingFundingManager',
-        version: 'v1.0',
+        version: '1',
         inputs: [
           {
             name: 'orchestratorTokenAddress',
             type: 'address',
-            jsType: '0xstring',
             description:
               'The address of the token that will be deposited to the funding manager',
           },
@@ -57,18 +54,16 @@ describe('#getDeploy', () => {
       },
       authorizer: {
         name: 'RoleAuthorizer',
-        version: 'v1.0',
+        version: '1',
         inputs: [
           {
             name: 'initialOwner',
             type: 'address',
-            jsType: '0xstring',
             description: 'The initial owner of the workflow',
           },
           {
             name: 'initialManager',
             type: 'address',
-            jsType: '0xstring',
             description: 'The initial manager of the workflow',
           },
         ],
@@ -94,9 +89,13 @@ describe('#getDeploy', () => {
         initialManager:
           '0x7AcaF5360474b8E40f619770c7e8803cf3ED1053' as `0x${string}`,
       },
-      paymentProcessor: {
-        epochLength: BigInt(604800), // 1 week in seconds
-      },
+      optionalModules: [
+        {
+          name: 'PaymentProcessor',
+          version: '1',
+          params: { epochLength: BigInt(604800) },
+        },
+      ],
     }
 
     describe('optionalModules: none', () => {
@@ -183,7 +182,7 @@ describe('#getDeploy', () => {
         it('has the correct format', async () => {
           const { inputs } = await getDeploy(walletClient, {
             ...requestedModules,
-            optionalModules: [{ name: 'MetadataManager', version: 'v1.0' }],
+            optionalModules: [{ name: 'MetadataManager', version: '1' }],
           } as any)
           expect(inputs).toEqual({
             ...expectedBaseInputSchema,
@@ -196,7 +195,7 @@ describe('#getDeploy', () => {
         it('submits a tx', async () => {
           const { run } = await getDeploy(walletClient, {
             ...requestedModules,
-            optionalModules: [{ name: 'MetadataManager', version: 'v1.0' }],
+            optionalModules: [{ name: 'MetadataManager', version: '1' }],
           } as any)
           const metadataManagerArgs = {
             managerName: 'example manager name',
@@ -229,7 +228,7 @@ describe('#getDeploy', () => {
         it('has the correct format', async () => {
           const { inputs } = await getDeploy(walletClient, {
             ...requestedModules,
-            optionalModules: [{ name: 'BountyManager', version: 'v1.0' }],
+            optionalModules: [{ name: 'BountyManager', version: '1' }],
           } as any)
           expect(inputs).toEqual(expectedBaseInputSchema as any)
         })
@@ -239,7 +238,7 @@ describe('#getDeploy', () => {
         it('has the correct format', async () => {
           const { run } = await getDeploy(walletClient, {
             ...requestedModules,
-            optionalModules: [{ name: 'BountyManager', version: 'v1.0' }],
+            optionalModules: [{ name: 'BountyManager', version: '1' }],
           } as any)
           // @ts-expect-error: bountyManager is not in RequestedModules
           const txHash = (await run(args)) as string
@@ -251,7 +250,7 @@ describe('#getDeploy', () => {
     describe('optional: RecurringPaymentManager', () => {
       const expectedSchema = {
         name: 'RecurringPaymentManager',
-        version: 'v1.0',
+        version: '1',
         inputs: [
           {
             name: 'epochLength',
@@ -268,7 +267,7 @@ describe('#getDeploy', () => {
           const { inputs } = await getDeploy(walletClient, {
             ...requestedModules,
             optionalModules: [
-              { name: 'RecurringPaymentManager', version: 'v1.0' },
+              { name: 'RecurringPaymentManager', version: '1' },
             ],
           } as any)
 
@@ -286,7 +285,7 @@ describe('#getDeploy', () => {
           const { run } = await getDeploy(walletClient, {
             ...requestedModules,
             optionalModules: [
-              { name: 'RecurringPaymentManager', version: 'v1.0' },
+              { name: 'RecurringPaymentManager', version: '1' },
             ],
           } as any)
           const txHash = (await run({
