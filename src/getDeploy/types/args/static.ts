@@ -26,3 +26,13 @@ export type ConstructedArgs = {
   paymentProcessor: ModuleArgs
   optionalModules: ModuleArgs[]
 }
+
+export type UserModuleArg = Record<string, unknown>
+
+export type UserArgs = {
+  orchestrator: OrchestratorArgs
+  fundingManager?: UserModuleArg
+  authorizer?: UserModuleArg
+  paymentProcessor?: UserModuleArg
+  optionalModules?: Record<string, UserModuleArg>
+}

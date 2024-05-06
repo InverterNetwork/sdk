@@ -5,9 +5,9 @@ import { getTestConnectors } from '../getTestConnectors'
 import { Hex } from 'viem'
 
 describe('main', async () => {
-  const { walletClient } = getTestConnectors()
+  const { walletClient, publicClient } = getTestConnectors()
   it('Should log the Deploy Function possible inputs', async () => {
-    const { run, inputs } = await getDeploy(walletClient, {
+    const { run, inputs } = await getDeploy(publicClient, walletClient, {
       authorizer: {
         name: 'RoleAuthorizer',
         version: '1',

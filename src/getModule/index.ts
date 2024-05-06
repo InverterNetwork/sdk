@@ -82,7 +82,7 @@ export default function getModule<
     description,
     read,
     simulate,
-    write: write as W extends undefined ? undefined : NonNullable<typeof write>,
+    write: write as W extends undefined ? never : NonNullable<typeof write>,
   }
 
   // Return the result object

@@ -59,7 +59,7 @@ export default async function getWorkflow<
   // 2. gather extras
   const erc20Address = await getContract({
     address: fundingManagerAddress,
-    abi: getModuleData('RebasingFundingManager', '1')!.abi,
+    abi: getModuleData('RebasingFundingManager', '1').abi,
     client: {
       public: publicClient,
     },
@@ -67,7 +67,7 @@ export default async function getWorkflow<
 
   const erc20Contract = getContract({
       address: erc20Address,
-      abi: getModuleData('ERC20', '1')!.abi,
+      abi: getModuleData('ERC20', '1').abi,
       client: { public: publicClient },
     }),
     erc20Decimals = await erc20Contract.read.decimals(),

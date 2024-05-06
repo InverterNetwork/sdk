@@ -9,7 +9,7 @@ describe('Should get the verion from a module', async () => {
     moduleObj = getContract({
       address: '0xdbEdA5eD0d488f892C747217aF9f86091F5Ec4A7',
       client: { public: publicClient, wallet: walletClient },
-      abi: getModuleData('ERC20', '1')!.abi,
+      abi: getModuleData('ERC20', '1').abi,
     })
 
   it('Fetch the version', async () => {

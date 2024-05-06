@@ -1,4 +1,4 @@
-import { GetModuleVersion, ModuleName, data } from '@inverter-network/abis'
+import { ModuleName } from '@inverter-network/abis'
 import { OrchestratorArgs } from './static'
 import { RequestedModules } from '../requested'
 import {
@@ -11,85 +11,52 @@ import { IsEmptyObject, Simplify } from 'type-fest'
 export * from './static'
 
 // User arguments per module name and version
-export type UserModuleArg<
+export type GetUserModuleArg<
   N extends ModuleName = ModuleName,
-  V extends GetModuleVersion<N> = GetModuleVersion<N>,
+  V extends string = string,
   CD = GetDeploymentArgs<N, V>['configData'][number],
 > = EmptyObjectToNever<{
-  // @ts-expect-error - TS doesn't resolve name and type
+  // @ts-expect-error - TS cant resolve name
   [PN in CD['name']]: FormattedParameterToPrimitiveType<
     Extract<CD, { name: PN }>
   >
 }>
 
-type UserOptionalArgsBase<T extends RequestedModules['optionalModules']> =
-  T extends infer U
-    ? U extends RequestedModules['optionalModules']
-      ? {
-          [K in NonNullable<U>[number]['name']]: UserModuleArg<
-            K,
-            // @ts-expect-error - TS doesn't resolve version
-            Extract<NonNullable<U>[number], { name: K }>['version']
-          >
-        }
-      : never
-    : never
+type GetUserOptionalArgsBase<T extends RequestedModules['optionalModules']> =
+  T extends undefined
+    ? never
+    : {
+        [K in NonNullable<T>[number]['name']]: GetUserModuleArg<
+          K,
+          Extract<NonNullable<T>[number], { name: K }>['version']
+        >
+      }
 
-export type UserOptionalArgs<
+export type GetUserOptionalArgs<
   T extends RequestedModules['optionalModules'],
-  R = UserOptionalArgsBase<T>,
+  R = GetUserOptionalArgsBase<T>,
 > = EmptyObjectToNever<
   OmitNever<{
     [K in keyof R]: IsEmptyObject<R[K]> extends true ? never : R[K]
   }>
 >
 
-export type UserArgs<T extends RequestedModules = RequestedModules> = Simplify<
-  OmitNever<{
-    orchestrator: OrchestratorArgs
-    fundingManager: UserModuleArg<
-      T['fundingManager']['name'],
-      // @ts-expect-error - TS doesn't resolve version
-      T['fundingManager']['version']
-    >
-    authorizer: UserModuleArg<
-      T['authorizer']['name'],
-      // @ts-expect-error - TS doesn't resolve version
-      T['authorizer']['version']
-    >
-    paymentProcessor: UserModuleArg<
-      T['paymentProcessor']['name'],
-      // @ts-expect-error - TS doesn't resolve version
-      T['paymentProcessor']['version']
-    >
-    optionalModules?: OptionalModuleParams // Mark this field as optional
-  }>
->
-
-type Module = (typeof data)[number]
-
-type ModuleNamesByType = {
-  [K in Module as K['moduleType']]: K['name']
-}
-
-type OptionalModulesParamNames = {
-  [K in ModuleNamesByType['logicModule'] | ModuleNamesByType['utils']]?: string
-}
-
-type DeployParamNamesByModuleName<
-  ModuleName extends Module['name'],
-  ArgType extends keyof Module['deploymentArgs'],
-> = Extract<
-  Module,
-  { name: ModuleName }
->['deploymentArgs'][ArgType][number]['name']
-
-type DeployParamNames<ModuleName extends Module['name']> =
-  | DeployParamNamesByModuleName<ModuleName, 'configData'>
-  | DeployParamNamesByModuleName<ModuleName, 'dependencyData'>
-
-export type OptionalModuleParams = {
-  [ModuleName in keyof OptionalModulesParamNames]?: {
-    [ParamName in DeployParamNames<ModuleName & string>]: string
-  }
-}
+export type GetUserArgs<T extends RequestedModules = RequestedModules> =
+  Simplify<
+    OmitNever<{
+      orchestrator: OrchestratorArgs
+      fundingManager: GetUserModuleArg<
+        T['fundingManager']['name'],
+        T['fundingManager']['version']
+      >
+      authorizer: GetUserModuleArg<
+        T['authorizer']['name'],
+        T['authorizer']['version']
+      >
+      paymentProcessor: GetUserModuleArg<
+        T['paymentProcessor']['name'],
+        T['paymentProcessor']['version']
+      >
+      optionalModules: GetUserOptionalArgs<T['optionalModules']>
+    }>
+  >

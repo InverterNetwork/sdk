@@ -1,5 +1,5 @@
 import { getModuleData } from '@inverter-network/abis'
-import { WalletClient, encodeAbiParameters } from 'viem'
+import { PublicClient, WalletClient, encodeAbiParameters } from 'viem'
 import { GetDeploymentArgs } from '../types'
 import { MANDATORY_MODULES } from './constants'
 import {
@@ -8,68 +8,67 @@ import {
   ModuleArgs,
   RequestedModule,
   RequestedModules,
-  UserArgs,
+  GetUserArgs,
   UserModuleArg,
+  UserArgs,
 } from './types'
-import { assembleMetadata, getWriteFn } from './utils'
+import { assembleMetadata, getViemMethods } from './utils'
+import { Entries } from 'type-fest'
 
-const getEncodedArgs = <T extends RequestedModule>(
-  userModuleArgs: UserModuleArg<
-    T['name'],
-    // @ts-expect-error - TS doesn't resolve version
-    T['version']
-  >,
-  deploymentArgs: GetDeploymentArgs
+const getEncodedArgs = (
+  deploymentArgs: GetDeploymentArgs,
+  userModuleArgs?: UserModuleArg
 ) => {
   // Initialize empty encodedArgs
   const encodedArgs = {} as EncodedArgs
-  // Get module deployment args and name
-  const { configData, dependencyData } = deploymentArgs
+
   // iterate over config and dependency data
-  ;[configData, dependencyData].forEach((dataArr, index) => {
-    const paramValueContainer = Array(dataArr.length)
-    const paramTypeContainer = Array(dataArr.length)
-    for (const paramName in userModuleArgs) {
-      // find index in config
-      const idx = dataArr.findIndex((config: any) => config.name === paramName)
-      if (idx >= 0) {
-        const { type } = dataArr[idx]
-        // put param in correct idx in param container
-        paramValueContainer[idx] = userModuleArgs[paramName]
-        paramTypeContainer[idx] = { type }
+  ;(Object.entries(deploymentArgs) as Entries<typeof deploymentArgs>).forEach(
+    ([key, dataArr]) => {
+      const paramValueContainer = Array(dataArr.length)
+      const paramTypeContainer = Array(dataArr.length)
+
+      for (const argName in userModuleArgs) {
+        // find index in config
+        const idx = dataArr.findIndex((config) => config.name === argName)
+        // if index is found
+        if (idx >= 0) {
+          // put arg in the correct idx in param container
+          paramValueContainer[idx] = userModuleArgs[argName]
+          // put type in the correct idx in type container
+          paramTypeContainer[idx] = { type: dataArr[idx].type }
+        }
       }
+
+      // set encodedArgs[key] to the encoded value of the args
+      encodedArgs[key] = encodeAbiParameters(
+        paramTypeContainer,
+        paramValueContainer
+      )
     }
-    const key = index === 0 ? 'configData' : 'dependencyData'
-    encodedArgs[key] = encodeAbiParameters(
-      paramTypeContainer,
-      paramValueContainer
-    )
-  })
+  )
+
   // Return encodedArgs
   return encodedArgs
 }
 
-const assembleModuleArgs = <T extends RequestedModule>(
-  requestedModule: RequestedModule,
-  userModuleArgs: UserModuleArg<
-    T['name'],
-    // @ts-expect-error - TS doesn't resolve version
-    T['version']
-  >
-) => {
-  const { name, version } = requestedModule
-  const { deploymentArgs } = getModuleData(name, version)!
-  const moduleArgs: ModuleArgs = {
-    ...getEncodedArgs(userModuleArgs, deploymentArgs),
+const assembleModuleArgs = (
+  { name, version }: RequestedModule,
+  userModuleArgs?: UserModuleArg
+): ModuleArgs => {
+  const { deploymentArgs } = getModuleData(name, version)
+  const moduleArgs = {
+    ...getEncodedArgs(deploymentArgs, userModuleArgs),
     metadata: assembleMetadata(name, version),
   }
   return moduleArgs
 }
 
-const constructArgs = <T extends RequestedModules>(
-  requestedModules: T,
-  userArgs: UserArgs<T>
+const constructArgs = (
+  requestedModules: RequestedModules,
+  userArgs: UserArgs
 ) => {
+  // Initialize args
   const args = {
     orchestrator: userArgs.orchestrator,
     fundingManager: {},
@@ -78,12 +77,11 @@ const constructArgs = <T extends RequestedModules>(
     optionalModules: [],
   } as unknown as ConstructedArgs
 
-  // mandatory modules
+  // itterate mandatory modules
   MANDATORY_MODULES.forEach((moduleType) => {
     const moduleArgs = assembleModuleArgs(
       requestedModules[moduleType],
-      // @ts-expect-error - TS doesn't resolve union
-      userArgs[moduleType]
+      userArgs[moduleType]!
     )
     args[moduleType] = moduleArgs
   })
@@ -94,10 +92,7 @@ const constructArgs = <T extends RequestedModules>(
     optionalModules.forEach((optionalModule) => {
       const moduleArgs = assembleModuleArgs(
         optionalModule,
-        // @ts-expect-error - TS doesn't resolve union
-        userArgs.optionalModules
-          ? userArgs.optionalModules[optionalModule.name]
-          : {}
+        userArgs.optionalModules?.[optionalModule.name]
       )
       args.optionalModules.push(moduleArgs)
     })
@@ -107,10 +102,11 @@ const constructArgs = <T extends RequestedModules>(
 }
 
 export default function getRun<T extends RequestedModules>(
+  publicClient: PublicClient,
   walletClient: WalletClient,
   requestedModules: T
 ) {
-  const run = (userArgs: UserArgs<T>) => {
+  const run = (userArgs: GetUserArgs<T>) => {
     // Construct the args
     const {
       orchestrator,
@@ -120,17 +116,30 @@ export default function getRun<T extends RequestedModules>(
       optionalModules,
     } = constructArgs(requestedModules, userArgs)
 
+    const { write, simulate } = getViemMethods(walletClient, publicClient)
+
+    const arr = [
+      orchestrator,
+      fundingManager,
+      authorizer,
+      paymentProcessor,
+      optionalModules,
+    ] as const
+
     // Return the write function with the args
-    return getWriteFn(walletClient)(
-      [
-        orchestrator,
-        fundingManager,
-        authorizer,
-        paymentProcessor,
-        optionalModules,
-      ],
-      {} as any
-    )
+    return (async () => {
+      // prettier-ignore
+      const orchestratorAddress = (await simulate(arr, {
+        // @ts-expect-error - TODO: add Account and Chain to wallet client type props
+        account: walletClient.account.walletAddress,
+      })).result
+      const transactionHash = await write(arr, {} as any)
+
+      return {
+        orchestratorAddress,
+        transactionHash,
+      }
+    })()
   }
 
   return run

@@ -4,9 +4,9 @@ import { getDeploy } from '../../src'
 import { getTestConnectors } from '../getTestConnectors'
 
 describe('main', async () => {
-  const { walletClient } = getTestConnectors()
+  const { publicClient, walletClient } = getTestConnectors()
   it('Should log the Deploy Function possible inputs', async () => {
-    const res = getDeploy(walletClient, {
+    const res = getDeploy(publicClient, walletClient, {
       authorizer: {
         name: 'RoleAuthorizer',
         version: '1',
