@@ -13,7 +13,14 @@ import {
 } from './types'
 import { assembleMetadata, getWriteFn } from './utils'
 
-const getEncodedArgs = (moduleArgs: any, deploymentArgs: GetDeploymentArgs) => {
+const getEncodedArgs = <T extends RequestedModule>(
+  userModuleArgs: UserModuleArg<
+    T['name'],
+    // @ts-expect-error - TS doesn't resolve version
+    T['version']
+  >,
+  deploymentArgs: GetDeploymentArgs
+) => {
   // Initialize empty encodedArgs
   const encodedArgs = {} as EncodedArgs
   // Get module deployment args and name
@@ -22,13 +29,14 @@ const getEncodedArgs = (moduleArgs: any, deploymentArgs: GetDeploymentArgs) => {
   ;[configData, dependencyData].forEach((dataArr, index) => {
     const paramValueContainer = Array(dataArr.length)
     const paramTypeContainer = Array(dataArr.length)
-    for (const paramName in moduleArgs) {
+    for (const paramName in userModuleArgs) {
       // find index in config
       const idx = dataArr.findIndex((config: any) => config.name === paramName)
       if (idx >= 0) {
         const { type } = dataArr[idx]
         // put param in correct idx in param container
-        paramValueContainer[idx] = moduleArgs[paramName]
+        // @ts-expect-error - TODO: fix type
+        paramValueContainer[idx] = userModuleArgs[paramName]
         paramTypeContainer[idx] = { type }
       }
     }

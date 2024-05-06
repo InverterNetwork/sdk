@@ -7,8 +7,8 @@ export * from './static'
 
 // User arguments per module name and version
 export type UserModuleArg<
-  N extends ModuleName,
-  V extends GetModuleVersion<N>,
+  N extends ModuleName = ModuleName,
+  V extends GetModuleVersion<N> = GetModuleVersion<N>,
   CD = GetDeploymentArgs<N, V>['configData'][number],
 > = {
   // @ts-expect-error - TS doesn't resolve name and type
