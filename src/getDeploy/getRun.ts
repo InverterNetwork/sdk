@@ -56,7 +56,7 @@ const assembleModuleArgs = (
   { name, version }: RequestedModule,
   userModuleArgs: UserModuleArg
 ): ModuleArgs => {
-  const { deploymentArgs } = getModuleData(name, version)!
+  const { deploymentArgs } = getModuleData(name, version)
   const moduleArgs = {
     ...getEncodedArgs(userModuleArgs, deploymentArgs),
     metadata: assembleMetadata(name, version),

@@ -8,7 +8,7 @@ import { METADATA_URL, ORCHESTRATOR_FACTORY_ADDRESS } from './constants'
 
 // retrieves the deployment function via viem
 export const getWriteFn = (walletClient: WalletClient) => {
-  const { abi } = getModuleData('OrchestratorFactory', '1')!
+  const { abi } = getModuleData('OrchestratorFactory', '1')
   const orchestratorFactory = getContract({
     address: ORCHESTRATOR_FACTORY_ADDRESS,
     abi,

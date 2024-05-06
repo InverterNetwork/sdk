@@ -21,7 +21,7 @@ export const getModuleSchema = <
   const { name, version, deploymentArgs } = getModuleData(
     module.name,
     module.version
-  )!
+  )
 
   const { configData, dependencyData } = deploymentArgs
 
