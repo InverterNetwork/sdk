@@ -1,4 +1,4 @@
-import { GetModuleVersion, ModuleName } from '@inverter-network/abis'
+import { GetModuleVersion, ModuleName, data } from '@inverter-network/abis'
 import { OrchestratorArgs } from './static'
 import { RequestedModules } from '../requested'
 import {
@@ -62,6 +62,34 @@ export type UserArgs<T extends RequestedModules = RequestedModules> = Simplify<
       // @ts-expect-error - TS doesn't resolve version
       T['paymentProcessor']['version']
     >
-    optionalModules: UserOptionalArgs<T['optionalModules']>
+    optionalModules?: OptionalModuleParams // Mark this field as optional
   }>
 >
+
+type Module = (typeof data)[number]
+
+type ModuleNamesByType = {
+  [K in Module as K['moduleType']]: K['name']
+}
+
+type OptionalModulesParamNames = {
+  [K in ModuleNamesByType['logicModule'] | ModuleNamesByType['utils']]?: string
+}
+
+type DeployParamNamesByModuleName<
+  ModuleName extends Module['name'],
+  ArgType extends keyof Module['deploymentArgs'],
+> = Extract<
+  Module,
+  { name: ModuleName }
+>['deploymentArgs'][ArgType][number]['name']
+
+type DeployParamNames<ModuleName extends Module['name']> =
+  | DeployParamNamesByModuleName<ModuleName, 'configData'>
+  | DeployParamNamesByModuleName<ModuleName, 'dependencyData'>
+
+export type OptionalModuleParams = {
+  [ModuleName in keyof OptionalModulesParamNames]?: {
+    [ParamName in DeployParamNames<ModuleName & string>]: string
+  }
+}

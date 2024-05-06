@@ -2,7 +2,13 @@ import { expect, describe, it } from 'bun:test'
 
 import { getTestConnectors } from './getTestConnectors'
 import { getDeploy } from '../src'
-import { UserArgs, ModuleSchema } from '../src/getDeploy/types'
+import {
+  UserArgs,
+  ModuleSchema,
+  OrchestratorArgs,
+  UserModuleArg,
+  DeploySchema,
+} from '../src/getDeploy/types'
 
 describe('#getDeploy', () => {
   const { walletClient } = getTestConnectors()
@@ -76,13 +82,12 @@ describe('#getDeploy', () => {
       paymentProcessor: { name: 'SimplePaymentProcessor'; version: '1' }
     }> = {
       orchestrator: {
-        owner: '0x5eb14c2e7D0cD925327d74ae4ce3fC692ff8ABEF' as `0x${string}`,
-        token: '0x7AcaF5360474b8E40f619770c7e8803cf3ED1053' as `0x${string}`,
-      },
+        owner: '0x5eb14c2e7D0cD925327d74ae4ce3fC692ff8ABEF',
+        token: '0x7AcaF5360474b8E40f619770c7e8803cf3ED1053',
+      } as OrchestratorArgs,
       fundingManager: {
-        orchestratorTokenAddress:
-          '0x5eb14c2e7D0cD925327d74ae4ce3fC692ff8ABEF' as `0x${string}`,
-      },
+        orchestratorTokenAddress: '0x5eb14c2e7D0cD925327d74ae4ce3fC692ff8ABEF',
+      } as UserModuleArg<'RebasingFundingManager', '1'>,
       authorizer: {
         initialOwner:
           '0x7AcaF5360474b8E40f619770c7e8803cf3ED1053' as `0x${string}`,
@@ -227,8 +232,8 @@ describe('#getDeploy', () => {
         })
       })
 
-      describe('run', () => {
-        it('has the correct format', async () => {
+      describe.only('run', () => {
+        it('submits a tx', async () => {
           const { run } = await getDeploy(walletClient, {
             ...requestedModules,
             optionalModules: [{ name: 'BountyManager', version: '1' }],
