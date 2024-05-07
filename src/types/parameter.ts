@@ -1,13 +1,13 @@
 import {
   ExtendedAbiParameter,
   NonTupleType,
-  Pretty,
   TupleType,
 } from '@inverter-network/abis'
 import { JsType } from './base'
+import { Simplify } from 'type-fest'
 
 // AbiParameter without components field + description, tag and jsType fields
-export type NonTupleFormattedAbiParameter = Pretty<
+export type NonTupleFormattedAbiParameter = Simplify<
   Exclude<
     ExtendedAbiParameter,
     {
@@ -19,7 +19,7 @@ export type NonTupleFormattedAbiParameter = Pretty<
 >
 
 // AbiParameter with components field, components field is an array of FormattedAbiParameters
-export type TupleFormattedAbiParameter = Pretty<
+export type TupleFormattedAbiParameter = Simplify<
   Omit<
     Exclude<
       ExtendedAbiParameter,

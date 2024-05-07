@@ -1,5 +1,5 @@
-import type { ModuleKeys, ModuleVersionKey } from '@inverter-network/abis'
-import { getModuleVersion } from '@inverter-network/abis'
+import type { ModuleName, GetModuleVersion } from '@inverter-network/abis'
+import { getModuleData } from '@inverter-network/abis'
 import { getContract } from 'viem'
 import type {
   Hex,
@@ -13,8 +13,8 @@ import prepareFunction from './prepareFunction'
 import { Extras } from '../types/base'
 
 export default function getModule<
-  K extends ModuleKeys,
-  V extends ModuleVersionKey,
+  N extends ModuleName,
+  V extends GetModuleVersion<N>,
   W extends WalletClient<Transport, Chain, Account> | undefined = undefined,
 >({
   name,
@@ -24,14 +24,17 @@ export default function getModule<
   walletClient,
   extras,
 }: {
-  name: K
+  name: N
   version: V
   address: Hex
   publicClient: PublicClient<Transport, Chain>
   walletClient?: W
   extras?: Extras
 }) {
-  const mv = getModuleVersion(name, version)
+  const mv = getModuleData(name, version)
+
+  if (!mv) throw new Error(`Module ${name} with version ${version} not found`)
+
   type MV = typeof mv
 
   // If the walletClient is valid add walletAddress to the extras-
@@ -79,7 +82,7 @@ export default function getModule<
     description,
     read,
     simulate,
-    write: write as W extends undefined ? undefined : NonNullable<typeof write>,
+    write: write as W extends undefined ? never : NonNullable<typeof write>,
   }
 
   // Return the result object

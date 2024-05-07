@@ -13,19 +13,19 @@ describe('Get A Module', async () => {
     workflowOrientation: {
       authorizer: {
         name: 'RoleAuthorizer',
-        version: 'v1.0',
+        version: '1',
       },
       fundingManager: {
         name: 'RebasingFundingManager',
-        version: 'v1.0',
+        version: '1',
       },
       logicModule: {
         name: 'BountyManager',
-        version: 'v1.0',
+        version: '1',
       },
       paymentProcessor: {
         name: 'SimplePaymentProcessor',
-        version: 'v1.0',
+        version: '1',
       },
     },
   })

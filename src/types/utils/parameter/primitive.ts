@@ -1,6 +1,6 @@
 import { AbiParameter, AbiParameterToPrimitiveType } from 'abitype'
 import { JsType } from '../..'
-import { Pretty } from '@inverter-network/abis'
+import { Simplify } from 'type-fest'
 
 // Non Tuple types Formatter
 type SimplePrimitive<P> = P extends {
@@ -29,7 +29,7 @@ type TuplePrimitive<P> = P extends {
   type: 'tuple' | 'tuple[]'
   components: infer CA extends readonly any[]
 }
-  ? Pretty<
+  ? Simplify<
       P['type'] extends 'tuple'
         ? TupleUtils<CA>
         : P['type'] extends 'tuple[]'

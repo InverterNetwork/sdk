@@ -13,6 +13,15 @@ export default function format(
 
   // If the output is not a tuple,
 
+  // if the output has a tag ( this has to come before the jsType check)
+  if ('tags' in output) {
+    const { tags } = output
+    // if the output has a tag
+    if (tags?.includes('any')) return any(res)
+
+    if (tags?.includes('decimals')) return decimals(res, extras)
+  }
+
   // If it also has jsType property
   if ('jsType' in output) {
     const { jsType } = output
@@ -22,15 +31,6 @@ export default function format(
 
     // if the output is a string[], format each string to a big int
     if (jsType === 'string[]') return res.map((i: bigint) => String(i))
-  }
-
-  // if the output has a tag
-  if ('tags' in output) {
-    const { tags } = output
-    // if the output has a tag
-    if (tags?.includes('any')) return any(res)
-
-    if (tags?.includes('decimals')) return decimals(res, extras)
   }
 
   // if all else fails, just return the initial res

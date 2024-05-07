@@ -11,7 +11,7 @@ export default function parse(
   if (type === 'tuple') return tuple({ input, arg, extras })
   if (type === 'tuple[]') return tupleArray({ arg, input, extras })
 
-  // if the input has a tag
+  // if the input has a tag ( this has to come before the jsType check)
   if ('tags' in input) {
     const { tags } = input
     if (tags?.includes('any')) return any(arg)

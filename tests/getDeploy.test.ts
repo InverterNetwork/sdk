@@ -3,59 +3,51 @@ import { isAddress } from 'viem'
 
 import { getTestConnectors } from './getTestConnectors'
 import { getDeploy } from '../src'
-import {
-  ClientInputs,
-  ModuleSchema,
-  DeploySchema,
-  RequestedModules,
-} from '../src/getDeploy/types'
+import { GetUserArgs, ModuleSchema } from '../src/getDeploy/types'
 
 describe('#getDeploy', () => {
-  const { walletClient, publicClient } = getTestConnectors()
+  const { publicClient, walletClient } = getTestConnectors()
 
   describe('Modules: RebasingFundingManager, RoleAuthorizer, SimplePaymentProcessor', () => {
     const requestedModules = {
       fundingManager: {
         name: 'RebasingFundingManager',
-        version: 'v1.0',
+        version: '1',
       },
       paymentProcessor: {
         name: 'SimplePaymentProcessor',
-        version: 'v1.0',
+        version: '1',
       },
       authorizer: {
         name: 'RoleAuthorizer',
-        version: 'v1.0',
+        version: '1',
       },
-    }
+    } as const
 
     const expectedBaseInputSchema = {
       orchestrator: {
         name: 'Orchestrator',
-        version: 'v1.0',
+        version: '1',
         inputs: [
           {
             name: 'owner',
             type: 'address',
-            jsType: '0xstring',
             description: 'The owner address of the workflow',
           },
           {
             name: 'token',
             type: 'address',
-            jsType: '0xstring',
             description: 'The payment token associated with the workflow',
           },
         ],
       },
       fundingManager: {
         name: 'RebasingFundingManager',
-        version: 'v1.0',
+        version: '1',
         inputs: [
           {
             name: 'orchestratorTokenAddress',
             type: 'address',
-            jsType: '0xstring',
             description:
               'The address of the token that will be deposited to the funding manager',
           },
@@ -63,47 +55,49 @@ describe('#getDeploy', () => {
       },
       authorizer: {
         name: 'RoleAuthorizer',
-        version: 'v1.0',
+        version: '1',
         inputs: [
           {
             name: 'initialOwner',
             type: 'address',
-            jsType: '0xstring',
             description: 'The initial owner of the workflow',
           },
           {
             name: 'initialManager',
             type: 'address',
-            jsType: '0xstring',
             description: 'The initial manager of the workflow',
           },
         ],
       },
     }
 
-    const args = {
-      Orchestrator: {
-        owner: '0x5eb14c2e7D0cD925327d74ae4ce3fC692ff8ABEF' as `0x${string}`,
-        token: '0x7AcaF5360474b8E40f619770c7e8803cf3ED1053' as `0x${string}`,
+    const args: GetUserArgs<{
+      fundingManager: { name: 'RebasingFundingManager'; version: '1' }
+      authorizer: { name: 'RoleAuthorizer'; version: '1' }
+      paymentProcessor: { name: 'SimplePaymentProcessor'; version: '1' }
+    }> = {
+      orchestrator: {
+        owner: '0x5eb14c2e7D0cD925327d74ae4ce3fC692ff8ABEF',
+        token: '0x7AcaF5360474b8E40f619770c7e8803cf3ED1053',
       },
-      RebasingFundingManager: {
+      fundingManager: {
         orchestratorTokenAddress: '0x5eb14c2e7D0cD925327d74ae4ce3fC692ff8ABEF',
       },
-      RoleAuthorizer: {
+      authorizer: {
         initialOwner: '0x7AcaF5360474b8E40f619770c7e8803cf3ED1053',
         initialManager: '0x7AcaF5360474b8E40f619770c7e8803cf3ED1053',
       },
-    } as ClientInputs
+    }
 
     describe('optionalModules: none', () => {
-      describe('inputSchema', () => {
+      describe('inputs', () => {
         it('has the correct format', async () => {
-          const { inputSchema } = await getDeploy(
-            walletClient,
+          const { inputs } = await getDeploy(
             publicClient,
-            requestedModules as RequestedModules
+            walletClient,
+            requestedModules
           )
-          expect(inputSchema).toEqual(expectedBaseInputSchema as any)
+          expect(inputs).toEqual(expectedBaseInputSchema as any)
         })
       })
 
@@ -121,109 +115,98 @@ describe('#getDeploy', () => {
 
       describe('deploy', () => {
         it('submits a tx', async () => {
-          const { deploy } = await getDeploy(
-            walletClient,
+          const { run } = await getDeploy(
             publicClient,
-            requestedModules as RequestedModules
+            walletClient,
+            requestedModules
           )
-          const { txHash } = await deploy(args)
-          expect(txHash.length).toEqual(66)
+          const { transactionHash } = await run(args)
+          expect(transactionHash.length).toEqual(66)
         })
       })
     })
 
     describe('optionalModules: MetadataManager', () => {
-      describe('inputSchema', () => {
+      describe('inputs', () => {
         const expectedMetadataManagerSchema = {
-          version: 'v1.0',
+          version: '1',
           name: 'MetadataManager',
           inputs: [
             {
               name: 'managerName',
               type: 'string',
               description: 'The (user-) name of the manager',
-              jsType: 'string',
             },
             {
               name: 'managerAccount',
               type: 'address',
               description: 'The address of the manager',
-              jsType: '0xstring',
             },
             {
               name: 'managerTwitterHandle',
               type: 'string',
               description: 'The twitter handle of the manager',
-              jsType: 'string',
             },
             {
               name: 'title',
               type: 'string',
               description: 'The name of the workflow/orchestrator',
-              jsType: 'string',
             },
             {
               name: 'descriptionShort',
               type: 'string',
               description: 'The short description of the workflow/orchestrator',
-              jsType: 'string',
             },
             {
               name: 'descriptionLong',
               type: 'string',
               description: 'The long description of the workflow/orchestrator',
-              jsType: 'string',
             },
             {
               name: 'externalMedias',
               type: 'string[]',
               description: 'An array of links to external medias',
-              jsType: 'string[]',
             },
             {
               name: 'categories',
               type: 'string[]',
               description: 'An array of categories of the workflow/orchestator',
-              jsType: 'string[]',
             },
             {
               name: 'memberName',
               type: 'string',
               description: 'The (user-) name of the member',
-              jsType: 'string',
             },
             {
               name: 'memberAccount',
               type: 'address',
               description: 'The address of the member',
-              jsType: '0xstring',
             },
             {
               name: 'memberUrl',
               type: 'string',
               description: 'A url of the member',
-              jsType: 'string',
             },
           ],
-        } as ModuleSchema
+        } as ModuleSchema<'MetadataManager', '1'>
 
         it('has the correct format', async () => {
-          const { inputSchema } = await getDeploy(walletClient, publicClient, {
+          const { inputs } = await getDeploy(publicClient, walletClient, {
             ...requestedModules,
-            optionalModules: [{ name: 'MetadataManager', version: 'v1.0' }],
+            optionalModules: [{ name: 'MetadataManager', version: '1' }],
           } as any)
-          expect(inputSchema).toEqual({
+          expect(inputs).toEqual({
             ...expectedBaseInputSchema,
             optionalModules: [expectedMetadataManagerSchema],
-          } as DeploySchema)
+          } as any) // TODO: fix type to DeploySchema
         })
       })
 
-      describe.skip('deploy', () => {
+      describe.skip('run', () => {
         it('submits a tx', async () => {
-          const { deploy } = await getDeploy(walletClient, publicClient, {
+          const { run } = await getDeploy(publicClient, walletClient, {
             ...requestedModules,
-            optionalModules: [{ name: 'MetadataManager', version: 'v1.0' }],
+            optionalModules: [{ name: 'MetadataManager', version: '1' }],
           } as any)
           const metadataManagerArgs = {
             managerName: 'example manager name',
@@ -240,37 +223,37 @@ describe('#getDeploy', () => {
             memberName: 'example member name',
             memberAccount: '0x7AcaF5360474b8E40f619770c7e8803cf3ED1053',
             memberUrl: 'example member url',
-          }
-          const { txHash } = await deploy({
+          } as const
+          const { transactionHash } = await run({
             ...args,
-            MetadataManager: metadataManagerArgs,
+            // @ts-expect-error: metadataManager is not in RequestedModules
+            optionalModules: [metadataManagerArgs],
           })
-          expect(txHash.length).toEqual(66)
+          expect(transactionHash.length).toEqual(66)
         })
       })
     })
 
     describe('optional: BountyManager', () => {
-      describe('inputSchema', () => {
+      describe('inputs', () => {
         it('has the correct format', async () => {
-          const { inputSchema } = await getDeploy(walletClient, publicClient, {
+          const { inputs } = await getDeploy(publicClient, walletClient, {
             ...requestedModules,
-            optionalModules: [{ name: 'BountyManager', version: 'v1.0' }],
+            optionalModules: [{ name: 'BountyManager', version: '1' }],
           } as any)
-          expect(inputSchema).toEqual({
-            ...(expectedBaseInputSchema as any),
-          })
+          expect(inputs).toEqual(expectedBaseInputSchema as any)
         })
       })
 
-      describe.only('deploy', () => {
+      describe('run', () => {
         it('has the correct format', async () => {
-          const { deploy } = await getDeploy(walletClient, publicClient, {
+          const { run } = await getDeploy(publicClient, walletClient, {
             ...requestedModules,
-            optionalModules: [{ name: 'BountyManager', version: 'v1.0' }],
+            optionalModules: [{ name: 'BountyManager', version: '1' }],
           } as any)
-          const { txHash } = await deploy(args)
-          expect(txHash.length).toEqual(66)
+          // @ts-expect-error: bountyManager is not in RequestedModules
+          const { transactionHash } = await run(args)
+          expect(transactionHash.length).toEqual(66)
         })
       })
     })
@@ -278,7 +261,7 @@ describe('#getDeploy', () => {
     describe('optional: RecurringPaymentManager', () => {
       const expectedSchema = {
         name: 'RecurringPaymentManager',
-        version: 'v1.0',
+        version: '1',
         inputs: [
           {
             name: 'epochLength',
@@ -290,39 +273,40 @@ describe('#getDeploy', () => {
         ],
       }
 
-      describe('inputSchema', () => {
+      describe('inputs', () => {
         it('has the correct format', async () => {
-          const { inputSchema } = await getDeploy(walletClient, publicClient, {
+          const { inputs } = await getDeploy(publicClient, walletClient, {
             ...requestedModules,
             optionalModules: [
-              { name: 'RecurringPaymentManager', version: 'v1.0' },
+              { name: 'RecurringPaymentManager', version: '1' },
             ],
           } as any)
 
-          expect(inputSchema).toEqual({
+          expect(inputs).toEqual({
             ...expectedBaseInputSchema,
             optionalModules: [expectedSchema],
-          } as DeploySchema)
+          } as any) // TODO: fix type to DeploySchema
         })
       })
 
-      describe.skip('deploy', () => {
+      describe('run', () => {
         const epochLength = '604800' // 1 week in seconds
 
         it('submits a tx', async () => {
-          const { deploy } = await getDeploy(walletClient, publicClient, {
+          const { run } = await getDeploy(publicClient, walletClient, {
             ...requestedModules,
             optionalModules: [
-              { name: 'RecurringPaymentManager', version: 'v1.0' },
+              { name: 'RecurringPaymentManager', version: '1' },
             ],
           } as any)
-          const { txHash } = await deploy({
+          const { transactionHash } = await run({
             ...args,
-            RecurringPaymentManager: {
-              epochLength: epochLength,
+            // @ts-expect-error: recurringPaymentManager is not in RequestedModules
+            paymentProcessor: {
+              epochLength: BigInt(epochLength),
             },
           })
-          expect(txHash.length).toEqual(66)
+          expect(transactionHash.length).toEqual(66)
         })
       })
     })

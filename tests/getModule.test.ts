@@ -8,7 +8,7 @@ describe('Get A Module', () => {
   const { publicClient, walletClient } = getTestConnectors()
   const module = getModule({
     name: 'BountyManager',
-    version: 'v1.0',
+    version: '1',
     address: '0xc24f66A74967c336c8Cd529308c193b05Ac3e02f',
     publicClient,
     walletClient,

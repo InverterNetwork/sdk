@@ -1,31 +1,18 @@
 import {
-  ModuleVersionKey,
-  data,
-  getModuleVersion,
+  GetModuleVersion,
+  getModuleData,
+  ModuleName,
 } from '@inverter-network/abis'
-import { GenericModuleName } from './types'
 import { PublicClient, WalletClient, getContract } from 'viem'
 import { METADATA_URL, ORCHESTRATOR_FACTORY_ADDRESS } from './constants'
 
-// retrieves the deployment arguments from the module version
-export const getDeploymentConfig = <
-  TGenericModuleName extends GenericModuleName,
-  TModuleVersionKey extends ModuleVersionKey,
->(
-  name: TGenericModuleName,
-  version: TModuleVersionKey
-) => {
-  const { moduleType, deploymentArgs } = data[name][version]
-  return { deploymentArgs, moduleType }
-}
-
 // retrieves the deployment function via viem
-export const getDeployInteraction = (
+export const getViemMethods = (
   walletClient: WalletClient,
   publicClient: PublicClient
 ) => {
-  const { abi } = getModuleVersion('OrchestratorFactory', 'v1.0')
-  const orchestratorFactory = getContract({
+  const { abi } = getModuleData('OrchestratorFactory', '1')
+  const { write, simulate } = getContract({
     address: ORCHESTRATOR_FACTORY_ADDRESS,
     abi,
     client: {
@@ -35,26 +22,23 @@ export const getDeployInteraction = (
   })
 
   return {
-    run: orchestratorFactory.write.createOrchestrator,
-    simulate: orchestratorFactory.simulate.createOrchestrator,
+    simulate: simulate.createOrchestrator,
+    write: write.createOrchestrator,
   }
 }
 
-// extracts the major and minor version from the version string
-export const extractMajorMinorVersion = (versionString: ModuleVersionKey) => {
-  const version = versionString
-    .substring(1)
-    .split('.')
-    .map((v) => parseInt(v))
-  return { majorVersion: BigInt(version[0]), minorVersion: BigInt(version[1]) }
+export const getMajorMinorVersion = (majorVersion: `${number}`) => {
+  const majorBigint = BigInt(majorVersion),
+    minorBigint = BigInt(0) // TODO: find a way to get the latest minor version
+  return { majorVersion: majorBigint, minorVersion: minorBigint }
 }
 
 // returns the MetaData struct that the deploy function requires for each module
-export const assembleMetadata = <ModuleName extends GenericModuleName>(
-  name: ModuleName,
-  version: ModuleVersionKey
+export const assembleMetadata = <N extends ModuleName>(
+  name: N,
+  version: GetModuleVersion<N>
 ) => {
-  const majorMinorVersion = extractMajorMinorVersion(version)
+  const majorMinorVersion = getMajorMinorVersion(version)
   return {
     title: name,
     url: METADATA_URL,
