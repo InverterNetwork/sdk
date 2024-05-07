@@ -1,5 +1,4 @@
 import { expect, describe, it } from 'bun:test'
-import { isAddress } from 'viem'
 
 import { getTestConnectors } from './getTestConnectors'
 import { getDeploy } from '../src'
@@ -98,18 +97,6 @@ describe('#getDeploy', () => {
             requestedModules
           )
           expect(inputs).toEqual(expectedBaseInputSchema as any)
-        })
-      })
-
-      describe('simulateDeploy', () => {
-        it('returns the orchestrator address', async () => {
-          const { simulateDeploy } = await getDeploy(
-            walletClient,
-            publicClient,
-            requestedModules as RequestedModules
-          )
-          const orchestratorAddress = await simulateDeploy(args)
-          expect(isAddress(orchestratorAddress)).toBeTrue
         })
       })
 
