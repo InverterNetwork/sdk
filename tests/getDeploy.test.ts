@@ -1,4 +1,5 @@
 import { expect, describe, it } from 'bun:test'
+import { isAddress } from 'viem'
 
 import { getTestConnectors } from './getTestConnectors'
 import { getDeploy } from '../src'
@@ -100,7 +101,19 @@ describe('#getDeploy', () => {
         })
       })
 
-      describe('deploymentFunction', () => {
+      describe('simulateDeploy', () => {
+        it('returns the orchestrator address', async () => {
+          const { simulateDeploy } = await getDeploy(
+            walletClient,
+            publicClient,
+            requestedModules as RequestedModules
+          )
+          const orchestratorAddress = await simulateDeploy(args)
+          expect(isAddress(orchestratorAddress)).toBeTrue
+        })
+      })
+
+      describe('deploy', () => {
         it('submits a tx', async () => {
           const { run } = await getDeploy(
             publicClient,
@@ -239,8 +252,8 @@ describe('#getDeploy', () => {
             optionalModules: [{ name: 'BountyManager', version: '1' }],
           } as any)
           // @ts-expect-error: bountyManager is not in RequestedModules
-          const txHash = (await run(args)) as string
-          expect(txHash.length).toEqual(66)
+          const { transactionHash } = await run(args)
+          expect(transactionHash.length).toEqual(66)
         })
       })
     })
