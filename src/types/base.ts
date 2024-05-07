@@ -12,3 +12,4 @@ export type JsType =
   | 'string[]'
   | '0xstring[]'
   | 'any'
+  | 'boolean[]'
