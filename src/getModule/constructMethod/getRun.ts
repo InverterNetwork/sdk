@@ -1,7 +1,12 @@
 import { AbiStateMutability } from 'viem'
-import { Extras, GetMethodArgs, GetMethodResponse } from '../../types'
+import {
+  Extras,
+  GetMethodArgs,
+  GetMethodResponse,
+  PopPublicClient,
+} from '../../types'
 import formatOutputs from '../formatOutputs'
-import parseInputs from '../parseInputs'
+import parseInputs from '../../utils/parseInputs'
 
 // Construct the run function
 export default function getRun<
@@ -9,21 +14,36 @@ export default function getRun<
   FormattedOutputs,
   StateMutability extends AbiStateMutability,
   Simulate extends boolean = false,
->(
-  name: string,
-  contract: any,
-  stateMutability: StateMutability,
-  formattedInputs: FormattedInputs,
-  formattedOutputs: FormattedOutputs,
-  extras?: Extras,
+>({
+  publicClient,
+  name,
+  contract,
+  stateMutability,
+  formattedInputs,
+  formattedOutputs,
+  extras,
+  simulate,
+}: {
+  publicClient: PopPublicClient
+  name: string
+  contract: any
+  stateMutability: StateMutability
+  formattedInputs: FormattedInputs
+  formattedOutputs: FormattedOutputs
+  extras?: Extras
   simulate?: Simulate
-) {
+}) {
   // Check if the function is a read or write function
   const kind = ['view', 'pure'].includes(stateMutability) ? 'read' : 'write'
 
   const run = async (args: GetMethodArgs<typeof formattedInputs>) => {
     // Parse the inputs, from user input to contract input
-    const parsedInputs = parseInputs(formattedInputs, args, extras)
+    const parsedInputs = await parseInputs({
+      formattedInputs,
+      args,
+      extras,
+      publicClient,
+    })
 
     // Get the result from the contract, based on the kind and simulate params
     const res = await (() => {

@@ -6,7 +6,7 @@ import writeLog from '../../tools/writeLog'
 describe('#DEPLOY_WORKFLOW', async () => {
   const { publicClient, walletClient } = getTestConnectors()
   it('Log: TX_HASH, INPUTS, ORCH_ADRESS', async () => {
-    const { run, inputs } = await getDeploy(publicClient, walletClient, {
+    const { run /* , inputs */ } = await getDeploy(publicClient, walletClient, {
       authorizer: {
         name: 'RoleAuthorizer',
         version: '1',

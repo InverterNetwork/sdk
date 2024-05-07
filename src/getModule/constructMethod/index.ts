@@ -1,5 +1,5 @@
 import formatParameters from '../../utils/formatParameters'
-import { Extras } from '../../types'
+import { Extras, PopPublicClient } from '../../types'
 import getRun from './getRun'
 import { ExtendedAbiFunction } from '@inverter-network/abis'
 
@@ -16,12 +16,19 @@ type PreservedProps<F extends ExtendedAbiFunction> = {
 export default function constructMethod<
   TAbiFunction extends ExtendedAbiFunction,
   Simulate extends boolean = false,
->(
-  abiFunction: TAbiFunction,
-  contract: any,
-  extras?: Extras,
+>({
+  abiFunction,
+  contract,
+  extras,
+  simulate,
+  publicClient,
+}: {
+  publicClient: PopPublicClient
+  abiFunction: TAbiFunction
+  contract: any
+  extras?: Extras
   simulate?: Simulate
-) {
+}) {
   // Construct the data preserving the type properties of the abiFunction
   const { description, name, stateMutability, inputs, outputs } =
     abiFunction as PreservedProps<typeof abiFunction>
@@ -31,15 +38,16 @@ export default function constructMethod<
     formattedOutputs = formatParameters(outputs, simulate)
 
   // Construct the run function
-  const run = getRun(
+  const run = getRun({
     name,
     contract,
     stateMutability,
     formattedInputs,
     formattedOutputs,
     extras,
-    simulate
-  )
+    simulate,
+    publicClient,
+  })
 
   // Return the constructed method
   return {
