@@ -1,11 +1,18 @@
+import { PublicClient } from 'viem'
 import { Extras, FormattedAbiParameter } from '../../types'
 import { tuple, tupleArray, stringNumber, decimals, any } from './utils'
+import { DECIMALS_ABI } from '../../getDeploy/constants'
 
-export default function parse(
-  input: FormattedAbiParameter,
-  arg: any,
+export default async function parse(
+  inputs: FormattedAbiParameter[],
+  args: any,
+  index: any,
+  publicClient: PublicClient,
   extras?: Extras
-): any {
+): Promise<any> {
+  const input = inputs[index]
+  const arg = Array.isArray(args) ? args[index] : args
+
   const { type } = input
   // These first two cases are for the recursive tuple types
   if (type === 'tuple') return tuple({ input, arg, extras })
@@ -16,7 +23,28 @@ export default function parse(
     const { tags } = input
     if (tags?.includes('any')) return any(arg)
 
-    if (tags?.includes('decimals')) return decimals(arg, extras)
+    const decimalsTag = tags?.find((t) => t.startsWith('decimals'))
+    if (decimalsTag) {
+      const [, source, location, name] = decimalsTag?.split(':')
+
+      let decimalsValue = 18 // default decimals
+      if (source === 'internal') {
+        if (location === 'exact') {
+          decimalsValue = args[inputs.findIndex((input) => input.name === name)]
+        } else if (location === 'indirect') {
+          // get decimals from contract
+          const address = args[inputs.findIndex((input) => input.name === name)]
+          const { readContract } = publicClient
+          decimalsValue = (await readContract({
+            address,
+            abi: DECIMALS_ABI,
+            functionName: 'decimals',
+          })) as number
+        }
+      }
+
+      return decimals(arg, { ...extras, decimals: decimalsValue })
+    }
   }
 
   // if the input has a jsType property

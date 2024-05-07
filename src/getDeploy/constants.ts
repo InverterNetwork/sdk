@@ -21,4 +21,20 @@ export const ORCHESTRATOR_CONFIG = {
   ] as const,
   ORCHESTRATOR_FACTORY_ADDRESS =
     '0x690d5000D278f90B167354975d019c747B78032e' as const,
-  METADATA_URL = 'https://github.com/InverterNetwork'
+  METADATA_URL = 'https://github.com/InverterNetwork',
+  DECIMALS_ABI = [
+    {
+      constant: true,
+      inputs: [],
+      name: 'decimals',
+      outputs: [
+        {
+          name: '',
+          type: 'uint8',
+        },
+      ],
+      payable: false,
+      stateMutability: 'view',
+      type: 'function',
+    },
+  ]

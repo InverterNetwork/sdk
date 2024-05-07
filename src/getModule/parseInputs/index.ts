@@ -1,20 +1,21 @@
 import { FormattedAbiParameter } from '../../types/parameter'
 import { Extras } from '../../types/base'
 import parse from './parse'
+import { PublicClient } from 'viem'
 
-export default function parseInputs(
+export default async function parseInputs(
   inputsProp: any,
   args: any,
+  publicClient: PublicClient,
   extras?: Extras
 ) {
   const inputs = inputsProp as FormattedAbiParameter[]
   // parse the inputs
-  const parsedInputs = inputs.map((input, index) => {
-    // get the argument of the same index
-    const arg = Array.isArray(args) ? args[index] : args
+
+  const parsedInputs = inputs.map((_, index) => {
     // parse the input with the argument
-    return parse(input, arg, extras)
+    return parse(inputs, args, index, publicClient, extras)
   })
 
-  return parsedInputs
+  return await Promise.all(parsedInputs)
 }
