@@ -42,10 +42,11 @@ describe('#DEPLOY_WORKFLOW', async () => {
     })
 
     writeLog({
-      content: { orchestratorAddress, transactionHash, inputs },
+      content: { orchestratorAddress, transactionHash },
       label: 'deployed_workflow',
     })
 
     expect(orchestratorAddress).toStartWith('0x')
+    expect(transactionHash).toStartWith('0x')
   })
 })

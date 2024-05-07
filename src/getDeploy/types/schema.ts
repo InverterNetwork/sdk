@@ -15,16 +15,18 @@ export type ModuleSchema<
 }
 
 export type OptionalModules<T extends RequestedModules['optionalModules']> =
-  T extends undefined
-    ? never
-    : Simplify<{
-        [K in keyof T]: ModuleSchema<
-          // @ts-expect-error - TS cant resolve name
-          T[K]['name'],
-          // @ts-expect-error - TS cant resolve version
-          T[K]['version']
-        >
-      }>
+  Simplify<
+    T extends undefined
+      ? never
+      : {
+          [K in keyof T]: ModuleSchema<
+            // @ts-expect-error - TS cant resolve name
+            T[K]['name'],
+            // @ts-expect-error - TS cant resolve version
+            T[K]['version']
+          >
+        }
+  >
 
 export type DeploySchema<T extends RequestedModules = RequestedModules> =
   Simplify<

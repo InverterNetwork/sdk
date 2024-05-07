@@ -39,27 +39,20 @@ export default function getInputs<T extends RequestedModules>(
   const mandatoryResult = MANDATORY_MODULES.reduce(
     (result, moduleType) => {
       const moduleSchema = getModuleSchema(requestedModules[moduleType])
-
       // @ts-expect-error - TS is not adviced to match schemas moduleType
-      if (moduleSchema.inputs.length > 0) result[moduleType] = moduleSchema
-
+      result[moduleType] = moduleSchema
       return result
     },
     {
       orchestrator: ORCHESTRATOR_CONFIG,
-    } as DeploySchema<T>
+    } as DeploySchema<Omit<T, 'optionalModules'>>
   )
 
-  if (!requestedModules.optionalModules?.length) return mandatoryResult as any
+  if (!requestedModules.optionalModules?.length) return mandatoryResult
 
-  const optionalModules = requestedModules.optionalModules
-    .map((module) => {
-      const moduleSchema = getModuleSchema(module)
-      if (moduleSchema.inputs.length > 0) return moduleSchema
-    })
-    .filter((i): i is NonNullable<typeof i> => !!i) as any
-
-  if (!optionalModules.length) return mandatoryResult as any
+  const optionalModules = requestedModules.optionalModules.map((module) =>
+    getModuleSchema(module)
+  )
 
   return {
     ...mandatoryResult,
