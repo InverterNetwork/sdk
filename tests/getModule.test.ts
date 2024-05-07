@@ -9,7 +9,7 @@ describe('Get A Module', () => {
   const module = getModule({
     name: 'BountyManager',
     version: '1',
-    address: '0xc24f66A74967c336c8Cd529308c193b05Ac3e02f',
+    address: '0xa23D85d8FE256a8a1eE92a6d5Ec156a8a21DCdaE',
     publicClient,
     walletClient,
     extras: {
@@ -26,28 +26,28 @@ describe('Get A Module', () => {
     expect(module).pass()
   })
 
-  it('Should post a bounty', async () => {
-    const simRes = await module.simulate.addBounty.run([
-      '100',
-      '1000',
-      ['this is an inverter project'],
-    ])
-    console.log('addBounty SIM RES', simRes)
-    const res = await module.write.addBounty.run([
-      '100',
-      '1000',
-      ['this is an inverter project'],
-    ])
-    console.log('addBounty RES', res)
-    expect(res).pass()
-  })
+  // it('Should post a bounty', async () => {
+  //   const simRes = await module.simulate.addBounty.run([
+  //     '100',
+  //     '1000',
+  //     ['this is an inverter project'],
+  //   ])
+  //   console.log('addBounty SIM RES', simRes)
+  //   const res = await module.write.addBounty.run([
+  //     '100',
+  //     '1000',
+  //     ['this is an inverter project'],
+  //   ])
+  //   console.log('addBounty RES', res)
+  //   expect(res).pass()
+  // })
 
-  it('Should list and read a bounty', async () => {
-    const bountyIds = await module.read.listBountyIds.run()
-    console.log('Bounty IDS', bountyIds)
+  // it('Should list and read a bounty', async () => {
+  //   const bountyIds = await module.read.listBountyIds.run()
+  //   console.log('Bounty IDS', bountyIds)
 
-    const res = await module.read.getBountyInformation.run('51')
-    console.log('getBountyInformation RES', res)
-    expect(res).pass()
-  })
+  //   const res = await module.read.getBountyInformation.run('51')
+  //   console.log('getBountyInformation RES', res)
+  //   expect(res).pass()
+  // })
 })

@@ -1,21 +1,15 @@
 import type { ModuleName, GetModuleVersion } from '@inverter-network/abis'
 import { getModuleData } from '@inverter-network/abis'
 import { getContract } from 'viem'
-import type {
-  Hex,
-  PublicClient,
-  WalletClient,
-  Chain,
-  Transport,
-  Account,
-} from 'viem'
+import type { Hex } from 'viem'
 import prepareFunction from './prepareFunction'
 import { Extras } from '../types/base'
+import { PopPublicClient, PopWalletClient } from '../types'
 
 export default function getModule<
   N extends ModuleName,
   V extends GetModuleVersion<N>,
-  W extends WalletClient<Transport, Chain, Account> | undefined = undefined,
+  W extends PopWalletClient | undefined = undefined,
 >({
   name,
   version,
@@ -27,7 +21,7 @@ export default function getModule<
   name: N
   version: V
   address: Hex
-  publicClient: PublicClient<Transport, Chain>
+  publicClient: PopPublicClient
   walletClient?: W
   extras?: Extras
 }) {
@@ -59,9 +53,16 @@ export default function getModule<
     })
 
   // Prepare the read functions
-  const read = prepareFunction(abi, ['pure', 'view'], contract, extras),
+  const read = prepareFunction(
+      publicClient,
+      abi,
+      ['pure', 'view'],
+      contract,
+      extras
+    ),
     // Prepare the simulate functions
     simulate = prepareFunction(
+      publicClient,
       abi,
       ['nonpayable', 'payable'],
       contract,
@@ -70,7 +71,14 @@ export default function getModule<
     ),
     // Prepare the write functions if the walletClient is valid
     write = !!walletClient
-      ? prepareFunction(abi, ['nonpayable', 'payable'], contract, extras, false)
+      ? prepareFunction(
+          publicClient,
+          abi,
+          ['nonpayable', 'payable'],
+          contract,
+          extras,
+          false
+        )
       : undefined
 
   // The result object, covers the whole module

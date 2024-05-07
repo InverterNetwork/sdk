@@ -1,12 +1,4 @@
-import {
-  getContract,
-  PublicClient,
-  WalletClient,
-  Hex,
-  Account,
-  Chain,
-  Transport,
-} from 'viem'
+import { getContract, Hex } from 'viem'
 import getModule from './getModule'
 import {
   UserFacingModuleType,
@@ -15,6 +7,7 @@ import {
   ModuleName,
   GetModuleNameByType,
 } from '@inverter-network/abis'
+import { PopPublicClient, PopWalletClient } from './types'
 
 type ModuleType = Exclude<UserFacingModuleType, 'orchestrator'>
 
@@ -32,14 +25,14 @@ type WorkflowOrientation = {
 
 export default async function getWorkflow<
   O extends WorkflowOrientation | undefined = undefined,
-  W extends WalletClient<Transport, Chain, Account> | undefined = undefined,
+  W extends PopWalletClient | undefined = undefined,
 >({
   publicClient,
   walletClient,
   orchestratorAddress,
   workflowOrientation,
 }: {
-  publicClient: PublicClient<Transport, Chain>
+  publicClient: PopPublicClient
   walletClient?: W
   orchestratorAddress: Hex
   workflowOrientation?: O
