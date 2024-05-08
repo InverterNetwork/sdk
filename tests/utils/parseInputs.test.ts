@@ -2,7 +2,6 @@ import { expect, describe, it, beforeEach } from 'bun:test'
 
 import parseInputs from '../../src/utils/parseInputs'
 import { getTestConnectors } from '../getTestConnectors'
-import { DECIMALS_ABI } from '../../src/getDeploy/constants'
 
 describe('#parseInputs', () => {
   const { publicClient, walletClient } = getTestConnectors()
