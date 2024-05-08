@@ -3,6 +3,7 @@ import { expect, describe, it } from 'bun:test'
 import { getTestConnectors } from './getTestConnectors'
 import { getDeploy } from '../src'
 import { GetUserArgs, ModuleSchema } from '../src/getDeploy/types'
+import { isAddress } from 'viem'
 
 describe('#getDeploy', () => {
   const { publicClient, walletClient } = getTestConnectors()
@@ -109,15 +110,15 @@ describe('#getDeploy', () => {
         })
       })
 
-      describe('deploy', () => {
-        it('submits a tx', async () => {
-          const { run } = await getDeploy(
+      describe('simulateRun', () => {
+        it('returns the orchestrator address as result', async () => {
+          const { simulateRun } = await getDeploy(
             publicClient,
             walletClient,
             requestedModules
           )
-          const { transactionHash } = await run(args)
-          expect(transactionHash.length).toEqual(66)
+          const simulationResult = await simulateRun(args)
+          expect(isAddress(simulationResult.result as string)).toBeTrue
         })
       })
     })
@@ -200,9 +201,9 @@ describe('#getDeploy', () => {
         })
       })
 
-      describe.skip('run', () => {
-        it('submits a tx', async () => {
-          const { run } = await getDeploy(publicClient, walletClient, {
+      describe.skip('simulateRun', () => {
+        it('returns the orchestrator address as result', async () => {
+          const { simulateRun } = await getDeploy(publicClient, walletClient, {
             ...requestedModules,
             optionalModules: [{ name: 'MetadataManager', version: '1' }],
           } as any)
@@ -222,12 +223,13 @@ describe('#getDeploy', () => {
             memberAccount: '0x7AcaF5360474b8E40f619770c7e8803cf3ED1053',
             memberUrl: 'example member url',
           } as const
-          const { transactionHash } = await run({
+
+          const simulationResult = await simulateRun({
             ...args,
             // @ts-expect-error: metadataManager is not in RequestedModules
             optionalModules: [metadataManagerArgs],
           })
-          expect(transactionHash.length).toEqual(66)
+          expect(isAddress(simulationResult.result as string)).toBeTrue
         })
       })
     })
@@ -254,13 +256,13 @@ describe('#getDeploy', () => {
 
       describe('run', () => {
         it('submits a tx', async () => {
-          const { run } = await getDeploy(publicClient, walletClient, {
+          const { simulateRun } = await getDeploy(publicClient, walletClient, {
             ...requestedModules,
             optionalModules: [{ name: 'BountyManager', version: '1' }],
           } as any)
           // @ts-expect-error: bountyManager is not in RequestedModules
-          const { transactionHash } = await run(args)
-          expect(transactionHash.length).toEqual(66)
+          const simulationResult = await simulateRun(args)
+          expect(isAddress(simulationResult.result as string)).toBeTrue
         })
       })
     })
@@ -300,13 +302,13 @@ describe('#getDeploy', () => {
         const epochLength = '604800' // 1 week in seconds
 
         it('submits a tx', async () => {
-          const { run } = await getDeploy(publicClient, walletClient, {
+          const { simulateRun } = await getDeploy(publicClient, walletClient, {
             ...requestedModules,
             optionalModules: [
               { name: 'RecurringPaymentManager', version: '1' },
             ],
           } as any)
-          const { transactionHash } = await run({
+          const simulationResult = await simulateRun({
             ...args,
             // @ts-expect-error: recurringPaymentManager is not in RequestedModules
             optionalModules: {
@@ -315,7 +317,7 @@ describe('#getDeploy', () => {
               },
             },
           })
-          expect(transactionHash.length).toEqual(66)
+          expect(isAddress(simulationResult.result as string)).toBeTrue
         })
       })
     })
