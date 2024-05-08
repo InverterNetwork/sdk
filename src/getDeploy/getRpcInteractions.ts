@@ -15,36 +15,39 @@ import {
 import { assembleMetadata, getViemMethods } from './utils'
 import { Entries } from 'type-fest'
 
-const getEncodedArgs = (
+const getEncodedArgs = async (
   deploymentArgs: GetDeploymentArgs,
   userModuleArgs?: UserModuleArg
 ) => {
   // Initialize empty encodedArgs
   const encodedArgs = {} as EncodedArgs
 
-  // iterate over config and dependency data
-  ;(Object.entries(deploymentArgs) as Entries<typeof deploymentArgs>).forEach(
-    ([key, dataArr]) => {
-      const paramValueContainer = Array(dataArr.length)
-      const paramTypeContainer = Array(dataArr.length)
+  const encodedDeploymentArgs = await Promise.all(
+    (Object.entries(deploymentArgs) as Entries<typeof deploymentArgs>).map(
+      ([, dataArr]) => {
+        const paramValueContainer = Array(dataArr.length)
+        const paramTypeContainer = Array(dataArr.length)
 
-      for (const argName in userModuleArgs) {
-        // find index in config
-        const idx = dataArr.findIndex((config) => config.name === argName)
-        // if index is found
-        if (idx >= 0) {
-          // put arg in the correct idx in param container
-          paramValueContainer[idx] = userModuleArgs[argName]
-          // put type in the correct idx in type container
-          paramTypeContainer[idx] = { type: dataArr[idx].type }
+        for (const argName in userModuleArgs) {
+          // find index in config
+          const idx = dataArr.findIndex((config) => config.name === argName)
+          // if index is found
+          if (idx >= 0) {
+            // put arg in the correct idx in param container
+            paramValueContainer[idx] = userModuleArgs[argName]
+            // put type in the correct idx in type container
+            paramTypeContainer[idx] = { type: dataArr[idx].type }
+          }
         }
-      }
 
-      // set encodedArgs[key] to the encoded value of the args
-      encodedArgs[key] = encodeAbiParameters(
-        paramTypeContainer,
-        paramValueContainer
-      )
+        return encodeAbiParameters(paramTypeContainer, paramValueContainer)
+      }
+    )
+  )
+
+  ;(Object.entries(deploymentArgs) as Entries<typeof deploymentArgs>).forEach(
+    ([key], idx) => {
+      encodedArgs[key] = encodedDeploymentArgs[idx]
     }
   )
 
@@ -52,13 +55,13 @@ const getEncodedArgs = (
   return encodedArgs
 }
 
-const assembleModuleArgs = (
+const assembleModuleArgs = async (
   { name, version }: RequestedModule,
   userModuleArgs?: UserModuleArg
-): ModuleArgs => {
+): Promise<ModuleArgs> => {
   const { deploymentArgs } = getModuleData(name, version)
   const moduleArgs = {
-    ...getEncodedArgs(deploymentArgs, userModuleArgs),
+    ...(await getEncodedArgs(deploymentArgs, userModuleArgs)),
     metadata: assembleMetadata(name, version),
   }
   return moduleArgs
