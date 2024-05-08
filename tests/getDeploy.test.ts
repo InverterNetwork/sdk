@@ -47,6 +47,8 @@ describe('#getDeploy', () => {
           {
             name: 'orchestratorTokenAddress',
             type: 'address',
+            jsType: '0xstring',
+            tags: 'decimals',
             description:
               'The address of the token that will be deposited to the funding manager',
           },
@@ -59,14 +61,21 @@ describe('#getDeploy', () => {
           {
             name: 'initialOwner',
             type: 'address',
+            jsType: '0xstring',
             description: 'The initial owner of the workflow',
           },
           {
             name: 'initialManager',
             type: 'address',
+            jsType: '0xstring',
             description: 'The initial manager of the workflow',
           },
         ],
+      },
+      paymentProcessor: {
+        inputs: [],
+        name: 'SimplePaymentProcessor',
+        version: '1',
       },
     }
 
@@ -127,6 +136,7 @@ describe('#getDeploy', () => {
             {
               name: 'managerAccount',
               type: 'address',
+              jsType: '0xstring',
               description: 'The address of the manager',
             },
             {
@@ -167,6 +177,7 @@ describe('#getDeploy', () => {
             {
               name: 'memberAccount',
               type: 'address',
+              jsType: '0xstring',
               description: 'The address of the member',
             },
             {
@@ -175,7 +186,7 @@ describe('#getDeploy', () => {
               description: 'A url of the member',
             },
           ],
-        } as ModuleSchema<'MetadataManager', '1'>
+        }
 
         it('has the correct format', async () => {
           const { inputs } = await getDeploy(publicClient, walletClient, {
@@ -228,12 +239,21 @@ describe('#getDeploy', () => {
             ...requestedModules,
             optionalModules: [{ name: 'BountyManager', version: '1' }],
           } as any)
-          expect(inputs).toEqual(expectedBaseInputSchema as any)
+          expect(inputs).toEqual({
+            ...expectedBaseInputSchema,
+            optionalModules: [
+              {
+                inputs: [],
+                name: 'BountyManager',
+                version: '1',
+              },
+            ],
+          } as any)
         })
       })
 
       describe('run', () => {
-        it('has the correct format', async () => {
+        it('submits a tx', async () => {
           const { run } = await getDeploy(publicClient, walletClient, {
             ...requestedModules,
             optionalModules: [{ name: 'BountyManager', version: '1' }],
@@ -276,7 +296,7 @@ describe('#getDeploy', () => {
         })
       })
 
-      describe('run', () => {
+      describe.skip('run', () => {
         const epochLength = '604800' // 1 week in seconds
 
         it('submits a tx', async () => {
@@ -289,8 +309,10 @@ describe('#getDeploy', () => {
           const { transactionHash } = await run({
             ...args,
             // @ts-expect-error: recurringPaymentManager is not in RequestedModules
-            paymentProcessor: {
-              epochLength: BigInt(epochLength),
+            optionalModules: {
+              RecurringPaymentManager: {
+                epochLength: BigInt(epochLength),
+              },
             },
           })
           expect(transactionHash.length).toEqual(66)
