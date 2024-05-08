@@ -14,9 +14,11 @@ import {
 } from './types'
 import { assembleMetadata, getViemMethods } from './utils'
 import { Entries } from 'type-fest'
+import parseInputs from '../utils/parseInputs'
 
 const getEncodedArgs = async (
   deploymentArgs: GetDeploymentArgs,
+  publicClient: PublicClient,
   userModuleArgs?: UserModuleArg
 ) => {
   // Initialize empty encodedArgs
@@ -24,7 +26,7 @@ const getEncodedArgs = async (
 
   const encodedDeploymentArgs = await Promise.all(
     (Object.entries(deploymentArgs) as Entries<typeof deploymentArgs>).map(
-      ([, dataArr]) => {
+      async ([, dataArr]) => {
         const paramValueContainer = Array(dataArr.length)
         const paramTypeContainer = Array(dataArr.length)
 
@@ -40,7 +42,14 @@ const getEncodedArgs = async (
           }
         }
 
-        return encodeAbiParameters(paramTypeContainer, paramValueContainer)
+        const formattedValueParams = (await parseInputs({
+          formattedInputs: dataArr,
+          args: paramValueContainer,
+          extras: {},
+          publicClient,
+        })) as any[]
+
+        return encodeAbiParameters(paramTypeContainer, formattedValueParams)
       }
     )
   )
@@ -57,11 +66,12 @@ const getEncodedArgs = async (
 
 const assembleModuleArgs = async (
   { name, version }: RequestedModule,
+  publicClient: PublicClient,
   userModuleArgs?: UserModuleArg
 ): Promise<ModuleArgs> => {
   const { deploymentArgs } = getModuleData(name, version)
   const moduleArgs = {
-    ...(await getEncodedArgs(deploymentArgs, userModuleArgs)),
+    ...(await getEncodedArgs(deploymentArgs, publicClient, userModuleArgs)),
     metadata: assembleMetadata(name, version),
   }
   return moduleArgs
@@ -69,7 +79,8 @@ const assembleModuleArgs = async (
 
 const constructArgs = async (
   requestedModules: RequestedModules,
-  userArgs: UserArgs
+  userArgs: UserArgs,
+  publicClient: PublicClient
 ) => {
   // Initialize args
   const args = {
@@ -82,7 +93,11 @@ const constructArgs = async (
 
   const mandatoryModuleArgs = await Promise.all(
     MANDATORY_MODULES.map((moduleType) =>
-      assembleModuleArgs(requestedModules[moduleType], userArgs[moduleType]!)
+      assembleModuleArgs(
+        requestedModules[moduleType],
+        publicClient,
+        userArgs[moduleType]!
+      )
     )
   )
   mandatoryModuleArgs.forEach((argObj, idx) => {
@@ -96,6 +111,7 @@ const constructArgs = async (
       optionalModules.map((optionalModule) =>
         assembleModuleArgs(
           optionalModule,
+          publicClient,
           userArgs.optionalModules?.[optionalModule.name]
         )
       )
@@ -110,7 +126,8 @@ const constructArgs = async (
 
 async function getArgs<T extends RequestedModules>(
   requestedModules: T,
-  userArgs: GetUserArgs<T>
+  userArgs: GetUserArgs<T>,
+  publicClient: PublicClient
 ) {
   const {
     orchestrator,
@@ -118,7 +135,7 @@ async function getArgs<T extends RequestedModules>(
     authorizer,
     paymentProcessor,
     optionalModules,
-  } = await constructArgs(requestedModules, userArgs)
+  } = await constructArgs(requestedModules, userArgs, publicClient)
 
   return [
     orchestrator,
@@ -137,7 +154,7 @@ export default function getRpcInteractions<T extends RequestedModules>(
   const { write, simulate } = getViemMethods(walletClient, publicClient)
 
   const simulateRun = async (userArgs: GetUserArgs<T>) => {
-    const arr = await getArgs(requestedModules, userArgs)
+    const arr = await getArgs(requestedModules, userArgs, publicClient)
     return await simulate(arr, {
       // @ts-expect-error - TODO: add Account and Chain to wallet client type props
       account: walletClient.account.walletAddress,
@@ -145,7 +162,7 @@ export default function getRpcInteractions<T extends RequestedModules>(
   }
 
   const run = async (userArgs: GetUserArgs<T>) => {
-    const arr = await getArgs(requestedModules, userArgs)
+    const arr = await getArgs(requestedModules, userArgs, publicClient)
     // Return the write function with the args
     return (async () => {
       // prettier-ignore
