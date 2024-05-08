@@ -1,7 +1,7 @@
 import { PublicClient, WalletClient } from 'viem'
 import { RequestedModules } from './types'
 import getInputs from './getInputs'
-import getRun from './getRun'
+import getRpcInteractions from './getRpcInteractions'
 
 export default async function getDeploy<T extends RequestedModules>(
   publicClient: PublicClient,
@@ -10,7 +10,11 @@ export default async function getDeploy<T extends RequestedModules>(
 ) {
   const inputs = getInputs(requestedModules)
 
-  const run = getRun(publicClient, walletClient, requestedModules)
+  const { run, simulateRun } = getRpcInteractions(
+    publicClient,
+    walletClient,
+    requestedModules
+  )
 
-  return { inputs, run }
+  return { inputs, run, simulateRun }
 }

@@ -64,7 +64,7 @@ const assembleModuleArgs = (
   return moduleArgs
 }
 
-const constructArgs = (
+const constructArgs = async (
   requestedModules: RequestedModules,
   userArgs: UserArgs
 ) => {
@@ -77,55 +77,72 @@ const constructArgs = (
     optionalModules: [],
   } as unknown as ConstructedArgs
 
-  // itterate mandatory modules
-  MANDATORY_MODULES.forEach((moduleType) => {
-    const moduleArgs = assembleModuleArgs(
-      requestedModules[moduleType],
-      userArgs[moduleType]!
+  const mandatoryModuleArgs = await Promise.all(
+    MANDATORY_MODULES.map((moduleType) =>
+      assembleModuleArgs(requestedModules[moduleType], userArgs[moduleType]!)
     )
-    args[moduleType] = moduleArgs
+  )
+  mandatoryModuleArgs.forEach((argObj, idx) => {
+    args[MANDATORY_MODULES[idx]] = argObj
   })
 
   // optional modules
   const { optionalModules } = requestedModules
   if (optionalModules && optionalModules?.length > 0) {
-    optionalModules.forEach((optionalModule) => {
-      const moduleArgs = assembleModuleArgs(
-        optionalModule,
-        userArgs.optionalModules?.[optionalModule.name]
+    const optionalModulesArgs = await Promise.all(
+      optionalModules.map((optionalModule) =>
+        assembleModuleArgs(
+          optionalModule,
+          userArgs.optionalModules?.[optionalModule.name]
+        )
       )
-      args.optionalModules.push(moduleArgs)
+    )
+    optionalModulesArgs.forEach((argObj) => {
+      args.optionalModules.push(argObj)
     })
   }
 
   return args
 }
 
-export default function getRun<T extends RequestedModules>(
+async function getArgs<T extends RequestedModules>(
+  requestedModules: T,
+  userArgs: GetUserArgs<T>
+) {
+  const {
+    orchestrator,
+    fundingManager,
+    authorizer,
+    paymentProcessor,
+    optionalModules,
+  } = await constructArgs(requestedModules, userArgs)
+
+  return [
+    orchestrator,
+    fundingManager,
+    authorizer,
+    paymentProcessor,
+    optionalModules,
+  ] as const
+}
+
+export default function getRpcInteractions<T extends RequestedModules>(
   publicClient: PublicClient,
   walletClient: WalletClient,
   requestedModules: T
 ) {
-  const run = (userArgs: GetUserArgs<T>) => {
-    // Construct the args
-    const {
-      orchestrator,
-      fundingManager,
-      authorizer,
-      paymentProcessor,
-      optionalModules,
-    } = constructArgs(requestedModules, userArgs)
+  const { write, simulate } = getViemMethods(walletClient, publicClient)
 
-    const { write, simulate } = getViemMethods(walletClient, publicClient)
+  const simulateRun = async (userArgs: GetUserArgs<T>) => {
+    const arr = await getArgs(requestedModules, userArgs)
+    return await simulate(arr, {
+      // @ts-expect-error - TODO: add Account and Chain to wallet client type props
+      account: walletClient.account.walletAddress,
+    })
+  }
 
-    const arr = [
-      orchestrator,
-      fundingManager,
-      authorizer,
-      paymentProcessor,
-      optionalModules,
-    ] as const
-
+  const run = async (userArgs: GetUserArgs<T>) => {
+    const arr = await getArgs(requestedModules, userArgs)
     // Return the write function with the args
     return (async () => {
       // prettier-ignore
@@ -142,5 +159,5 @@ export default function getRun<T extends RequestedModules>(
     })()
   }
 
-  return run
+  return { run, simulateRun }
 }
