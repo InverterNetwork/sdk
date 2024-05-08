@@ -49,7 +49,6 @@ describe('#getDeploy', () => {
             name: 'orchestratorTokenAddress',
             type: 'address',
             jsType: '0xstring',
-            tags: 'decimals',
             description:
               'The address of the token that will be deposited to the funding manager',
           },
