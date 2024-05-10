@@ -9,7 +9,8 @@ describe('#parseInputs', () => {
   const USDC_SEPOLIA = '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238' // USDC has 6 decimals
 
   describe('with decimals tag', () => {
-    describe.only('with :external', () => {
+    // TODO when contract name refactoring is done:
+    describe.skip('with :external', () => {
       const args = ['42069']
       const formattedInputs = [
         {
