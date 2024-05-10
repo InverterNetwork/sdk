@@ -15,22 +15,18 @@ export const getModuleSchema = <
   module: T
 ): {
   name: T['name']
-  version: T['version']
   inputs: Inputs
 } => {
-  const { name, version, deploymentArgs } = getModuleData(
-    module.name,
-    module.version
-  )
+  const { name, deploymentInputs } = getModuleData(module.name)
 
-  const { configData, dependencyData } = deploymentArgs
+  const { configData, dependencyData } = deploymentInputs
 
   const configInputs = formatParameters(configData),
     dependencyInputs = formatParameters(dependencyData)
 
   const inputs = configInputs.concat(dependencyInputs) as any
 
-  return { name, version, inputs }
+  return { name, inputs }
 }
 
 export default function getInputs<T extends RequestedModules>(

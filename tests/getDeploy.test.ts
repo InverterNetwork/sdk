@@ -11,39 +11,39 @@ describe('#getDeploy', () => {
   describe('Modules: RebasingFundingManager, RoleAuthorizer, SimplePaymentProcessor', () => {
     const requestedModules = {
       fundingManager: {
-        name: 'RebasingFundingManager',
+        name: 'FM_Rebasing_v1',
         version: '1',
       },
       paymentProcessor: {
-        name: 'SimplePaymentProcessor',
+        name: 'PP_Simple_v1',
         version: '1',
       },
       authorizer: {
-        name: 'RoleAuthorizer',
+        name: 'AUT_Roles_v1',
         version: '1',
       },
     } as const
 
     const expectedBaseInputSchema = {
       orchestrator: {
-        name: 'Orchestrator',
-        version: '1',
+        name: 'Orchestrator_v1',
         inputs: [
           {
             name: 'owner',
             type: 'address',
+            jsType: '0xstring',
             description: 'The owner address of the workflow',
           },
           {
             name: 'token',
             type: 'address',
+            jsType: '0xstring',
             description: 'The payment token associated with the workflow',
           },
         ],
       },
       fundingManager: {
-        name: 'RebasingFundingManager',
-        version: '1',
+        name: 'FM_Rebasing_v1',
         inputs: [
           {
             name: 'orchestratorTokenAddress',
@@ -55,8 +55,7 @@ describe('#getDeploy', () => {
         ],
       },
       authorizer: {
-        name: 'RoleAuthorizer',
-        version: '1',
+        name: 'AUT_Roles_v1',
         inputs: [
           {
             name: 'initialOwner',
@@ -74,15 +73,14 @@ describe('#getDeploy', () => {
       },
       paymentProcessor: {
         inputs: [],
-        name: 'SimplePaymentProcessor',
-        version: '1',
+        name: 'PP_Simple_v1',
       },
     }
 
     const args: GetUserArgs<{
-      fundingManager: { name: 'RebasingFundingManager'; version: '1' }
-      authorizer: { name: 'RoleAuthorizer'; version: '1' }
-      paymentProcessor: { name: 'SimplePaymentProcessor'; version: '1' }
+      fundingManager: { name: 'FM_Rebasing_v1'; version: '1' }
+      authorizer: { name: 'AUT_Roles_v1'; version: '1' }
+      paymentProcessor: { name: 'PP_Simple_v1'; version: '1' }
     }> = {
       orchestrator: {
         owner: '0x5eb14c2e7D0cD925327d74ae4ce3fC692ff8ABEF',
@@ -105,7 +103,9 @@ describe('#getDeploy', () => {
             walletClient,
             requestedModules
           )
-          expect(inputs).toEqual(expectedBaseInputSchema as any)
+          expect(inputs).toEqual({
+            ...expectedBaseInputSchema,
+          } as any)
         })
       })
 
@@ -122,11 +122,10 @@ describe('#getDeploy', () => {
       })
     })
 
-    describe('optionalModules: MetadataManager', () => {
+    describe('optionalModules: MetadataManager_v1', () => {
       describe('inputs', () => {
         const expectedMetadataManagerSchema = {
-          version: '1',
-          name: 'MetadataManager',
+          name: 'MetadataManager_v1',
           inputs: [
             {
               name: 'managerName',
@@ -186,12 +185,12 @@ describe('#getDeploy', () => {
               description: 'A url of the member',
             },
           ],
-        }
+        } as ModuleSchema<'MetadataManager_v1', '1'>
 
         it('has the correct format', async () => {
           const { inputs } = await getDeploy(publicClient, walletClient, {
             ...requestedModules,
-            optionalModules: [{ name: 'MetadataManager', version: '1' }],
+            optionalModules: [{ name: 'MetadataManager_v1', version: '1' }],
           } as any)
           expect(inputs).toEqual({
             ...expectedBaseInputSchema,
@@ -204,7 +203,7 @@ describe('#getDeploy', () => {
         it('returns the orchestrator address as result', async () => {
           const { simulateRun } = await getDeploy(publicClient, walletClient, {
             ...requestedModules,
-            optionalModules: [{ name: 'MetadataManager', version: '1' }],
+            optionalModules: [{ name: 'MetadataManager_v1', version: '1' }],
           } as any)
           const metadataManagerArgs = {
             managerName: 'example manager name',
@@ -226,27 +225,26 @@ describe('#getDeploy', () => {
           const simulationResult = await simulateRun({
             ...args,
             // @ts-expect-error: metadataManager is not in RequestedModules
-            optionalModules: [metadataManagerArgs],
+            optionalModules: { MetadataManager_v1: metadataManagerArgs },
           })
           expect(isAddress(simulationResult.result as string)).toBeTrue
         })
       })
     })
 
-    describe('optional: BountyManager', () => {
+    describe('optional: LM_PC_Bounties_v1', () => {
       describe('inputs', () => {
         it('has the correct format', async () => {
           const { inputs } = await getDeploy(publicClient, walletClient, {
             ...requestedModules,
-            optionalModules: [{ name: 'BountyManager', version: '1' }],
+            optionalModules: [{ name: 'LM_PC_Bounties_v1', version: '1' }],
           } as any)
           expect(inputs).toEqual({
             ...expectedBaseInputSchema,
             optionalModules: [
               {
                 inputs: [],
-                name: 'BountyManager',
-                version: '1',
+                name: 'LM_PC_Bounties_v1',
               },
             ],
           } as any)
@@ -257,7 +255,7 @@ describe('#getDeploy', () => {
         it('submits a tx', async () => {
           const { simulateRun } = await getDeploy(publicClient, walletClient, {
             ...requestedModules,
-            optionalModules: [{ name: 'BountyManager', version: '1' }],
+            optionalModules: [{ name: 'LM_PC_Bounties_v1', version: '1' }],
           } as any)
           // @ts-expect-error: bountyManager is not in RequestedModules
           const simulationResult = await simulateRun(args)
@@ -266,10 +264,9 @@ describe('#getDeploy', () => {
       })
     })
 
-    describe('optional: RecurringPaymentManager', () => {
+    describe('optional: LM_PC_RecurringPayments_v1', () => {
       const expectedSchema = {
-        name: 'RecurringPaymentManager',
-        version: '1',
+        name: 'LM_PC_RecurringPayments_v1',
         inputs: [
           {
             name: 'epochLength',
@@ -286,7 +283,7 @@ describe('#getDeploy', () => {
           const { inputs } = await getDeploy(publicClient, walletClient, {
             ...requestedModules,
             optionalModules: [
-              { name: 'RecurringPaymentManager', version: '1' },
+              { name: 'LM_PC_RecurringPayments_v1', version: '1' },
             ],
           } as any)
 
@@ -297,21 +294,21 @@ describe('#getDeploy', () => {
         })
       })
 
-      describe.skip('run', () => {
+      describe('run', () => {
         const epochLength = '604800' // 1 week in seconds
 
         it('submits a tx', async () => {
           const { simulateRun } = await getDeploy(publicClient, walletClient, {
             ...requestedModules,
             optionalModules: [
-              { name: 'RecurringPaymentManager', version: '1' },
+              { name: 'LM_PC_RecurringPayments_v1', version: '1' },
             ],
           } as any)
           const simulationResult = await simulateRun({
             ...args,
             // @ts-expect-error: recurringPaymentManager is not in RequestedModules
             optionalModules: {
-              RecurringPaymentManager: {
+              LM_PC_RecurringPayments_v1: {
                 epochLength: BigInt(epochLength),
               },
             },

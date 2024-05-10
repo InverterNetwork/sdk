@@ -11,7 +11,7 @@ export const getViemMethods = (
   walletClient: WalletClient,
   publicClient: PublicClient
 ) => {
-  const { abi } = getModuleData('OrchestratorFactory', '1')
+  const { abi } = getModuleData('OrchestratorFactory_v1')
   const { write, simulate } = getContract({
     address: ORCHESTRATOR_FACTORY_ADDRESS,
     abi,
