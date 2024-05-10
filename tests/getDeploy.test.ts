@@ -251,8 +251,8 @@ describe('#getDeploy', () => {
         })
       })
 
-      describe('run', () => {
-        it('submits a tx', async () => {
+      describe('simulateRun', () => {
+        it('returns the orchestrator address as result', async () => {
           const { simulateRun } = await getDeploy(publicClient, walletClient, {
             ...requestedModules,
             optionalModules: [{ name: 'LM_PC_Bounties_v1', version: '1' }],
@@ -294,10 +294,10 @@ describe('#getDeploy', () => {
         })
       })
 
-      describe('run', () => {
+      describe('simulateRun', () => {
         const epochLength = '604800' // 1 week in seconds
 
-        it('submits a tx', async () => {
+        it('returns the orchestrator address as result', async () => {
           const { simulateRun } = await getDeploy(publicClient, walletClient, {
             ...requestedModules,
             optionalModules: [
