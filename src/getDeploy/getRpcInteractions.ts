@@ -17,7 +17,7 @@ import { Entries } from 'type-fest'
 import parseInputs from '../utils/parseInputs'
 
 const getEncodedArgs = async (
-  deploymentArgs: GetDeploymentArgs,
+  deploymentInputs: GetDeploymentArgs,
   publicClient: PublicClient,
   userModuleArgs?: UserModuleArg
 ) => {
@@ -25,11 +25,10 @@ const getEncodedArgs = async (
   const encodedArgs = {} as EncodedArgs
 
   const encodedDeploymentArgs = await Promise.all(
-    (Object.entries(deploymentArgs) as Entries<typeof deploymentArgs>).map(
+    (Object.entries(deploymentInputs) as Entries<typeof deploymentInputs>).map(
       async ([, dataArr]) => {
         const paramValueContainer = Array(dataArr.length)
         const paramTypeContainer = Array(dataArr.length)
-
         for (const argName in userModuleArgs) {
           // find index in config
           const idx = dataArr.findIndex((config) => config.name === argName)
@@ -54,11 +53,11 @@ const getEncodedArgs = async (
     )
   )
 
-  ;(Object.entries(deploymentArgs) as Entries<typeof deploymentArgs>).forEach(
-    ([key], idx) => {
-      encodedArgs[key] = encodedDeploymentArgs[idx]
-    }
-  )
+  ;(
+    Object.entries(deploymentInputs) as Entries<typeof deploymentInputs>
+  ).forEach(([key], idx) => {
+    encodedArgs[key] = encodedDeploymentArgs[idx]
+  })
 
   // Return encodedArgs
   return encodedArgs
@@ -69,9 +68,9 @@ const assembleModuleArgs = async (
   publicClient: PublicClient,
   userModuleArgs?: UserModuleArg
 ): Promise<ModuleArgs> => {
-  const { deploymentArgs } = getModuleData(name, version)
+  const { deploymentInputs } = getModuleData(name)
   const moduleArgs = {
-    ...(await getEncodedArgs(deploymentArgs, publicClient, userModuleArgs)),
+    ...(await getEncodedArgs(deploymentInputs, publicClient, userModuleArgs)),
     metadata: assembleMetadata(name, version),
   }
   return moduleArgs
