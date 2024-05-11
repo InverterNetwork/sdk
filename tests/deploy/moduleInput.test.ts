@@ -5,8 +5,7 @@ import writeLog from '../../tools/writeLog'
 describe('main', async () => {
   it('Should log the Deploy Function possible inputs', async () => {
     const res = getModuleSchema({
-      name: 'BancorVirtualSupplyBondingCurveFundingManager',
-      version: '1',
+      name: 'MetadataManager_v1',
     })
 
     writeLog({

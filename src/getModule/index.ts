@@ -1,4 +1,4 @@
-import type { ModuleName, GetModuleVersion } from '@inverter-network/abis'
+import type { ModuleName } from '@inverter-network/abis'
 import { getModuleData } from '@inverter-network/abis'
 import { getContract } from 'viem'
 import type { Hex } from 'viem'
@@ -8,26 +8,23 @@ import { PopPublicClient, PopWalletClient } from '../types'
 
 export default function getModule<
   N extends ModuleName,
-  V extends GetModuleVersion<N>,
   W extends PopWalletClient | undefined = undefined,
 >({
   name,
-  version,
   address,
   publicClient,
   walletClient,
   extras,
 }: {
   name: N
-  version: V
   address: Hex
   publicClient: PopPublicClient
   walletClient?: W
   extras?: Extras
 }) {
-  const mv = getModuleData(name, version)
+  const mv = getModuleData(name)
 
-  if (!mv) throw new Error(`Module ${name} with version ${version} not found`)
+  if (!mv) throw new Error(`Module ${name} was not found`)
 
   type MV = typeof mv
 
@@ -84,7 +81,6 @@ export default function getModule<
   // The result object, covers the whole module
   const result = {
     name,
-    version,
     address,
     moduleType,
     description,

@@ -2,7 +2,6 @@ import { getContract, Hex } from 'viem'
 import getModule from './getModule'
 import {
   UserFacingModuleType,
-  GetModuleVersion,
   getModuleData,
   ModuleName,
   GetModuleNameByType,
@@ -14,10 +13,8 @@ type ModuleType = Exclude<UserFacingModuleType, 'orchestrator'>
 type OrientationPart<
   MT extends ModuleType,
   N extends GetModuleNameByType<MT> = GetModuleNameByType<MT>,
-  V extends GetModuleVersion<N> = GetModuleVersion<N>,
 > = {
   name: N
-  version: V
 }
 type WorkflowOrientation = {
   [T in ModuleType]: OrientationPart<T>
@@ -41,8 +38,7 @@ export default async function getWorkflow<
 
   // 1. initialize orchestrator
   const orchestrator = getModule({
-    name: 'Orchestrator',
-    version: '1',
+    name: 'Orchestrator_v1',
     address: orchestratorAddress,
     publicClient,
     walletClient,
@@ -52,7 +48,7 @@ export default async function getWorkflow<
   // 2. gather extras
   const erc20Address = await getContract({
     address: fundingManagerAddress,
-    abi: getModuleData('RebasingFundingManager', '1').abi,
+    abi: getModuleData('FM_Rebasing_v1').abi,
     client: {
       public: publicClient,
     },
@@ -60,7 +56,7 @@ export default async function getWorkflow<
 
   const erc20Contract = getContract({
       address: erc20Address,
-      abi: getModuleData('ERC20', '1').abi,
+      abi: getModuleData('ERC20').abi,
       client: { public: publicClient },
     }),
     erc20Decimals = await erc20Contract.read.decimals(),
@@ -70,7 +66,6 @@ export default async function getWorkflow<
       walletClient,
       address: erc20Address,
       name: 'ERC20',
-      version: '1',
       extras: {
         decimals: erc20Decimals,
       },
@@ -102,21 +97,17 @@ export default async function getWorkflow<
                   walletClient,
                   address,
                   name: 'Module',
-                  version: '1',
                 }),
-                name = <Name>await flatModule.read.title.run(),
-                [major] = await flatModule.read.version.run(),
-                version = <GetModuleVersion<Name>>major
+                name = <Name>await flatModule.read.title.run()
 
-              return { name, version, address }
+              return { name, address }
             })
           )
 
     // 4. Map the module array using the source data
-    const modulesArray = source.map(({ name, version, address }) =>
+    const modulesArray = source.map(({ name, address }) =>
       getModule({
         name,
-        version,
         address,
         publicClient,
         walletClient,
@@ -132,16 +123,8 @@ export default async function getWorkflow<
       return acc
     }, {}) as {
       [K in keyof WorkflowOrientation]: O extends NonNullable<O>
-        ? ReturnType<
-            typeof getModule<O[K]['name'], GetModuleVersion<O[K]['name']>, W>
-          >
-        : ReturnType<
-            typeof getModule<
-              WorkflowOrientation[K]['name'],
-              GetModuleVersion<WorkflowOrientation[K]['name']>,
-              W
-            >
-          >
+        ? ReturnType<typeof getModule<O[K]['name'], W>>
+        : ReturnType<typeof getModule<WorkflowOrientation[K]['name'], W>>
     }
 
     return result

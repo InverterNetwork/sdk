@@ -7,8 +7,7 @@ import utils from '../tools'
 describe('Get A Module', () => {
   const { publicClient, walletClient } = getTestConnectors()
   const module = getModule({
-    name: 'BountyManager',
-    version: '1',
+    name: 'LM_PC_Bounties_v1',
     address: '0xa23D85d8FE256a8a1eE92a6d5Ec156a8a21DCdaE',
     publicClient,
     walletClient,

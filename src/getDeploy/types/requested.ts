@@ -1,4 +1,4 @@
-import { GetModuleNameByType, GetModuleVersion } from '@inverter-network/abis'
+import { GetModuleNameByType } from '@inverter-network/abis'
 import { MendatoryModuleType, ModuleType } from '.'
 import { Simplify } from 'type-fest'
 
@@ -7,14 +7,13 @@ export type RequestedModule<
   N extends GetModuleNameByType<MT> = GetModuleNameByType<MT>,
 > = {
   name: N
-  version: GetModuleVersion<N>
 }
 
 export type RequestedModules = Simplify<
   {
     [K in MendatoryModuleType]: RequestedModule<K>
   } & {
-    optionalModules?: RequestedModule<'logicModule' | 'utils'>[]
+    optionalModules?: RequestedModule<'logicModule'>[]
   }
 >
 
