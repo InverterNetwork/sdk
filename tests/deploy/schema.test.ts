@@ -7,20 +7,10 @@ describe('main', async () => {
   const { publicClient, walletClient } = getTestConnectors()
   it('Should log the Deploy Function possible inputs', async () => {
     const res = getDeploy(publicClient, walletClient, {
-      authorizer: {
-        name: 'AUT_Roles_v1',
-      },
-      fundingManager: {
-        name: 'FM_Rebasing_v1',
-      },
-      paymentProcessor: {
-        name: 'PP_Simple_v1',
-      },
-      optionalModules: [
-        {
-          name: 'LM_PC_Bounties_v1',
-        },
-      ],
+      authorizer: 'AUT_Roles_v1',
+      fundingManager: 'FM_Rebasing_v1',
+      paymentProcessor: 'PP_Simple_v1',
+      optionalModules: ['LM_PC_Bounties_v1'],
     })
 
     // const t = (await res).inputs.fundingManager.name

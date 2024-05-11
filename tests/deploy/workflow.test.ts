@@ -7,20 +7,10 @@ describe('#DEPLOY_WORKFLOW', async () => {
   const { publicClient, walletClient } = getTestConnectors()
   it('Log: TX_HASH, INPUTS, ORCH_ADRESS', async () => {
     const { run /* , inputs */ } = await getDeploy(publicClient, walletClient, {
-      authorizer: {
-        name: 'AUT_Roles_v1',
-      },
-      fundingManager: {
-        name: 'FM_Rebasing_v1',
-      },
-      paymentProcessor: {
-        name: 'PP_Simple_v1',
-      },
-      optionalModules: [
-        {
-          name: 'LM_PC_Bounties_v1',
-        },
-      ],
+      authorizer: 'AUT_Roles_v1',
+      fundingManager: 'FM_Rebasing_v1',
+      paymentProcessor: 'PP_Simple_v1',
+      optionalModules: ['LM_PC_Bounties_v1'],
     })
 
     const { orchestratorAddress, transactionHash } = await run({

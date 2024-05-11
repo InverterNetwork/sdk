@@ -17,7 +17,7 @@ export type OptionalModules<T extends RequestedModules['optionalModules']> =
       : {
           [K in keyof T]: ModuleSchema<
             // @ts-expect-error - TS cant resolve name
-            T[K]['name']
+            T[K]
           >
         }
   >
@@ -26,9 +26,9 @@ export type DeploySchema<T extends RequestedModules = RequestedModules> =
   Simplify<
     OmitNever<{
       orchestrator: OrchestratorInputs
-      paymentProcessor: ModuleSchema<T['paymentProcessor']['name']>
-      fundingManager: ModuleSchema<T['fundingManager']['name']>
-      authorizer: ModuleSchema<T['authorizer']['name']>
+      paymentProcessor: ModuleSchema<T['paymentProcessor']>
+      fundingManager: ModuleSchema<T['fundingManager']>
+      authorizer: ModuleSchema<T['authorizer']>
       optionalModules: OptionalModules<T['optionalModules']>
     }>
   >
