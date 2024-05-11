@@ -5,7 +5,7 @@ import {
 import { ORCHESTRATOR_CONFIG } from '../constants'
 
 // Module Types Start
-export type ModuleType = Exclude<UserFacingModuleType, 'orchestrator'> | 'utils'
+export type ModuleType = Exclude<UserFacingModuleType, 'orchestrator'>
 export type MendatoryModuleType =
   | 'fundingManager'
   | 'paymentProcessor'

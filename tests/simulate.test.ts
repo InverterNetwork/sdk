@@ -9,7 +9,7 @@ describe('Test out the simulate of getContract', async () => {
     contract = getContract({
       client: { public: publicClient, wallet: walletClient },
       address: '0xc24f66A74967c336c8Cd529308c193b05Ac3e02f',
-      abi: getModuleData('BountyManager', '1').abi,
+      abi: getModuleData('LM_PC_Bounties_v1').abi,
     })
 
   it('Should simulate the addBounty', async () => {

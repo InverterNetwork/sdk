@@ -5,13 +5,9 @@ import { RequestedModules } from './requested'
 import { OmitNever } from '../../types'
 import { Simplify } from 'type-fest'
 
-export type ModuleSchema<
-  N extends ModuleName = ModuleName,
-  V extends string = string,
-> = {
+export type ModuleSchema<N extends ModuleName = ModuleName> = {
   name: N
-  version: V
-  inputs: FomrattedDeploymentParameters<N, V>
+  inputs: FomrattedDeploymentParameters<N>
 }
 
 export type OptionalModules<T extends RequestedModules['optionalModules']> =
@@ -21,9 +17,7 @@ export type OptionalModules<T extends RequestedModules['optionalModules']> =
       : {
           [K in keyof T]: ModuleSchema<
             // @ts-expect-error - TS cant resolve name
-            T[K]['name'],
-            // @ts-expect-error - TS cant resolve version
-            T[K]['version']
+            T[K]['name']
           >
         }
   >
@@ -32,18 +26,9 @@ export type DeploySchema<T extends RequestedModules = RequestedModules> =
   Simplify<
     OmitNever<{
       orchestrator: OrchestratorInputs
-      paymentProcessor: ModuleSchema<
-        T['paymentProcessor']['name'],
-        T['paymentProcessor']['version']
-      >
-      fundingManager: ModuleSchema<
-        T['fundingManager']['name'],
-        T['fundingManager']['version']
-      >
-      authorizer: ModuleSchema<
-        T['authorizer']['name'],
-        T['authorizer']['version']
-      >
+      paymentProcessor: ModuleSchema<T['paymentProcessor']['name']>
+      fundingManager: ModuleSchema<T['fundingManager']['name']>
+      authorizer: ModuleSchema<T['authorizer']['name']>
       optionalModules: OptionalModules<T['optionalModules']>
     }>
   >

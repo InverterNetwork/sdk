@@ -12,20 +12,16 @@ describe('Get A Module', async () => {
     orchestratorAddress: '0x4B3a97fE6588b6E2731a4939aA633dc4A86c0636',
     workflowOrientation: {
       authorizer: {
-        name: 'RoleAuthorizer',
-        version: '1',
+        name: 'AUT_Roles_v1',
       },
       fundingManager: {
-        name: 'RebasingFundingManager',
-        version: '1',
+        name: 'FM_Rebasing_v1',
       },
       logicModule: {
-        name: 'BountyManager',
-        version: '1',
+        name: 'LM_PC_Bounties_v1',
       },
       paymentProcessor: {
-        name: 'SimplePaymentProcessor',
-        version: '1',
+        name: 'PP_Simple_v1',
       },
     },
   })

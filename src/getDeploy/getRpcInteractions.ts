@@ -1,6 +1,6 @@
 import { getModuleData } from '@inverter-network/abis'
 import { PublicClient, WalletClient, encodeAbiParameters } from 'viem'
-import { GetDeploymentArgs } from '../types'
+import { GetDeploymentInputs } from '../types'
 import { MANDATORY_MODULES } from './constants'
 import {
   ConstructedArgs,
@@ -17,7 +17,7 @@ import { Entries } from 'type-fest'
 import parseInputs from '../utils/parseInputs'
 
 const getEncodedArgs = async (
-  deploymentInputs: GetDeploymentArgs,
+  deploymentInputs: GetDeploymentInputs,
   publicClient: PublicClient,
   userModuleArgs?: UserModuleArg
 ) => {
@@ -64,14 +64,14 @@ const getEncodedArgs = async (
 }
 
 const assembleModuleArgs = async (
-  { name, version }: RequestedModule,
+  { name }: RequestedModule,
   publicClient: PublicClient,
   userModuleArgs?: UserModuleArg
 ): Promise<ModuleArgs> => {
   const { deploymentInputs } = getModuleData(name)
   const moduleArgs = {
     ...(await getEncodedArgs(deploymentInputs, publicClient, userModuleArgs)),
-    metadata: assembleMetadata(name, version),
+    metadata: assembleMetadata(name),
   }
   return moduleArgs
 }

@@ -1,8 +1,4 @@
-import {
-  GetModuleVersion,
-  getModuleData,
-  ModuleName,
-} from '@inverter-network/abis'
+import { getModuleData, ModuleName } from '@inverter-network/abis'
 import { PublicClient, WalletClient, getContract } from 'viem'
 import { METADATA_URL, ORCHESTRATOR_FACTORY_ADDRESS } from './constants'
 
@@ -27,18 +23,18 @@ export const getViemMethods = (
   }
 }
 
-export const getMajorMinorVersion = (majorVersion: `${number}`) => {
-  const majorBigint = BigInt(majorVersion),
+export const getMajorMinorVersion = (name: ModuleName) => {
+  const nameParts = name.split('_'),
+    majorString = nameParts[nameParts.length - 1].slice(1),
+    major = Number(majorString) > 1 ? 1 : Number(majorString),
+    majorBigint = BigInt(major),
     minorBigint = BigInt(0) // TODO: find a way to get the latest minor version
   return { majorVersion: majorBigint, minorVersion: minorBigint }
 }
 
 // returns the MetaData struct that the deploy function requires for each module
-export const assembleMetadata = <N extends ModuleName>(
-  name: N,
-  version: GetModuleVersion<N>
-) => {
-  const majorMinorVersion = getMajorMinorVersion(version)
+export const assembleMetadata = <N extends ModuleName>(name: N) => {
+  const majorMinorVersion = getMajorMinorVersion(name)
   return {
     title: name,
     url: METADATA_URL,

@@ -3,7 +3,7 @@ import { OrchestratorArgs } from './static'
 import { RequestedModules } from '../requested'
 import {
   OmitNever,
-  GetDeploymentArgs,
+  GetDeploymentInputs,
   EmptyObjectToNever,
 } from '../../../types'
 import { FormattedParameterToPrimitiveType } from '../../../types/utils/parameter/primitive'
@@ -13,8 +13,7 @@ export * from './static'
 // User arguments per module name and version
 export type GetUserModuleArg<
   N extends ModuleName = ModuleName,
-  V extends string = string,
-  CD = GetDeploymentArgs<N, V>['configData'][number],
+  CD = GetDeploymentInputs<N>['configData'][number],
 > = EmptyObjectToNever<{
   // @ts-expect-error - TS cant resolve name
   [PN in CD['name']]: FormattedParameterToPrimitiveType<
@@ -26,10 +25,7 @@ type GetUserOptionalArgsBase<T extends RequestedModules['optionalModules']> =
   T extends undefined
     ? never
     : {
-        [K in NonNullable<T>[number]['name']]: GetUserModuleArg<
-          K,
-          Extract<NonNullable<T>[number], { name: K }>['version']
-        >
+        [K in NonNullable<T>[number]['name']]: GetUserModuleArg<K>
       }
 
 export type GetUserOptionalArgs<
@@ -45,18 +41,9 @@ export type GetUserArgs<T extends RequestedModules = RequestedModules> =
   Simplify<
     OmitNever<{
       orchestrator: OrchestratorArgs
-      fundingManager: GetUserModuleArg<
-        T['fundingManager']['name'],
-        T['fundingManager']['version']
-      >
-      authorizer: GetUserModuleArg<
-        T['authorizer']['name'],
-        T['authorizer']['version']
-      >
-      paymentProcessor: GetUserModuleArg<
-        T['paymentProcessor']['name'],
-        T['paymentProcessor']['version']
-      >
+      fundingManager: GetUserModuleArg<T['fundingManager']['name']>
+      authorizer: GetUserModuleArg<T['authorizer']['name']>
+      paymentProcessor: GetUserModuleArg<T['paymentProcessor']['name']>
       optionalModules: GetUserOptionalArgs<T['optionalModules']>
     }>
   >

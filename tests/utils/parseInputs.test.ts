@@ -4,7 +4,7 @@ import parseInputs from '../../src/utils/parseInputs'
 import { getTestConnectors } from '../getTestConnectors'
 
 describe('#parseInputs', () => {
-  const { publicClient, walletClient } = getTestConnectors()
+  const { publicClient /* , walletClient */ } = getTestConnectors()
 
   const USDC_SEPOLIA = '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238' // USDC has 6 decimals
 
@@ -28,7 +28,7 @@ describe('#parseInputs', () => {
           '0x86fda565A5E96f4232f8136141C92Fd79F2BE950' as `0x${string}`,
       }
 
-      let minimumPayoutAmount
+      let minimumPayoutAmount: number
 
       beforeEach(async () => {
         ;[minimumPayoutAmount] = await parseInputs({
@@ -81,7 +81,7 @@ describe('#parseInputs', () => {
           '0x86fda565A5E96f4232f8136141C92Fd79F2BE950' as `0x${string}`,
       }
 
-      let initialTokenSupply, initialCollateralSupply
+      let initialTokenSupply: BigInt, initialCollateralSupply: BigInt
 
       beforeEach(async () => {
         ;[, initialTokenSupply, initialCollateralSupply, ,] = await parseInputs(

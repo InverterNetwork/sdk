@@ -135,7 +135,6 @@ describe('#getDeploy', () => {
             {
               name: 'managerAccount',
               type: 'address',
-              jsType: '0xstring',
               description: 'The address of the manager',
             },
             {
@@ -176,7 +175,6 @@ describe('#getDeploy', () => {
             {
               name: 'memberAccount',
               type: 'address',
-              jsType: '0xstring',
               description: 'The address of the member',
             },
             {
@@ -185,12 +183,12 @@ describe('#getDeploy', () => {
               description: 'A url of the member',
             },
           ],
-        } as ModuleSchema<'MetadataManager_v1', '1'>
+        } as ModuleSchema<'MetadataManager_v1'>
 
         it('has the correct format', async () => {
           const { inputs } = await getDeploy(publicClient, walletClient, {
             ...requestedModules,
-            optionalModules: [{ name: 'MetadataManager_v1', version: '1' }],
+            optionalModules: [{ name: 'MetadataManager_v1' }],
           } as any)
           expect(inputs).toEqual({
             ...expectedBaseInputSchema,

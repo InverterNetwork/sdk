@@ -8,21 +8,17 @@ describe('main', async () => {
   it('Should log the Deploy Function possible inputs', async () => {
     const res = getDeploy(publicClient, walletClient, {
       authorizer: {
-        name: 'RoleAuthorizer',
-        version: '1',
+        name: 'AUT_Roles_v1',
       },
       fundingManager: {
-        name: 'RebasingFundingManager',
-        version: '1',
+        name: 'FM_Rebasing_v1',
       },
       paymentProcessor: {
-        name: 'SimplePaymentProcessor',
-        version: '1',
+        name: 'PP_Simple_v1',
       },
       optionalModules: [
         {
-          name: 'BountyManager',
-          version: '1',
+          name: 'LM_PC_Bounties_v1',
         },
       ],
     })
