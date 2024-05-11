@@ -13,9 +13,8 @@ type ModuleType = Exclude<UserFacingModuleType, 'orchestrator'>
 type OrientationPart<
   MT extends ModuleType,
   N extends GetModuleNameByType<MT> = GetModuleNameByType<MT>,
-> = {
-  name: N
-}
+> = N
+
 type WorkflowOrientation = {
   [T in ModuleType]: OrientationPart<T>
 }
@@ -79,11 +78,11 @@ export default async function getWorkflow<
       !!workflowOrientation
         ? // 2. If defined, map over the values and find the address of the module
           await Promise.all(
-            Object.values(workflowOrientation).map(async (i) => ({
-              ...i,
+            Object.values(workflowOrientation).map(async (name) => ({
+              name,
               address:
                 await orchestrator.read.findModuleAddressInOrchestrator.run(
-                  i.name
+                  name
                 ),
             }))
           )
@@ -123,8 +122,8 @@ export default async function getWorkflow<
       return acc
     }, {}) as {
       [K in keyof WorkflowOrientation]: O extends NonNullable<O>
-        ? ReturnType<typeof getModule<O[K]['name'], W>>
-        : ReturnType<typeof getModule<WorkflowOrientation[K]['name'], W>>
+        ? ReturnType<typeof getModule<O[K], W>>
+        : ReturnType<typeof getModule<WorkflowOrientation[K], W>>
     }
 
     return result
