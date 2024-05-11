@@ -11,7 +11,5 @@ export type OmitNever<T> = {
 
 export type EmptyObjectToNever<T> = IsEmptyObject<T> extends true ? never : T
 
-export type GetDeploymentArgs<
-  N extends ModuleName = ModuleName,
-  V extends string = string,
-> = GetModuleData<N, V>['deploymentArgs']
+export type GetDeploymentInputs<N extends ModuleName = ModuleName> =
+  GetModuleData<N>['deploymentInputs']

@@ -9,21 +9,17 @@ describe('#DEPLOY_INPUTS', async () => {
 
   const requestedModules = {
     authorizer: {
-      name: 'RoleAuthorizer',
-      version: '1',
+      name: 'AUT_Roles_v1',
     },
     fundingManager: {
-      name: 'RebasingFundingManager',
-      version: '1',
+      name: 'FM_Rebasing_v1',
     },
     paymentProcessor: {
-      name: 'SimplePaymentProcessor',
-      version: '1',
+      name: 'PP_Simple_v1',
     },
     optionalModules: [
       {
-        name: 'BountyManager',
-        version: '1',
+        name: 'LM_PC_Bounties_v1',
       },
     ],
   } satisfies RequestedModules

@@ -22,8 +22,6 @@ export default async function parse({
   if (type === 'tuple[]')
     return await tupleArray({ arg, input, extras, decimalsCallback })
 
-  console.log('input', input, 'arg', arg)
-
   // if the input has a tag ( this has to come before the jsType check)
   if ('tags' in input) {
     const { tags } = input
@@ -36,8 +34,6 @@ export default async function parse({
   // if the input has a jsType property
   if ('jsType' in input) {
     const { jsType } = input
-
-    console.log('jsType', jsType, 'arg', arg)
 
     // if the input is a string or a number, parse it to a big int
     if (jsType === 'string') return stringNumber(arg)
