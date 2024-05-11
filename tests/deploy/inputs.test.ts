@@ -8,20 +8,10 @@ describe('#DEPLOY_INPUTS', async () => {
   const { walletClient, publicClient } = getTestConnectors()
 
   const requestedModules = {
-    authorizer: {
-      name: 'AUT_Roles_v1',
-    },
-    fundingManager: {
-      name: 'FM_Rebasing_v1',
-    },
-    paymentProcessor: {
-      name: 'PP_Simple_v1',
-    },
-    optionalModules: [
-      {
-        name: 'LM_PC_Bounties_v1',
-      },
-    ],
+    authorizer: 'AUT_Roles_v1',
+    fundingManager: 'FM_Rebasing_v1',
+    paymentProcessor: 'PP_Simple_v1',
+    optionalModules: ['LM_PC_Bounties_v1'],
   } satisfies RequestedModules
 
   const { inputs } = await getDeploy(

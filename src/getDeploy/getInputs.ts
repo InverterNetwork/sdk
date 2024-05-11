@@ -10,14 +10,14 @@ import { getModuleData } from '@inverter-network/abis'
 
 export const getModuleSchema = <
   T extends RequestedModule,
-  Inputs = FomrattedDeploymentParameters<T['name']>,
+  Inputs = FomrattedDeploymentParameters<T>,
 >(
-  module: T
+  name: T
 ): {
-  name: T['name']
+  name: T
   inputs: Inputs
 } => {
-  const { name, deploymentInputs } = getModuleData(module.name)
+  const { deploymentInputs } = getModuleData(name as any)
 
   const { configData, dependencyData } = deploymentInputs
 

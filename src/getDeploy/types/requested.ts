@@ -5,9 +5,7 @@ import { Simplify } from 'type-fest'
 export type RequestedModule<
   MT extends ModuleType = ModuleType,
   N extends GetModuleNameByType<MT> = GetModuleNameByType<MT>,
-> = {
-  name: N
-}
+> = N
 
 export type RequestedModules = Simplify<
   {

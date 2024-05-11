@@ -10,18 +10,9 @@ describe('#getDeploy', () => {
 
   describe('Modules: RebasingFundingManager, RoleAuthorizer, SimplePaymentProcessor', () => {
     const requestedModules = {
-      fundingManager: {
-        name: 'FM_Rebasing_v1',
-        version: '1',
-      },
-      paymentProcessor: {
-        name: 'PP_Simple_v1',
-        version: '1',
-      },
-      authorizer: {
-        name: 'AUT_Roles_v1',
-        version: '1',
-      },
+      fundingManager: 'FM_Rebasing_v1',
+      paymentProcessor: 'PP_Simple_v1',
+      authorizer: 'AUT_Roles_v1',
     } as const
 
     const expectedBaseInputSchema = {
@@ -78,9 +69,9 @@ describe('#getDeploy', () => {
     }
 
     const args: GetUserArgs<{
-      fundingManager: { name: 'FM_Rebasing_v1'; version: '1' }
-      authorizer: { name: 'AUT_Roles_v1'; version: '1' }
-      paymentProcessor: { name: 'PP_Simple_v1'; version: '1' }
+      fundingManager: 'FM_Rebasing_v1'
+      authorizer: 'AUT_Roles_v1'
+      paymentProcessor: 'PP_Simple_v1'
     }> = {
       orchestrator: {
         owner: '0x5eb14c2e7D0cD925327d74ae4ce3fC692ff8ABEF',

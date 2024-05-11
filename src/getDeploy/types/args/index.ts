@@ -25,7 +25,7 @@ type GetUserOptionalArgsBase<T extends RequestedModules['optionalModules']> =
   T extends undefined
     ? never
     : {
-        [K in NonNullable<T>[number]['name']]: GetUserModuleArg<K>
+        [K in NonNullable<T>[number]]: GetUserModuleArg<K>
       }
 
 export type GetUserOptionalArgs<
@@ -41,9 +41,9 @@ export type GetUserArgs<T extends RequestedModules = RequestedModules> =
   Simplify<
     OmitNever<{
       orchestrator: OrchestratorArgs
-      fundingManager: GetUserModuleArg<T['fundingManager']['name']>
-      authorizer: GetUserModuleArg<T['authorizer']['name']>
-      paymentProcessor: GetUserModuleArg<T['paymentProcessor']['name']>
+      fundingManager: GetUserModuleArg<T['fundingManager']>
+      authorizer: GetUserModuleArg<T['authorizer']>
+      paymentProcessor: GetUserModuleArg<T['paymentProcessor']>
       optionalModules: GetUserOptionalArgs<T['optionalModules']>
     }>
   >

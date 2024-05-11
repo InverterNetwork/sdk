@@ -64,7 +64,7 @@ const getEncodedArgs = async (
 }
 
 const assembleModuleArgs = async (
-  { name }: RequestedModule,
+  name: RequestedModule,
   publicClient: PublicClient,
   userModuleArgs?: UserModuleArg
 ): Promise<ModuleArgs> => {
@@ -111,7 +111,7 @@ const constructArgs = async (
         assembleModuleArgs(
           optionalModule,
           publicClient,
-          userArgs.optionalModules?.[optionalModule.name]
+          userArgs.optionalModules?.[optionalModule]
         )
       )
     )
