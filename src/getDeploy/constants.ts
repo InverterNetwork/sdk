@@ -22,20 +22,4 @@ export const ORCHESTRATOR_CONFIG = {
   ] as const,
   ORCHESTRATOR_FACTORY_ADDRESS =
     '0xa6efB8332A0Cee2e8cD43edbfeb89c1376c20Ee5' as const,
-  METADATA_URL = 'https://github.com/InverterNetwork/inverter-contracts',
-  DECIMALS_ABI = [
-    {
-      constant: true,
-      inputs: [],
-      name: 'decimals',
-      outputs: [
-        {
-          name: '',
-          type: 'uint8',
-        },
-      ],
-      payable: false,
-      stateMutability: 'view',
-      type: 'function',
-    },
-  ]
+  METADATA_URL = 'https://github.com/InverterNetwork/inverter-contracts'

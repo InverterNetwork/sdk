@@ -1,12 +1,12 @@
-import { getContract, Hex } from 'viem'
+import { Hex } from 'viem'
 import getModule from './getModule'
 import {
   UserFacingModuleType,
-  getModuleData,
   GetModuleNameByType,
 } from '@inverter-network/abis'
 import { OmitNever, PopPublicClient, PopWalletClient } from './types'
 import { Merge } from 'type-fest'
+import { TOKEN_DATA_ABI } from './utils/constants'
 
 type OrientationPart<
   MT extends UserFacingModuleType,
@@ -47,22 +47,25 @@ export default async function getWorkflow<
   })
 
   const fundingManagerAddress = await orchestrator.read.fundingManager.run()
-  // 2. gather extras
-  const erc20Address = await getContract({
-    address: fundingManagerAddress,
-    abi: getModuleData('FM_Rebasing_v1').abi,
-    client: {
-      public: publicClient,
-    },
-  }).read.token()
 
-  const erc20Contract = getContract({
-      address: erc20Address,
-      abi: getModuleData('ERC20').abi,
-      client: { public: publicClient },
+  const { readContract } = publicClient
+
+  // 2. gather extras
+  const erc20Address = <Hex>await readContract({
+      address: fundingManagerAddress,
+      abi: TOKEN_DATA_ABI,
+      functionName: 'token',
     }),
-    erc20Decimals = await erc20Contract.read.decimals(),
-    erc20Symbol = await erc20Contract.read.symbol(),
+    erc20Decimals = <number>await readContract({
+      address: erc20Address,
+      abi: TOKEN_DATA_ABI,
+      functionName: 'decimals',
+    }),
+    erc20Symbol = <string>await readContract({
+      address: erc20Address,
+      abi: TOKEN_DATA_ABI,
+      functionName: 'symbol',
+    }),
     erc20Module = getModule({
       publicClient,
       walletClient,
