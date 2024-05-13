@@ -9,13 +9,13 @@ describe('Get A Module', async () => {
   const workflow = await getWorkflow({
     publicClient,
     walletClient,
-    orchestratorAddress: '0x4B3a97fE6588b6E2731a4939aA633dc4A86c0636',
+    orchestratorAddress: '0x8a1897E6Fa0236F68f86240C391D2a7bED3Cf85c',
   })
 
   it('Should Log The Compiled Workflow Object', () => {
     utils.writeLog({
       content: workflow,
-      label: 'WorkflowObject',
+      label: 'headlessWorkflow',
       format: 'json',
     })
 
