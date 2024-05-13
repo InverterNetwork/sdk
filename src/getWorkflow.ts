@@ -1,23 +1,26 @@
-import { getContract, Hex } from 'viem'
+import { Hex } from 'viem'
 import getModule from './getModule'
 import {
   UserFacingModuleType,
-  getModuleData,
-  ModuleName,
   GetModuleNameByType,
 } from '@inverter-network/abis'
-import { PopPublicClient, PopWalletClient } from './types'
-
-type ModuleType = Exclude<UserFacingModuleType, 'orchestrator'>
+import { OmitNever, PopPublicClient, PopWalletClient } from './types'
+import { Merge } from 'type-fest'
+import { TOKEN_DATA_ABI } from './utils/constants'
 
 type OrientationPart<
-  MT extends ModuleType,
+  MT extends UserFacingModuleType,
   N extends GetModuleNameByType<MT> = GetModuleNameByType<MT>,
 > = N
 
-type WorkflowOrientation = {
-  [T in ModuleType]: OrientationPart<T>
-}
+type WorkflowOrientation = Merge<
+  {
+    [T in Exclude<UserFacingModuleType, 'logicModule'>]: OrientationPart<T>
+  },
+  {
+    logicModules?: OrientationPart<'logicModule'>[]
+  }
+>
 
 export default async function getWorkflow<
   O extends WorkflowOrientation | undefined = undefined,
@@ -44,22 +47,25 @@ export default async function getWorkflow<
   })
 
   const fundingManagerAddress = await orchestrator.read.fundingManager.run()
-  // 2. gather extras
-  const erc20Address = await getContract({
-    address: fundingManagerAddress,
-    abi: getModuleData('FM_Rebasing_v1').abi,
-    client: {
-      public: publicClient,
-    },
-  }).read.token()
 
-  const erc20Contract = getContract({
-      address: erc20Address,
-      abi: getModuleData('ERC20').abi,
-      client: { public: publicClient },
+  const { readContract } = publicClient
+
+  // 2. gather extras
+  const erc20Address = <Hex>await readContract({
+      address: fundingManagerAddress,
+      abi: TOKEN_DATA_ABI,
+      functionName: 'token',
     }),
-    erc20Decimals = await erc20Contract.read.decimals(),
-    erc20Symbol = await erc20Contract.read.symbol(),
+    erc20Decimals = <number>await readContract({
+      address: erc20Address,
+      abi: TOKEN_DATA_ABI,
+      functionName: 'decimals',
+    }),
+    erc20Symbol = <string>await readContract({
+      address: erc20Address,
+      abi: TOKEN_DATA_ABI,
+      functionName: 'symbol',
+    }),
     erc20Module = getModule({
       publicClient,
       walletClient,
@@ -78,19 +84,21 @@ export default async function getWorkflow<
       !!workflowOrientation
         ? // 2. If defined, map over the values and find the address of the module
           await Promise.all(
-            Object.values(workflowOrientation).map(async (name) => ({
-              name,
-              address:
-                await orchestrator.read.findModuleAddressInOrchestrator.run(
-                  name
-                ),
-            }))
+            Object.values(workflowOrientation)
+              .flat()
+              .map(async (name) => {
+                const address =
+                  await orchestrator.read.findModuleAddressInOrchestrator.run(
+                    name
+                  )
+                return { name, address }
+              })
           )
         : // 3. If not defined, list all modules from the orchestrator for their-
           // address then get the title and version
           await Promise.all(
             (await orchestrator.read.listModules.run()).map(async (address) => {
-              type Name = Exclude<ModuleName, 'Orchestrator' | 'ERC20'>
+              type Name = GetModuleNameByType<UserFacingModuleType>
               const flatModule = getModule({
                   publicClient,
                   walletClient,
@@ -104,8 +112,8 @@ export default async function getWorkflow<
           )
 
     // 4. Map the module array using the source data
-    const modulesArray = source.map(({ name, address }) =>
-      getModule({
+    const modulesArray = source.map(({ name, address }) => {
+      return getModule({
         name,
         address,
         publicClient,
@@ -114,17 +122,53 @@ export default async function getWorkflow<
           decimals: erc20Decimals,
         },
       })
-    )
+    })
 
-    // 5. Reduce the array to an object with the moduleType as key
-    const result = modulesArray.reduce((acc: any, curr) => {
-      acc[curr.moduleType] = curr
-      return acc
-    }, {}) as {
-      [K in keyof WorkflowOrientation]: O extends NonNullable<O>
+    type MendatoryResult = {
+      [K in Exclude<
+        UserFacingModuleType,
+        'logicModule'
+      >]: O extends NonNullable<O>
         ? ReturnType<typeof getModule<O[K], W>>
         : ReturnType<typeof getModule<WorkflowOrientation[K], W>>
     }
+
+    type OptionalResult = OmitNever<{
+      logicModules: O extends NonNullable<O>
+        ? O['logicModules'] extends NonNullable<O['logicModules']>
+          ? {
+              [K in O['logicModules'][number]]: ReturnType<
+                typeof getModule<K, W>
+              >
+            }
+          : never
+        : {
+            [K in NonNullable<
+              WorkflowOrientation['logicModules']
+            >[number]]: ReturnType<typeof getModule<K, W>>
+          }
+    }>
+
+    type Result = Merge<MendatoryResult, OptionalResult>
+
+    // 5. Reduce the array to an object with the moduleType as key
+    const result = modulesArray.reduce(
+      (acc, curr) => {
+        if (curr.moduleType === 'logicModule')
+          acc.logicModules = {
+            ...acc.logicModules,
+            [curr.name]: curr,
+          }
+        else acc[curr.moduleType] = curr
+        return acc
+      },
+      {
+        authorizer: {},
+        fundingManager: {},
+        paymentProcessor: {},
+        logicModules: {},
+      }
+    ) as unknown as Result
 
     return result
   })()

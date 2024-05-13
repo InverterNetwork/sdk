@@ -11,7 +11,7 @@ import {
 } from '../../types'
 import parse, { DecimalsCallback } from './parse'
 import { Tag } from '@inverter-network/abis'
-import { DECIMALS_ABI } from '../../getDeploy/constants'
+import { TOKEN_DATA_ABI } from '../constants'
 
 type TupleCaseParams = {
   input: TupleFormattedAbiParameter
@@ -89,7 +89,7 @@ export const decimals = async ({
         const address = args[inputs.findIndex((input) => input.name === name)]
         decimals = <number>await readContract({
           address,
-          abi: DECIMALS_ABI,
+          abi: TOKEN_DATA_ABI,
           functionName: 'decimals',
         })
         break
@@ -104,7 +104,7 @@ export const decimals = async ({
         } as ReadContractParameters)
         decimals = <number>await readContract({
           address: tokenAddress,
-          abi: DECIMALS_ABI,
+          abi: TOKEN_DATA_ABI,
           functionName: 'decimals',
         })
         break
