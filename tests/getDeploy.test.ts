@@ -2,18 +2,22 @@ import { expect, describe, it } from 'bun:test'
 
 import { getTestConnectors } from './getTestConnectors'
 import { getDeploy } from '../src'
-import { GetUserArgs, ModuleSchema } from '../src/getDeploy/types'
+import {
+  GetUserArgs,
+  ModuleSchema,
+  RequestedModules,
+} from '../src/getDeploy/types'
 import { isAddress } from 'viem'
 
 describe('#getDeploy', () => {
   const { publicClient, walletClient } = getTestConnectors()
 
-  describe('Modules: RebasingFundingManager, RoleAuthorizer, SimplePaymentProcessor', () => {
+  describe('Modules: FM_Rebasing_v1, AUT_Roles_v1, PP_Simple_v1', () => {
     const requestedModules = {
       fundingManager: 'FM_Rebasing_v1',
       paymentProcessor: 'PP_Simple_v1',
       authorizer: 'AUT_Roles_v1',
-    } as const
+    } satisfies RequestedModules
 
     const expectedBaseInputSchema = {
       orchestrator: {
@@ -126,6 +130,7 @@ describe('#getDeploy', () => {
             {
               name: 'managerAccount',
               type: 'address',
+              jsType: '0xstring',
               description: 'The address of the manager',
             },
             {
@@ -166,6 +171,7 @@ describe('#getDeploy', () => {
             {
               name: 'memberAccount',
               type: 'address',
+              jsType: '0xstring',
               description: 'The address of the member',
             },
             {
@@ -179,7 +185,7 @@ describe('#getDeploy', () => {
         it('has the correct format', async () => {
           const { inputs } = await getDeploy(publicClient, walletClient, {
             ...requestedModules,
-            optionalModules: [{ name: 'MetadataManager_v1' }],
+            optionalModules: ['MetadataManager_v1'],
           } as any)
           expect(inputs).toEqual({
             ...expectedBaseInputSchema,
@@ -226,7 +232,7 @@ describe('#getDeploy', () => {
         it('has the correct format', async () => {
           const { inputs } = await getDeploy(publicClient, walletClient, {
             ...requestedModules,
-            optionalModules: [{ name: 'LM_PC_Bounties_v1', version: '1' }],
+            optionalModules: ['LM_PC_Bounties_v1'],
           } as any)
           expect(inputs).toEqual({
             ...expectedBaseInputSchema,
@@ -244,7 +250,7 @@ describe('#getDeploy', () => {
         it('returns the orchestrator address as result', async () => {
           const { simulateRun } = await getDeploy(publicClient, walletClient, {
             ...requestedModules,
-            optionalModules: [{ name: 'LM_PC_Bounties_v1', version: '1' }],
+            optionalModules: ['LM_PC_Bounties_v1'],
           } as any)
           // @ts-expect-error: bountyManager is not in RequestedModules
           const simulationResult = await simulateRun(args)
@@ -271,9 +277,7 @@ describe('#getDeploy', () => {
         it('has the correct format', async () => {
           const { inputs } = await getDeploy(publicClient, walletClient, {
             ...requestedModules,
-            optionalModules: [
-              { name: 'LM_PC_RecurringPayments_v1', version: '1' },
-            ],
+            optionalModules: ['LM_PC_RecurringPayments_v1'],
           } as any)
 
           expect(inputs).toEqual({
@@ -289,9 +293,7 @@ describe('#getDeploy', () => {
         it('returns the orchestrator address as result', async () => {
           const { simulateRun } = await getDeploy(publicClient, walletClient, {
             ...requestedModules,
-            optionalModules: [
-              { name: 'LM_PC_RecurringPayments_v1', version: '1' },
-            ],
+            optionalModules: ['LM_PC_RecurringPayments_v1'],
           } as any)
           const simulationResult = await simulateRun({
             ...args,
