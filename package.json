@@ -24,7 +24,7 @@
     "release": "standard-version -a",
     "release:alpha": "standard-version -a --prerelease alpha --skip.changelog",
     "release:beta": "standard-version -a --prerelease beta --skip.changelog",
-    "release:pub": "git push --follow-tags origin main"
+    "release:pub": "git push --follow-tags"
   },
   "lint-staged": {
     "src/**/*.{ts,tsx}": [
