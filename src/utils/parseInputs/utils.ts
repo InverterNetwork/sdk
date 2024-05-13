@@ -108,6 +108,13 @@ export const decimals = async ({
           functionName: 'decimals',
         })
         break
+      case 'exact':
+        decimals = <number>await readContract({
+          address: contract.address,
+          abi: DECIMALS_ABI,
+          functionName: name,
+        })
+        break
     }
   }
   if (!decimals) throw new Error('No decimals provided')
