@@ -134,7 +134,7 @@ export default async function getWorkflow<
     }
 
     type OptionalResult = OmitNever<{
-      logicModules: O extends NonNullable<O>
+      logicModule: O extends NonNullable<O>
         ? O['logicModules'] extends NonNullable<O['logicModules']>
           ? {
               [K in O['logicModules'][number]]: ReturnType<
@@ -155,8 +155,8 @@ export default async function getWorkflow<
     const result = modulesArray.reduce(
       (acc, curr) => {
         if (curr.moduleType === 'logicModule')
-          acc.logicModules = {
-            ...acc.logicModules,
+          acc.logicModule = {
+            ...acc.logicModule,
             [curr.name]: curr,
           }
         else acc[curr.moduleType] = curr
@@ -166,7 +166,7 @@ export default async function getWorkflow<
         authorizer: {},
         fundingManager: {},
         paymentProcessor: {},
-        logicModules: {},
+        logicModule: {},
       }
     ) as unknown as Result
 
