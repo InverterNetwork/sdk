@@ -9,11 +9,13 @@ export default async function parseInputs({
   args,
   extras,
   publicClient,
+  contract,
 }: {
   formattedInputs: any
   args: any
   publicClient: PublicClient
   extras?: Extras
+  contract?: any
 }) {
   const inputs = formattedInputs as FormattedAbiParameter[]
   // parse the inputs
@@ -34,6 +36,7 @@ export default async function parseInputs({
             extras,
             arg,
             args,
+            contract,
           }),
       })
     })
