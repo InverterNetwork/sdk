@@ -149,7 +149,7 @@ export default async function getWorkflow<
           }
     }>
 
-    type Result = Merge<MendatoryResult, OptionalResult>
+    type Result = MendatoryResult & OptionalResult
 
     // 5. Reduce the array to an object with the moduleType as key
     const result = modulesArray.reduce(
