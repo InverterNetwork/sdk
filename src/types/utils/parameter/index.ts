@@ -24,15 +24,21 @@ type GetJsType<
     ? JsTypeWithTag<Tags>
     : T extends 'bool'
       ? 'boolean'
-      : T extends SolidityInt
-        ? 'string'
-        : T extends `${SolidityInt}[]`
-          ? 'string[]'
-          : T extends SolidityBytes
-            ? '0xstring'
-            : T extends `${SolidityBytes}[]`
-              ? '0xstring[]'
-              : never
+      : T extends 'bool[]'
+        ? 'boolean[]'
+        : T extends SolidityInt
+          ? 'string'
+          : T extends `${SolidityInt}[]`
+            ? 'string[]'
+            : T extends SolidityBytes
+              ? '0xstring'
+              : T extends `${SolidityBytes}[]`
+                ? '0xstring[]'
+                : T extends 'address'
+                  ? '0xstring'
+                  : T extends 'address[]'
+                    ? '0xstring[]'
+                    : never
 
 // Format the AbiParameter type from solidity to typscript type and-
 // add the description and tag to the parameter

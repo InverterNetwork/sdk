@@ -1,6 +1,6 @@
 import { getModuleData } from '@inverter-network/abis'
-import { PublicClient, WalletClient, encodeAbiParameters } from 'viem'
-import { GetDeploymentInputs } from '../types'
+import { PublicClient, encodeAbiParameters } from 'viem'
+import { GetDeploymentInputs, PopWalletClient } from '../types'
 import { MANDATORY_MODULES } from './constants'
 import {
   ConstructedArgs,
@@ -147,7 +147,7 @@ async function getArgs<T extends RequestedModules>(
 
 export default function getRpcInteractions<T extends RequestedModules>(
   publicClient: PublicClient,
-  walletClient: WalletClient,
+  walletClient: PopWalletClient,
   requestedModules: T
 ) {
   const { write, simulate } = getViemMethods(walletClient, publicClient)
@@ -155,8 +155,7 @@ export default function getRpcInteractions<T extends RequestedModules>(
   const simulateRun = async (userArgs: GetUserArgs<T>) => {
     const arr = await getArgs(requestedModules, userArgs, publicClient)
     return await simulate(arr, {
-      // @ts-expect-error - TODO: add Account and Chain to wallet client type props
-      account: walletClient.account.walletAddress,
+      account: walletClient.account.address,
     })
   }
 
@@ -166,8 +165,7 @@ export default function getRpcInteractions<T extends RequestedModules>(
     return (async () => {
       // prettier-ignore
       const orchestratorAddress = (await simulate(arr, {
-        // @ts-expect-error - TODO: add Account and Chain to wallet client type props
-        account: walletClient.account.walletAddress,
+        account: walletClient.account.address,
       })).result
       const transactionHash = await write(arr, {} as any)
 
