@@ -1,21 +1,38 @@
 import { data } from '@inverter-network/abis'
 
 export default function getDeployOptions() {
-  const deployOptions = data
-    .map(({ moduleType, name, version }) => {
+  const modules = data
+    .map(({ moduleType, name }) => {
       switch (moduleType) {
-        case 'utils':
-        case 'logicModule':
-          return { type: 'optioanlModules' as const, name, version }
         case 'authorizer':
+          return { moduleType, name }
         case 'fundingManager':
+          return { moduleType, name }
         case 'paymentProcessor':
-          return { type: moduleType, name, version }
+          return { moduleType, name }
+        case 'logicModule':
+          return { moduleType: 'optionalModules' as const, name }
         default:
-          return null
+          return false
       }
     })
-    .filter((x): x is Exclude<typeof x, null> => x !== null)
+    .filter((x): x is Exclude<typeof x, false> => x !== false)
 
-  return deployOptions
+  type MM = (typeof modules)[number]
+
+  const modulesObj = modules.reduce(
+    (result, { moduleType, name }) => {
+      ;(result[moduleType] as any).push(name)
+      return result
+    },
+    {
+      fundingManager: [],
+      paymentProcessor: [],
+      authorizer: [],
+      optionalModules: [],
+    } as {
+      [K in MM['moduleType']]: Extract<MM, { moduleType: K }>['name'][]
+    }
+  )
+  return modulesObj
 }
