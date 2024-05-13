@@ -130,7 +130,6 @@ describe('#getDeploy', () => {
             {
               name: 'managerAccount',
               type: 'address',
-              // @ts-expect-error - js and ts doesnt match
               jsType: '0xstring',
               description: 'The address of the manager',
             },
