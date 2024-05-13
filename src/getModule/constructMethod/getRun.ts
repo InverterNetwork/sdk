@@ -43,6 +43,7 @@ export default function getRun<
       args,
       extras,
       publicClient,
+      contract,
     })
 
     // Get the result from the contract, based on the kind and simulate params

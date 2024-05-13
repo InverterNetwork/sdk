@@ -1,4 +1,9 @@
-import { PublicClient, parseUnits, stringToHex } from 'viem'
+import {
+  PublicClient,
+  ReadContractParameters,
+  parseUnits,
+  stringToHex,
+} from 'viem'
 import {
   TupleFormattedAbiParameter,
   Extras,
@@ -60,6 +65,7 @@ export const decimals = async ({
   extras,
   decimalsTag,
   publicClient,
+  contract,
 }: {
   arg: any
   args: any[]
@@ -67,10 +73,13 @@ export const decimals = async ({
   extras?: Extras
   decimalsTag: Tag
   publicClient: PublicClient
+  contract?: any
 }) => {
   let decimals = extras?.decimals
 
   const [, source, location, name] = decimalsTag?.split(':')
+  const { readContract } = publicClient
+
   if (source === 'internal') {
     switch (location) {
       case 'exact':
@@ -78,7 +87,6 @@ export const decimals = async ({
         break
       case 'indirect':
         const address = args[inputs.findIndex((input) => input.name === name)]
-        const { readContract } = publicClient
         decimals = <number>await readContract({
           address,
           abi: DECIMALS_ABI,
@@ -86,8 +94,22 @@ export const decimals = async ({
         })
         break
     }
+  } else if (source === 'external') {
+    switch (location) {
+      case 'indirect':
+        const tokenAddress = <`0x${string}`>await readContract({
+          address: contract.address,
+          abi: contract.abi,
+          functionName: name,
+        } as ReadContractParameters)
+        decimals = <number>await readContract({
+          address: tokenAddress,
+          abi: DECIMALS_ABI,
+          functionName: 'decimals',
+        })
+        break
+    }
   }
-
   if (!decimals) throw new Error('No decimals provided')
   return parseUnits(arg, decimals)
 }
