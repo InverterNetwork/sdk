@@ -13,7 +13,7 @@ import {
   UserArgs,
 } from './types'
 import { assembleMetadata, getViemMethods } from './utils'
-import { Entries } from 'type-fest'
+import { Entries } from 'type-fest-4'
 import parseInputs from '../utils/parseInputs'
 
 const getEncodedArgs = async (

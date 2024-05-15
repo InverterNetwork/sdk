@@ -5,7 +5,7 @@ import {
   GetModuleNameByType,
 } from '@inverter-network/abis'
 import { OmitNever, PopPublicClient, PopWalletClient } from './types'
-import { Merge } from 'type-fest'
+import { Merge } from 'type-fest-4'
 import { TOKEN_DATA_ABI } from './utils/constants'
 
 type OrientationPart<

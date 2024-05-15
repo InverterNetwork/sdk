@@ -5,7 +5,7 @@ import {
   ExtractAbiFunctionNames,
   ExtractAbiFunction,
 } from 'abitype'
-import { Simplify, TupleToUnion } from 'type-fest'
+import { Simplify, TupleToUnion } from 'type-fest-4'
 import { ExtendedAbi, ExtendedAbiFunction } from '@inverter-network/abis'
 import { PopPublicClient } from '../types'
 

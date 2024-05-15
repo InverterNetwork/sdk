@@ -7,7 +7,7 @@ import {
   EmptyObjectToNever,
 } from '../../../types'
 import { FormattedParameterToPrimitiveType } from '../../../types/utils/parameter/primitive'
-import { IsEmptyObject, Simplify } from 'type-fest'
+import { IsEmptyObject, Simplify } from 'type-fest-4'
 export * from './static'
 
 // User arguments per module name and version

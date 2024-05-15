@@ -3,7 +3,7 @@ import { OrchestratorInputs } from './generic'
 import { FomrattedDeploymentParameters } from './parameter'
 import { RequestedModules } from './requested'
 import { OmitNever } from '../../types'
-import { Simplify } from 'type-fest'
+import { Simplify } from 'type-fest-4'
 
 export type ModuleSchema<N extends ModuleName = ModuleName> = {
   name: N
