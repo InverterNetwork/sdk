@@ -1,13 +1,44 @@
-import { ExtendedAbiParameter, Tag, TupleType } from '@inverter-network/abis'
+import {
+  ExtendedAbiParameter,
+  NonTupleType,
+  Tag,
+  TupleType,
+} from '@inverter-network/abis'
 import { SolidityBytes, SolidityInt } from 'abitype'
 import { FormattedParameterToPrimitiveType } from './primitive'
+import { OmitNever } from '..'
+import { IfUnknown, Simplify } from 'type-fest'
 
 type JsTypeWithTag<P extends readonly Tag[] | undefined> =
   P extends readonly Tag[]
     ? P[number] extends 'any'
       ? 'any'
-      : unknown
-    : unknown
+      : undefined
+    : undefined
+
+type GetJsType<
+  T extends NonTupleType | TupleType,
+  Tags extends readonly Tag[] | undefined,
+> =
+  JsTypeWithTag<Tags> extends string
+    ? JsTypeWithTag<Tags>
+    : T extends 'bool'
+      ? 'boolean'
+      : T extends 'bool[]'
+        ? 'boolean[]'
+        : T extends SolidityInt
+          ? 'string'
+          : T extends `${SolidityInt}[]`
+            ? 'string[]'
+            : T extends SolidityBytes
+              ? '0xstring'
+              : T extends `${SolidityBytes}[]`
+                ? '0xstring[]'
+                : T extends 'address'
+                  ? '0xstring'
+                  : T extends 'address[]'
+                    ? '0xstring[]'
+                    : never
 
 // Format the AbiParameter type from solidity to typscript type and-
 // add the description and tag to the parameter
@@ -19,26 +50,15 @@ export type FormatParameter<P> = P extends ExtendedAbiParameter
         description: P['description']
         components: FormatParameters<Components>
       }
-    : {
-        name: P['name']
-        type: P['type']
-        jsType: JsTypeWithTag<P['tags']> extends string
-          ? JsTypeWithTag<P['tags']>
-          : P['type'] extends 'bool'
-            ? 'boolean'
-            : P['type'] extends SolidityInt
-              ? 'string'
-              : P['type'] extends `${SolidityInt}[]`
-                ? 'string[]'
-                : P['type'] extends SolidityBytes
-                  ? '0xstring'
-                  : P['type'] extends `${SolidityBytes}[]`
-                    ? '0xstring[]'
-                    : unknown
-
-        description: P['description']
-        tags: P['tags']
-      }
+    : Simplify<
+        OmitNever<{
+          name: P['name']
+          type: P['type']
+          description: IfUnknown<P['description'], never, P['description']>
+          jsType: GetJsType<P['type'], P['tags']>
+          tags: IfUnknown<P['tags'], never, P['tags']>
+        }>
+      >
   : never
 
 // Itterate over the parameters and format them

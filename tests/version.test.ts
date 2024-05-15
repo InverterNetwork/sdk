@@ -7,7 +7,6 @@ describe('Should get the verion from a module', async () => {
   const { publicClient, walletClient } = getTestConnectors(),
     moduleObj = getModule({
       name: 'Module',
-      version: 'v1.0',
       address: '0xa23D85d8FE256a8a1eE92a6d5Ec156a8a21DCdaE',
       publicClient,
       walletClient,

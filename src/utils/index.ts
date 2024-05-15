@@ -12,8 +12,11 @@ export const getJsType = (parameter: ExtendedAbiParameter) => {
 
   // Simplify the type of the parameter, to typescript types, into the jsType property
   if (type === 'bool') return 'boolean'
-  if (/^u?int/.test(type)) return 'string'
+  if (type === 'bool[]') return 'boolean[]'
+  if (type === 'address') return '0xstring'
+  if (type === 'address[]') return '0xstring[]'
+  if (/^u?int(?!.*\]$)/.test(type)) return 'string'
   if (/^u?int.*\[\]$/.test(type)) return 'string[]'
-  if (/^bytes/.test(type)) return '0xstring'
+  if (/^bytes(?!.*\]$)/.test(type)) return '0xstring'
   if (/^bytes.*\[\]$/.test(type)) return '0xstring[]'
 }

@@ -1,36 +1,37 @@
-import {
-  getContract,
-  PublicClient,
-  WalletClient,
-  Hex,
-  Account,
-  Chain,
-  Transport,
-} from 'viem'
+import { Hex } from 'viem'
 import getModule from './getModule'
 import {
   UserFacingModuleType,
-  ModuleVersion,
-  getModuleVersion,
+  GetModuleNameByType,
 } from '@inverter-network/abis'
+import { OmitNever, PopPublicClient, PopWalletClient } from './types'
+import { Merge } from 'type-fest'
+import { TOKEN_DATA_ABI } from './utils/constants'
 
-type WorkflowOrientation = {
-  [T in Exclude<UserFacingModuleType, 'orchestrator'>]: {
-    name: Extract<ModuleVersion, { moduleType: T }>['name']
-    version: Extract<ModuleVersion, { moduleType: T }>['version']
+type OrientationPart<
+  MT extends UserFacingModuleType,
+  N extends GetModuleNameByType<MT> = GetModuleNameByType<MT>,
+> = N
+
+type WorkflowOrientation = Merge<
+  {
+    [T in Exclude<UserFacingModuleType, 'logicModule'>]: OrientationPart<T>
+  },
+  {
+    logicModules?: OrientationPart<'logicModule'>[]
   }
-}
+>
 
 export default async function getWorkflow<
   O extends WorkflowOrientation | undefined = undefined,
-  W extends WalletClient<Transport, Chain, Account> | undefined = undefined,
+  W extends PopWalletClient | undefined = undefined,
 >({
   publicClient,
   walletClient,
   orchestratorAddress,
   workflowOrientation,
 }: {
-  publicClient: PublicClient<Transport, Chain>
+  publicClient: PopPublicClient
   walletClient?: W
   orchestratorAddress: Hex
   workflowOrientation?: O
@@ -39,36 +40,37 @@ export default async function getWorkflow<
 
   // 1. initialize orchestrator
   const orchestrator = getModule({
-    name: 'Orchestrator',
-    version: 'v1.0',
+    name: 'Orchestrator_v1',
     address: orchestratorAddress,
     publicClient,
     walletClient,
   })
 
   const fundingManagerAddress = await orchestrator.read.fundingManager.run()
-  // 2. gather extras
-  const erc20Address = await getContract({
-    address: fundingManagerAddress,
-    abi: getModuleVersion('RebasingFundingManager', 'v1.0').abi,
-    client: {
-      public: publicClient,
-    },
-  }).read.token()
 
-  const erc20Contract = getContract({
-      address: erc20Address,
-      abi: getModuleVersion('ERC20', 'v1.0').abi,
-      client: { public: publicClient },
+  const { readContract } = publicClient
+
+  // 2. gather extras
+  const erc20Address = <Hex>await readContract({
+      address: fundingManagerAddress,
+      abi: TOKEN_DATA_ABI,
+      functionName: 'token',
     }),
-    erc20Decimals = await erc20Contract.read.decimals(),
-    erc20Symbol = await erc20Contract.read.symbol(),
+    erc20Decimals = <number>await readContract({
+      address: erc20Address,
+      abi: TOKEN_DATA_ABI,
+      functionName: 'decimals',
+    }),
+    erc20Symbol = <string>await readContract({
+      address: erc20Address,
+      abi: TOKEN_DATA_ABI,
+      functionName: 'symbol',
+    }),
     erc20Module = getModule({
       publicClient,
       walletClient,
       address: erc20Address,
       name: 'ERC20',
-      version: 'v1.0',
       extras: {
         decimals: erc20Decimals,
       },
@@ -82,43 +84,37 @@ export default async function getWorkflow<
       !!workflowOrientation
         ? // 2. If defined, map over the values and find the address of the module
           await Promise.all(
-            Object.values(workflowOrientation).map(async (i) => ({
-              ...i,
-              address:
-                await orchestrator.read.findModuleAddressInOrchestrator.run(
-                  i.name
-                ),
-            }))
+            Object.values(workflowOrientation)
+              .flat()
+              .map(async (name) => {
+                const address =
+                  await orchestrator.read.findModuleAddressInOrchestrator.run(
+                    name
+                  )
+                return { name, address }
+              })
           )
         : // 3. If not defined, list all modules from the orchestrator for their-
           // address then get the title and version
           await Promise.all(
             (await orchestrator.read.listModules.run()).map(async (address) => {
+              type Name = GetModuleNameByType<UserFacingModuleType>
               const flatModule = getModule({
                   publicClient,
                   walletClient,
                   address,
                   name: 'Module',
-                  version: 'v1.0',
                 }),
-                name = <ModuleVersion['name']>await flatModule.read.title.run(),
-                [major, minor] = await flatModule.read.version.run(),
-                version = <ModuleVersion['version']>(() => {
-                  const initialRes = `v${major}.${minor}`
-                  // TODO: Contract version should match ( contract team )
-                  if (Number(minor) > 0) return 'v1.0'
-                  return initialRes
-                })()
+                name = <Name>await flatModule.read.title.run()
 
-              return { name, version, address }
+              return { name, address }
             })
           )
 
     // 4. Map the module array using the source data
-    const modulesArray = source.map(({ name, version, address }) =>
-      getModule({
+    const modulesArray = source.map(({ name, address }) => {
+      return getModule({
         name,
-        version,
         address,
         publicClient,
         walletClient,
@@ -126,23 +122,53 @@ export default async function getWorkflow<
           decimals: erc20Decimals,
         },
       })
-    )
+    })
+
+    type MendatoryResult = {
+      [K in Exclude<
+        UserFacingModuleType,
+        'logicModule'
+      >]: O extends NonNullable<O>
+        ? ReturnType<typeof getModule<O[K], W>>
+        : ReturnType<typeof getModule<WorkflowOrientation[K], W>>
+    }
+
+    type OptionalResult = OmitNever<{
+      logicModule: O extends NonNullable<O>
+        ? O['logicModules'] extends NonNullable<O['logicModules']>
+          ? {
+              [K in O['logicModules'][number]]: ReturnType<
+                typeof getModule<K, W>
+              >
+            }
+          : never
+        : {
+            [K in NonNullable<
+              WorkflowOrientation['logicModules']
+            >[number]]: ReturnType<typeof getModule<K, W>>
+          }
+    }>
+
+    type Result = MendatoryResult & OptionalResult
 
     // 5. Reduce the array to an object with the moduleType as key
-    const result = modulesArray.reduce((acc: any, curr) => {
-      acc[curr.moduleType] = curr
-      return acc
-    }, {}) as {
-      [K in keyof WorkflowOrientation]: O extends NonNullable<O>
-        ? ReturnType<typeof getModule<O[K]['name'], O[K]['version'], W>>
-        : ReturnType<
-            typeof getModule<
-              WorkflowOrientation[K]['name'],
-              WorkflowOrientation[K]['version'],
-              W
-            >
-          >
-    }
+    const result = modulesArray.reduce(
+      (acc, curr) => {
+        if (curr.moduleType === 'logicModule')
+          acc.logicModule = {
+            ...acc.logicModule,
+            [curr.name]: curr,
+          }
+        else acc[curr.moduleType] = curr
+        return acc
+      },
+      {
+        authorizer: {},
+        fundingManager: {},
+        paymentProcessor: {},
+        logicModule: {},
+      }
+    ) as unknown as Result
 
     return result
   })()

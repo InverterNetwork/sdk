@@ -5,7 +5,7 @@ const dirname = import.meta.dirname
 
 const logsPath = path.join(dirname, '../logs')
 
-export default function ({
+export default function writeLog({
   content,
   label,
   format = 'json',

@@ -2,14 +2,14 @@ import { expect, describe, it } from 'bun:test'
 
 import { getTestConnectors } from './getTestConnectors'
 import { getContract } from 'viem'
-import { getModuleVersion } from '@inverter-network/abis'
+import { getModuleData } from '@inverter-network/abis'
 
 describe('Should get the verion from a module', async () => {
   const { publicClient, walletClient } = getTestConnectors(),
     moduleObj = getContract({
       address: '0xdbEdA5eD0d488f892C747217aF9f86091F5Ec4A7',
       client: { public: publicClient, wallet: walletClient },
-      abi: getModuleVersion('ERC20', 'v1.0').abi,
+      abi: getModuleData('ERC20').abi,
     })
 
   it('Fetch the version', async () => {

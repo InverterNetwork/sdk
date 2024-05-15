@@ -2,14 +2,14 @@ import { expect, describe, it } from 'bun:test'
 
 import { getTestConnectors } from './getTestConnectors'
 import { getContract } from 'viem'
-import { data } from '@inverter-network/abis'
+import { getModuleData } from '@inverter-network/abis'
 
 describe('Test out the simulate of getContract', async () => {
   const { publicClient, walletClient } = getTestConnectors(),
     contract = getContract({
       client: { public: publicClient, wallet: walletClient },
       address: '0xc24f66A74967c336c8Cd529308c193b05Ac3e02f',
-      abi: data.BountyManager['v1.0'].abi,
+      abi: getModuleData('LM_PC_Bounties_v1').abi,
     })
 
   it('Should simulate the addBounty', async () => {

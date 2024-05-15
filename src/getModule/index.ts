@@ -1,37 +1,31 @@
-import type { ModuleKeys, ModuleVersionKey } from '@inverter-network/abis'
-import { getModuleVersion } from '@inverter-network/abis'
+import type { ModuleName } from '@inverter-network/abis'
+import { getModuleData } from '@inverter-network/abis'
 import { getContract } from 'viem'
-import type {
-  Hex,
-  PublicClient,
-  WalletClient,
-  Chain,
-  Transport,
-  Account,
-} from 'viem'
+import type { Hex } from 'viem'
 import prepareFunction from './prepareFunction'
 import { Extras } from '../types/base'
+import { PopPublicClient, PopWalletClient } from '../types'
 
 export default function getModule<
-  K extends ModuleKeys,
-  V extends ModuleVersionKey,
-  W extends WalletClient<Transport, Chain, Account> | undefined = undefined,
+  N extends ModuleName,
+  W extends PopWalletClient | undefined = undefined,
 >({
   name,
-  version,
   address,
   publicClient,
   walletClient,
   extras,
 }: {
-  name: K
-  version: V
+  name: N
   address: Hex
-  publicClient: PublicClient<Transport, Chain>
+  publicClient: PopPublicClient
   walletClient?: W
   extras?: Extras
 }) {
-  const mv = getModuleVersion(name, version)
+  const mv = getModuleData(name)
+
+  if (!mv) throw new Error(`Module ${name} was not found`)
+
   type MV = typeof mv
 
   // If the walletClient is valid add walletAddress to the extras-
@@ -56,9 +50,16 @@ export default function getModule<
     })
 
   // Prepare the read functions
-  const read = prepareFunction(abi, ['pure', 'view'], contract, extras),
+  const read = prepareFunction(
+      publicClient,
+      abi,
+      ['pure', 'view'],
+      contract,
+      extras
+    ),
     // Prepare the simulate functions
     simulate = prepareFunction(
+      publicClient,
       abi,
       ['nonpayable', 'payable'],
       contract,
@@ -67,19 +68,25 @@ export default function getModule<
     ),
     // Prepare the write functions if the walletClient is valid
     write = !!walletClient
-      ? prepareFunction(abi, ['nonpayable', 'payable'], contract, extras, false)
+      ? prepareFunction(
+          publicClient,
+          abi,
+          ['nonpayable', 'payable'],
+          contract,
+          extras,
+          false
+        )
       : undefined
 
   // The result object, covers the whole module
   const result = {
     name,
-    version,
     address,
     moduleType,
     description,
     read,
     simulate,
-    write: write as W extends undefined ? undefined : NonNullable<typeof write>,
+    write: write as W extends undefined ? never : NonNullable<typeof write>,
   }
 
   // Return the result object
