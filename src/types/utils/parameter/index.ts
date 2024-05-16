@@ -27,9 +27,9 @@ type GetJsType<
       : T extends 'bool[]'
         ? 'boolean[]'
         : T extends SolidityInt
-          ? 'string'
+          ? 'numberString'
           : T extends `${SolidityInt}[]`
-            ? 'string[]'
+            ? 'numberString[]'
             : T extends SolidityBytes
               ? '0xstring'
               : T extends `${SolidityBytes}[]`

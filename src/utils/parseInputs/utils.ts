@@ -21,7 +21,13 @@ type TupleCaseParams = {
 }
 
 // TODO: Add error handling, for empty data
-export const any = (arg: any) => stringToHex(JSON.stringify(arg))
+export const any = (arg: any) => {
+  try {
+    stringToHex(JSON.stringify(arg))
+  } catch {
+    return '0x0'
+  }
+}
 
 // The case for tuple arguments
 export const tuple = async ({
@@ -50,12 +56,6 @@ export const tuple = async ({
 // The case for tuple[] arguments
 export const tupleArray = ({ arg, ...rest }: TupleCaseParams) =>
   arg.map((argI: any) => tuple({ arg: argI, ...rest }))
-
-// Parse a string or number to a big int
-export const stringNumber = (arg: any) => {
-  if (Number(arg) * 0 === 0) return BigInt(arg)
-  return arg
-}
 
 // The error case for decimals tag
 export const decimals = async ({
