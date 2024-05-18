@@ -8,9 +8,9 @@ type SimplePrimitive<P> = P extends {
   // Exclude these types to handle with abitype utils
   jsType: Exclude<JsType, '0xstring' | '0xstring[]' | 'boolean'>
 }
-  ? P['jsType'] extends 'string'
+  ? P['jsType'] extends 'numberString'
     ? string
-    : P['jsType'] extends 'string[]'
+    : P['jsType'] extends 'numberString[]'
       ? readonly string[]
       : P['jsType'] extends 'any'
         ? any

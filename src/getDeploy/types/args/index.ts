@@ -5,6 +5,7 @@ import {
   OmitNever,
   GetDeploymentInputs,
   EmptyObjectToNever,
+  FormatParameter,
 } from '../../../types'
 import { FormattedParameterToPrimitiveType } from '../../../types/utils/parameter/primitive'
 import { IsEmptyObject, Simplify } from 'type-fest-4'
@@ -13,7 +14,7 @@ export * from './static'
 // User arguments per module name and version
 export type GetUserModuleArg<
   N extends ModuleName = ModuleName,
-  CD = GetDeploymentInputs<N>['configData'][number],
+  CD = FormatParameter<GetDeploymentInputs<N>['configData'][number]>,
 > = EmptyObjectToNever<{
   // @ts-expect-error - TS cant resolve name
   [PN in CD['name']]: FormattedParameterToPrimitiveType<
