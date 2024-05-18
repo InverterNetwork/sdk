@@ -1,6 +1,6 @@
 import { Tag } from '@inverter-network/abis'
 import { Extras, FormattedAbiParameter } from '../../types'
-import { tuple, tupleArray, stringNumber, any } from './utils'
+import { tuple, tupleArray, any } from './utils'
 
 export type DecimalsCallback = (decimalsTag: Tag) => Promise<bigint>
 
@@ -36,11 +36,10 @@ export default async function parse({
     const { jsType } = input
 
     // if the input is a string or a number, parse it to a big int
-    if (jsType === 'string') return stringNumber(arg)
+    if (jsType === 'numberString') return BigInt(arg)
 
     // if the input is a string[], parse each string to a big int
-    if (input.type === 'string[]')
-      return arg.map((i: string) => stringNumber(i))
+    if (jsType === 'numberString[]') return arg.map((i: string) => BigInt(i))
   }
 
   // if all else fails, just return the argument

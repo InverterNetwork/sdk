@@ -26,11 +26,11 @@ export default function format(
   if ('jsType' in output) {
     const { jsType } = output
 
-    // if the output is a string or a number, format it to a big int
-    if (jsType === 'string') return String(res)
+    // if the output is a numberString, fromat res into string
+    if (jsType === 'numberString') return String(res)
 
-    // if the output is a string[], format each string to a big int
-    if (jsType === 'string[]') return res.map((i: bigint) => String(i))
+    // if the output is a numberString[], format each res to a string
+    if (jsType === 'numberString[]') return res.map((i: bigint) => String(i))
   }
 
   // if all else fails, just return the initial res

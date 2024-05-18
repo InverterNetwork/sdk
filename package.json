@@ -1,6 +1,6 @@
 {
   "name": "@inverter-network/sdk",
-  "version": "0.1.0-alpha.2",
+  "version": "0.1.0-alpha.10",
   "description": "INVERTER typescript SDK",
   "main": "./dist/cjs/index.js",
   "module": "./dist/index.js",
@@ -24,7 +24,7 @@
     "release": "standard-version -a",
     "release:alpha": "standard-version -a --prerelease alpha --skip.changelog",
     "release:beta": "standard-version -a --prerelease beta --skip.changelog",
-    "release:pub": "git push --follow-tags"
+    "release:pub": "git push --follow-tags origin main"
   },
   "lint-staged": {
     "src/**/*.{ts,tsx}": [
@@ -70,8 +70,7 @@
     "lint-staged": "^15",
     "pinst": "^3",
     "prettier": "^3",
-    "standard-version": "^9",
-    "type-fest": "^4"
+    "standard-version": "^9"
   },
   "peerDependencies": {
     "abitype": "^1",
@@ -80,6 +79,7 @@
     "viem": "^2.7.6"
   },
   "dependencies": {
-    "@inverter-network/abis": "0.1.0-alpha.5"
+    "@inverter-network/abis": "0.1.0-alpha.7",
+    "type-fest-4": "npm:type-fest@^4"
   }
 }

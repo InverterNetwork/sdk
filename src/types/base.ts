@@ -6,10 +6,10 @@ export type Extras = {
 
 // JsType is used for the typescript type of the function arguments
 export type JsType =
-  | 'string'
+  | 'numberString'
+  | 'numberString[]'
   | 'boolean'
   | '0xstring'
-  | 'string[]'
   | '0xstring[]'
   | 'any'
   | 'boolean[]'

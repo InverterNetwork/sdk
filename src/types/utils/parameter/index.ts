@@ -7,7 +7,7 @@ import {
 import { SolidityBytes, SolidityInt } from 'abitype'
 import { FormattedParameterToPrimitiveType } from './primitive'
 import { OmitNever } from '..'
-import { IfUnknown, Simplify } from 'type-fest'
+import { IfUnknown, Simplify } from 'type-fest-4'
 
 type JsTypeWithTag<P extends readonly Tag[] | undefined> =
   P extends readonly Tag[]
@@ -27,9 +27,9 @@ type GetJsType<
       : T extends 'bool[]'
         ? 'boolean[]'
         : T extends SolidityInt
-          ? 'string'
+          ? 'numberString'
           : T extends `${SolidityInt}[]`
-            ? 'string[]'
+            ? 'numberString[]'
             : T extends SolidityBytes
               ? '0xstring'
               : T extends `${SolidityBytes}[]`

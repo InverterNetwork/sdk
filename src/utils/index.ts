@@ -1,6 +1,9 @@
 import { ExtendedAbiParameter } from '@inverter-network/abis'
+import { JsType } from '../types'
 
-export const getJsType = (parameter: ExtendedAbiParameter) => {
+export const getJsType = (
+  parameter: ExtendedAbiParameter
+): JsType | undefined => {
   const { type } = parameter
 
   // If the parameter has a tag, format it ( this needs to come first )
@@ -15,8 +18,8 @@ export const getJsType = (parameter: ExtendedAbiParameter) => {
   if (type === 'bool[]') return 'boolean[]'
   if (type === 'address') return '0xstring'
   if (type === 'address[]') return '0xstring[]'
-  if (/^u?int(?!.*\]$)/.test(type)) return 'string'
-  if (/^u?int.*\[\]$/.test(type)) return 'string[]'
+  if (/^u?int(?!.*\]$)/.test(type)) return 'numberString'
+  if (/^u?int.*\[\]$/.test(type)) return 'numberString[]'
   if (/^bytes(?!.*\]$)/.test(type)) return '0xstring'
   if (/^bytes.*\[\]$/.test(type)) return '0xstring[]'
 }
