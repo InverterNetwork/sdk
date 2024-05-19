@@ -18,7 +18,7 @@ export const getViemMethods = (
   })
 
   return {
-    simulate: simulate.createOrchestrator,
+    simulateWrite: simulate.createOrchestrator,
     write: write.createOrchestrator,
   }
 }

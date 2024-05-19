@@ -104,14 +104,14 @@ describe('#getDeploy', () => {
         })
       })
 
-      describe('simulateRun', () => {
+      describe('simulate', () => {
         it('returns the orchestrator address as result', async () => {
-          const { simulateRun } = await getDeploy(
+          const { simulate } = await getDeploy(
             publicClient,
             walletClient,
             requestedModules
           )
-          const simulationResult = await simulateRun(args)
+          const simulationResult = await simulate(args)
           expect(isAddress(simulationResult.result as string)).toBeTrue
         })
       })
@@ -194,9 +194,9 @@ describe('#getDeploy', () => {
         })
       })
 
-      describe.skip('simulateRun', () => {
+      describe.skip('simulate', () => {
         it('returns the orchestrator address as result', async () => {
-          const { simulateRun } = await getDeploy(publicClient, walletClient, {
+          const { simulate } = await getDeploy(publicClient, walletClient, {
             ...requestedModules,
             optionalModules: [{ name: 'MetadataManager_v1', version: '1' }],
           } as any)
@@ -217,7 +217,7 @@ describe('#getDeploy', () => {
             memberUrl: 'example member url',
           } as const
 
-          const simulationResult = await simulateRun({
+          const simulationResult = await simulate({
             ...args,
             // @ts-expect-error: metadataManager is not in RequestedModules
             optionalModules: { MetadataManager_v1: metadataManagerArgs },
@@ -246,14 +246,14 @@ describe('#getDeploy', () => {
         })
       })
 
-      describe('simulateRun', () => {
+      describe('simulate', () => {
         it('returns the orchestrator address as result', async () => {
-          const { simulateRun } = await getDeploy(publicClient, walletClient, {
+          const { simulate } = await getDeploy(publicClient, walletClient, {
             ...requestedModules,
             optionalModules: ['LM_PC_Bounties_v1'],
           } as any)
           // @ts-expect-error: bountyManager is not in RequestedModules
-          const simulationResult = await simulateRun(args)
+          const simulationResult = await simulate(args)
           expect(isAddress(simulationResult.result as string)).toBeTrue
         })
       })
@@ -287,15 +287,15 @@ describe('#getDeploy', () => {
         })
       })
 
-      describe('simulateRun', () => {
+      describe('simulate', () => {
         const epochLength = '604800' // 1 week in seconds
 
         it('returns the orchestrator address as result', async () => {
-          const { simulateRun } = await getDeploy(publicClient, walletClient, {
+          const { simulate } = await getDeploy(publicClient, walletClient, {
             ...requestedModules,
             optionalModules: ['LM_PC_RecurringPayments_v1'],
           } as any)
-          const simulationResult = await simulateRun({
+          const simulationResult = await simulate({
             ...args,
             // @ts-expect-error: recurringPaymentManager is not in RequestedModules
             optionalModules: {

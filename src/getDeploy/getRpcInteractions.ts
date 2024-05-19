@@ -150,11 +150,11 @@ export default function getRpcInteractions<T extends RequestedModules>(
   walletClient: PopWalletClient,
   requestedModules: T
 ) {
-  const { write, simulate } = getViemMethods(walletClient, publicClient)
+  const { write, simulateWrite } = getViemMethods(walletClient, publicClient)
 
-  const simulateRun = async (userArgs: GetUserArgs<T>) => {
+  const simulate = async (userArgs: GetUserArgs<T>) => {
     const arr = await getArgs(requestedModules, userArgs, publicClient)
-    return await simulate(arr, {
+    return await simulateWrite(arr, {
       account: walletClient.account.address,
     })
   }
@@ -164,7 +164,7 @@ export default function getRpcInteractions<T extends RequestedModules>(
     // Return the write function with the args
     return (async () => {
       // prettier-ignore
-      const orchestratorAddress = (await simulate(arr, {
+      const orchestratorAddress = (await simulateWrite(arr, {
         account: walletClient.account.address,
       })).result
       const transactionHash = await write(arr, {} as any)
@@ -176,5 +176,5 @@ export default function getRpcInteractions<T extends RequestedModules>(
     })()
   }
 
-  return { run, simulateRun }
+  return { run, simulate }
 }
