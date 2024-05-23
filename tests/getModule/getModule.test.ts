@@ -16,7 +16,8 @@ describe('Get A Module', () => {
     },
   })
 
-  it('Should Log The Compiled Module Object', () => {
+  it('Should Log The Compiled Module Object', async () => {
+    console.log(Object.keys(module))
     utils.writeLog({
       content: module,
       label: 'FullModuleObject',
