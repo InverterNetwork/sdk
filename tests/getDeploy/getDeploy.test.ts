@@ -1,12 +1,12 @@
 import { expect, describe, it } from 'bun:test'
 
-import { getTestConnectors } from './getTestConnectors'
-import { getDeploy } from '../src'
+import { getTestConnectors } from '../getTestConnectors'
+import { getDeploy } from '../../src'
 import {
   GetUserArgs,
   ModuleSchema,
   RequestedModules,
-} from '../src/getDeploy/types'
+} from '../../src/getDeploy/types'
 import { isAddress } from 'viem'
 
 describe('#getDeploy', () => {
@@ -267,7 +267,7 @@ describe('#getDeploy', () => {
             name: 'epochLength',
             description:
               'The length of an epoch in seconds. This will be the common denominator for all payments, as these are specified in epochs (i.e. if an epoch is 1 week, vestings can be done for 1 week, 2 week, 3 week, etc.). Epoch needs to be greater than 1 week and smaller than 52 weeks',
-            jsType: 'string',
+            jsType: 'numberString',
             type: 'uint256',
           },
         ],
