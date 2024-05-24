@@ -1,30 +1,11 @@
-import {
-  UserFacingModuleType,
-  GetModuleNameByType,
-} from '@inverter-network/abis'
-import { Merge } from 'type-fest-4'
-
-import getWorkflow from './getWorkflow'
 import { PopPublicClient, PopWalletClient } from './types'
-
-type OrientationPart<
-  MT extends UserFacingModuleType,
-  N extends GetModuleNameByType<MT> = GetModuleNameByType<MT>,
-> = N
-
-type WorkflowOrientation = Merge<
-  {
-    [T in Exclude<UserFacingModuleType, 'logicModule'>]: OrientationPart<T>
-  },
-  {
-    logicModules?: OrientationPart<'logicModule'>[]
-  }
->
+import getWorkflow from './getWorkflow'
+import { WorkflowOrientation, Workflow } from './getWorkflow/types'
 
 export class InverterSDK {
   readonly publicClient: PopPublicClient
   readonly walletClient: PopWalletClient
-  workflows: Map<`0x${string}`, WorkflowOrientation>
+  readonly workflows: Map<`0x${string}`, any>
 
   constructor(publicClient: PopPublicClient, walletClient: PopWalletClient) {
     this.publicClient = publicClient
@@ -32,20 +13,23 @@ export class InverterSDK {
     this.workflows = new Map()
   }
 
-  async addWorkflow<O extends WorkflowOrientation | undefined = undefined>(
+  async addWorkflow(
     orchestratorAddress: `0x${string}`,
-    workflowOrientation?: O
+    workflowOrientation?: WorkflowOrientation
   ) {
     const workflow = await getWorkflow({
       publicClient: this.publicClient,
       walletClient: this.walletClient,
-      orchestratorAddress: orchestratorAddress,
+      orchestratorAddress,
       workflowOrientation,
     })
     this.workflows.set(orchestratorAddress, workflow)
   }
 
-  getWorkflow(orchestratorAddress: `0x${string}`) {
-    return this.workflows.get(orchestratorAddress)
+  getWorkflow<O extends WorkflowOrientation>(
+    orchestratorAddress: `0x${string}`
+  ) {
+    const workflow = this.workflows.get(orchestratorAddress)
+    return workflow as Workflow<PopWalletClient, O>
   }
 }
