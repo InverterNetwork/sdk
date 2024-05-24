@@ -1,7 +1,7 @@
 import { expect, describe, it } from 'bun:test'
 
-import { getTestConnectors } from './getTestConnectors'
-import getModule from '../src/getModule'
+import { getTestConnectors } from '../getTestConnectors'
+import getModule from '../../src/getModule'
 
 describe('Should get the verion from a module', async () => {
   const { publicClient, walletClient } = getTestConnectors(),
