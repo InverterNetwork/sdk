@@ -1,8 +1,10 @@
-import { describe, it, beforeEach, expect } from 'bun:test'
+import { describe, it, beforeEach, expect, beforeAll } from 'bun:test'
 
 import { WorkflowOrientation } from '../src/getWorkflow/types'
 import { InverterSDK } from '../src/inverterSdk'
 import { getTestConnectors } from './getTestConnectors'
+import { GetUserArgs, RequestedModules } from '../src'
+import { isAddress } from 'viem'
 
 interface MyWorkflowOrientation extends WorkflowOrientation {
   authorizer: 'AUT_Roles_v1'
@@ -69,6 +71,41 @@ describe('InverterSDK', () => {
         'orchestrator',
         'logicModule',
       ])
+    })
+  })
+
+  describe('#getDeploy', () => {
+    const requestedModules = {
+      fundingManager: 'FM_Rebasing_v1',
+      paymentProcessor: 'PP_Simple_v1',
+      authorizer: 'AUT_Roles_v1',
+    } satisfies RequestedModules
+
+    describe('simulate', () => {
+      const args: GetUserArgs<{
+        fundingManager: 'FM_Rebasing_v1'
+        authorizer: 'AUT_Roles_v1'
+        paymentProcessor: 'PP_Simple_v1'
+      }> = {
+        orchestrator: {
+          owner: '0x5eb14c2e7D0cD925327d74ae4ce3fC692ff8ABEF',
+          token: '0x7AcaF5360474b8E40f619770c7e8803cf3ED1053',
+        },
+        fundingManager: {
+          orchestratorTokenAddress:
+            '0x5eb14c2e7D0cD925327d74ae4ce3fC692ff8ABEF',
+        },
+        authorizer: {
+          initialOwner: '0x7AcaF5360474b8E40f619770c7e8803cf3ED1053',
+          initialManager: '0x7AcaF5360474b8E40f619770c7e8803cf3ED1053',
+        },
+      }
+
+      it('simulates the deployment tx', async () => {
+        const { simulate } = await sdk.getDeploy(requestedModules)
+        const { result } = await simulate(args as any)
+        expect(isAddress(result)).toBeTrue
+      })
     })
   })
 })

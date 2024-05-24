@@ -1,6 +1,8 @@
 import { PopPublicClient, PopWalletClient } from './types'
 import getWorkflow from './getWorkflow'
 import { WorkflowOrientation, Workflow } from './getWorkflow/types'
+import { RequestedModules } from './getDeploy/types'
+import getDeploy from './getDeploy'
 
 export class InverterSDK {
   readonly publicClient: PopPublicClient
@@ -31,5 +33,13 @@ export class InverterSDK {
   ) {
     const workflow = this.workflows.get(orchestratorAddress)
     return workflow as Workflow<PopWalletClient, O>
+  }
+
+  async getDeploy(requestedModules: RequestedModules) {
+    return await getDeploy(
+      this.publicClient,
+      this.walletClient,
+      requestedModules
+    )
   }
 }
