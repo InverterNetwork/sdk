@@ -1,26 +1,12 @@
 import { Hex } from 'viem'
-import getModule from './getModule'
+import getModule from '../getModule'
 import {
   UserFacingModuleType,
   GetModuleNameByType,
 } from '@inverter-network/abis'
-import { OmitNever, PopPublicClient, PopWalletClient } from './types'
-import { Merge } from 'type-fest-4'
-import { TOKEN_DATA_ABI } from './utils/constants'
-
-type OrientationPart<
-  MT extends UserFacingModuleType,
-  N extends GetModuleNameByType<MT> = GetModuleNameByType<MT>,
-> = N
-
-type WorkflowOrientation = Merge<
-  {
-    [T in Exclude<UserFacingModuleType, 'logicModule'>]: OrientationPart<T>
-  },
-  {
-    logicModules?: OrientationPart<'logicModule'>[]
-  }
->
+import { PopPublicClient, PopWalletClient } from '../types'
+import { WorkflowOrientation, Workflow } from './types'
+import { TOKEN_DATA_ABI } from '../utils/constants'
 
 export default async function getWorkflow<
   O extends WorkflowOrientation | undefined = undefined,
@@ -124,33 +110,6 @@ export default async function getWorkflow<
       })
     })
 
-    type MendatoryResult = {
-      [K in Exclude<
-        UserFacingModuleType,
-        'logicModule'
-      >]: O extends NonNullable<O>
-        ? ReturnType<typeof getModule<O[K], W>>
-        : ReturnType<typeof getModule<WorkflowOrientation[K], W>>
-    }
-
-    type OptionalResult = OmitNever<{
-      logicModule: O extends NonNullable<O>
-        ? O['logicModules'] extends NonNullable<O['logicModules']>
-          ? {
-              [K in O['logicModules'][number]]: ReturnType<
-                typeof getModule<K, W>
-              >
-            }
-          : never
-        : {
-            [K in NonNullable<
-              WorkflowOrientation['logicModules']
-            >[number]]: ReturnType<typeof getModule<K, W>>
-          }
-    }>
-
-    type Result = MendatoryResult & OptionalResult
-
     // 5. Reduce the array to an object with the moduleType as key
     const result = modulesArray.reduce(
       (acc, curr) => {
@@ -168,7 +127,7 @@ export default async function getWorkflow<
         paymentProcessor: {},
         logicModule: {},
       }
-    ) as unknown as Result
+    ) as unknown as Workflow<W, O>
 
     return result
   })()
