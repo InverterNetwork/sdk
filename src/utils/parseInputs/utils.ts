@@ -1,12 +1,12 @@
 import { stringToHex } from 'viem'
 import { TupleFormattedAbiParameter, Extras } from '../../types'
-import parse, { DecimalsCallback } from './parse'
+import parse, { TokenCallback } from './parse'
 
 type TupleCaseParams = {
   input: TupleFormattedAbiParameter
   arg: any
   extras?: Extras
-  decimalsCallback: DecimalsCallback
+  tokenCallback: TokenCallback
 }
 
 // TODO: Add error handling, for empty data
@@ -23,7 +23,7 @@ export const tuple = async ({
   input,
   arg,
   extras,
-  decimalsCallback,
+  tokenCallback,
 }: TupleCaseParams) => {
   const formattedTuple: any = {}
   // iterate over the components of the tuple template
@@ -34,7 +34,7 @@ export const tuple = async ({
         input: c,
         arg: arg[c.name ?? index],
         extras,
-        decimalsCallback,
+        tokenCallback,
       })
     })
   )

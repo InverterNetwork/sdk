@@ -1,7 +1,7 @@
 import { FormattedAbiParameter } from '../../types/parameter'
 import { Extras } from '../../types/base'
 import parse from './parse'
-import decimals from './decimals'
+import tokenInfo from './tokenInfo'
 import { PublicClient } from 'viem'
 import { InverterSDK } from '../../InverterSDK'
 
@@ -31,8 +31,8 @@ export default async function parseInputs({
         input,
         arg,
         extras,
-        decimalsCallback: (decimalsTag, arg) =>
-          decimals({
+        tokenCallback: (decimalsTag, arg) =>
+          tokenInfo({
             inputs: formattedInputs,
             publicClient,
             decimalsTag,
