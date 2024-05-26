@@ -107,7 +107,11 @@ describe('#parseInputs', () => {
       })
 
       describe('with :exact', () => {
-        const mockContract = { address: USDC_SEPOLIA, abi: TOKEN_DATA_ABI }
+        const mockModuleWithErc20 = USDC_SEPOLIA
+        const mockContract = {
+          address: mockModuleWithErc20,
+          abi: TOKEN_DATA_ABI,
+        }
         const tags = ['decimals:external:exact:decimals']
         const formattedInputs = [{ ...sharedFormattedInput, tags }]
 
@@ -125,7 +129,10 @@ describe('#parseInputs', () => {
         describe('with sdk instance', () => {
           const sdk = new InverterSDK(publicClient, walletClient)
 
+          // this test case is a bit confusing:
+          // it passes in the USDC contract
           it('stores token info in cache', async () => {
+            const formattedInputs = [{ ...sharedFormattedInput, tags }]
             await parseInputs({
               formattedInputs,
               args,
@@ -136,9 +143,11 @@ describe('#parseInputs', () => {
             })
             expect(
               // @ts-ignore reading private state from sdk instance
-              sdk.tokenCache.get(`${mockAddress}:${formattedInputs[0].tags[0]}`)
+              sdk.tokenCache.get(
+                `${mockModuleWithErc20}:${formattedInputs[0].tags[0]}`
+              )
             ).toEqual({
-              address: USDC_SEPOLIA,
+              address: mockModuleWithErc20,
               decimals: 6,
             })
           })
@@ -148,7 +157,7 @@ describe('#parseInputs', () => {
             await sdk.tokenCache.set(
               `${mockAddress}:${formattedInputs[0].tags[0]}`,
               {
-                address: USDC_SEPOLIA,
+                address: mockModuleWithErc20,
                 decimals: 6,
               }
             )
@@ -229,7 +238,7 @@ describe('#parseInputs', () => {
         describe('with sdk instance', () => {
           const sdk = new InverterSDK(publicClient, walletClient)
 
-          it.only('stores token info in cache', async () => {
+          it('stores token info in cache', async () => {
             await parseInputs({
               formattedInputs,
               args,

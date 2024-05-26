@@ -97,7 +97,7 @@ export const decimals = async ({
 
   const [, source, location, name] = decimalsTag?.split(':')
   const { readContract } = publicClient
-
+  // console.log(self)
   const cachedToken = self?.tokenCache.get(`${contract.address}:${decimalsTag}`)
 
   if (source === 'internal') {
@@ -157,11 +157,25 @@ export const decimals = async ({
         }
         break
       case 'exact':
-        decimals = <number>await readContract({
-          address: contract.address,
-          abi: TOKEN_DATA_ABI,
-          functionName: name,
-        })
+        if (cachedToken) {
+          const { decimals: cachedDecimals } = cachedToken
+          decimals = cachedDecimals
+        } else {
+          decimals = <number>await readContract({
+            address: contract.address,
+            abi: TOKEN_DATA_ABI,
+            functionName: name,
+          })
+          if (self) {
+            cacheToken(
+              self,
+              decimalsTag,
+              contract.address,
+              contract.address,
+              decimals
+            )
+          }
+        }
         break
     }
   }
