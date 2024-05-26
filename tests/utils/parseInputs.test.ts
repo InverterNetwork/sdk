@@ -2,11 +2,30 @@ import { expect, describe, it, beforeEach } from 'bun:test'
 
 import parseInputs from '../../src/utils/parseInputs'
 import { getTestConnectors } from '../getTestConnectors'
-import { DECIMALS_ABI } from '../../src/getDeploy/constants'
+import { TOKEN_DATA_ABI } from '../../src/utils/constants'
+import { InverterSDK } from '../../src/inverterSdk'
 
 describe('#parseInputs', () => {
-  const { publicClient /* , walletClient */ } = getTestConnectors()
+  const { publicClient, walletClient } = getTestConnectors()
   const USDC_SEPOLIA = '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238' // USDC has 6 decimals
+  const mockAddress = '0x80f8493761a18d29fd77c131865f9cf62b15e62a'
+  const mockAbi = [
+    {
+      constant: true,
+      inputs: [],
+      name: 'tokenAddress',
+      outputs: [
+        {
+          name: '',
+          type: 'address',
+        },
+      ],
+      payable: false,
+      stateMutability: 'view',
+      type: 'function',
+    },
+  ]
+  const mockContract = { address: mockAddress, abi: mockAbi }
 
   describe('with decimals tag', () => {
     describe('without additional tags', () => {
@@ -88,7 +107,7 @@ describe('#parseInputs', () => {
       })
 
       describe('with :exact', () => {
-        const mockContract = { address: USDC_SEPOLIA, abi: DECIMALS_ABI }
+        const mockContract = { address: USDC_SEPOLIA, abi: TOKEN_DATA_ABI }
         const tags = ['decimals:external:exact:decimals']
         const formattedInputs = [{ ...sharedFormattedInput, tags }]
 
@@ -101,6 +120,50 @@ describe('#parseInputs', () => {
             contract: mockContract,
           })
           expect(minimumPayoutAmount).toEqual(42069000000n)
+        })
+
+        describe('with sdk instance', () => {
+          const sdk = new InverterSDK(publicClient, walletClient)
+
+          it('stores token info in cache', async () => {
+            await parseInputs({
+              formattedInputs,
+              args,
+              extras,
+              publicClient,
+              contract: mockContract,
+              self: sdk,
+            })
+            expect(
+              // @ts-ignore reading private state from sdk instance
+              sdk.tokenCache.get(`${mockAddress}:${formattedInputs[0].tags[0]}`)
+            ).toEqual({
+              address: USDC_SEPOLIA,
+              decimals: 6,
+            })
+          })
+
+          it('reads token info from cache if available', async () => {
+            // @ts-ignore reading private state from sdk instance
+            await sdk.tokenCache.set(
+              `${mockAddress}:${formattedInputs[0].tags[0]}`,
+              {
+                address: USDC_SEPOLIA,
+                decimals: 6,
+              }
+            )
+            const start = performance.now()
+            await parseInputs({
+              formattedInputs,
+              args,
+              extras,
+              publicClient,
+              contract: mockContract,
+              self: sdk,
+            })
+            const ms = performance.now() - start
+            expect(ms).toBeLessThan(1)
+          })
         })
       })
     })
@@ -140,23 +203,68 @@ describe('#parseInputs', () => {
           '0x86fda565A5E96f4232f8136141C92Fd79F2BE950' as `0x${string}`,
       }
 
-      let initialTokenSupply: BigInt, initialCollateralSupply: BigInt
-
-      beforeEach(async () => {
-        ;[, initialTokenSupply, initialCollateralSupply, ,] = await parseInputs(
-          { formattedInputs, args, extras, publicClient }
-        )
-      })
-
       describe('with :exact', () => {
         it('applies the decimals from the user inputs', async () => {
+          const [, initialTokenSupply, , ,] = await parseInputs({
+            formattedInputs,
+            args,
+            extras,
+            publicClient,
+          })
           expect(initialTokenSupply).toEqual(420000000000000000000n)
         })
       })
 
       describe('with :indirect', () => {
-        it('retrieves decimals from token specified by user input', () => {
+        it('retrieves decimals from token specified by user input', async () => {
+          const [, , initialCollateralSupply, ,] = await parseInputs({
+            formattedInputs,
+            args,
+            extras,
+            publicClient,
+          })
           expect(initialCollateralSupply).toEqual(69000000n)
+        })
+
+        describe('with sdk instance', () => {
+          const sdk = new InverterSDK(publicClient, walletClient)
+
+          it.only('stores token info in cache', async () => {
+            await parseInputs({
+              formattedInputs,
+              args,
+              extras,
+              publicClient,
+              contract: mockContract,
+              self: sdk,
+            })
+            expect(
+              // @ts-ignore object possibly undefined
+              sdk.tokenCache.get(`${mockAddress}:${formattedInputs[2].tags[0]}`)
+            ).toEqual({
+              address: USDC_SEPOLIA,
+              decimals: 6,
+            })
+          })
+
+          it('reads token info from cache if available', async () => {
+            // @ts-ignore object possibly undefined
+            sdk.tokenCache.set(`${mockAddress}:${formattedInputs[2].tags[0]}`, {
+              address: USDC_SEPOLIA,
+              decimals: 6,
+            })
+            const start = performance.now()
+            await parseInputs({
+              formattedInputs,
+              args,
+              extras,
+              publicClient,
+              contract: mockContract,
+              self: sdk,
+            })
+            const ms = performance.now() - start
+            expect(ms).toBeLessThan(1)
+          })
         })
       })
     })

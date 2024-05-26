@@ -12,6 +12,7 @@ import {
 import parse, { DecimalsCallback } from './parse'
 import { Tag } from '@inverter-network/abis'
 import { TOKEN_DATA_ABI } from '../constants'
+import { InverterSDK } from '../../inverterSdk'
 
 type TupleCaseParams = {
   input: TupleFormattedAbiParameter
@@ -57,6 +58,21 @@ export const tuple = async ({
 export const tupleArray = ({ arg, ...rest }: TupleCaseParams) =>
   arg.map((argI: any) => tuple({ arg: argI, ...rest }))
 
+const cacheToken = (
+  self: InverterSDK,
+  decimalsTag: Tag,
+  tokenAddress: `0x${string}`,
+  moduleAddress: `0x${string}`,
+  decimals: number
+) => {
+  const key = `${moduleAddress}:${decimalsTag}`
+  const value = {
+    address: tokenAddress,
+    decimals,
+  }
+  self.tokenCache.set(key, value)
+}
+
 // The error case for decimals tag
 export const decimals = async ({
   arg,
@@ -66,6 +82,7 @@ export const decimals = async ({
   decimalsTag,
   publicClient,
   contract,
+  self,
 }: {
   arg: any
   args: any[]
@@ -74,11 +91,14 @@ export const decimals = async ({
   decimalsTag: Tag
   publicClient: PublicClient
   contract?: any
+  self?: InverterSDK
 }) => {
   let decimals = extras?.decimals
 
   const [, source, location, name] = decimalsTag?.split(':')
   const { readContract } = publicClient
+
+  const cachedToken = self?.tokenCache.get(`${contract.address}:${decimalsTag}`)
 
   if (source === 'internal') {
     switch (location) {
@@ -86,32 +106,60 @@ export const decimals = async ({
         decimals = args[inputs.findIndex((input) => input.name === name)]
         break
       case 'indirect':
-        const address = args[inputs.findIndex((input) => input.name === name)]
-        decimals = <number>await readContract({
-          address,
-          abi: TOKEN_DATA_ABI,
-          functionName: 'decimals',
-        })
+        if (cachedToken) {
+          const { decimals: cachedDecimals } = cachedToken
+          decimals = cachedDecimals
+        } else {
+          const tokenAddress =
+            args[inputs.findIndex((input) => input.name === name)]
+          decimals = <number>await readContract({
+            address: tokenAddress,
+            abi: TOKEN_DATA_ABI,
+            functionName: 'decimals',
+          })
+          if (self)
+            cacheToken(
+              self,
+              decimalsTag,
+              tokenAddress,
+              contract.address,
+              decimals
+            )
+        }
+
         break
     }
   } else if (source === 'external') {
     switch (location) {
       case 'indirect':
-        const tokenAddress = <`0x${string}`>await readContract({
-          address: contract.address,
-          abi: contract.abi,
-          functionName: name,
-        } as ReadContractParameters)
-        decimals = <number>await readContract({
-          address: tokenAddress,
-          abi: TOKEN_DATA_ABI,
-          functionName: 'decimals',
-        })
+        if (cachedToken) {
+          const { decimals: cachedDecimals } = cachedToken
+          decimals = cachedDecimals
+        } else {
+          const tokenAddress = <`0x${string}`>await readContract({
+            address: contract.address,
+            abi: contract.abi,
+            functionName: name,
+          } as ReadContractParameters)
+          decimals = <number>await readContract({
+            address: tokenAddress,
+            abi: TOKEN_DATA_ABI,
+            functionName: 'decimals',
+          })
+          if (self)
+            cacheToken(
+              self,
+              decimalsTag,
+              tokenAddress,
+              contract.address,
+              decimals
+            )
+        }
         break
       case 'exact':
         decimals = <number>await readContract({
           address: contract.address,
-          abi: DECIMALS_ABI,
+          abi: TOKEN_DATA_ABI,
           functionName: name,
         })
         break
