@@ -7,6 +7,7 @@ import {
 } from '../../types'
 import formatOutputs from '../formatOutputs'
 import parseInputs from '../../utils/parseInputs'
+import { InverterSDK } from '../../inverterSdk'
 
 // Construct the run function
 export default function getRun<
@@ -23,6 +24,7 @@ export default function getRun<
   formattedOutputs,
   extras,
   simulate,
+  self,
 }: {
   publicClient: PopPublicClient
   name: string
@@ -32,6 +34,7 @@ export default function getRun<
   formattedOutputs: FormattedOutputs
   extras?: Extras
   simulate?: Simulate
+  self?: InverterSDK
 }) {
   // Check if the function is a read or write function
   const kind = ['view', 'pure'].includes(stateMutability) ? 'read' : 'write'
@@ -44,6 +47,7 @@ export default function getRun<
       extras,
       publicClient,
       contract,
+      self,
     })
 
     // Get the result from the contract, based on the kind and simulate params
