@@ -54,6 +54,7 @@ export default function getRpcInteractions<T extends RequestedModules>(
           args: paramValueContainer,
           extras: {},
           publicClient,
+          self,
         })) as any[]
 
         return encodeAbiParameters(paramTypeContainer, formattedValueParams)
