@@ -16,14 +16,6 @@ interface MyWorkflowOrientation extends WorkflowOrientation {
 describe('InverterSDK', () => {
   const { publicClient, walletClient } = getTestConnectors()
 
-  const orchestratorAddress = '0x614aFB457ad58f15ED7b32615417c628e30C0c65'
-  const workFlowOrientation = {
-    authorizer: 'AUT_Roles_v1',
-    fundingManager: 'FM_Rebasing_v1',
-    paymentProcessor: 'PP_Simple_v1',
-    logicModules: ['LM_PC_Bounties_v1'],
-  } as MyWorkflowOrientation
-
   let sdk: InverterSDK
 
   beforeEach(async () => {
@@ -37,40 +29,50 @@ describe('InverterSDK', () => {
     })
   })
 
-  describe('#addWorkflow', () => {
-    beforeEach(async () => {
-      await sdk.addWorkflow(orchestratorAddress, workFlowOrientation)
+  describe('operations', () => {
+    const orchestratorAddress = '0x614aFB457ad58f15ED7b32615417c628e30C0c65'
+    const workFlowOrientation = {
+      authorizer: 'AUT_Roles_v1',
+      fundingManager: 'FM_Rebasing_v1',
+      paymentProcessor: 'PP_Simple_v1',
+      logicModules: ['LM_PC_Bounties_v1'],
+    } as MyWorkflowOrientation
+
+    describe('#addWorkflow', () => {
+      beforeEach(async () => {
+        await sdk.addWorkflow(orchestratorAddress, workFlowOrientation)
+      })
+
+      it('adds the workflow to the class instance', () => {
+        expect(sdk.workflows.get(orchestratorAddress)).toContainKeys([
+          'authorizer',
+          'fundingManager',
+          'paymentProcessor',
+          'erc20Module',
+          'orchestrator',
+          'logicModule',
+        ])
+      })
     })
 
-    it('adds the workflow to the class instance', () => {
-      expect(sdk.workflows.get(orchestratorAddress)).toContainKeys([
-        'authorizer',
-        'fundingManager',
-        'paymentProcessor',
-        'erc20Module',
-        'orchestrator',
-        'logicModule',
-      ])
-    })
-  })
+    describe('#getWorkflow', () => {
+      beforeEach(async () => {
+        await sdk.addWorkflow(orchestratorAddress, workFlowOrientation)
+      })
 
-  describe('#getWorkflow', () => {
-    beforeEach(async () => {
-      await sdk.addWorkflow(orchestratorAddress, workFlowOrientation)
-    })
+      it('gets the workflow', async () => {
+        const workflow =
+          sdk.getWorkflow<MyWorkflowOrientation>(orchestratorAddress)
 
-    it('gets the workflow', async () => {
-      const workflow =
-        sdk.getWorkflow<MyWorkflowOrientation>(orchestratorAddress)
-
-      expect(workflow).toContainKeys([
-        'authorizer',
-        'fundingManager',
-        'paymentProcessor',
-        'erc20Module',
-        'orchestrator',
-        'logicModule',
-      ])
+        expect(workflow).toContainKeys([
+          'authorizer',
+          'fundingManager',
+          'paymentProcessor',
+          'erc20Module',
+          'orchestrator',
+          'logicModule',
+        ])
+      })
     })
   })
 
@@ -78,29 +80,28 @@ describe('InverterSDK', () => {
     const requestedModules = {
       fundingManager: 'FM_Rebasing_v1',
       paymentProcessor: 'PP_Simple_v1',
-      authorizer: 'AUT_Roles_v1',
+      authorizer: 'AUT_TokenGated_Roles_v1',
     } satisfies RequestedModules
 
-    describe('simulate', () => {
-      const args: GetUserArgs<{
-        fundingManager: 'FM_Rebasing_v1'
-        authorizer: 'AUT_Roles_v1'
-        paymentProcessor: 'PP_Simple_v1'
-      }> = {
-        orchestrator: {
-          owner: '0x5eb14c2e7D0cD925327d74ae4ce3fC692ff8ABEF',
-          token: '0x7AcaF5360474b8E40f619770c7e8803cf3ED1053',
-        },
-        fundingManager: {
-          orchestratorTokenAddress:
-            '0x5eb14c2e7D0cD925327d74ae4ce3fC692ff8ABEF',
-        },
-        authorizer: {
-          initialOwner: '0x7AcaF5360474b8E40f619770c7e8803cf3ED1053',
-          initialManager: '0x7AcaF5360474b8E40f619770c7e8803cf3ED1053',
-        },
-      }
+    const args: GetUserArgs<{
+      fundingManager: 'FM_Rebasing_v1'
+      authorizer: 'AUT_TokenGated_Roles_v1'
+      paymentProcessor: 'PP_Simple_v1'
+    }> = {
+      orchestrator: {
+        owner: '0x86fda565A5E96f4232f8136141C92Fd79F2BE950',
+        token: '0x86fda565A5E96f4232f8136141C92Fd79F2BE950',
+      },
+      fundingManager: {
+        orchestratorTokenAddress: '0x5eb14c2e7D0cD925327d74ae4ce3fC692ff8ABEF',
+      },
+      authorizer: {
+        initialOwner: '0x86fda565A5E96f4232f8136141C92Fd79F2BE950',
+        initialManager: '0x86fda565A5E96f4232f8136141C92Fd79F2BE950',
+      },
+    }
 
+    describe('#simulate', () => {
       it('simulates the deployment tx', async () => {
         const { simulate } = await sdk.getDeploy(requestedModules)
         const { result } = await simulate(args as any)

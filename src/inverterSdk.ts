@@ -8,11 +8,13 @@ export class InverterSDK {
   readonly publicClient: PopPublicClient
   readonly walletClient: PopWalletClient
   readonly workflows: Map<`0x${string}`, any>
+  tokenCache: Map<string, any>
 
   constructor(publicClient: PopPublicClient, walletClient: PopWalletClient) {
     this.publicClient = publicClient
     this.walletClient = walletClient
     this.workflows = new Map()
+    this.tokenCache = new Map()
   }
 
   async addWorkflow(
@@ -39,7 +41,8 @@ export class InverterSDK {
     return await getDeploy(
       this.publicClient,
       this.walletClient,
-      requestedModules
+      requestedModules,
+      this
     )
   }
 }
