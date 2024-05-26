@@ -2,6 +2,7 @@ import { expect, describe, it, beforeEach } from 'bun:test'
 
 import parseInputs from '../../src/utils/parseInputs'
 import { getTestConnectors } from '../getTestConnectors'
+import { DECIMALS_ABI } from '../../src/getDeploy/constants'
 
 describe('#parseInputs', () => {
   const { publicClient /* , walletClient */ } = getTestConnectors()
@@ -39,55 +40,66 @@ describe('#parseInputs', () => {
     })
 
     describe('with :external', () => {
-      const mockAddress = '0x80f8493761a18d29fd77c131865f9cf62b15e62a'
-      const mockAbi = [
-        {
-          constant: true,
-          inputs: [],
-          name: 'tokenAddress',
-          outputs: [
-            {
-              name: '',
-              type: 'address',
-            },
-          ],
-          payable: false,
-          stateMutability: 'view',
-          type: 'function',
-        },
-      ]
-      const mockContract = { address: mockAddress, abi: mockAbi }
+      const sharedFormattedInput = {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'mockInputName',
+        type: 'uint256',
+        description: 'Blablablala',
+      }
       const args = ['42069']
-      const formattedInputs = [
-        {
-          indexed: false,
-          internalType: 'uint256',
-          name: 'mockInputName',
-          type: 'uint256',
-          tags: ['decimals:external:indirect:tokenAddress'], // should resolve to usdc on sepolia w/ decimals
-          description: 'Blablablala',
-        },
-      ]
       const extras = {
         walletAddress:
           '0x86fda565A5E96f4232f8136141C92Fd79F2BE950' as `0x${string}`,
-        decimals: 10,
       }
 
-      let minimumPayoutAmount: bigint
+      describe('with :indirect', () => {
+        const mockAddress = '0x80f8493761a18d29fd77c131865f9cf62b15e62a' // self-deployed mock contract
+        const mockAbi = [
+          {
+            constant: true,
+            inputs: [],
+            name: 'tokenAddress',
+            outputs: [
+              {
+                name: '',
+                type: 'address',
+              },
+            ],
+            payable: false,
+            stateMutability: 'view',
+            type: 'function',
+          },
+        ]
+        const mockContract = { address: mockAddress, abi: mockAbi }
+        const tags = ['decimals:external:indirect:tokenAddress'] // should resolve to usdc on sepolia w/ decimals
+        const formattedInputs = [{ ...sharedFormattedInput, tags }]
 
-      beforeEach(async () => {
-        ;[minimumPayoutAmount] = await parseInputs({
-          formattedInputs,
-          args,
-          extras,
-          publicClient,
-          contract: mockContract,
+        it('retrieves token from module and the decimals from token', async () => {
+          const [minimumPayoutAmount] = await parseInputs({
+            formattedInputs,
+            args,
+            extras,
+            publicClient,
+            contract: mockContract,
+          })
+          expect(minimumPayoutAmount).toEqual(42069000000n)
         })
       })
 
-      describe('with :indirect', () => {
-        it('retrieves token from module and the decimals from token', async () => {
+      describe('with :exact', () => {
+        const mockContract = { address: USDC_SEPOLIA, abi: DECIMALS_ABI }
+        const tags = ['decimals:external:exact:decimals']
+        const formattedInputs = [{ ...sharedFormattedInput, tags }]
+
+        it('retrieves the decimals from module which is token', async () => {
+          const [minimumPayoutAmount] = await parseInputs({
+            formattedInputs,
+            args,
+            extras,
+            publicClient,
+            contract: mockContract,
+          })
           expect(minimumPayoutAmount).toEqual(42069000000n)
         })
       })
