@@ -2,25 +2,25 @@ import { Tag } from '@inverter-network/abis'
 import { Extras, FormattedAbiParameter } from '../../types'
 import { tuple, tupleArray, any } from './utils'
 
-export type DecimalsCallback = (decimalsTag: Tag) => Promise<bigint>
+export type TokenCallback = (decimalsTag: Tag) => Promise<bigint>
 
 export default async function parse({
   input,
   arg,
   extras,
-  decimalsCallback,
+  tokenCallback,
 }: {
   input: FormattedAbiParameter
   arg: any
   extras?: Extras
-  decimalsCallback: DecimalsCallback
+  tokenCallback: TokenCallback
 }) {
   const { type } = input
   // These first two cases are for the recursive tuple types
   if (type === 'tuple')
-    return await tuple({ input, arg, extras, decimalsCallback })
+    return await tuple({ input, arg, extras, tokenCallback })
   if (type === 'tuple[]')
-    return await tupleArray({ arg, input, extras, decimalsCallback })
+    return await tupleArray({ arg, input, extras, tokenCallback })
 
   // if the input has a tag ( this has to come before the jsType check)
   if ('tags' in input) {
@@ -28,7 +28,7 @@ export default async function parse({
     if (tags?.includes('any')) return any(arg)
 
     const decimalsTag = tags?.find((t) => t.startsWith('decimals'))
-    if (!!decimalsTag) return await decimalsCallback(decimalsTag)
+    if (!!decimalsTag) return await tokenCallback(decimalsTag)
   }
 
   // if the input has a jsType property
