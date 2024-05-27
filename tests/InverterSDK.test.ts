@@ -10,7 +10,7 @@ interface MyWorkflowOrientation extends WorkflowOrientation {
   authorizer: 'AUT_Roles_v1'
   fundingManager: 'FM_Rebasing_v1'
   paymentProcessor: 'PP_Simple_v1'
-  logicModules: ['LM_PC_Bounties_v1']
+  optionalModules: ['LM_PC_Bounties_v1']
 }
 
 describe('InverterSDK', () => {
@@ -40,7 +40,7 @@ describe('InverterSDK', () => {
 
     describe('#getWorkflow', () => {
       beforeEach(async () => {
-        await sdk.addWorkflow(orchestratorAddress, workFlowOrientation)
+        await sdk.getWorkflow(orchestratorAddress, workFlowOrientation)
       })
 
       it('adds the workflow to the class instance state', async () => {

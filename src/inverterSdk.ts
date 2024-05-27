@@ -17,19 +17,6 @@ export class InverterSDK {
     this.tokenCache = new Map()
   }
 
-  async addWorkflow(
-    orchestratorAddress: `0x${string}`,
-    workflowOrientation?: WorkflowOrientation
-  ) {
-    const workflow = await getWorkflow({
-      publicClient: this.publicClient,
-      walletClient: this.walletClient,
-      orchestratorAddress,
-      workflowOrientation,
-    })
-    this.workflows.set(orchestratorAddress, workflow)
-  }
-
   async getWorkflow(
     orchestratorAddress: `0x${string}`,
     workflowOrientation?: WorkflowOrientation
