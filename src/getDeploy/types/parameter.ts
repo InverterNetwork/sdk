@@ -11,9 +11,4 @@ export type ConfigDataParameters<N extends ModuleName> = {
 }
 
 export type FomrattedDeploymentParameters<N extends ModuleName> =
-  FormatParameters<
-    [
-      ...GetDeploymentInputs<N>['configData'],
-      ...GetDeploymentInputs<N>['dependencyData'],
-    ]
-  >
+  FormatParameters<GetDeploymentInputs<N>['configData']>

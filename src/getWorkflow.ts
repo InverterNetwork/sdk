@@ -103,7 +103,7 @@ export default async function getWorkflow<
                   publicClient,
                   walletClient,
                   address,
-                  name: 'Module',
+                  name: 'Module_v1',
                 }),
                 name = <Name>await flatModule.read.title.run()
 
