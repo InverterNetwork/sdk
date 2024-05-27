@@ -2,7 +2,7 @@ import { expect, describe, it, beforeEach } from 'bun:test'
 
 import parseInputs from '../../src/utils/parseInputs'
 import { getTestConnectors } from '../getTestConnectors'
-import { DECIMALS_ABI } from '../../src/getDeploy/constants'
+import { TOKEN_DATA_ABI } from '../../src/utils/constants'
 
 describe('#parseInputs', () => {
   const { publicClient /* , walletClient */ } = getTestConnectors()
@@ -88,7 +88,7 @@ describe('#parseInputs', () => {
       })
 
       describe('with :exact', () => {
-        const mockContract = { address: USDC_SEPOLIA, abi: DECIMALS_ABI }
+        const mockContract = { address: USDC_SEPOLIA, abi: TOKEN_DATA_ABI }
         const tags = ['decimals:external:exact:decimals']
         const formattedInputs = [{ ...sharedFormattedInput, tags }]
 

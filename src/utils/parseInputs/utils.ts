@@ -111,7 +111,7 @@ export const decimals = async ({
       case 'exact':
         decimals = <number>await readContract({
           address: contract.address,
-          abi: DECIMALS_ABI,
+          abi: TOKEN_DATA_ABI,
           functionName: name,
         })
         break
