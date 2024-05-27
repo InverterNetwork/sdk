@@ -9,7 +9,7 @@ import {
   Extras,
   FormattedAbiParameter,
 } from '../../types'
-import parse, { DecimalsCallback } from './parse'
+import parse, { TokenCallback } from './parse'
 import { Tag } from '@inverter-network/abis'
 import { TOKEN_DATA_ABI } from '../constants'
 import { InverterSDK } from '../../inverterSdk'
@@ -18,7 +18,7 @@ type TupleCaseParams = {
   input: TupleFormattedAbiParameter
   arg: any
   extras?: Extras
-  tokenCallback: DecimalsCallback
+  tokenCallback: TokenCallback
 }
 
 // TODO: Add error handling, for empty data
@@ -72,6 +72,8 @@ const cacheToken = (
   }
   self.tokenCache.set(key, value)
 }
+
+export const processTags = async () => {}
 
 export const tokenInfo = async ({
   arg,
