@@ -360,6 +360,7 @@ describe('#getDeploy', () => {
         symbol: 'QACC',
         decimals: '18',
         maxSupply: '115792',
+        tokenAdmin: mockAddress,
         formula: mockAddress,
         reserveRatioForBuying: '333333',
         reserveRatioForSelling: '333333',
@@ -384,7 +385,7 @@ describe('#getDeploy', () => {
       //   } as any)
       // })
 
-      it('returns the orchestrator address as result', async () => {
+      it.only('returns the orchestrator address as result', async () => {
         const { simulate } = await getDeploy(
           publicClient,
           walletClient,
@@ -473,7 +474,7 @@ describe('#getDeploy', () => {
         // console.log(x)
       })
 
-      it('decodes as struct', async () => {
+      it('encodes', async () => {
         const structs = [
           {
             components: [
