@@ -1,8 +1,8 @@
 import { expect, describe, it } from 'bun:test'
 
-import getModule from '../src/getModule'
-import { getTestConnectors } from './getTestConnectors'
-import utils from '../tools'
+import getModule from '../../src/getModule'
+import { getTestConnectors } from '../getTestConnectors'
+import utils from '../../tools'
 
 describe('Get A Module', () => {
   const { publicClient, walletClient } = getTestConnectors()
