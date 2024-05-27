@@ -233,4 +233,125 @@ describe('#getDeploy', () => {
       })
     })
   })
+
+  describe.only('Modules: FM_BC_Bancor_Redeeming_VirtualSupply_v1, AUT_TokenGated_Roles_v1, PP_Simple_v1', () => {
+    const requestedModules = {
+      fundingManager: 'FM_BC_Bancor_Redeeming_VirtualSupply_v1',
+      paymentProcessor: 'PP_Simple_v1',
+      authorizer: 'AUT_Roles_v1',
+    } satisfies RequestedModules
+
+    const expectedBCInputSchema = {
+      name: 'FM_BC_Bancor_Redeeming_VirtualSupply_v1',
+      inputs: [
+        {
+          name: 'name',
+          type: 'bytes32',
+          description: 'The name of the issuance token',
+          jsType: '0xstring',
+        },
+        {
+          name: 'symbol',
+          type: 'bytes32',
+          description: 'The symbol of the issuance token',
+          jsType: '0xstring',
+        },
+        {
+          name: 'decimals',
+          type: 'uint8',
+          description: 'The decimals used within the issuance token',
+          jsType: 'numberString',
+        },
+        {
+          name: 'maxSupply',
+          type: 'uint256',
+          description: 'The max total supply of the token',
+          tags: ['decimals:internal:exact:decimals'],
+          jsType: 'numberString',
+        },
+        {
+          name: 'formula',
+          type: 'address',
+          description:
+            'The formula contract used to calculate the issucance and redemption rate',
+          jsType: '0xstring',
+        },
+        {
+          name: 'reserveRatioForBuying',
+          type: 'uint32',
+          description:
+            'The reserve ratio, expressed in PPM, used for issuance on the bonding curve',
+          jsType: 'numberString',
+        },
+        {
+          name: 'reserveRatioForSelling',
+          type: 'uint32',
+          description:
+            'The reserve ratio, expressed in PPM, used for redeeming on the bonding curve',
+          jsType: 'numberString',
+        },
+        {
+          name: 'buyFee',
+          type: 'uint256',
+          description: 'The buy fee expressed in base points',
+          jsType: 'numberString',
+        },
+        {
+          name: 'sellFee',
+          type: 'uint256',
+          description: 'The sell fee expressed in base points',
+          jsType: 'numberString',
+        },
+        {
+          name: 'buyIsOpen',
+          type: 'bool',
+          description:
+            'The indicator used for enabling/disabling the buying functionalities on deployment',
+          jsType: 'boolean',
+        },
+        {
+          name: 'sellIsOpen',
+          type: 'bool',
+          description:
+            'The indicator used for enabling/disabling the selling functionalties on deployment',
+          jsType: 'boolean',
+        },
+        {
+          name: 'initialTokenSupply',
+          type: 'uint256',
+          description: 'The initial virtual issuance token supply',
+          tags: ['decimals:internal:exact:decimals'],
+          jsType: 'numberString',
+        },
+        {
+          name: 'initialCollateralSupply',
+          type: 'uint256',
+          description: 'The initial virtual collateral token supply',
+          tags: ['decimals:internal:indirect:acceptedToken'],
+          jsType: 'numberString',
+        },
+        {
+          name: 'acceptedToken',
+          type: 'address',
+          description:
+            'The address of the token that will be deposited to the funding manager',
+          jsType: '0xstring',
+        },
+      ],
+    }
+
+    describe('inputs', () => {
+      it('has the correct format', async () => {
+        const { inputs } = await getDeploy(
+          publicClient,
+          walletClient,
+          requestedModules
+        )
+        expect(inputs).toEqual({
+          ...expectedBaseInputSchema,
+          fundingManager: expectedBCInputSchema,
+        })
+      })
+    })
+  })
 })
