@@ -4,7 +4,7 @@ import writeLog from '../../tools/writeLog'
 
 describe('main', async () => {
   it('Should log the Deploy Function possible inputs', async () => {
-    const res = getModuleSchema('MetadataManager_v1')
+    const res = getModuleSchema('AUT_Roles_v1')
 
     writeLog({
       content: res,
