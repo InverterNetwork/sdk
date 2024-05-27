@@ -16,10 +16,19 @@ export default function writeLog({
 }) {
   if (!fs.existsSync(logsPath)) fs.mkdirSync(logsPath, { recursive: true })
 
-  const timestamp = (Number(Date.now().toString()) / 1000).toFixed(0).slice(6)
-  const optionalLabel = label ? `${timestamp}-${label}` : timestamp
+  const now = new Date(),
+    date = now.getDate(),
+    month = now.getMonth() + 1,
+    year = now.getFullYear().toString().slice(2),
+    hours = now.getHours(),
+    minutes = now.getMinutes(),
+    seconds = now.getSeconds()
 
-  const newFilePath = path.join(logsPath, `${optionalLabel}.log.${format}`)
+  const timestamp = `${date}-${month}-${year}_${hours}:${minutes}:${seconds}`
+
+  const formattedLabel = label ? `${timestamp}-${label}` : timestamp
+
+  const newFilePath = path.join(logsPath, `${formattedLabel}.json`)
 
   let fileContent: string
   if (format === 'json') {

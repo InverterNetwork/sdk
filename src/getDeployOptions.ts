@@ -10,7 +10,7 @@ export default function getDeployOptions() {
           return { moduleType, name }
         case 'paymentProcessor':
           return { moduleType, name }
-        case 'logicModule':
+        case 'optionalModule':
           return { moduleType: 'optionalModules' as const, name }
         default:
           return false
