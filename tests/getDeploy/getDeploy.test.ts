@@ -2,11 +2,7 @@ import { expect, describe, it } from 'bun:test'
 
 import { getTestConnectors } from '../getTestConnectors'
 import { getDeploy } from '../../src'
-import {
-  GetUserArgs,
-  ModuleSchema,
-  RequestedModules,
-} from '../../src/getDeploy/types'
+import { GetUserArgs, RequestedModules } from '../../src/getDeploy/types'
 import { isAddress } from 'viem'
 
 describe('#getDeploy', () => {
