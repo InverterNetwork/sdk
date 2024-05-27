@@ -38,13 +38,13 @@ describe('InverterSDK', () => {
       logicModules: ['LM_PC_Bounties_v1'],
     } as MyWorkflowOrientation
 
-    describe('#addWorkflow', () => {
+    describe('#getWorkflow', () => {
       beforeEach(async () => {
         await sdk.addWorkflow(orchestratorAddress, workFlowOrientation)
       })
 
-      it('adds the workflow to the class instance', () => {
-        expect(sdk.workflows.get(orchestratorAddress)).toContainKeys([
+      it('adds the workflow to the class instance state', async () => {
+        expect(await sdk.workflows.get(orchestratorAddress)).toContainKeys([
           'authorizer',
           'fundingManager',
           'paymentProcessor',
@@ -53,16 +53,9 @@ describe('InverterSDK', () => {
           'logicModule',
         ])
       })
-    })
-
-    describe('#getWorkflow', () => {
-      beforeEach(async () => {
-        await sdk.addWorkflow(orchestratorAddress, workFlowOrientation)
-      })
 
       it('gets the workflow', async () => {
-        const workflow =
-          sdk.getWorkflow<MyWorkflowOrientation>(orchestratorAddress)
+        const workflow = await sdk.getWorkflow(orchestratorAddress)
 
         expect(workflow).toContainKeys([
           'authorizer',

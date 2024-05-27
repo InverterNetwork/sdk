@@ -30,11 +30,23 @@ export class InverterSDK {
     this.workflows.set(orchestratorAddress, workflow)
   }
 
-  getWorkflow<O extends WorkflowOrientation>(
-    orchestratorAddress: `0x${string}`
+  async getWorkflow(
+    orchestratorAddress: `0x${string}`,
+    workflowOrientation?: WorkflowOrientation
   ) {
-    const workflow = this.workflows.get(orchestratorAddress)
-    return workflow as Workflow<PopWalletClient, O>
+    const cachedWorkflow = this.workflows.get(orchestratorAddress)
+    if (cachedWorkflow) {
+      return cachedWorkflow as Workflow<PopWalletClient, WorkflowOrientation>
+    } else {
+      const workflow = await getWorkflow({
+        publicClient: this.publicClient,
+        walletClient: this.walletClient,
+        orchestratorAddress,
+        workflowOrientation,
+      })
+      this.workflows.set(orchestratorAddress, workflow)
+      return workflow as Workflow<PopWalletClient, WorkflowOrientation>
+    }
   }
 
   async getDeploy(requestedModules: RequestedModules) {
