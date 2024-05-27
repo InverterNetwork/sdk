@@ -11,7 +11,7 @@ export type RequestedModules = Simplify<
   {
     [K in MendatoryModuleType]: RequestedModule<K>
   } & {
-    optionalModules?: RequestedModule<'logicModule'>[]
+    optionalModules?: RequestedModule<'optionalModule'>[]
   }
 >
 
