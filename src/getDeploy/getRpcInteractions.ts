@@ -4,7 +4,6 @@ import { GetDeploymentInputs, PopWalletClient } from '../types'
 import { MANDATORY_MODULES } from './constants'
 import {
   ConstructedArgs,
-  EncodedArgs,
   ModuleArgs,
   RequestedModule,
   RequestedModules,
@@ -14,55 +13,67 @@ import {
 } from './types'
 import { assembleMetadata, getViemMethods } from './utils'
 import parseInputs from '../utils/parseInputs'
-import { getEntries, getValues } from '../utils'
+import { TOKEN_DATA_ABI } from '../utils/constants'
+
+const prepareArgsForEncoding = async (
+  configArr,
+  userModuleArgs: UserModuleArg
+) => {
+  const args = Array(configArr.length)
+  const formattedInputs = Array(configArr.length)
+  for (let i = 0; i < configArr.length; i++) {
+    const configDataMember = configArr[i]
+    const { name, components } = configDataMember
+    if (components) {
+      // parse args into object format
+      const tupleArgs = components.reduce((acc, item) => {
+        acc[item.name] = userModuleArgs[item.name]
+        return acc
+      }, {})
+      args[i] = tupleArgs
+    } else {
+      const value = userModuleArgs[name]
+      args[i] = value
+    }
+    formattedInputs[i] = configDataMember
+  }
+  return {
+    formattedInputs,
+    args,
+  }
+}
 
 const getEncodedArgs = async (
   deploymentInputs: GetDeploymentInputs,
   publicClient: PublicClient,
-  userModuleArgs?: UserModuleArg
+  userModuleArgs: UserModuleArg
 ) => {
-  // Initialize empty encodedArgs
-  const encodedArgs = {} as EncodedArgs
-
-  const encodedDeploymentArgs = await Promise.all(
-    getValues(deploymentInputs).map(async (dataArr) => {
-      const paramValueContainer = Array(dataArr.length)
-      const paramTypeContainer = Array(dataArr.length)
-      for (const argName in userModuleArgs) {
-        // find index in config
-        const idx = dataArr.findIndex((config) => config.name === argName)
-        // if index is found
-        if (idx >= 0) {
-          // put arg in the correct idx in param container
-          paramValueContainer[idx] = userModuleArgs[argName]
-          // put type in the correct idx in type container
-          paramTypeContainer[idx] = { type: dataArr[idx].type }
-        }
-      }
-
-      const formattedValueParams = (await parseInputs({
-        formattedInputs: dataArr,
-        args: paramValueContainer,
-        extras: {},
-        publicClient,
-      })) as any[]
-
-      return encodeAbiParameters(paramTypeContainer, formattedValueParams)
-    })
+  const { formattedInputs, args } = await prepareArgsForEncoding(
+    deploymentInputs.configData,
+    userModuleArgs
   )
 
-  getEntries(deploymentInputs).forEach(([key], idx) => {
-    encodedArgs[key] = encodedDeploymentArgs[idx]
-  })
+  // TODO: pass formattedInputs and args to parseInputs
+  // challenge: parseInputs returns a flat array but viem's
+  // encodeAbiParameters expects a different format:
+  // https://viem.sh/docs/abi/encodeAbiParameters.html#simple-struct
+
+  // const parsedArgs = await parseInputs({
+  //   formattedInputs,
+  //   args,
+  //   publicClient,
+  // })
 
   // Return encodedArgs
-  return encodedArgs
+  return {
+    configData: encodeAbiParameters(formattedInputs, args),
+  }
 }
 
 const assembleModuleArgs = async (
   name: RequestedModule,
   publicClient: PublicClient,
-  userModuleArgs?: UserModuleArg
+  userModuleArgs: UserModuleArg
 ): Promise<ModuleArgs> => {
   const { deploymentInputs } = getModuleData(name)
   const moduleArgs = {
