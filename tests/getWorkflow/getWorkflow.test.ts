@@ -28,7 +28,7 @@ describe('Get A Module', async () => {
   })
 
   it('Read Funding Manager Total Supply', async () => {
-    const totalSupply = await workflow.fundingManager.read.totalSupply.run()
+    const totalSupply = await workflow.fundingManager.read.totalSupply()
     writeLog({
       content: { totalSupply },
       label: 'totalSupply',

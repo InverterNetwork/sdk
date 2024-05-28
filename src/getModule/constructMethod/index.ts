@@ -50,11 +50,10 @@ export default function constructMethod<
   })
 
   // Return the constructed method
-  return {
+  return Object.assign(run, {
     name,
     description,
-    run,
     inputs: formattedInputs,
     outputs: formattedOutputs,
-  }
+  })
 }
