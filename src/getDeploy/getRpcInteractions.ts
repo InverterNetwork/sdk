@@ -23,13 +23,8 @@ const getEncodedArgs = async (
   userModuleArg: UserModuleArg
 ) => {
   const formattedInputs = formatParameters(configData)
-  // TODO: Handle undefined userModuleArg
-  const args = getValues(userModuleArg)
 
-  // TODO: pass formattedInputs and args to parseInputs
-  // challenge: parseInputs returns a flat array but viem's
-  // encodeAbiParameters expects a different format:
-  // https://viem.sh/docs/abi/encodeAbiParameters.html#simple-struct
+  const args = userModuleArg ? getValues(userModuleArg) : '0x00'
 
   // MG NOTE: Parse inputs respects the array order and struct structure
 
