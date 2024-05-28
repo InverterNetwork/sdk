@@ -75,7 +75,6 @@ export const decimals = async ({
   publicClient: PublicClient
   contract?: any
 }) => {
-  console.log(decimalsTag)
   let decimals = extras?.decimals
 
   const [, source, location, name] = decimalsTag?.split(':')
@@ -85,11 +84,14 @@ export const decimals = async ({
     switch (location) {
       case 'exact':
         decimals =
+          // check if the value is contained by a non-tuple arg search it based on the index that is has in `inputs`
           args[
             inputs.findIndex((input) => {
               return input.name === name
             })
-          ]
+            // or if there is a tuple arg that contains a parameter with `name`which would provide the decimals
+          ] || args.find((arg) => !!arg[name])[name]
+
         break
       case 'indirect':
         const address = args[inputs.findIndex((input) => input.name === name)]
@@ -123,6 +125,7 @@ export const decimals = async ({
         break
     }
   }
+
   if (!decimals) throw new Error('No decimals provided')
   return parseUnits(arg, decimals)
 }
