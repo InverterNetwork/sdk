@@ -19,7 +19,7 @@ describe('#parseInputs', () => {
           tags: ['decimals'],
           description: 'Blablablala',
         },
-      ]
+      ] as const
       const extras = {
         walletAddress:
           '0x86fda565A5E96f4232f8136141C92Fd79F2BE950' as `0x${string}`,
@@ -46,7 +46,7 @@ describe('#parseInputs', () => {
         name: 'mockInputName',
         type: 'uint256',
         description: 'Blablablala',
-      }
+      } as const
       const args = ['42069']
       const extras = {
         walletAddress:
@@ -72,8 +72,8 @@ describe('#parseInputs', () => {
           },
         ]
         const mockContract = { address: mockAddress, abi: mockAbi }
-        const tags = ['decimals:external:indirect:tokenAddress'] // should resolve to usdc on sepolia w/ decimals
-        const formattedInputs = [{ ...sharedFormattedInput, tags }]
+        const tags = ['decimals:external:indirect:tokenAddress'] as const // should resolve to usdc on sepolia w/ decimals
+        const formattedInputs = [{ ...sharedFormattedInput, tags }] as const
 
         it('retrieves token from module and the decimals from token', async () => {
           const [minimumPayoutAmount] = await parseInputs({
@@ -89,8 +89,8 @@ describe('#parseInputs', () => {
 
       describe('with :exact', () => {
         const mockContract = { address: USDC_SEPOLIA, abi: TOKEN_DATA_ABI }
-        const tags = ['decimals:external:exact:decimals']
-        const formattedInputs = [{ ...sharedFormattedInput, tags }]
+        const tags = ['decimals:external:exact:decimals'] as any
+        const formattedInputs = [{ ...sharedFormattedInput, tags }] as const
 
         it('retrieves the decimals from module which is token', async () => {
           const [minimumPayoutAmount] = await parseInputs({
@@ -112,29 +112,31 @@ describe('#parseInputs', () => {
           name: 'decimals',
           type: 'uint8',
           description: 'The decimals used within the issuance token',
-          jsType: 'string',
+          jsType: 'numberString',
         },
         {
           name: 'initialTokenSupply',
           type: 'uint256',
           description: 'The initial virtual issuance token supply',
           tags: ['decimals:internal:exact:decimals'],
-          jsType: 'string',
+          jsType: 'numberString',
         },
         {
           name: 'initialCollateralSupply',
           type: 'uint256',
           description: 'The initial virtual collateral token supply',
           tags: ['decimals:internal:indirect:acceptedToken'],
-          jsType: 'string',
+          jsType: 'numberString',
         },
         {
           name: 'acceptedToken',
           type: 'address',
           description:
             'The address of the token that will be deposited to the funding manager',
+          jsType: '0xstring',
         },
-      ]
+      ] as const
+
       const extras = {
         walletAddress:
           '0x86fda565A5E96f4232f8136141C92Fd79F2BE950' as `0x${string}`,

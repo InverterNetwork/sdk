@@ -69,7 +69,7 @@ export const decimals = async ({
 }: {
   arg: any
   args: any[]
-  inputs: FormattedAbiParameter[]
+  inputs: readonly FormattedAbiParameter[]
   extras?: Extras
   decimalsTag: Tag
   publicClient: PublicClient

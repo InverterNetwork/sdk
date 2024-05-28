@@ -11,16 +11,16 @@ export default async function parseInputs({
   publicClient,
   contract,
 }: {
-  formattedInputs: any
+  formattedInputs: readonly FormattedAbiParameter[]
   args: any
   publicClient: PublicClient
   extras?: Extras
   contract?: any
 }) {
-  const inputs = formattedInputs as FormattedAbiParameter[]
+  // const inputs = formattedInputs as FormattedAbiParameter[]
   // parse the inputs
   const parsedInputs = await Promise.all(
-    inputs.map(async (input, index) => {
+    formattedInputs.map(async (input, index) => {
       // get the argument of the same index
       const arg = Array.isArray(args) ? args[index] : args
       // parse the input with the argument
@@ -30,7 +30,7 @@ export default async function parseInputs({
         extras,
         decimalsCallback: (decimalsTag) =>
           decimals({
-            inputs,
+            inputs: formattedInputs,
             publicClient,
             decimalsTag,
             extras,
