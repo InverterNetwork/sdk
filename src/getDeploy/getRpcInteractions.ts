@@ -13,8 +13,8 @@ import {
   UserArgs,
 } from './types'
 import { assembleMetadata, getViemMethods } from './utils'
-import { Entries } from 'type-fest-4'
 import parseInputs from '../utils/parseInputs'
+import { getEntries, getValues } from '../utils'
 
 const getEncodedArgs = async (
   deploymentInputs: GetDeploymentInputs,
@@ -25,37 +25,33 @@ const getEncodedArgs = async (
   const encodedArgs = {} as EncodedArgs
 
   const encodedDeploymentArgs = await Promise.all(
-    (Object.entries(deploymentInputs) as Entries<typeof deploymentInputs>).map(
-      async ([, dataArr]) => {
-        const paramValueContainer = Array(dataArr.length)
-        const paramTypeContainer = Array(dataArr.length)
-        for (const argName in userModuleArgs) {
-          // find index in config
-          const idx = dataArr.findIndex((config) => config.name === argName)
-          // if index is found
-          if (idx >= 0) {
-            // put arg in the correct idx in param container
-            paramValueContainer[idx] = userModuleArgs[argName]
-            // put type in the correct idx in type container
-            paramTypeContainer[idx] = { type: dataArr[idx].type }
-          }
+    getValues(deploymentInputs).map(async (dataArr) => {
+      const paramValueContainer = Array(dataArr.length)
+      const paramTypeContainer = Array(dataArr.length)
+      for (const argName in userModuleArgs) {
+        // find index in config
+        const idx = dataArr.findIndex((config) => config.name === argName)
+        // if index is found
+        if (idx >= 0) {
+          // put arg in the correct idx in param container
+          paramValueContainer[idx] = userModuleArgs[argName]
+          // put type in the correct idx in type container
+          paramTypeContainer[idx] = { type: dataArr[idx].type }
         }
-
-        const formattedValueParams = (await parseInputs({
-          formattedInputs: dataArr,
-          args: paramValueContainer,
-          extras: {},
-          publicClient,
-        })) as any[]
-
-        return encodeAbiParameters(paramTypeContainer, formattedValueParams)
       }
-    )
+
+      const formattedValueParams = (await parseInputs({
+        formattedInputs: dataArr,
+        args: paramValueContainer,
+        extras: {},
+        publicClient,
+      })) as any[]
+
+      return encodeAbiParameters(paramTypeContainer, formattedValueParams)
+    })
   )
 
-  ;(
-    Object.entries(deploymentInputs) as Entries<typeof deploymentInputs>
-  ).forEach(([key], idx) => {
+  getEntries(deploymentInputs).forEach(([key], idx) => {
     encodedArgs[key] = encodedDeploymentArgs[idx]
   })
 

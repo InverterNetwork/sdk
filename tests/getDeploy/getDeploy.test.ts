@@ -2,7 +2,7 @@ import { expect, describe, it } from 'bun:test'
 
 import { getTestConnectors } from '../getTestConnectors'
 import { getDeploy } from '../../src'
-import { GetUserArgs, RequestedModules } from '../../src/getDeploy/types'
+import { RequestedModules } from '../../src/getDeploy/types'
 import { isAddress } from 'viem'
 
 describe('#getDeploy', () => {
@@ -58,13 +58,9 @@ describe('#getDeploy', () => {
       inputs: [],
       name: 'PP_Simple_v1',
     },
-  }
+  } as const
 
-  const args: GetUserArgs<{
-    fundingManager: 'FM_Rebasing_v1'
-    authorizer: 'AUT_Roles_v1'
-    paymentProcessor: 'PP_Simple_v1'
-  }> = {
+  const args = {
     orchestrator: {
       owner: '0x5eb14c2e7D0cD925327d74ae4ce3fC692ff8ABEF',
       token: '0x7AcaF5360474b8E40f619770c7e8803cf3ED1053',
@@ -76,7 +72,7 @@ describe('#getDeploy', () => {
       initialOwner: '0x7AcaF5360474b8E40f619770c7e8803cf3ED1053',
       initialManager: '0x7AcaF5360474b8E40f619770c7e8803cf3ED1053',
     },
-  }
+  } as const
 
   describe('Modules: FM_Rebasing_v1, AUT_Roles_v1, PP_Simple_v1', () => {
     const requestedModules = {
@@ -118,7 +114,8 @@ describe('#getDeploy', () => {
           const { inputs } = await getDeploy(publicClient, walletClient, {
             ...requestedModules,
             optionalModules: ['LM_PC_Bounties_v1'],
-          } as any)
+          })
+
           expect(inputs).toEqual({
             ...expectedBaseInputSchema,
             optionalModules: [
@@ -127,7 +124,7 @@ describe('#getDeploy', () => {
                 name: 'LM_PC_Bounties_v1',
               },
             ],
-          } as any)
+          })
         })
       })
 
@@ -136,8 +133,7 @@ describe('#getDeploy', () => {
           const { simulate } = await getDeploy(publicClient, walletClient, {
             ...requestedModules,
             optionalModules: ['LM_PC_Bounties_v1'],
-          } as any)
-          // @ts-expect-error: bountyManager is not in RequestedModules
+          })
           const simulationResult = await simulate(args)
           expect(isAddress(simulationResult.result as string)).toBeTrue
         })
