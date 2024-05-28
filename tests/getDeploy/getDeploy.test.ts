@@ -8,6 +8,7 @@ import { isAddress } from 'viem'
 describe('#getDeploy', () => {
   const { publicClient, walletClient } = getTestConnectors()
 
+  const USDC_SEPOLIA = '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238' // USDC has 6 decimals
   const mockAddress = '0x80f8493761a18d29fd77c131865f9cf62b15e62a' // self-deployed mock contract
   const expectedBaseInputSchema = {
     orchestrator: {
@@ -97,8 +98,8 @@ describe('#getDeploy', () => {
         })
       })
 
-      describe('simulate', () => {
-        it.only('returns the orchestrator address as result', async () => {
+      describe.only('simulate', () => {
+        it('returns the orchestrator address as result', async () => {
           const { simulate } = await getDeploy(
             publicClient,
             walletClient,
@@ -391,6 +392,7 @@ describe('#getDeploy', () => {
           walletClient,
           requestedModules
         )
+
         const simulationResult = await simulate({
           ...args,
           fundingManager: bcArgs,
@@ -411,8 +413,7 @@ describe('#getDeploy', () => {
       const SELL_IS_OPEN = false
       const INITIAL_ISSUANCE_SUPPLY = 100n
       const INITIAL_COLLATERAL_SUPPLY = 33n
-      const BONDING_CURVE_COLLATERAL_TOKEN =
-        '0x1000000000000000000000000000000000000008'
+      const BONDING_CURVE_COLLATERAL_TOKEN = 'USDC_SEPOLIA'
       const BANCOR_FORMULA_ADDRESS =
         '0x1000000000000000000000000000000000000009'
       const OWNER = privateKeyToAccount(

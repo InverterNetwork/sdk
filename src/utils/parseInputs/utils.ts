@@ -75,6 +75,7 @@ export const decimals = async ({
   publicClient: PublicClient
   contract?: any
 }) => {
+  console.log(decimalsTag)
   let decimals = extras?.decimals
 
   const [, source, location, name] = decimalsTag?.split(':')
@@ -83,7 +84,12 @@ export const decimals = async ({
   if (source === 'internal') {
     switch (location) {
       case 'exact':
-        decimals = args[inputs.findIndex((input) => input.name === name)]
+        decimals =
+          args[
+            inputs.findIndex((input) => {
+              return input.name === name
+            })
+          ]
         break
       case 'indirect':
         const address = args[inputs.findIndex((input) => input.name === name)]
