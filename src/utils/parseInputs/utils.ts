@@ -75,7 +75,6 @@ export const decimals = async ({
   publicClient: PublicClient
   contract?: any
 }) => {
-  console.log(decimalsTag)
   let decimals = extras?.decimals
 
   const [, source, location, name] = decimalsTag?.split(':')

@@ -13,61 +13,34 @@ import {
 } from './types'
 import { assembleMetadata, getViemMethods } from './utils'
 import parseInputs from '../utils/parseInputs'
-import { TOKEN_DATA_ABI } from '../utils/constants'
-
-const prepareArgsForEncoding = async (
-  configArr,
-  userModuleArgs: UserModuleArg
-) => {
-  const args = Array(configArr.length)
-  const formattedInputs = Array(configArr.length)
-  for (let i = 0; i < configArr.length; i++) {
-    const configDataMember = configArr[i]
-    const { name, components } = configDataMember
-    if (components) {
-      // parse args into object format
-      const tupleArgs = components.reduce((acc, item) => {
-        acc[item.name] = userModuleArgs[item.name]
-        return acc
-      }, {})
-      args[i] = tupleArgs
-    } else {
-      const value = userModuleArgs[name]
-      args[i] = value
-    }
-    formattedInputs[i] = configDataMember
-  }
-  return {
-    formattedInputs,
-    args,
-  }
-}
+import formatParameters from '../utils/formatParameters'
+import { getValues } from '../utils'
+// import { TOKEN_DATA_ABI } from '../utils/constants'
 
 const getEncodedArgs = async (
-  deploymentInputs: GetDeploymentInputs,
+  { configData }: GetDeploymentInputs,
   publicClient: PublicClient,
-  userModuleArgs: UserModuleArg
+  userModuleArg: UserModuleArg
 ) => {
-  const { formattedInputs, args } = await prepareArgsForEncoding(
-    deploymentInputs.configData,
-    userModuleArgs
-  )
+  const formattedInputs = formatParameters(configData)
+  // TODO: Handle undefined userModuleArg
+  const args = getValues(userModuleArg)
 
   // TODO: pass formattedInputs and args to parseInputs
   // challenge: parseInputs returns a flat array but viem's
   // encodeAbiParameters expects a different format:
   // https://viem.sh/docs/abi/encodeAbiParameters.html#simple-struct
 
-  // const parsedArgs = await parseInputs({
-  //   formattedInputs,
-  //   args,
-  //   publicClient,
-  // })
+  // MG NOTE: Parse inputs respects the array order and struct structure
+
+  const parsedArgs = (await parseInputs({
+    formattedInputs,
+    args,
+    publicClient,
+  })) as any
 
   // Return encodedArgs
-  return {
-    configData: encodeAbiParameters(formattedInputs, args),
-  }
+  return encodeAbiParameters(configData, parsedArgs)
 }
 
 const assembleModuleArgs = async (
@@ -76,10 +49,18 @@ const assembleModuleArgs = async (
   userModuleArgs: UserModuleArg
 ): Promise<ModuleArgs> => {
   const { deploymentInputs } = getModuleData(name)
+
+  const encodedArgs = await getEncodedArgs(
+    deploymentInputs,
+    publicClient,
+    userModuleArgs
+  )
+
   const moduleArgs = {
-    ...(await getEncodedArgs(deploymentInputs, publicClient, userModuleArgs)),
+    configData: encodedArgs,
     metadata: assembleMetadata(name),
   }
+
   return moduleArgs
 }
 
@@ -106,6 +87,7 @@ const constructArgs = async (
       )
     )
   )
+
   mandatoryModuleArgs.forEach((argObj, idx) => {
     args[MANDATORY_MODULES[idx]] = argObj
   })
@@ -114,14 +96,18 @@ const constructArgs = async (
   const { optionalModules } = requestedModules
   if (optionalModules && optionalModules?.length > 0) {
     const optionalModulesArgs = await Promise.all(
-      optionalModules.map((optionalModule) =>
-        assembleModuleArgs(
-          optionalModule,
-          publicClient,
-          userArgs.optionalModules?.[optionalModule]
-        )
-      )
+      optionalModules.map((optionalModule) => {
+        const userModuleArg = userArgs.optionalModules?.[optionalModule]
+
+        if (!userModuleArg)
+          throw new Error(
+            `Missing user arguments for optional module: ${optionalModule}`
+          )
+
+        return assembleModuleArgs(optionalModule, publicClient, userModuleArg)
+      })
     )
+
     optionalModulesArgs.forEach((argObj) => {
       args.optionalModules.push(argObj)
     })
@@ -135,20 +121,18 @@ async function getArgs<T extends RequestedModules>(
   userArgs: GetUserArgs<T>,
   publicClient: PublicClient
 ) {
-  const {
-    orchestrator,
-    fundingManager,
-    authorizer,
-    paymentProcessor,
-    optionalModules,
-  } = await constructArgs(requestedModules, userArgs, publicClient)
+  const constructed = await constructArgs(
+    requestedModules,
+    userArgs,
+    publicClient
+  )
 
   return [
-    orchestrator,
-    fundingManager,
-    authorizer,
-    paymentProcessor,
-    optionalModules,
+    constructed.orchestrator,
+    constructed.fundingManager,
+    constructed.authorizer,
+    constructed.paymentProcessor,
+    constructed.optionalModules,
   ] as const
 }
 
@@ -161,6 +145,7 @@ export default function getRpcInteractions<T extends RequestedModules>(
 
   const simulate = async (userArgs: GetUserArgs<T>) => {
     const arr = await getArgs(requestedModules, userArgs, publicClient)
+
     return await simulateWrite(arr, {
       account: walletClient.account.address,
     })
