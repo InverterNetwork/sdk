@@ -7,17 +7,19 @@ import { Merge } from 'type-fest-4'
 import { OmitNever, PopWalletClient } from '../types'
 import getModule from '../getModule'
 
+type ModuleType = Exclude<UserFacingModuleType, 'orchestrator'>
+
 type OrientationPart<
-  MT extends UserFacingModuleType,
+  MT extends ModuleType,
   N extends GetModuleNameByType<MT> = GetModuleNameByType<MT>,
 > = N
 
 export type WorkflowOrientation = Merge<
   {
-    [T in Exclude<UserFacingModuleType, 'logicModule'>]: OrientationPart<T>
+    [T in Exclude<ModuleType, 'optionalModule'>]: OrientationPart<T>
   },
   {
-    logicModules?: OrientationPart<'logicModule'>[]
+    optionalModules?: OrientationPart<'optionalModule'>[]
   }
 >
 
@@ -25,7 +27,7 @@ type MandatoryResult<
   W extends PopWalletClient | undefined,
   O extends WorkflowOrientation | undefined,
 > = {
-  [K in Exclude<UserFacingModuleType, 'logicModule'>]: O extends NonNullable<O>
+  [K in Exclude<ModuleType, 'optionalModule'>]: O extends NonNullable<O>
     ? ReturnType<typeof getModule<O[K], W>>
     : ReturnType<typeof getModule<WorkflowOrientation[K], W>>
 }
@@ -34,15 +36,17 @@ type OptionalResult<
   W extends PopWalletClient | undefined,
   O extends WorkflowOrientation | undefined,
 > = OmitNever<{
-  logicModule: O extends NonNullable<O>
-    ? O['logicModules'] extends NonNullable<O['logicModules']>
+  optionalModule: O extends NonNullable<O>
+    ? O['optionalModules'] extends NonNullable<O['optionalModules']>
       ? {
-          [K in O['logicModules'][number]]: ReturnType<typeof getModule<K, W>>
+          [K in O['optionalModules'][number]]: ReturnType<
+            typeof getModule<K, W>
+          >
         }
       : never
     : {
         [K in NonNullable<
-          WorkflowOrientation['logicModules']
+          WorkflowOrientation['optionalModules']
         >[number]]: ReturnType<typeof getModule<K, W>>
       }
 }>

@@ -1,11 +1,9 @@
 import { Hex } from 'viem'
 import getModule from '../getModule'
-import {
-  UserFacingModuleType,
-  GetModuleNameByType,
-} from '@inverter-network/abis'
+import { GetModuleNameByType } from '@inverter-network/abis'
 import { PopPublicClient, PopWalletClient } from '../types'
 import { WorkflowOrientation, Workflow } from './types'
+import { ModuleType } from '../getDeploy/types'
 import { TOKEN_DATA_ABI } from '../utils/constants'
 
 export default async function getWorkflow<
