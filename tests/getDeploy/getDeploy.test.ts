@@ -397,7 +397,7 @@ describe('#getDeploy', () => {
       })
     })
 
-    describe.only('simulate', () => {
+    describe('simulate', () => {
       it('returns the orchestrator address as result', async () => {
         const { simulate } = await getDeploy(
           publicClient,
