@@ -93,12 +93,6 @@ const constructArgs = async (
     const optionalModulesArgs = await Promise.all(
       optionalModules.map((optionalModule) => {
         const userModuleArg = userArgs.optionalModules?.[optionalModule]
-
-        if (!userModuleArg)
-          throw new Error(
-            `Missing user arguments for optional module: ${optionalModule}`
-          )
-
         return assembleModuleArgs(optionalModule, publicClient, userModuleArg)
       })
     )

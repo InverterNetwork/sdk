@@ -6,6 +6,9 @@ import { Hex, isAddress } from 'viem'
 
 // ===============CONSTANTS_START================
 
+const USDC_SEPOLIA = '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238' as Hex // USDC has 6 decimals
+const mockAddress = '0x80f8493761a18d29fd77c131865f9cf62b15e62a' as Hex // self-deployed mock contract
+
 const expectedBaseInputSchema = {
   orchestrator: {
     name: 'Orchestrator_v1',
@@ -191,13 +194,32 @@ const expected_FM_BC_Restricted_BancorInputSchema = {
   ],
 } as const
 
+const bcArgs = {
+  issuanceToken: {
+    name: 'Project Issuance Token',
+    symbol: 'QACC',
+    decimals: '18',
+    maxSupply: '115792',
+  },
+  tokenAdmin: mockAddress,
+  bondingCurveParams: {
+    formula: mockAddress,
+    reserveRatioForBuying: '333333',
+    reserveRatioForSelling: '333333',
+    buyFee: '0',
+    sellFee: '100',
+    buyIsOpen: true,
+    sellIsOpen: false,
+    initialTokenSupply: '100',
+    initialCollateralSupply: '33',
+  },
+  acceptedToken: USDC_SEPOLIA, //USDC
+} as const
+
 // ===============CONSTANTS_END================
 
 describe('#getDeploy', () => {
   const { publicClient, walletClient } = getTestConnectors()
-
-  const USDC_SEPOLIA = '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238' as Hex // USDC has 6 decimals
-  const mockAddress = '0x80f8493761a18d29fd77c131865f9cf62b15e62a' as Hex // self-deployed mock contract
 
   describe('Modules: FM_Rebasing_v1, AUT_Roles_v1, PP_Simple_v1', () => {
     const requestedModules = {
@@ -219,7 +241,7 @@ describe('#getDeploy', () => {
         })
       })
 
-      describe.only('simulate', () => {
+      describe('simulate', () => {
         it('returns the orchestrator address as result', async () => {
           const { simulate } = await getDeploy(
             publicClient,
@@ -376,28 +398,6 @@ describe('#getDeploy', () => {
     })
 
     describe('simulate', () => {
-      const bcArgs = {
-        issuanceToken: {
-          name: 'Project Issuance Token',
-          symbol: 'QACC',
-          decimals: '18',
-          maxSupply: '115792',
-        },
-        tokenAdmin: mockAddress,
-        bondingCurveParams: {
-          formula: mockAddress,
-          reserveRatioForBuying: '333333',
-          reserveRatioForSelling: '333333',
-          buyFee: '0',
-          sellFee: '100',
-          buyIsOpen: true,
-          sellIsOpen: false,
-          initialTokenSupply: '100',
-          initialCollateralSupply: '33',
-        },
-        acceptedToken: USDC_SEPOLIA, //USDC
-      }
-
       // it('has the correct format', async () => {
       //   const { inputs } = await getDeploy(
       //     publicClient,
@@ -410,7 +410,7 @@ describe('#getDeploy', () => {
       //   } as any)
       // })
 
-      it.only('returns the orchestrator address as result', async () => {
+      it('returns the orchestrator address as result', async () => {
         const { simulate } = await getDeploy(
           publicClient,
           walletClient,
