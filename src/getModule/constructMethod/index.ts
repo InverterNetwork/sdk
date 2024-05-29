@@ -49,12 +49,11 @@ export default function constructMethod<
     publicClient,
   })
 
-  // Return the constructed method
   return {
     name,
     description,
-    run,
     inputs: formattedInputs,
     outputs: formattedOutputs,
+    run,
   }
 }

@@ -43,22 +43,24 @@ type GetJsType<
 // Format the AbiParameter type from solidity to typscript type and-
 // add the description and tag to the parameter
 export type FormatParameter<P> = P extends ExtendedAbiParameter
-  ? P extends { type: TupleType; components: infer Components }
-    ? {
-        name: P['name']
-        type: P['type']
-        description: P['description']
-        components: FormatParameters<Components>
-      }
-    : Simplify<
-        OmitNever<{
-          name: P['name']
-          type: P['type']
-          description: IfUnknown<P['description'], never, P['description']>
-          jsType: GetJsType<P['type'], P['tags']>
-          tags: IfUnknown<P['tags'], never, P['tags']>
-        }>
+  ? Simplify<
+      OmitNever<
+        P extends { type: TupleType; components: infer Components }
+          ? {
+              name: P['name']
+              type: P['type']
+              description: IfUnknown<P['description'], never, P['description']>
+              components: FormatParameters<Components>
+            }
+          : {
+              name: P['name']
+              type: P['type']
+              description: IfUnknown<P['description'], never, P['description']>
+              jsType: GetJsType<P['type'], P['tags']>
+              tags: IfUnknown<P['tags'], never, P['tags']>
+            }
       >
+    >
   : never
 
 // Itterate over the parameters and format them

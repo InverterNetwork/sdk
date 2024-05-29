@@ -26,4 +26,14 @@ describe('Get A Module', async () => {
 
     expect(workflow).toBeDefined()
   })
+
+  it('Read Funding Manager Total Supply', async () => {
+    const totalSupply = await workflow.fundingManager.read.totalSupply.run()
+    writeLog({
+      content: { totalSupply },
+      label: 'totalSupply',
+    })
+
+    expect(totalSupply).toBeDefined()
+  })
 })

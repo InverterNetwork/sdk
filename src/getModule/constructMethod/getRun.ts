@@ -2,16 +2,16 @@ import { AbiStateMutability } from 'viem'
 import {
   Extras,
   GetMethodArgs,
-  GetMethodResponse,
   PopPublicClient,
+  FormattedAbiParameter,
 } from '../../types'
 import formatOutputs from '../formatOutputs'
 import parseInputs from '../../utils/parseInputs'
 
 // Construct the run function
 export default function getRun<
-  FormattedInputs,
-  FormattedOutputs,
+  FormattedInputs extends readonly FormattedAbiParameter[],
+  FormattedOutputs extends readonly FormattedAbiParameter[],
   StateMutability extends AbiStateMutability,
   Simulate extends boolean = false,
 >({
@@ -67,7 +67,9 @@ export default function getRun<
     // Format the outputs, from contract output to user output-
     // and pass the return type to type param
     const formattedRes = formatOutputs<
-      GetMethodResponse<FormattedOutputs, StateMutability, Simulate>
+      StateMutability,
+      Simulate,
+      FormattedOutputs
     >(formattedOutputs, res, extras)
 
     return formattedRes
