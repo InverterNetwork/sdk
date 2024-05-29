@@ -39,11 +39,9 @@ describe('InverterSDK', () => {
     } as MyWorkflowOrientation
 
     describe('#getWorkflow', () => {
-      beforeEach(async () => {
-        await sdk.getWorkflow(orchestratorAddress, workFlowOrientation)
-      })
-
       it('adds the workflow to the class instance state', async () => {
+        await sdk.getWorkflow(orchestratorAddress, workFlowOrientation)
+
         expect(await sdk.workflows.get(orchestratorAddress)).toContainKeys([
           'authorizer',
           'fundingManager',
