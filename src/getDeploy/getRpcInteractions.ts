@@ -20,7 +20,7 @@ import { getValues } from '../utils'
 const getEncodedArgs = async (
   { configData }: GetDeploymentInputs,
   publicClient: PublicClient,
-  userModuleArg: UserModuleArg
+  userModuleArg?: UserModuleArg
 ) => {
   const formattedInputs = formatParameters(configData)
 
@@ -41,7 +41,7 @@ const getEncodedArgs = async (
 const assembleModuleArgs = async (
   name: RequestedModule,
   publicClient: PublicClient,
-  userModuleArgs: UserModuleArg
+  userModuleArgs?: UserModuleArg
 ): Promise<ModuleArgs> => {
   const { deploymentInputs } = getModuleData(name)
 
