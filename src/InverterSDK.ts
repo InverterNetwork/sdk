@@ -40,8 +40,7 @@ export class InverterSDK {
     return await getDeploy(
       this.publicClient,
       this.walletClient,
-      requestedModules,
-      this
+      requestedModules
     )
   }
 }
