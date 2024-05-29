@@ -29,7 +29,8 @@ Simplify<{
   >
 }> {
   // Itterate over the abi functions
-  const itterated = abi
+  const itterated1 = [...abi]
+  const itterated2 = itterated1
     // Filter the functions by their stateMutability
     .filter(
       (i): i is ExtendedAbiFunction =>
@@ -41,10 +42,10 @@ Simplify<{
     )
     // Reduce the array to an object with the function name as key
     .reduce((acc, item) => {
-      acc[item.name] = item
+      acc[item.methodName] = item
       return acc
       // Cast the object to the result type
     }, {} as any)
 
-  return itterated
+  return itterated2
 }
