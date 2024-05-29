@@ -397,19 +397,7 @@ describe('#getDeploy', () => {
       })
     })
 
-    describe('simulate', () => {
-      // it('has the correct format', async () => {
-      //   const { inputs } = await getDeploy(
-      //     publicClient,
-      //     walletClient,
-      //     requestedModules
-      //   )
-      //   expect(inputs).toEqual({
-      //     ...expectedBaseInputSchema,
-      //     fundingManager: expectedBCInputSchema,
-      //   } as any)
-      // })
-
+    describe.only('simulate', () => {
       it('returns the orchestrator address as result', async () => {
         const { simulate } = await getDeploy(
           publicClient,
