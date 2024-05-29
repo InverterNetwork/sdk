@@ -13,7 +13,7 @@ describe('Should get the verion from a module', async () => {
     })
 
   it('Fetch the version', async () => {
-    const res = await moduleObj.read.listModules()
+    const res = await moduleObj.read.listModules.run()
     console.log('Version Res: \n', res)
     expect(res).toBeArray()
   })

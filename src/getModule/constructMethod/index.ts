@@ -49,11 +49,11 @@ export default function constructMethod<
     publicClient,
   })
 
-  // Return the constructed method
-  return Object.assign(run, {
-    methodName: name,
+  return {
+    name,
     description,
     inputs: formattedInputs,
     outputs: formattedOutputs,
-  })
+    run,
+  }
 }

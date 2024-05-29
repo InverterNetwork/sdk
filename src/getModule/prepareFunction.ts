@@ -41,7 +41,7 @@ Simplify<{
     )
     // Reduce the array to an object with the function name as key
     .reduce((acc, item) => {
-      acc[item.methodName] = item
+      acc[item.name] = item
       return acc
       // Cast the object to the result type
     }, {} as any)

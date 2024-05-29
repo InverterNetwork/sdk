@@ -48,7 +48,7 @@ export default async function getWorkflow<
     walletClient,
   })
 
-  const fundingManagerAddress = await orchestrator.read.fundingManager()
+  const fundingManagerAddress = await orchestrator.read.fundingManager.run()
 
   const { readContract } = publicClient
 
@@ -90,14 +90,16 @@ export default async function getWorkflow<
               .flat()
               .map(async (name) => {
                 const address =
-                  await orchestrator.read.findModuleAddressInOrchestrator(name)
+                  await orchestrator.read.findModuleAddressInOrchestrator.run(
+                    name
+                  )
                 return { name, address }
               })
           )
         : // 3. If not defined, list all modules from the orchestrator for their-
           // address then get the title and version
           await Promise.all(
-            (await orchestrator.read.listModules()).map(async (address) => {
+            (await orchestrator.read.listModules.run()).map(async (address) => {
               type Name = GetModuleNameByType<ModuleType>
               const flatModule = getModule({
                   publicClient,
@@ -105,7 +107,7 @@ export default async function getWorkflow<
                   address,
                   name: 'Module_v1',
                 }),
-                name = <Name>await flatModule.read.title()
+                name = <Name>await flatModule.read.title.run()
 
               return { name, address }
             })
