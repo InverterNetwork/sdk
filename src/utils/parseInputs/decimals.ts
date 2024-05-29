@@ -2,6 +2,22 @@ import { PublicClient, ReadContractParameters, parseUnits } from 'viem'
 import { TOKEN_DATA_ABI } from '../constants'
 import { Extras, FormattedAbiParameter } from '../../types'
 import { Tag } from '@inverter-network/abis'
+import { InverterSDK } from '../../InverterSDK'
+
+const cacheToken = (
+  self: InverterSDK,
+  decimalsTag: Tag,
+  tokenAddress: `0x${string}`,
+  moduleAddress: `0x${string}`,
+  decimals: number
+) => {
+  const key = `${moduleAddress}:${decimalsTag}`
+  const value = {
+    address: tokenAddress,
+    decimals,
+  }
+  self.tokenCache.set(key, value)
+}
 
 export default async function ({
   arg,
@@ -11,6 +27,7 @@ export default async function ({
   decimalsTag,
   publicClient,
   contract,
+  self,
 }: {
   arg: any
   args: any[]
@@ -19,11 +36,14 @@ export default async function ({
   decimalsTag: Tag
   publicClient: PublicClient
   contract?: any
+  self?: InverterSDK
 }) {
   let decimals = extras?.decimals
 
   const [, source, location, name] = decimalsTag?.split(':')
   const { readContract } = publicClient
+
+  const cachedToken = self?.tokenCache.get(`${contract.address}:${decimalsTag}`)
 
   // INTERNAL CASE
   if (source === 'internal')
@@ -37,35 +57,78 @@ export default async function ({
 
         break
       case 'indirect':
-        const address = args[inputs.findIndex((input) => input.name === name)]
-        decimals = <number>await readContract({
-          address,
-          abi: TOKEN_DATA_ABI,
-          functionName: 'decimals',
-        })
+        if (cachedToken) {
+          const { decimals: cachedDecimals } = cachedToken
+          decimals = cachedDecimals
+        } else {
+          const tokenAddress =
+            args[inputs.findIndex((input) => input.name === name)]
+          decimals = <number>await readContract({
+            address: tokenAddress,
+            abi: TOKEN_DATA_ABI,
+            functionName: 'decimals',
+          })
+          if (self)
+            cacheToken(
+              self,
+              decimalsTag,
+              tokenAddress,
+              contract.address,
+              decimals
+            )
+        }
         break
     }
   // EXTERNAL CASE
   else if (source === 'external')
+    // ####
     switch (location) {
       case 'indirect':
-        const tokenAddress = <`0x${string}`>await readContract({
-          address: contract.address,
-          abi: contract.abi,
-          functionName: name,
-        } as ReadContractParameters)
-        decimals = <number>await readContract({
-          address: tokenAddress,
-          abi: TOKEN_DATA_ABI,
-          functionName: 'decimals',
-        })
+        if (cachedToken) {
+          const { decimals: cachedDecimals } = cachedToken
+          decimals = cachedDecimals
+        } else {
+          const tokenAddress = <`0x${string}`>await readContract({
+            address: contract.address,
+            abi: contract.abi,
+            functionName: name,
+          } as ReadContractParameters)
+          decimals = <number>await readContract({
+            address: tokenAddress,
+            abi: TOKEN_DATA_ABI,
+            functionName: 'decimals',
+          })
+          if (self)
+            cacheToken(
+              self,
+              decimalsTag,
+              tokenAddress,
+              contract.address,
+              decimals
+            )
+        }
         break
       case 'exact':
-        decimals = <number>await readContract({
-          address: contract.address,
-          abi: TOKEN_DATA_ABI,
-          functionName: name,
-        })
+        if (cachedToken) {
+          const { decimals: cachedDecimals } = cachedToken
+          decimals = cachedDecimals
+        } else {
+          decimals = <number>await readContract({
+            address: contract.address,
+            abi: TOKEN_DATA_ABI,
+            functionName: name,
+          })
+          if (self) {
+            cacheToken(
+              self,
+              decimalsTag,
+              contract.address,
+              contract.address,
+              decimals
+            )
+          }
+        }
+
         break
     }
 

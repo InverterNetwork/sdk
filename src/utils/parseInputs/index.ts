@@ -3,6 +3,7 @@ import { Extras } from '../../types/base'
 import parse from './parse'
 import decimals from './decimals'
 import { PublicClient } from 'viem'
+import { InverterSDK } from '../../InverterSDK'
 
 export default async function parseInputs({
   formattedInputs,
@@ -10,12 +11,14 @@ export default async function parseInputs({
   extras,
   publicClient,
   contract,
+  self,
 }: {
   formattedInputs: readonly FormattedAbiParameter[]
   args: any
   publicClient: PublicClient
   extras?: Extras
   contract?: any
+  self?: InverterSDK
 }) {
   // const inputs = formattedInputs as FormattedAbiParameter[]
   // parse the inputs
@@ -37,6 +40,7 @@ export default async function parseInputs({
             arg,
             args,
             contract,
+            self,
           }),
       })
     })
