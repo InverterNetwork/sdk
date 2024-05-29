@@ -1,7 +1,7 @@
 import { FormattedAbiParameter } from '../../types/parameter'
 import { Extras } from '../../types/base'
 import parse from './parse'
-import { decimals } from './utils'
+import decimals from './decimals'
 import { PublicClient } from 'viem'
 
 export default async function parseInputs({
@@ -28,7 +28,7 @@ export default async function parseInputs({
         input,
         arg,
         extras,
-        decimalsCallback: (decimalsTag) =>
+        decimalsCallback: (decimalsTag, arg) =>
           decimals({
             inputs: formattedInputs,
             publicClient,
