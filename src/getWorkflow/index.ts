@@ -1,28 +1,12 @@
 import { Hex } from 'viem'
-import getModule from './getModule'
+import getModule from '../getModule'
 import {
   UserFacingModuleType,
   GetModuleNameByType,
 } from '@inverter-network/abis'
-import { OmitNever, PopPublicClient, PopWalletClient } from './types'
-import { Merge } from 'type-fest-4'
-import { TOKEN_DATA_ABI } from './utils/constants'
-
-type ModuleType = Exclude<UserFacingModuleType, 'orchestrator'>
-
-type OrientationPart<
-  MT extends ModuleType,
-  N extends GetModuleNameByType<MT> = GetModuleNameByType<MT>,
-> = N
-
-type WorkflowOrientation = Merge<
-  {
-    [T in Exclude<ModuleType, 'optionalModule'>]: OrientationPart<T>
-  },
-  {
-    optionalModules?: OrientationPart<'optionalModule'>[]
-  }
->
+import { PopPublicClient, PopWalletClient } from '../types'
+import { WorkflowOrientation, Workflow } from './types'
+import { TOKEN_DATA_ABI } from '../utils/constants'
 
 export default async function getWorkflow<
   O extends WorkflowOrientation | undefined = undefined,
@@ -126,30 +110,6 @@ export default async function getWorkflow<
       })
     })
 
-    type MendatoryResult = {
-      [K in Exclude<ModuleType, 'optionalModule'>]: O extends NonNullable<O>
-        ? ReturnType<typeof getModule<O[K], W>>
-        : ReturnType<typeof getModule<WorkflowOrientation[K], W>>
-    }
-
-    type OptionalResult = OmitNever<{
-      optionalModule: O extends NonNullable<O>
-        ? O['optionalModules'] extends NonNullable<O['optionalModules']>
-          ? {
-              [K in O['optionalModules'][number]]: ReturnType<
-                typeof getModule<K, W>
-              >
-            }
-          : never
-        : {
-            [K in NonNullable<
-              WorkflowOrientation['optionalModules']
-            >[number]]: ReturnType<typeof getModule<K, W>>
-          }
-    }>
-
-    type Result = MendatoryResult & OptionalResult
-
     // 5. Reduce the array to an object with the moduleType as key
     const result = modulesArray.reduce(
       (acc, curr) => {
@@ -167,7 +127,7 @@ export default async function getWorkflow<
         paymentProcessor: {},
         optionalModule: {},
       }
-    ) as unknown as Result
+    ) as unknown as Workflow<W, O>
 
     return result
   })()
