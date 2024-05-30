@@ -21,5 +21,5 @@ export const ORCHESTRATOR_CONFIG = {
     'fundingManager',
   ] as const,
   ORCHESTRATOR_FACTORY_ADDRESS =
-    '0xa6efB8332A0Cee2e8cD43edbfeb89c1376c20Ee5' as const,
+    '0x763003802b22c3f2B9106768497ca43088958c9C' as const,
   METADATA_URL = 'https://github.com/InverterNetwork/inverter-contracts'

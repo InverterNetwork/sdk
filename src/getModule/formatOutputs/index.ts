@@ -1,15 +1,18 @@
-import { FormattedAbiParameter, Extras } from '../../types'
+import { AbiStateMutability } from 'abitype'
+import { FormattedAbiParameter, Extras, GetMethodResponse } from '../../types'
 import format from './format'
 
-export default function formattedOutputs<T>(
-  outputsProp: any,
+export default function formattedOutputs<
+  StateMutability extends AbiStateMutability,
+  Simulate extends boolean,
+  T extends readonly FormattedAbiParameter[],
+>(
+  formattedOutputs: T,
   res: any,
   extras?: Extras
-): T {
-  const outputs = outputsProp as FormattedAbiParameter[]
-
+): GetMethodResponse<T, StateMutability, Simulate> {
   // format the outputs
-  const formattedOutputs = outputs.map((output) => {
+  const mapped = formattedOutputs.map((output) => {
     const name = output.name
     // get the argument of the same index
     const selectedRes = (() => {
@@ -27,7 +30,7 @@ export default function formattedOutputs<T>(
   })
 
   // return the formatted outputs, selecting the first one if there is only one
-  return formattedOutputs.length === 1 ? formattedOutputs[0] : formattedOutputs
+  return mapped.length === 1 ? mapped[0] : mapped
 }
 
 // check if the output is not a array type-

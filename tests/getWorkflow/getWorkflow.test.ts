@@ -1,8 +1,8 @@
 import { expect, describe, it } from 'bun:test'
 
-import getWorkflow from '../src/getWorkflow'
-import { getTestConnectors } from './getTestConnectors'
-import writeLog from '../tools/writeLog'
+import getWorkflow from '../../src/getWorkflow'
+import { getTestConnectors } from '../getTestConnectors'
+import writeLog from '../../tools/writeLog'
 
 describe('Get A Module', async () => {
   const { publicClient, walletClient } = getTestConnectors()
@@ -14,7 +14,7 @@ describe('Get A Module', async () => {
       authorizer: 'AUT_Roles_v1',
       fundingManager: 'FM_Rebasing_v1',
       paymentProcessor: 'PP_Simple_v1',
-      logicModules: ['LM_PC_Bounties_v1'],
+      optionalModules: ['LM_PC_Bounties_v1'],
     },
   })
 
@@ -25,5 +25,15 @@ describe('Get A Module', async () => {
     })
 
     expect(workflow).toBeDefined()
+  })
+
+  it('Read Funding Manager Total Supply', async () => {
+    const totalSupply = await workflow.fundingManager.read.totalSupply.run()
+    writeLog({
+      content: { totalSupply },
+      label: 'totalSupply',
+    })
+
+    expect(totalSupply).toBeDefined()
   })
 })

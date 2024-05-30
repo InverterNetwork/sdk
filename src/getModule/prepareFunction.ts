@@ -29,7 +29,7 @@ Simplify<{
   >
 }> {
   // Itterate over the abi functions
-  const itterated = abi
+  const iterated = abi
     // Filter the functions by their stateMutability
     .filter(
       (i): i is ExtendedAbiFunction =>
@@ -46,5 +46,5 @@ Simplify<{
       // Cast the object to the result type
     }, {} as any)
 
-  return itterated
+  return iterated
 }

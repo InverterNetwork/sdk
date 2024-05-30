@@ -8,17 +8,19 @@ import { OmitNever, PopPublicClient, PopWalletClient } from './types'
 import { Merge } from 'type-fest-4'
 import { TOKEN_DATA_ABI } from './utils/constants'
 
+type ModuleType = Exclude<UserFacingModuleType, 'orchestrator'>
+
 type OrientationPart<
-  MT extends UserFacingModuleType,
+  MT extends ModuleType,
   N extends GetModuleNameByType<MT> = GetModuleNameByType<MT>,
 > = N
 
 type WorkflowOrientation = Merge<
   {
-    [T in Exclude<UserFacingModuleType, 'logicModule'>]: OrientationPart<T>
+    [T in Exclude<ModuleType, 'optionalModule'>]: OrientationPart<T>
   },
   {
-    logicModules?: OrientationPart<'logicModule'>[]
+    optionalModules?: OrientationPart<'optionalModule'>[]
   }
 >
 
@@ -98,12 +100,12 @@ export default async function getWorkflow<
           // address then get the title and version
           await Promise.all(
             (await orchestrator.read.listModules.run()).map(async (address) => {
-              type Name = GetModuleNameByType<UserFacingModuleType>
+              type Name = GetModuleNameByType<ModuleType>
               const flatModule = getModule({
                   publicClient,
                   walletClient,
                   address,
-                  name: 'Module',
+                  name: 'Module_v1',
                 }),
                 name = <Name>await flatModule.read.title.run()
 
@@ -125,26 +127,23 @@ export default async function getWorkflow<
     })
 
     type MendatoryResult = {
-      [K in Exclude<
-        UserFacingModuleType,
-        'logicModule'
-      >]: O extends NonNullable<O>
+      [K in Exclude<ModuleType, 'optionalModule'>]: O extends NonNullable<O>
         ? ReturnType<typeof getModule<O[K], W>>
         : ReturnType<typeof getModule<WorkflowOrientation[K], W>>
     }
 
     type OptionalResult = OmitNever<{
-      logicModule: O extends NonNullable<O>
-        ? O['logicModules'] extends NonNullable<O['logicModules']>
+      optionalModule: O extends NonNullable<O>
+        ? O['optionalModules'] extends NonNullable<O['optionalModules']>
           ? {
-              [K in O['logicModules'][number]]: ReturnType<
+              [K in O['optionalModules'][number]]: ReturnType<
                 typeof getModule<K, W>
               >
             }
           : never
         : {
             [K in NonNullable<
-              WorkflowOrientation['logicModules']
+              WorkflowOrientation['optionalModules']
             >[number]]: ReturnType<typeof getModule<K, W>>
           }
     }>
@@ -154,9 +153,9 @@ export default async function getWorkflow<
     // 5. Reduce the array to an object with the moduleType as key
     const result = modulesArray.reduce(
       (acc, curr) => {
-        if (curr.moduleType === 'logicModule')
-          acc.logicModule = {
-            ...acc.logicModule,
+        if (curr.moduleType === 'optionalModule')
+          acc.optionalModule = {
+            ...acc.optionalModule,
             [curr.name]: curr,
           }
         else acc[curr.moduleType] = curr
@@ -166,7 +165,7 @@ export default async function getWorkflow<
         authorizer: {},
         fundingManager: {},
         paymentProcessor: {},
-        logicModule: {},
+        optionalModule: {},
       }
     ) as unknown as Result
 

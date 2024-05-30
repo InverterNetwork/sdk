@@ -2,7 +2,7 @@ import { ModuleName } from '@inverter-network/abis'
 import { OrchestratorInputs } from './generic'
 import { FomrattedDeploymentParameters } from './parameter'
 import { RequestedModules } from './requested'
-import { OmitNever } from '../../types'
+import { EmptyObjectToNever, OmitNever } from '../../types'
 import { Simplify } from 'type-fest-4'
 
 export type ModuleSchema<N extends ModuleName = ModuleName> = {
@@ -29,6 +29,6 @@ export type DeploySchema<T extends RequestedModules = RequestedModules> =
       paymentProcessor: ModuleSchema<T['paymentProcessor']>
       fundingManager: ModuleSchema<T['fundingManager']>
       authorizer: ModuleSchema<T['authorizer']>
-      optionalModules: OptionalModules<T['optionalModules']>
+      optionalModules: EmptyObjectToNever<OptionalModules<T['optionalModules']>>
     }>
   >

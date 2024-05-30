@@ -19,12 +19,9 @@ export const getModuleSchema = <
 } => {
   const { deploymentInputs } = getModuleData(name as any)
 
-  const { configData, dependencyData } = deploymentInputs
+  const { configData } = deploymentInputs
 
-  const configInputs = formatParameters(configData),
-    dependencyInputs = formatParameters(dependencyData)
-
-  const inputs = configInputs.concat(dependencyInputs) as any
+  const inputs = formatParameters(configData) as any
 
   return { name, inputs }
 }

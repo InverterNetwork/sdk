@@ -1,8 +1,8 @@
 import { expect, describe, it } from 'bun:test'
 
-import getModule from '../src/getModule'
-import { getTestConnectors } from './getTestConnectors'
-import utils from '../tools'
+import getModule from '../../src/getModule'
+import { getTestConnectors } from '../getTestConnectors'
+import utils from '../../tools'
 
 describe('Get A Module', () => {
   const { publicClient, walletClient } = getTestConnectors()
@@ -16,7 +16,8 @@ describe('Get A Module', () => {
     },
   })
 
-  it('Should Log The Compiled Module Object', () => {
+  it('Should Log The Compiled Module Object', async () => {
+    console.log(Object.keys(module))
     utils.writeLog({
       content: module,
       label: 'FullModuleObject',

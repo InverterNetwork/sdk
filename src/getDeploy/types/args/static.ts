@@ -7,7 +7,6 @@ export type Metadata = {
 
 export type EncodedArgs = {
   configData: `0x${string}`
-  dependencyData: `0x${string}`
 }
 
 export type OrchestratorArgs = {

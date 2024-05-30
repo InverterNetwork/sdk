@@ -1,5 +1,6 @@
 import { ExtendedAbiParameter } from '@inverter-network/abis'
 import { JsType } from '../types'
+import { Entries } from 'type-fest-4'
 
 export const getJsType = (
   parameter: ExtendedAbiParameter
@@ -23,3 +24,9 @@ export const getJsType = (
   if (/^bytes(?!.*\]$)/.test(type)) return '0xstring'
   if (/^bytes.*\[\]$/.test(type)) return '0xstring[]'
 }
+
+export const getEntries = <T extends object>(obj: T): Entries<T> =>
+  Object.entries(obj) as any
+
+export const getValues = <T extends object>(obj: T): T[keyof T][] =>
+  Object.values(obj)
