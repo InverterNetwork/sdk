@@ -1,4 +1,9 @@
-import { PublicClient, ReadContractParameters, parseUnits } from 'viem'
+import {
+  PublicClient,
+  ReadContractParameters,
+  WalletClient,
+  parseUnits,
+} from 'viem'
 import { TOKEN_DATA_ABI } from '../constants'
 import { Extras, FormattedAbiParameter } from '../../types'
 import { Tag } from '@inverter-network/abis'
@@ -27,6 +32,7 @@ export default async function ({
   decimalsTag,
   approvalTag,
   publicClient,
+  walletClient,
   contract,
   self,
 }: {
@@ -37,6 +43,7 @@ export default async function ({
   decimalsTag: Tag
   approvalTag: Tag | undefined
   publicClient: PublicClient
+  walletClient?: WalletClient
   contract?: any
   self?: InverterSDK
 }) {
@@ -139,12 +146,13 @@ export default async function ({
 
   const inputWithDecimals = parseUnits(arg, decimals)
   const requiredApprovalAmt = 0
-  if (approvalTag && tokenAddress) {
-    await readContract({
+  const userAddress = walletClient?.account?.address
+  if (approvalTag && tokenAddress && userAddress) {
+    const amount = <number>await readContract({
       address: tokenAddress,
       abi: TOKEN_DATA_ABI,
       functionName: 'allowance',
-      args: [],
+      args: [userAddress, contract.address],
     })
   }
 

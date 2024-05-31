@@ -70,6 +70,7 @@ describe('#parseInputs', () => {
                 args,
                 extras,
                 publicClient,
+                walletClient,
                 contract: {},
               })
             })
