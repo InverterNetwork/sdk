@@ -38,7 +38,7 @@ export default function getRun<
 
   const run = async (args: GetMethodArgs<typeof formattedInputs>) => {
     // Parse the inputs, from user input to contract input
-    const parsedInputs = await parseInputs({
+    const { inputsWithDecimals } = await parseInputs({
       formattedInputs,
       args,
       extras,
@@ -52,16 +52,16 @@ export default function getRun<
       if (simulate) {
         // If extras has a wallet address, use it
         if (!!extras?.walletAddress)
-          return contract['simulate'][name](parsedInputs, {
+          return contract['simulate'][name](inputsWithDecimals, {
             account: extras.walletAddress,
           })
 
         // Else, just use the parsed inputs
-        return contract['simulate'][name](parsedInputs)
+        return contract['simulate'][name](inputsWithDecimals)
       }
 
       // defaults to non simulate, read or write function
-      return contract[kind][name](parsedInputs)
+      return contract[kind][name](inputsWithDecimals)
     })()
 
     // Format the outputs, from contract output to user output-

@@ -25,6 +25,7 @@ export default async function ({
   inputs,
   extras,
   decimalsTag,
+  approvalTag,
   publicClient,
   contract,
   self,
@@ -34,10 +35,12 @@ export default async function ({
   inputs: readonly FormattedAbiParameter[]
   extras?: Extras
   decimalsTag: Tag
+  approvalTag: Tag | undefined
   publicClient: PublicClient
   contract?: any
   self?: InverterSDK
 }) {
+  let tokenAddress
   let decimals = extras?.decimals
 
   const [, source, location, name] = decimalsTag?.split(':')
@@ -61,8 +64,7 @@ export default async function ({
           const { decimals: cachedDecimals } = cachedToken
           decimals = cachedDecimals
         } else {
-          const tokenAddress =
-            args[inputs.findIndex((input) => input.name === name)]
+          tokenAddress = args[inputs.findIndex((input) => input.name === name)]
           decimals = <number>await readContract({
             address: tokenAddress,
             abi: TOKEN_DATA_ABI,
@@ -88,7 +90,7 @@ export default async function ({
           const { decimals: cachedDecimals } = cachedToken
           decimals = cachedDecimals
         } else {
-          const tokenAddress = <`0x${string}`>await readContract({
+          tokenAddress = <`0x${string}`>await readContract({
             address: contract.address,
             abi: contract.abi,
             functionName: name,
@@ -113,8 +115,9 @@ export default async function ({
           const { decimals: cachedDecimals } = cachedToken
           decimals = cachedDecimals
         } else {
+          tokenAddress = contract.address
           decimals = <number>await readContract({
-            address: contract.address,
+            address: tokenAddress,
             abi: TOKEN_DATA_ABI,
             functionName: name,
           })
@@ -122,7 +125,7 @@ export default async function ({
             cacheToken(
               self,
               decimalsTag,
-              contract.address,
+              tokenAddress,
               contract.address,
               decimals
             )
@@ -133,5 +136,20 @@ export default async function ({
     }
 
   if (!decimals) throw new Error('No decimals provided')
-  return parseUnits(arg, decimals)
+
+  const inputWithDecimals = parseUnits(arg, decimals)
+  const requiredApprovalAmt = 0
+  if (approvalTag && tokenAddress) {
+    await readContract({
+      address: tokenAddress,
+      abi: TOKEN_DATA_ABI,
+      functionName: 'allowance',
+      args: [],
+    })
+  }
+
+  return {
+    inputWithDecimals,
+    requiredApprovalAmt,
+  }
 }
