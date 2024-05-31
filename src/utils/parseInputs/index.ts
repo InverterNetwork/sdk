@@ -2,7 +2,7 @@ import { FormattedAbiParameter } from '../../types/parameter'
 import { Extras } from '../../types/base'
 import parse from './parse'
 import tokenInfo from './tokenInfo'
-import { PublicClient } from 'viem'
+import { PublicClient, WalletClient } from 'viem'
 import { InverterSDK } from '../../InverterSDK'
 
 export default async function parseInputs({
@@ -10,12 +10,14 @@ export default async function parseInputs({
   args,
   extras,
   publicClient,
+  walletClient,
   contract,
   self,
 }: {
   formattedInputs: readonly FormattedAbiParameter[]
   args: any
   publicClient: PublicClient
+  walletClient?: WalletClient
   extras?: Extras
   contract?: any
   self?: InverterSDK
@@ -37,6 +39,7 @@ export default async function parseInputs({
           const { inputWithDecimals, requiredApprovalAmt } = await tokenInfo({
             inputs: formattedInputs,
             publicClient,
+            walletClient,
             decimalsTag,
             approvalTag,
             extras,
