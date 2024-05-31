@@ -45,6 +45,7 @@ describe('#parseInputs', () => {
           walletAddress:
             '0x86fda565A5E96f4232f8136141C92Fd79F2BE950' as `0x${string}`,
           decimals: 10,
+          defaultToken: USDC_SEPOLIA as `0x${string}`,
         }
         const args = ['42069']
 
@@ -54,7 +55,8 @@ describe('#parseInputs', () => {
             args,
             extras,
             publicClient,
-            contract: {},
+            walletClient,
+            contract: mockContract,
           })
           expect(inputsWithDecimals[0]).toEqual(420690000000000n)
         })
@@ -63,16 +65,22 @@ describe('#parseInputs', () => {
           const tags = ['decimals', 'approval']
           const formattedInputsWithApproval = [{ ...formattedInputs[0], tags }]
 
-          describe('without previous approval', () => {
-            it('returns the required approvals', async () => {
-              const { requiredApprovalAmts } = await parseInputs({
-                formattedInputs: formattedInputsWithApproval,
-                args,
-                extras,
-                publicClient,
-                walletClient,
-                contract: {},
-              })
+          it('returns the required approvals', async () => {
+            const { requiredAllowances } = await parseInputs({
+              formattedInputs:
+                formattedInputsWithApproval as FormattedAbiParameter[],
+              args,
+              extras,
+              publicClient,
+              walletClient,
+              contract: mockContract,
+            })
+
+            expect(requiredAllowances).toHaveLength(1)
+            expect(requiredAllowances[0]).toEqual({
+              amount: 420690000000000n,
+              spender: '0x80f8493761a18d29fd77c131865f9cf62b15e62a',
+              owner: walletClient.account.address,
             })
           })
         })
@@ -123,6 +131,7 @@ describe('#parseInputs', () => {
               args,
               extras,
               publicClient,
+              walletClient,
               contract: mockContract,
             })
             expect(inputsWithDecimals[0]).toEqual(42069000000n)
@@ -165,6 +174,7 @@ describe('#parseInputs', () => {
                 args,
                 extras,
                 publicClient,
+                walletClient,
                 contract: mockContract,
                 self: sdk,
               })
@@ -194,6 +204,7 @@ describe('#parseInputs', () => {
                 args,
                 extras,
                 publicClient,
+                walletClient,
                 contract: mockContract,
                 self: sdk,
               })
@@ -234,6 +245,8 @@ describe('#parseInputs', () => {
         const extras = {
           walletAddress:
             '0x86fda565A5E96f4232f8136141C92Fd79F2BE950' as `0x${string}`,
+          defaultToken: USDC_SEPOLIA as `0x${string}`,
+          decimals: 6,
         }
 
         describe('with :exact', () => {
@@ -243,6 +256,8 @@ describe('#parseInputs', () => {
               args,
               extras,
               publicClient,
+              walletClient,
+              contract: { address: mockAddress },
             })
             const [, initialTokenSupply, , ,] = inputsWithDecimals
             expect(initialTokenSupply).toEqual(420000000000000000000n)
@@ -256,6 +271,8 @@ describe('#parseInputs', () => {
               args,
               extras,
               publicClient,
+              walletClient,
+              contract: mockContract,
             })
             const [, , initialCollateralSupply, ,] = inputsWithDecimals
             expect(initialCollateralSupply).toEqual(69000000n)
@@ -270,6 +287,7 @@ describe('#parseInputs', () => {
                 args,
                 extras,
                 publicClient,
+                walletClient,
                 contract: mockContract,
                 self: sdk,
               })
@@ -299,6 +317,7 @@ describe('#parseInputs', () => {
                 args,
                 extras,
                 publicClient,
+                walletClient,
                 contract: mockContract,
                 self: sdk,
               })
@@ -311,5 +330,5 @@ describe('#parseInputs', () => {
     })
   })
 
-  describe('#requiredApprovalAmts', () => {})
+  describe('#requiredAllowances', () => {})
 })

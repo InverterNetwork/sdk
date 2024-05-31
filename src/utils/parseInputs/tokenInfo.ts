@@ -24,6 +24,32 @@ const cacheToken = (
   self.tokenCache.set(key, value)
 }
 
+const getRequiredAllowance = async (
+  transferAmount: bigint,
+  tokenAddress: `0x${string}`,
+  spenderAddress: `0x${string}`,
+  publicClient: PublicClient,
+  walletClient?: WalletClient
+) => {
+  const userAddress = walletClient?.account?.address
+  if (tokenAddress && userAddress) {
+    const currentAllowance = <bigint>await publicClient.readContract({
+      address: tokenAddress,
+      abi: TOKEN_DATA_ABI,
+      functionName: 'allowance',
+      args: [userAddress, spenderAddress],
+    })
+    const requiredAllowance = transferAmount - currentAllowance
+    return {
+      amount: requiredAllowance,
+      spender: spenderAddress,
+      owner: userAddress,
+    }
+  }
+
+  return undefined
+}
+
 export default async function ({
   arg,
   args,
@@ -41,22 +67,38 @@ export default async function ({
   inputs: readonly FormattedAbiParameter[]
   extras?: Extras
   decimalsTag: Tag
-  approvalTag: Tag | undefined
+  approvalTag?: Tag | undefined
   publicClient: PublicClient
   walletClient?: WalletClient
   contract?: any
   self?: InverterSDK
 }) {
   let tokenAddress
-  let decimals = extras?.decimals
+  let decimals: number | undefined
 
   const [, source, location, name] = decimalsTag?.split(':')
   const { readContract } = publicClient
-
   const cachedToken = self?.tokenCache.get(`${contract.address}:${decimalsTag}`)
-
   // INTERNAL CASE
-  if (source === 'internal')
+  if (!source) {
+    decimals = extras?.decimals
+    tokenAddress = extras?.defaultToken
+    const userAddress = walletClient?.account?.address
+    // tokenAddress =
+    if (tokenAddress && userAddress) {
+      console.log(tokenAddress)
+      console.log(userAddress)
+      console.log(contract.address)
+      const amount = <number>await publicClient.readContract({
+        address: tokenAddress,
+        abi: TOKEN_DATA_ABI,
+        functionName: 'allowance',
+        args: [userAddress, contract.address],
+      })
+      console.log('amount')
+      console.log(amount)
+    }
+  } else if (source === 'internal')
     switch (location) {
       case 'exact':
         decimals =
@@ -145,19 +187,21 @@ export default async function ({
   if (!decimals) throw new Error('No decimals provided')
 
   const inputWithDecimals = parseUnits(arg, decimals)
-  const requiredApprovalAmt = 0
-  const userAddress = walletClient?.account?.address
-  if (approvalTag && tokenAddress && userAddress) {
-    const amount = <number>await readContract({
-      address: tokenAddress,
-      abi: TOKEN_DATA_ABI,
-      functionName: 'allowance',
-      args: [userAddress, contract.address],
-    })
+
+  let requiredAllowance
+
+  if (approvalTag) {
+    requiredAllowance = await getRequiredAllowance(
+      inputWithDecimals,
+      tokenAddress,
+      contract.address,
+      publicClient,
+      walletClient
+    )
   }
 
   return {
     inputWithDecimals,
-    requiredApprovalAmt,
+    requiredAllowance,
   }
 }

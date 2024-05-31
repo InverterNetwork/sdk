@@ -22,7 +22,11 @@ export default async function parseInputs({
   contract?: any
   self?: InverterSDK
 }) {
-  const requiredApprovalAmts = {}
+  const requiredAllowances: {
+    amount: bigint
+    spender: `0x${string}`
+    owner: `0x${string}`
+  }[] = []
 
   // const inputs = formattedInputs as FormattedAbiParameter[]
   // parse the inputs
@@ -36,7 +40,7 @@ export default async function parseInputs({
         arg,
         extras,
         tokenCallback: async (decimalsTag, approvalTag, arg) => {
-          const { inputWithDecimals, requiredApprovalAmt } = await tokenInfo({
+          const { inputWithDecimals, requiredAllowance } = await tokenInfo({
             inputs: formattedInputs,
             publicClient,
             walletClient,
@@ -48,12 +52,12 @@ export default async function parseInputs({
             contract,
             self,
           })
-
+          if (requiredAllowance) requiredAllowances.push(requiredAllowance)
           return inputWithDecimals
         },
       })
     })
   )
 
-  return { inputsWithDecimals, requiredApprovalAmts }
+  return { inputsWithDecimals, requiredAllowances }
 }

@@ -4,7 +4,7 @@ import { tuple, tupleArray, any } from './utils'
 
 export type TokenCallback = (
   decimalsTag: Tag,
-  approvalTag: Tag,
+  approvalTag: Tag | undefined,
   arg: any
 ) => Promise<bigint>
 
