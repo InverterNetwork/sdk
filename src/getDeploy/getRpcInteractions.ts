@@ -28,14 +28,14 @@ const getEncodedArgs = async (
 
   // MG NOTE: Parse inputs respects the array order and struct structure
 
-  const parsedArgs = (await parseInputs({
+  const { inputsWithDecimals } = (await parseInputs({
     formattedInputs,
     args,
     publicClient,
   })) as any
 
   // Return encodedArgs
-  return encodeAbiParameters(configData, parsedArgs)
+  return encodeAbiParameters(configData, inputsWithDecimals)
 }
 
 const assembleModuleArgs = async (

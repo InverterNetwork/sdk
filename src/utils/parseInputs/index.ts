@@ -20,9 +20,11 @@ export default async function parseInputs({
   contract?: any
   self?: InverterSDK
 }) {
+  const requiredApprovalAmts = {}
+
   // const inputs = formattedInputs as FormattedAbiParameter[]
   // parse the inputs
-  const parsedInputs = await Promise.all(
+  const inputsWithDecimals = await Promise.all(
     formattedInputs.map(async (input, index) => {
       // get the argument of the same index
       const arg = Array.isArray(args) ? args[index] : args
@@ -31,20 +33,24 @@ export default async function parseInputs({
         input,
         arg,
         extras,
-        tokenCallback: (decimalsTag, arg) =>
-          tokenInfo({
+        tokenCallback: async (decimalsTag, approvalTag, arg) => {
+          const { inputWithDecimals, requiredApprovalAmt } = await tokenInfo({
             inputs: formattedInputs,
             publicClient,
             decimalsTag,
+            approvalTag,
             extras,
             arg,
             args,
             contract,
             self,
-          }),
+          })
+
+          return inputWithDecimals
+        },
       })
     })
   )
 
-  return parsedInputs
+  return { inputsWithDecimals, requiredApprovalAmts }
 }

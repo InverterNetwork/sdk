@@ -2,7 +2,11 @@ import { Tag } from '@inverter-network/abis'
 import { Extras, FormattedAbiParameter } from '../../types'
 import { tuple, tupleArray, any } from './utils'
 
-export type TokenCallback = (decimalsTag: Tag, arg: any) => Promise<bigint>
+export type TokenCallback = (
+  decimalsTag: Tag,
+  approvalTag: Tag,
+  arg: any
+) => Promise<bigint>
 
 export default async function parse({
   input,
@@ -28,7 +32,8 @@ export default async function parse({
     if (tags?.includes('any')) return any(arg)
 
     const decimalsTag = tags?.find((t) => t.startsWith('decimals'))
-    if (!!decimalsTag) return await tokenCallback(decimalsTag, arg)
+    const approvalTag = tags?.find((t) => t === 'approval')
+    if (!!decimalsTag) return await tokenCallback(decimalsTag, approvalTag, arg)
   }
 
   // if the input has a jsType property
