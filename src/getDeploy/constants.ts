@@ -22,4 +22,5 @@ export const ORCHESTRATOR_CONFIG = {
   ] as const,
   ORCHESTRATOR_FACTORY_ADDRESS =
     '0x763003802b22c3f2B9106768497ca43088958c9C' as const,
-  METADATA_URL = 'https://github.com/InverterNetwork/inverter-contracts'
+  METADATA_URL = 'https://github.com/InverterNetwork/inverter-contracts',
+  USDC_SEPOLIA = '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238'
