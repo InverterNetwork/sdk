@@ -1,6 +1,6 @@
 import { expect, describe, it } from 'bun:test'
 
-import { getTestConnectors } from '../getTestConnectors'
+import { getTestConnectors } from '../testHelpers/getTestConnectors'
 import { getDeploy } from '../../src'
 import { Hex, isAddress } from 'viem'
 
