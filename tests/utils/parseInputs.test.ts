@@ -1,7 +1,7 @@
 import { expect, describe, it } from 'bun:test'
 
 import parseInputs from '../../src/utils/parseInputs'
-import { getTestConnectors } from '../getTestConnectors'
+import { getTestConnectors } from '../testHelpers/getTestConnectors'
 import { TOKEN_DATA_ABI } from '../../src/utils/constants'
 import { FormattedAbiParameter } from '../../src'
 import { InverterSDK } from '../../src/InverterSDK'

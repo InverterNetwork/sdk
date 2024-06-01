@@ -2,7 +2,7 @@ import { describe, it, beforeEach, expect } from 'bun:test'
 
 import { WorkflowOrientation } from '../src/getWorkflow/types'
 import { InverterSDK } from '../src/InverterSDK'
-import { getTestConnectors } from './getTestConnectors'
+import { getTestConnectors } from './testHelpers/getTestConnectors'
 import { GetUserArgs, RequestedModules } from '../src'
 import { isAddress } from 'viem'
 

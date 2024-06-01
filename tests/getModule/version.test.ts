@@ -1,6 +1,6 @@
 import { expect, describe, it } from 'bun:test'
 
-import { getTestConnectors } from '../getTestConnectors'
+import { getTestConnectors } from '../testHelpers/getTestConnectors'
 import getModule from '../../src/getModule'
 
 describe('Should get the verion from a module', async () => {
