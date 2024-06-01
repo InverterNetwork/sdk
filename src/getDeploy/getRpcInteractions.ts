@@ -28,7 +28,6 @@ export default async <T extends RequestedModules>(
 
   const getEncodedArgs = async (
     { configData }: GetDeploymentInputs,
-    publicClient: PublicClient,
     userModuleArg?: UserModuleArg
   ) => {
     const formattedInputs = formatParameters(configData)
@@ -52,16 +51,11 @@ export default async <T extends RequestedModules>(
 
   const assembleModuleArgs = async (
     name: RequestedModule,
-    publicClient: PublicClient,
     userModuleArgs?: UserModuleArg
   ): Promise<ModuleArgs> => {
     const { deploymentInputs } = getModuleData(name)
 
-    const encodedArgs = await getEncodedArgs(
-      deploymentInputs,
-      publicClient,
-      userModuleArgs
-    )
+    const encodedArgs = await getEncodedArgs(deploymentInputs, userModuleArgs)
 
     const moduleArgs = {
       configData: encodedArgs,
@@ -71,10 +65,7 @@ export default async <T extends RequestedModules>(
     return moduleArgs
   }
 
-  const getDefaultToken = async (
-    fundingManager: UserModuleArg,
-    publicClient: PublicClient
-  ) => {
+  const getDefaultToken = async (fundingManager: UserModuleArg) => {
     const { readContract } = publicClient
 
     let tokenAddress: `0x${string}`
@@ -94,8 +85,7 @@ export default async <T extends RequestedModules>(
 
   const constructArgs = async (
     requestedModules: RequestedModules,
-    userArgs: UserArgs,
-    publicClient: PublicClient
+    userArgs: UserArgs
   ) => {
     // Initialize args
     const args = {
@@ -107,16 +97,12 @@ export default async <T extends RequestedModules>(
     } as unknown as ConstructedArgs
 
     if (userArgs.fundingManager) {
-      extras = await getDefaultToken(userArgs!.fundingManager, publicClient)
+      extras = await getDefaultToken(userArgs!.fundingManager)
     }
 
     const mandatoryModuleArgs = await Promise.all(
       MANDATORY_MODULES.map((moduleType) =>
-        assembleModuleArgs(
-          requestedModules[moduleType],
-          publicClient,
-          userArgs[moduleType]!
-        )
+        assembleModuleArgs(requestedModules[moduleType], userArgs[moduleType]!)
       )
     )
 
@@ -130,7 +116,7 @@ export default async <T extends RequestedModules>(
       const optionalModulesArgs = await Promise.all(
         optionalModules.map((optionalModule) => {
           const userModuleArg = userArgs.optionalModules?.[optionalModule]
-          return assembleModuleArgs(optionalModule, publicClient, userModuleArg)
+          return assembleModuleArgs(optionalModule, userModuleArg)
         })
       )
 
@@ -144,14 +130,9 @@ export default async <T extends RequestedModules>(
 
   async function getArgs<T extends RequestedModules>(
     requestedModules: T,
-    userArgs: GetUserArgs<T>,
-    publicClient: PublicClient
+    userArgs: GetUserArgs<T>
   ) {
-    const constructed = await constructArgs(
-      requestedModules,
-      userArgs,
-      publicClient
-    )
+    const constructed = await constructArgs(requestedModules, userArgs)
 
     return [
       constructed.orchestrator,
@@ -162,15 +143,11 @@ export default async <T extends RequestedModules>(
     ] as const
   }
 
-  function getRpcInteractions<T extends RequestedModules>(
-    publicClient: PublicClient,
-    walletClient: PopWalletClient,
-    requestedModules: T
-  ) {
+  function getRpcInteractions<T extends RequestedModules>(requestedModules: T) {
     const { write, simulateWrite } = getViemMethods(walletClient, publicClient)
 
     const simulate = async (userArgs: GetUserArgs<T>) => {
-      const arr = await getArgs(requestedModules, userArgs, publicClient)
+      const arr = await getArgs(requestedModules, userArgs)
 
       return await simulateWrite(arr, {
         account: walletClient.account.address,
@@ -178,7 +155,7 @@ export default async <T extends RequestedModules>(
     }
 
     const run = async (userArgs: GetUserArgs<T>) => {
-      const arr = await getArgs(requestedModules, userArgs, publicClient)
+      const arr = await getArgs(requestedModules, userArgs)
       // Return the write function with the args
       return (async () => {
         // prettier-ignore
@@ -197,5 +174,5 @@ export default async <T extends RequestedModules>(
     return { run, simulate }
   }
 
-  return getRpcInteractions(publicClient, walletClient, requestedModules)
+  return getRpcInteractions(requestedModules)
 }
