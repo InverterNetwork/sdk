@@ -30,6 +30,7 @@ export class InverterSDK {
         walletClient: this.walletClient,
         orchestratorAddress,
         workflowOrientation,
+        self: this,
       })
       this.workflows.set(orchestratorAddress, workflow)
       return workflow as Workflow<PopWalletClient, WorkflowOrientation>
@@ -40,7 +41,8 @@ export class InverterSDK {
     return await getDeploy(
       this.publicClient,
       this.walletClient,
-      requestedModules
+      requestedModules,
+      this
     )
   }
 }

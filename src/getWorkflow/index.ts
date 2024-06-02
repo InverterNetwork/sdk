@@ -5,6 +5,7 @@ import { PopPublicClient, PopWalletClient } from '../types'
 import { WorkflowOrientation, Workflow } from './types'
 import { ModuleType } from '../getDeploy/types'
 import { TOKEN_DATA_ABI } from '../utils/constants'
+import { InverterSDK } from '../InverterSDK'
 
 export default async function getWorkflow<
   O extends WorkflowOrientation | undefined = undefined,
@@ -14,11 +15,13 @@ export default async function getWorkflow<
   walletClient,
   orchestratorAddress,
   workflowOrientation,
+  self,
 }: {
   publicClient: PopPublicClient
   walletClient?: W
   orchestratorAddress: Hex
   workflowOrientation?: O
+  self?: InverterSDK
 }) {
   if (!publicClient) throw new Error('Public client not initialized')
 
@@ -28,6 +31,7 @@ export default async function getWorkflow<
     address: orchestratorAddress,
     publicClient,
     walletClient,
+    self,
   })
 
   const fundingManagerAddress = await orchestrator.read.fundingManager.run()
@@ -58,6 +62,7 @@ export default async function getWorkflow<
       extras: {
         decimals: erc20Decimals,
       },
+      self,
     })
 
   // 3. initialize modules with extras
@@ -88,6 +93,7 @@ export default async function getWorkflow<
                   walletClient,
                   address,
                   name: 'Module_v1',
+                  self,
                 }),
                 name = <Name>await flatModule.read.title.run()
 
@@ -105,6 +111,7 @@ export default async function getWorkflow<
         extras: {
           decimals: erc20Decimals,
         },
+        self,
       })
     })
 
