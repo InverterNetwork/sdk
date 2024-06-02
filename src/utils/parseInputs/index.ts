@@ -4,6 +4,7 @@ import parse from './parse'
 import tokenInfo from './tokenInfo'
 import { PublicClient, WalletClient } from 'viem'
 import { InverterSDK } from '../../InverterSDK'
+import { RequiredAllowances } from './types'
 
 export default async function parseInputs({
   formattedInputs,
@@ -22,11 +23,7 @@ export default async function parseInputs({
   contract?: any
   self?: InverterSDK
 }) {
-  const requiredAllowances: {
-    amount: bigint
-    spender: `0x${string}`
-    owner: `0x${string}`
-  }[] = []
+  const requiredAllowances: RequiredAllowances[] = []
 
   // const inputs = formattedInputs as FormattedAbiParameter[]
   // parse the inputs
@@ -52,7 +49,10 @@ export default async function parseInputs({
             contract,
             self,
           })
-          if (requiredAllowance) requiredAllowances.push(requiredAllowance)
+
+          if (requiredAllowance) {
+            requiredAllowances.push(requiredAllowance)
+          }
           return inputWithDecimals
         },
       })

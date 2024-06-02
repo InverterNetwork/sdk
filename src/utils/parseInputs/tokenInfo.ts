@@ -44,6 +44,7 @@ const getRequiredAllowance = async (
       amount: requiredAllowance,
       spender: spenderAddress,
       owner: userAddress,
+      token: tokenAddress,
     }
   }
 
