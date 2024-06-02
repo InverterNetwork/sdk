@@ -1,6 +1,7 @@
 import { stringToHex } from 'viem'
 import { TupleFormattedAbiParameter, Extras } from '../../types'
-import parse, { TokenCallback } from './parse'
+import parse from './parse'
+import { TokenCallback } from './types'
 
 type TupleCaseParams = {
   input: TupleFormattedAbiParameter

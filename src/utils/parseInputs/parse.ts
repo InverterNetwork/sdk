@@ -1,12 +1,6 @@
-import { Tag } from '@inverter-network/abis'
 import { Extras, FormattedAbiParameter } from '../../types'
 import { tuple, tupleArray, any } from './utils'
-
-export type TokenCallback = (
-  decimalsTag: Tag,
-  approvalTag: Tag | undefined,
-  arg: any
-) => Promise<bigint>
+import { TokenCallback } from './types'
 
 export default async function parse({
   input,

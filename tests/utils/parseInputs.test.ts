@@ -81,6 +81,7 @@ describe('#parseInputs', () => {
               amount: 420690000000000n,
               spender: '0x80f8493761a18d29fd77c131865f9cf62b15e62a',
               owner: walletClient.account.address,
+              token: USDC_SEPOLIA,
             })
           })
         })

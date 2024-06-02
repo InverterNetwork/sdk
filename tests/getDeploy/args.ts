@@ -1,6 +1,10 @@
 import { USDC_SEPOLIA } from '../../src/getDeploy/constants'
 
-export const mockAddress = '0x80f8493761a18d29fd77c131865f9cf62b15e62a' as Hex // self-deployed mock contract
+export const mockAddress = '0x80f8493761a18d29fd77c131865f9cf62b15e62a' // self-deployed mock contract
+export const iUSD = '0xB637cE56AFDb659AB7f85d1293e20cE661445db4' // token with unpermissioned mint function
+export const deployedBcOrchestrator =
+  '0x5815859FFc3cF512fDe8b65345c4698Eda0F6031'
+export const deployedBcModule = '0x815f393008b8C6aD2C3AB9E7D79bb836B8c87941'
 
 export const baseArgs = {
   orchestrator: {
@@ -25,13 +29,13 @@ export const bcArgs = {
   },
   tokenAdmin: mockAddress,
   bondingCurveParams: {
-    formula: mockAddress,
+    formula: '0x823F6AC80759F2e037eaF706d45CB4B47b80926c',
     reserveRatioForBuying: '333333',
     reserveRatioForSelling: '333333',
     buyFee: '0',
     sellFee: '100',
     buyIsOpen: true,
-    sellIsOpen: false,
+    sellIsOpen: true,
     initialTokenSupply: '100',
     initialCollateralSupply: '33',
   },

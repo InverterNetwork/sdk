@@ -3,14 +3,11 @@ import { expect, describe, it } from 'bun:test'
 import { getTestConnectors } from '../testHelpers/getTestConnectors'
 import { getDeploy } from '../../src'
 import { isAddress } from 'viem'
-import { USDC_SEPOLIA } from '../../src/getDeploy/constants'
 import { baseArgs, bcArgs } from './args'
 import {
   expected_FM_BC_Restricted_BancorInputSchema,
   expectedBaseInputSchema,
 } from './expectedOutputs'
-
-// ===============CONSTANTS_END================
 
 describe('#getDeploy', () => {
   const { publicClient, walletClient } = getTestConnectors()
