@@ -1,22 +1,13 @@
-import { stringToHex } from 'viem'
+import { parseUnits, stringToHex } from 'viem'
 import { TupleFormattedAbiParameter, Extras } from '../../types'
 import parse from './parse'
-import { TokenCallback } from './types'
+import { TagCallback } from '../../types'
 
 type TupleCaseParams = {
   input: TupleFormattedAbiParameter
   arg: any
   extras?: Extras
-  tokenCallback: TokenCallback
-}
-
-// TODO: Add error handling, for empty data
-export const any = (arg: any) => {
-  try {
-    stringToHex(JSON.stringify(arg))
-  } catch {
-    return '0x0'
-  }
+  tagCallback: TagCallback
 }
 
 // The case for tuple arguments
@@ -24,7 +15,7 @@ export const tuple = async ({
   input,
   arg,
   extras,
-  tokenCallback,
+  tagCallback,
 }: TupleCaseParams) => {
   const formattedTuple: any = {}
   // iterate over the components of the tuple template
@@ -35,7 +26,7 @@ export const tuple = async ({
         input: c,
         arg: arg[c.name ?? index],
         extras,
-        tokenCallback,
+        tagCallback,
       })
     })
   )
@@ -46,3 +37,15 @@ export const tuple = async ({
 // The case for tuple[] arguments
 export const tupleArray = ({ arg, ...rest }: TupleCaseParams) =>
   arg.map((argI: any) => tuple({ arg: argI, ...rest }))
+
+// TODO: Add error handling, for empty data
+export const parseAny = (arg: any) => {
+  try {
+    stringToHex(JSON.stringify(arg))
+  } catch {
+    return '0x0'
+  }
+}
+
+export const parseDecimals = (arg: any, decimals: number) =>
+  parseUnits(arg, decimals)

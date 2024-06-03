@@ -1,13 +1,9 @@
-import {
-  PublicClient,
-  ReadContractParameters,
-  WalletClient,
-  parseUnits,
-} from 'viem'
+import { PublicClient, ReadContractParameters } from 'viem'
 import { TOKEN_DATA_ABI } from '../constants'
 import { Extras, FormattedAbiParameter } from '../../types'
 import { Tag } from '@inverter-network/abis'
 import { InverterSDK } from '../../InverterSDK'
+import { DecimalsTagReturn } from '../../types/tag'
 
 const cacheToken = (
   self: InverterSDK,
@@ -24,57 +20,26 @@ const cacheToken = (
   self.tokenCache.set(key, value)
 }
 
-const getRequiredAllowance = async (
-  transferAmount: bigint,
-  tokenAddress: `0x${string}`,
-  spenderAddress: `0x${string}`,
-  publicClient: PublicClient,
-  walletClient?: WalletClient
-) => {
-  const userAddress = walletClient?.account?.address
-  if (tokenAddress && userAddress) {
-    const currentAllowance = <bigint>await publicClient.readContract({
-      address: tokenAddress,
-      abi: TOKEN_DATA_ABI,
-      functionName: 'allowance',
-      args: [userAddress, spenderAddress],
-    })
-    const requiredAllowance = transferAmount - currentAllowance
-    return {
-      amount: requiredAllowance,
-      spender: spenderAddress,
-      owner: userAddress,
-      token: tokenAddress,
-    }
-  }
-
-  return undefined
-}
-
 export default async function ({
-  arg,
   args,
   inputs,
   extras,
   decimalsTag,
-  approvalTag,
   publicClient,
-  walletClient,
   contract,
   self,
 }: {
-  arg: any
   args: any[]
   inputs: readonly FormattedAbiParameter[]
   extras?: Extras
-  decimalsTag: Tag
-  approvalTag?: Tag | undefined
+  decimalsTag?: Tag
   publicClient: PublicClient
-  walletClient?: WalletClient
   contract?: any
   self?: InverterSDK
-}) {
-  let tokenAddress
+}): Promise<DecimalsTagReturn> {
+  if (!decimalsTag) throw new Error('No decimals tag provided')
+
+  let tokenAddress: `0x${string}` | undefined
   let decimals: number | undefined
 
   const [, source, location, name] = decimalsTag?.split(':')
@@ -100,6 +65,7 @@ export default async function ({
           decimals = cachedDecimals
         } else {
           tokenAddress = args[inputs.findIndex((input) => input.name === name)]
+          if (!tokenAddress) throw new Error('No token address found')
           decimals = <number>await readContract({
             address: tokenAddress,
             abi: TOKEN_DATA_ABI,
@@ -151,6 +117,7 @@ export default async function ({
           decimals = cachedDecimals
         } else {
           tokenAddress = contract.address
+          if (!tokenAddress) throw new Error('No token address found')
           decimals = <number>await readContract({
             address: tokenAddress,
             abi: TOKEN_DATA_ABI,
@@ -172,22 +139,5 @@ export default async function ({
 
   if (!decimals) throw new Error('No decimals provided')
 
-  const inputWithDecimals = parseUnits(arg, decimals)
-
-  let requiredAllowance
-
-  if (approvalTag) {
-    requiredAllowance = await getRequiredAllowance(
-      inputWithDecimals,
-      tokenAddress,
-      contract.address,
-      publicClient,
-      walletClient
-    )
-  }
-
-  return {
-    inputWithDecimals,
-    requiredAllowance,
-  }
+  return { decimals, tokenAddress }
 }

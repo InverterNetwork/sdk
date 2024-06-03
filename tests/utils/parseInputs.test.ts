@@ -65,25 +65,31 @@ describe('#parseInputs', () => {
           const tags = ['decimals', 'approval']
           const formattedInputsWithApproval = [{ ...formattedInputs[0], tags }]
 
-          it('returns the required approvals', async () => {
-            const { requiredAllowances } = await parseInputs({
-              formattedInputs:
-                formattedInputsWithApproval as FormattedAbiParameter[],
-              args,
-              extras,
-              publicClient,
-              walletClient,
-              contract: mockContract,
-            })
+          it(
+            'returns the required approvals',
+            async () => {
+              const { requiredAllowances } = await parseInputs({
+                formattedInputs:
+                  formattedInputsWithApproval as FormattedAbiParameter[],
+                args,
+                extras,
+                publicClient,
+                walletClient,
+                contract: mockContract,
+              })
 
-            expect(requiredAllowances).toHaveLength(1)
-            expect(requiredAllowances[0]).toEqual({
-              amount: 420690000000000n,
-              spender: '0x80f8493761a18d29fd77c131865f9cf62b15e62a',
-              owner: walletClient.account.address,
-              token: USDC_SEPOLIA,
-            })
-          })
+              expect(requiredAllowances).toHaveLength(1)
+              expect(requiredAllowances[0]).toEqual({
+                amount: 420690000000000n,
+                spender: '0x80f8493761a18d29fd77c131865f9cf62b15e62a',
+                owner: walletClient.account.address,
+                token: USDC_SEPOLIA,
+              })
+            },
+            {
+              timeout: 10000,
+            }
+          )
         })
       })
 

@@ -9,7 +9,7 @@ import {
 import formatOutputs from '../formatOutputs'
 import parseInputs from '../../utils/parseInputs'
 import { TOKEN_DATA_ABI } from '../../utils/constants'
-import { RequiredAllowances } from '../../utils/parseInputs/types'
+import { RequiredAllowances } from '../../types'
 import { InverterSDK } from '../../InverterSDK'
 
 const runDependencies = async (

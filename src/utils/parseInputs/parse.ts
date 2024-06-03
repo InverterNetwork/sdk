@@ -1,33 +1,31 @@
 import { Extras, FormattedAbiParameter } from '../../types'
-import { tuple, tupleArray, any } from './utils'
-import { TokenCallback } from './types'
+import { tuple, tupleArray, parseAny } from './utils'
+import { TagCallback } from '../../types'
 
 export default async function parse({
   input,
   arg,
   extras,
-  tokenCallback,
+  tagCallback,
 }: {
   input: FormattedAbiParameter
   arg: any
   extras?: Extras
-  tokenCallback: TokenCallback
+  tagCallback: TagCallback
 }) {
   const { type } = input
   // These first two cases are for the recursive tuple types
-  if (type === 'tuple')
-    return await tuple({ input, arg, extras, tokenCallback })
+  if (type === 'tuple') return await tuple({ input, arg, extras, tagCallback })
   if (type === 'tuple[]')
-    return await tupleArray({ arg, input, extras, tokenCallback })
+    return await tupleArray({ arg, input, extras, tagCallback })
 
   // if the input has a tag ( this has to come before the jsType check)
-  if ('tags' in input) {
+  if ('tags' in input && !!input.tags) {
     const { tags } = input
-    if (tags?.includes('any')) return any(arg)
+    if (tags.includes('any')) return parseAny(arg)
 
-    const decimalsTag = tags?.find((t) => t.startsWith('decimals'))
-    const approvalTag = tags?.find((t) => t === 'approval')
-    if (!!decimalsTag) return await tokenCallback(decimalsTag, approvalTag, arg)
+    const decimalsTag = tags.find((t) => t.startsWith('decimals'))
+    if (!!decimalsTag) return await tagCallback('parseDecimals', tags, arg)
   }
 
   // if the input has a jsType property
