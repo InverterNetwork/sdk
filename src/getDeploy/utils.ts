@@ -13,7 +13,7 @@ export const getViemMethods = async (
   } = await axios.get(DEPLOYMENTS_URL)
   const { abi } = getModuleData('OrchestratorFactory_v1')
   const { write, simulate } = getContract({
-    address: orchestratorFactory[publicClient.chain.id],
+    address: orchestratorFactory[publicClient!.chain!.id],
     abi,
     client: {
       wallet: walletClient,
