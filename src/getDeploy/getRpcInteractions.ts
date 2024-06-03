@@ -12,7 +12,7 @@ import {
   UserArgs,
 } from './types'
 import { assembleMetadata, getViemMethods } from './utils'
-import parseInputs from '../utils/parseInputs'
+import parseInputs from '../utils/processInputs'
 import formatParameters from '../utils/formatParameters'
 import { getValues } from '../utils'
 import { InverterSDK } from '../InverterSDK'

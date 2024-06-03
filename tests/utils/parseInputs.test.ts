@@ -1,6 +1,6 @@
 import { expect, describe, it } from 'bun:test'
 
-import parseInputs from '../../src/utils/parseInputs'
+import parseInputs from '../../src/utils/processInputs'
 import { getTestConnectors } from '../testHelpers/getTestConnectors'
 import { TOKEN_DATA_ABI } from '../../src/utils/constants'
 import { FormattedAbiParameter } from '../../src'

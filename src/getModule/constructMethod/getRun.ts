@@ -7,7 +7,7 @@ import {
   PopWalletClient,
 } from '../../types'
 import formatOutputs from '../formatOutputs'
-import parseInputs from '../../utils/parseInputs'
+import parseInputs from '../../utils/processInputs'
 import { TOKEN_DATA_ABI } from '../../utils/constants'
 import { RequiredAllowances } from '../../types'
 import { InverterSDK } from '../../InverterSDK'

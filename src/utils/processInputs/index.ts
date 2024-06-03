@@ -12,7 +12,7 @@ export type ParseInputsBaseParams = {
 
 export type ParseInputsParams = Omit<GetTagCallbackParams, 'requiredAllowances'>
 
-export default async function parseInputs(params: ParseInputsParams) {
+export default async function processInputs(params: ParseInputsParams) {
   const requiredAllowances: RequiredAllowances[] = []
 
   const { formattedInputs, args, extras } = params
