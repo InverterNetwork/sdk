@@ -333,6 +333,126 @@ describe('#getDeploy', () => {
         })
       })
     })
+
+    // LM_PC_Staking_v1 is not yet deployed & registered
+    describe.skip('optional: LM_PC_Staking_v1', () => {
+      const expectedSchema = {
+        name: 'LM_PC_Staking_v1',
+        inputs: [
+          {
+            name: 'stakingToken',
+            description: 'The token users stake to earn rewards.',
+            jsType: '0xstring',
+            type: 'address',
+          },
+        ],
+      } as const
+
+      describe('inputs', () => {
+        it('has the correct format', async () => {
+          const { inputs } = await getDeploy(publicClient, walletClient, {
+            ...requestedModules,
+            optionalModules: ['LM_PC_Staking_v1'],
+          })
+
+          expect(inputs).toEqual({
+            ...expectedBaseInputSchema,
+            optionalModules: [expectedSchema],
+          })
+        })
+      })
+
+      describe('simulate', () => {
+        it('returns the orchestrator address as result', async () => {
+          const { simulate } = await getDeploy(publicClient, walletClient, {
+            ...requestedModules,
+            optionalModules: ['LM_PC_Staking_v1'],
+          })
+
+          const simulationResult = await simulate({
+            ...baseArgs,
+            optionalModules: {
+              LM_PC_Staking_v1: {
+                stakingToken: USDC_SEPOLIA, // 1 week in seconds,
+              },
+            },
+          })
+          expect(isAddress(simulationResult.result as string)).toBeTrue
+        })
+      })
+    })
+
+    // LM_PC_KPIRewarder_v1 deployment presumably fails because
+    // we dont have a mock contract for ooAddr at hand
+    describe.skip('optional: LM_PC_KPIRewarder_v1', () => {
+      const expectedSchema = {
+        name: 'LM_PC_KPIRewarder_v1',
+        inputs: [
+          {
+            name: 'stakingTokenAddr',
+            type: 'address',
+            description: 'The token users stake to earn rewards.',
+            jsType: '0xstring',
+          },
+          {
+            name: 'currencyAddr',
+            type: 'address',
+            description:
+              'The token the Optimistic Oracle will charge its fee in.',
+            jsType: '0xstring',
+          },
+          {
+            name: 'ooAddr',
+            type: 'address',
+            description: 'The address of the optimisitic oracle.',
+            jsType: '0xstring',
+          },
+          {
+            name: 'liveness',
+            type: 'uint64',
+            description:
+              'How long (in seconds) a query to the oracle will be open for dispute.',
+            jsType: 'numberString',
+          },
+        ],
+      } as const
+
+      describe('inputs', () => {
+        it('has the correct format', async () => {
+          const { inputs } = await getDeploy(publicClient, walletClient, {
+            ...requestedModules,
+            optionalModules: ['LM_PC_KPIRewarder_v1'],
+          })
+
+          expect(inputs).toEqual({
+            ...expectedBaseInputSchema,
+            optionalModules: [expectedSchema],
+          })
+        })
+      })
+
+      describe('simulate', () => {
+        it('returns the orchestrator address as result', async () => {
+          const { simulate } = await getDeploy(publicClient, walletClient, {
+            ...requestedModules,
+            optionalModules: ['LM_PC_KPIRewarder_v1'],
+          })
+
+          const simulationResult = await simulate({
+            ...baseArgs,
+            optionalModules: {
+              LM_PC_KPIRewarder_v1: {
+                stakingTokenAddr: USDC_SEPOLIA,
+                currencyAddr: USDC_SEPOLIA,
+                ooAddr: USDC_SEPOLIA,
+                liveness: '10000',
+              },
+            },
+          })
+          expect(isAddress(simulationResult.result as string)).toBeTrue
+        })
+      })
+    })
   })
 
   describe('Modules: FM_Rebasing_v1, AUT_TokenGated_Roles_v1, PP_Simple_v1', () => {
