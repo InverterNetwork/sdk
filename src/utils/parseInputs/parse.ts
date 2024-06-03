@@ -1,6 +1,18 @@
 import { Extras, FormattedAbiParameter } from '../../types'
-import { tuple, tupleArray, parseAny } from './utils'
+import { tuple, tupleArray } from './utils'
 import { TagCallback } from '../../types'
+import { parseUnits, stringToHex } from 'viem'
+
+export const parseAny = (arg: any) => {
+  try {
+    stringToHex(JSON.stringify(arg))
+  } catch {
+    return '0x0'
+  }
+}
+
+export const parseDecimals = (arg: any, decimals: number) =>
+  parseUnits(arg, decimals)
 
 export default async function parse({
   input,

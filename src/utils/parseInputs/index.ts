@@ -1,31 +1,21 @@
 import { FormattedAbiParameter } from '../../types/parameter'
 import { Extras } from '../../types/base'
 import parse from './parse'
-import { PublicClient, WalletClient } from 'viem'
-import { InverterSDK } from '../../InverterSDK'
 import { RequiredAllowances } from '../../types'
-import tagProcessor from '../tagProcessor'
-import { DecimalsTagReturn } from '../../types'
-import { parseDecimals } from './utils'
+import getTagCallback, { GetTagCallbackParams } from './getTagCallback'
 
-export default async function parseInputs({
-  formattedInputs,
-  args,
-  extras,
-  publicClient,
-  walletClient,
-  contract,
-  self,
-}: {
+export type ParseInputsBaseParams = {
+  extras?: Extras
   formattedInputs: readonly FormattedAbiParameter[]
   args: any
-  publicClient: PublicClient
-  walletClient?: WalletClient
-  extras?: Extras
-  contract?: any
-  self?: InverterSDK
-}) {
+}
+
+export type ParseInputsParams = Omit<GetTagCallbackParams, 'requiredAllowances'>
+
+export default async function parseInputs(params: ParseInputsParams) {
   const requiredAllowances: RequiredAllowances[] = []
+
+  const { formattedInputs, args, extras } = params
 
   // const inputs = formattedInputs as FormattedAbiParameter[]
   // parse the inputs
@@ -38,39 +28,7 @@ export default async function parseInputs({
         input,
         arg,
         extras,
-        tagCallback: async (type, tags, arg) => {
-          let decimalsRes: DecimalsTagReturn
-          let parsedAmount: bigint
-
-          if (type === 'parseDecimals') {
-            decimalsRes = await tagProcessor.decimals({
-              args,
-              inputs: formattedInputs,
-              extras,
-              decimalsTag: tags.find((t) => t.startsWith('decimals')),
-              publicClient,
-              contract,
-              self,
-            })
-
-            parsedAmount = parseDecimals(arg, decimalsRes.decimals)
-
-            if (tags.includes('approval' as any))
-              requiredAllowances.push(
-                await tagProcessor.approval({
-                  transferAmount: parsedAmount,
-                  publicClient,
-                  spenderAddress: contract.address,
-                  tokenAddress: decimalsRes.tokenAddress,
-                  userAddress: walletClient?.account?.address,
-                })
-              )
-
-            return parsedAmount
-          }
-
-          throw new Error('Invalid tag type')
-        },
+        tagCallback: getTagCallback({ requiredAllowances, ...params }),
       })
     })
   )
