@@ -1,22 +1,15 @@
 import { getModuleData, ModuleName } from '@inverter-network/abis'
 import { PublicClient, WalletClient, getContract } from 'viem'
-import { METADATA_URL, DEPLOYMENTS_URL } from './constants'
+import { METADATA_URL, ORCHESTRATOR_FACTORY_ADDRESS } from './constants'
 
 // retrieves the deployment function via viem
-export const getViemMethods = async (
+export const getViemMethods = (
   walletClient: WalletClient,
   publicClient: PublicClient
 ) => {
-  // const {
-  //   data: { orchestratorFactory },
-  // } = await fetch(DEPLOYMENTS_URL)
-  const response = await fetch(DEPLOYMENTS_URL)
-  const { orchestratorFactory } = (await response.json()) as any
-
   const { abi } = getModuleData('OrchestratorFactory_v1')
-
   const { write, simulate } = getContract({
-    address: orchestratorFactory[publicClient!.chain!.id],
+    address: ORCHESTRATOR_FACTORY_ADDRESS,
     abi,
     client: {
       wallet: walletClient,

@@ -2,7 +2,6 @@
 export type Extras = {
   walletAddress?: `0x${string}`
   decimals?: number
-  defaultToken?: `0x${string}`
 }
 
 // JsType is used for the typescript type of the function arguments

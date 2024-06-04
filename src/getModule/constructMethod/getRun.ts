@@ -4,48 +4,9 @@ import {
   GetMethodArgs,
   PopPublicClient,
   FormattedAbiParameter,
-  PopWalletClient,
 } from '../../types'
 import formatOutputs from '../formatOutputs'
-import processInputs from '../../utils/processInputs'
-import { TOKEN_DATA_ABI } from '../../utils/constants'
-import { RequiredAllowances } from '../../types'
-import { InverterSDK } from '../../InverterSDK'
-
-const runDependencies = async (
-  requiredAllowances: RequiredAllowances[],
-  publicClient: PopPublicClient,
-  walletClient?: PopWalletClient
-) => {
-  if (!walletClient) return
-  const dependencyTxHashes = await Promise.all(
-    requiredAllowances.map((requiredAllowance) => {
-      return walletClient.writeContract({
-        address: requiredAllowance.token,
-        account: walletClient.account,
-        functionName: 'approve',
-        args: [requiredAllowance.spender, requiredAllowance.amount],
-        abi: TOKEN_DATA_ABI,
-      })
-    })
-  )
-  return await Promise.all(
-    dependencyTxHashes.map((hash) => {
-      return publicClient.waitForTransactionReceipt({ hash })
-    })
-  )
-}
-
-const runWithDependencies = async (
-  mainFunction: any,
-  mainArgs: any,
-  requiredAllowances: RequiredAllowances[],
-  publicClient: PopPublicClient,
-  walletClient?: PopWalletClient
-) => {
-  await runDependencies(requiredAllowances, publicClient, walletClient)
-  return mainFunction(mainArgs)
-}
+import parseInputs from '../../utils/parseInputs'
 
 // Construct the run function
 export default function getRun<
@@ -55,7 +16,6 @@ export default function getRun<
   Simulate extends boolean = false,
 >({
   publicClient,
-  walletClient,
   name,
   contract,
   stateMutability,
@@ -63,7 +23,6 @@ export default function getRun<
   formattedOutputs,
   extras,
   simulate,
-  self,
 }: {
   publicClient: PopPublicClient
   name: string
@@ -71,56 +30,38 @@ export default function getRun<
   stateMutability: StateMutability
   formattedInputs: FormattedInputs
   formattedOutputs: FormattedOutputs
-  walletClient?: PopWalletClient
   extras?: Extras
   simulate?: Simulate
-  self?: InverterSDK
 }) {
   // Check if the function is a read or write function
   const kind = ['view', 'pure'].includes(stateMutability) ? 'read' : 'write'
 
   const run = async (args: GetMethodArgs<typeof formattedInputs>) => {
     // Parse the inputs, from user input to contract input
-    const { processedInputs, requiredAllowances } = await processInputs({
+    const parsedInputs = await parseInputs({
       formattedInputs,
       args,
       extras,
       publicClient,
-      walletClient,
       contract,
-      self,
     })
-
-    const hasDependencies = requiredAllowances.find(
-      (requiredAllowance) => requiredAllowance.amount > 0n
-    )
 
     // Get the result from the contract, based on the kind and simulate params
     const res = await (() => {
       // If simulate is true
-      if (simulate && !hasDependencies) {
+      if (simulate) {
         // If extras has a wallet address, use it
         if (!!extras?.walletAddress)
-          return contract['simulate'][name](processedInputs, {
+          return contract['simulate'][name](parsedInputs, {
             account: extras.walletAddress,
           })
 
         // Else, just use the parsed inputs
-        return contract['simulate'][name](processedInputs)
-      }
-
-      if (hasDependencies) {
-        return runWithDependencies(
-          contract[kind][name],
-          processedInputs,
-          requiredAllowances,
-          publicClient,
-          walletClient
-        )
+        return contract['simulate'][name](parsedInputs)
       }
 
       // defaults to non simulate, read or write function
-      return contract[kind][name](processedInputs)
+      return contract[kind][name](parsedInputs)
     })()
 
     // Format the outputs, from contract output to user output-
@@ -129,7 +70,7 @@ export default function getRun<
       StateMutability,
       Simulate,
       FormattedOutputs
-    >({ formattedOutputs, res, extras, publicClient, contract, self })
+    >(formattedOutputs, res, extras)
 
     return formattedRes
   }

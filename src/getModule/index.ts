@@ -5,7 +5,6 @@ import type { Hex } from 'viem'
 import prepareFunction from './prepareFunction'
 import { Extras } from '../types/base'
 import { PopPublicClient, PopWalletClient } from '../types'
-import { InverterSDK } from '../InverterSDK'
 
 export default function getModule<
   N extends ModuleName,
@@ -16,14 +15,12 @@ export default function getModule<
   publicClient,
   walletClient,
   extras,
-  self,
 }: {
   name: N
   address: Hex
   publicClient: PopPublicClient
   walletClient?: W
   extras?: Extras
-  self?: InverterSDK
 }) {
   const mv = getModuleData(name)
 
@@ -58,10 +55,7 @@ export default function getModule<
       abi,
       ['pure', 'view'],
       contract,
-      extras,
-      // We need to pass simulate undefined to not override the default inputs to txHash
-      undefined,
-      self
+      extras
     ),
     // Prepare the simulate functions
     simulate = prepareFunction(
@@ -70,8 +64,7 @@ export default function getModule<
       ['nonpayable', 'payable'],
       contract,
       extras,
-      true,
-      self
+      true
     ),
     // Prepare the write functions if the walletClient is valid
     write = !!walletClient
@@ -81,8 +74,7 @@ export default function getModule<
           ['nonpayable', 'payable'],
           contract,
           extras,
-          false,
-          self
+          false
         )
       : undefined
 

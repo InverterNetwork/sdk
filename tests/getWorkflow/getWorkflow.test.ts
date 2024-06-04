@@ -1,7 +1,7 @@
 import { expect, describe, it } from 'bun:test'
 
 import getWorkflow from '../../src/getWorkflow'
-import { getTestConnectors } from '../testHelpers/getTestConnectors'
+import { getTestConnectors } from '../getTestConnectors'
 import writeLog from '../../tools/writeLog'
 
 describe('Get A Module', async () => {

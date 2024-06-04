@@ -2,7 +2,6 @@ import formatParameters from '../../utils/formatParameters'
 import { Extras, PopPublicClient } from '../../types'
 import getRun from './getRun'
 import { ExtendedAbiFunction } from '@inverter-network/abis'
-import { InverterSDK } from '../../InverterSDK'
 
 // The PreservedProps type is used to preserve the properties of the abiFunction
 type PreservedProps<F extends ExtendedAbiFunction> = {
@@ -23,14 +22,12 @@ export default function constructMethod<
   extras,
   simulate,
   publicClient,
-  self,
 }: {
   publicClient: PopPublicClient
   abiFunction: TAbiFunction
   contract: any
   extras?: Extras
   simulate?: Simulate
-  self?: InverterSDK
 }) {
   // Construct the data preserving the type properties of the abiFunction
   const { description, name, stateMutability, inputs, outputs } =
@@ -50,7 +47,6 @@ export default function constructMethod<
     extras,
     simulate,
     publicClient,
-    self,
   })
 
   return {

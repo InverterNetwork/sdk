@@ -1,11 +1,28 @@
 import { Hex } from 'viem'
-import getModule from '../getModule'
-import { GetModuleNameByType } from '@inverter-network/abis'
-import { PopPublicClient, PopWalletClient } from '../types'
-import { WorkflowOrientation, Workflow } from './types'
-import { ModuleType } from '../getDeploy/types'
-import { TOKEN_DATA_ABI } from '../utils/constants'
-import { InverterSDK } from '../InverterSDK'
+import getModule from './getModule'
+import {
+  UserFacingModuleType,
+  GetModuleNameByType,
+} from '@inverter-network/abis'
+import { OmitNever, PopPublicClient, PopWalletClient } from './types'
+import { Merge } from 'type-fest-4'
+import { TOKEN_DATA_ABI } from './utils/constants'
+
+type ModuleType = Exclude<UserFacingModuleType, 'orchestrator'>
+
+type OrientationPart<
+  MT extends ModuleType,
+  N extends GetModuleNameByType<MT> = GetModuleNameByType<MT>,
+> = N
+
+type WorkflowOrientation = Merge<
+  {
+    [T in Exclude<ModuleType, 'optionalModule'>]: OrientationPart<T>
+  },
+  {
+    optionalModules?: OrientationPart<'optionalModule'>[]
+  }
+>
 
 export default async function getWorkflow<
   O extends WorkflowOrientation | undefined = undefined,
@@ -15,13 +32,11 @@ export default async function getWorkflow<
   walletClient,
   orchestratorAddress,
   workflowOrientation,
-  self,
 }: {
   publicClient: PopPublicClient
   walletClient?: W
   orchestratorAddress: Hex
   workflowOrientation?: O
-  self?: InverterSDK
 }) {
   if (!publicClient) throw new Error('Public client not initialized')
 
@@ -31,7 +46,6 @@ export default async function getWorkflow<
     address: orchestratorAddress,
     publicClient,
     walletClient,
-    self,
   })
 
   const fundingManagerAddress = await orchestrator.read.fundingManager.run()
@@ -62,7 +76,6 @@ export default async function getWorkflow<
       extras: {
         decimals: erc20Decimals,
       },
-      self,
     })
 
   // 3. initialize modules with extras
@@ -93,7 +106,6 @@ export default async function getWorkflow<
                   walletClient,
                   address,
                   name: 'Module_v1',
-                  self,
                 }),
                 name = <Name>await flatModule.read.title.run()
 
@@ -111,9 +123,32 @@ export default async function getWorkflow<
         extras: {
           decimals: erc20Decimals,
         },
-        self,
       })
     })
+
+    type MendatoryResult = {
+      [K in Exclude<ModuleType, 'optionalModule'>]: O extends NonNullable<O>
+        ? ReturnType<typeof getModule<O[K], W>>
+        : ReturnType<typeof getModule<WorkflowOrientation[K], W>>
+    }
+
+    type OptionalResult = OmitNever<{
+      optionalModule: O extends NonNullable<O>
+        ? O['optionalModules'] extends NonNullable<O['optionalModules']>
+          ? {
+              [K in O['optionalModules'][number]]: ReturnType<
+                typeof getModule<K, W>
+              >
+            }
+          : never
+        : {
+            [K in NonNullable<
+              WorkflowOrientation['optionalModules']
+            >[number]]: ReturnType<typeof getModule<K, W>>
+          }
+    }>
+
+    type Result = MendatoryResult & OptionalResult
 
     // 5. Reduce the array to an object with the moduleType as key
     const result = modulesArray.reduce(
@@ -132,7 +167,7 @@ export default async function getWorkflow<
         paymentProcessor: {},
         optionalModule: {},
       }
-    ) as unknown as Workflow<W, O>
+    ) as unknown as Result
 
     return result
   })()

@@ -1,33 +1,25 @@
-import { Extras, FormattedAbiParameter, TagCallback } from '../../types'
-import { tuple, tupleArray, formatAny } from './utils'
+import { Extras, FormattedAbiParameter } from '../../types'
+import { tuple, tupleArray, decimals, any } from './utils'
 
-export default async function format({
-  output,
-  res,
-  extras,
-  tagCallback,
-}: {
-  output: FormattedAbiParameter
-  res: any
+export default function format(
+  output: FormattedAbiParameter,
+  res: any,
   extras?: Extras
-  tagCallback: TagCallback
-}) {
+): any {
   const { type } = output
   // These first two cases are for the recursive tuple types
-  if (type === 'tuple') return await tuple({ output, res, extras, tagCallback })
-  if (type === 'tuple[]')
-    return await tupleArray({ output, res, extras, tagCallback })
+  if (type === 'tuple') return tuple({ output, res, extras })
+  if (type === 'tuple[]') return tupleArray({ output, res, extras })
 
   // If the output is not a tuple,
 
   // if the output has a tag ( this has to come before the jsType check)
-  if ('tags' in output && !!output.tags) {
+  if ('tags' in output) {
     const { tags } = output
     // if the output has a tag
-    if (tags.includes('any')) return formatAny(res)
+    if (tags?.includes('any')) return any(res)
 
-    const decimalsTag = tags.find((t) => t.startsWith('decimals'))
-    if (!!decimalsTag) return await tagCallback('formatDecimals', tags, res)
+    if (tags?.includes('decimals')) return decimals(res, extras)
   }
 
   // If it also has jsType property

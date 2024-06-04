@@ -1,43 +1,34 @@
+import { Tag } from '@inverter-network/abis'
 import { Extras, FormattedAbiParameter } from '../../types'
-import { tuple, tupleArray } from './utils'
-import { TagCallback } from '../../types'
-import { parseUnits, stringToHex } from 'viem'
+import { tuple, tupleArray, any } from './utils'
 
-export const parseAny = (arg: any) => {
-  try {
-    stringToHex(JSON.stringify(arg))
-  } catch {
-    return '0x0'
-  }
-}
-
-export const parseDecimals = (arg: any, decimals: number) =>
-  parseUnits(arg, decimals)
+export type DecimalsCallback = (decimalsTag: Tag, arg: any) => Promise<bigint>
 
 export default async function parse({
   input,
   arg,
   extras,
-  tagCallback,
+  decimalsCallback,
 }: {
   input: FormattedAbiParameter
   arg: any
   extras?: Extras
-  tagCallback: TagCallback
+  decimalsCallback: DecimalsCallback
 }) {
   const { type } = input
   // These first two cases are for the recursive tuple types
-  if (type === 'tuple') return await tuple({ input, arg, extras, tagCallback })
+  if (type === 'tuple')
+    return await tuple({ input, arg, extras, decimalsCallback })
   if (type === 'tuple[]')
-    return await tupleArray({ arg, input, extras, tagCallback })
+    return await tupleArray({ arg, input, extras, decimalsCallback })
 
   // if the input has a tag ( this has to come before the jsType check)
-  if ('tags' in input && !!input.tags) {
+  if ('tags' in input) {
     const { tags } = input
-    if (tags.includes('any')) return parseAny(arg)
+    if (tags?.includes('any')) return any(arg)
 
-    const decimalsTag = tags.find((t) => t.startsWith('decimals'))
-    if (!!decimalsTag) return await tagCallback('parseDecimals', tags, arg)
+    const decimalsTag = tags?.find((t) => t.startsWith('decimals'))
+    if (!!decimalsTag) return await decimalsCallback(decimalsTag, arg)
   }
 
   // if the input has a jsType property

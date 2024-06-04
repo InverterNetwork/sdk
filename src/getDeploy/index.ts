@@ -3,21 +3,18 @@ import { RequestedModules } from './types'
 import getInputs from './getInputs'
 import getRpcInteractions from './getRpcInteractions'
 import { PopWalletClient } from '../types'
-import { InverterSDK } from '../InverterSDK'
 
 export default async function getDeploy<T extends RequestedModules>(
   publicClient: PublicClient,
   walletClient: PopWalletClient,
-  requestedModules: T,
-  self?: InverterSDK
+  requestedModules: T
 ) {
   const inputs = getInputs(requestedModules)
 
-  const { run, simulate } = await getRpcInteractions(
+  const { run, simulate } = getRpcInteractions(
     publicClient,
     walletClient,
-    requestedModules,
-    self
+    requestedModules
   )
 
   return { inputs, run, simulate }
