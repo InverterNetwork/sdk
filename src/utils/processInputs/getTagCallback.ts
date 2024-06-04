@@ -30,9 +30,9 @@ export default function getTagCallback({
     if (type === 'parseDecimals') {
       decimalsRes = await tagProcessor.decimals({
         args,
-        inputs: formattedInputs,
+        parameters: formattedInputs,
         extras,
-        decimalsTag: tags.find((t) => t.startsWith('decimals')),
+        tag: tags.find((t) => t.startsWith('decimals')),
         publicClient,
         contract,
         self,

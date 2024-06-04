@@ -129,7 +129,7 @@ export default function getRun<
       StateMutability,
       Simulate,
       FormattedOutputs
-    >({ formattedOutputs, res, extras })
+    >({ formattedOutputs, res, extras, publicClient, contract, self })
 
     return formattedRes
   }

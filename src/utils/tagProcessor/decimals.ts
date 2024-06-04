@@ -7,12 +7,12 @@ import { DecimalsTagReturn } from '../../types/tag'
 
 const cacheToken = (
   self: InverterSDK,
-  decimalsTag: Tag,
+  tag: Tag,
   tokenAddress: `0x${string}`,
   moduleAddress: `0x${string}`,
   decimals: number
 ) => {
-  const key = `${moduleAddress}:${decimalsTag}`
+  const key = `${moduleAddress}:${tag}`
   const value = {
     address: tokenAddress,
     decimals,
@@ -22,29 +22,29 @@ const cacheToken = (
 
 export default async function ({
   args,
-  inputs,
+  parameters,
   extras,
-  decimalsTag,
+  tag,
   publicClient,
   contract,
   self,
 }: {
   args: any[]
-  inputs: readonly FormattedAbiParameter[]
+  parameters: readonly FormattedAbiParameter[]
   extras?: Extras
-  decimalsTag?: Tag
+  tag?: Tag
   publicClient: PublicClient
   contract?: any
   self?: InverterSDK
 }): Promise<DecimalsTagReturn> {
-  if (!decimalsTag) throw new Error('No decimals tag provided')
+  if (!tag) throw new Error('No decimals tag provided')
 
   let tokenAddress: `0x${string}` | undefined
   let decimals: number | undefined
 
-  const [, source, location, name] = decimalsTag?.split(':')
+  const [, source, location, name] = tag?.split(':')
   const { readContract } = publicClient
-  const cachedToken = self?.tokenCache.get(`${contract.address}:${decimalsTag}`)
+  const cachedToken = self?.tokenCache.get(`${contract.address}:${tag}`)
   // INTERNAL CASE
   if (!source) {
     decimals = extras?.decimals
@@ -54,7 +54,7 @@ export default async function ({
       case 'exact':
         decimals =
           // check if the value is contained by a non-tuple arg search it based on the index that is has in `inputs`
-          args[inputs.findIndex((input) => input.name === name)] ||
+          args[parameters.findIndex((parameter) => parameter.name === name)] ||
           // or if there is a tuple arg that contains a parameter with `name`which would provide the decimals
           args.find((item) => typeof item === 'object' && name in item)[name]
 
@@ -64,7 +64,8 @@ export default async function ({
           const { decimals: cachedDecimals } = cachedToken
           decimals = cachedDecimals
         } else {
-          tokenAddress = args[inputs.findIndex((input) => input.name === name)]
+          tokenAddress =
+            args[parameters.findIndex((parameter) => parameter.name === name)]
           if (!tokenAddress) throw new Error('No token address found')
           decimals = <number>await readContract({
             address: tokenAddress,
@@ -72,13 +73,7 @@ export default async function ({
             functionName: 'decimals',
           })
           if (self)
-            cacheToken(
-              self,
-              decimalsTag,
-              tokenAddress,
-              contract.address,
-              decimals
-            )
+            cacheToken(self, tag, tokenAddress, contract.address, decimals)
         }
         break
     }
@@ -102,13 +97,7 @@ export default async function ({
             functionName: 'decimals',
           })
           if (self)
-            cacheToken(
-              self,
-              decimalsTag,
-              tokenAddress,
-              contract.address,
-              decimals
-            )
+            cacheToken(self, tag, tokenAddress, contract.address, decimals)
         }
         break
       case 'exact':
@@ -124,13 +113,7 @@ export default async function ({
             functionName: name,
           })
           if (self) {
-            cacheToken(
-              self,
-              decimalsTag,
-              tokenAddress,
-              contract.address,
-              decimals
-            )
+            cacheToken(self, tag, tokenAddress, contract.address, decimals)
           }
         }
 
