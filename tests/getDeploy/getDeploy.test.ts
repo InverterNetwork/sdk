@@ -384,7 +384,7 @@ describe('#getDeploy', () => {
 
     // LM_PC_KPIRewarder_v1 deployment presumably fails because
     // we dont have a mock contract for ooAddr at hand
-    describe.skip('optional: LM_PC_KPIRewarder_v1', () => {
+    describe('optional: LM_PC_KPIRewarder_v1', () => {
       const expectedSchema = {
         name: 'LM_PC_KPIRewarder_v1',
         inputs: [
@@ -444,7 +444,7 @@ describe('#getDeploy', () => {
               LM_PC_KPIRewarder_v1: {
                 stakingTokenAddr: USDC_SEPOLIA,
                 currencyAddr: USDC_SEPOLIA,
-                ooAddr: USDC_SEPOLIA,
+                ooAddr: '0xFd9e2642a170aDD10F53Ee14a93FcF2F31924944',
                 liveness: '10000',
               },
             },
