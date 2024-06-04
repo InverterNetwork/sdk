@@ -40,8 +40,6 @@ export default function getTagCallback({
         self,
       })
 
-      console.log('decimalsRes', decimalsRes, 'arg', arg)
-
       formattedAmount = formatDecimals(arg, decimalsRes.decimals)
 
       return formattedAmount
