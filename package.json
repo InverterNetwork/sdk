@@ -80,6 +80,7 @@
   },
   "dependencies": {
     "@inverter-network/abis": "0.1.0-alpha.10",
+    "axios": "^1.7.2",
     "type-fest-4": "npm:type-fest@^4"
   }
 }
