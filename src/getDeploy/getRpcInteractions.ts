@@ -143,8 +143,13 @@ export default async <T extends RequestedModules>(
     ] as const
   }
 
-  function getRpcInteractions<T extends RequestedModules>(requestedModules: T) {
-    const { write, simulateWrite } = getViemMethods(walletClient, publicClient)
+  async function getRpcInteractions<T extends RequestedModules>(
+    requestedModules: T
+  ) {
+    const { write, simulateWrite } = await getViemMethods(
+      walletClient,
+      publicClient
+    )
 
     const simulate = async (userArgs: GetUserArgs<T>) => {
       const arr = await getArgs(requestedModules, userArgs)
@@ -174,5 +179,5 @@ export default async <T extends RequestedModules>(
     return { run, simulate }
   }
 
-  return getRpcInteractions(requestedModules)
+  return await getRpcInteractions(requestedModules)
 }
