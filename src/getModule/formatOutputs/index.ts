@@ -3,7 +3,7 @@ import { FormattedAbiParameter, Extras, GetMethodResponse } from '../../types'
 import format from './format'
 import getTagCallback, { GetTagCallbackParams } from './getTagCallback'
 
-export type FormattedOutputsBaseParams<
+export type FormatOutputsBaseParams<
   T extends readonly FormattedAbiParameter[] = readonly FormattedAbiParameter[],
 > = {
   formattedOutputs: T
@@ -11,7 +11,7 @@ export type FormattedOutputsBaseParams<
   extras?: Extras
 }
 
-export default async function formattedOutputs<
+export default async function formatOutputs<
   StateMutability extends AbiStateMutability,
   Simulate extends boolean,
   T extends readonly FormattedAbiParameter[],

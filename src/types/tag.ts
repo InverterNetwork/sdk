@@ -36,7 +36,7 @@ export type TagCallbackReturn<T extends TagCallbackType> =
 export type TagCallback<T extends TagCallbackType = TagCallbackType> = (
   type: T,
   tags: readonly Tag[],
-  arg: any
+  argOrRes: any
 ) => Promise<TagCallbackReturn<T>>
 
 // (

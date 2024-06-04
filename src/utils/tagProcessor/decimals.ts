@@ -21,7 +21,7 @@ const cacheToken = (
 }
 
 export default async function ({
-  args,
+  argsOrRes,
   parameters,
   extras,
   tag,
@@ -29,7 +29,7 @@ export default async function ({
   contract,
   self,
 }: {
-  args: any[]
+  argsOrRes: any[]
   parameters: readonly FormattedAbiParameter[]
   extras?: Extras
   tag?: Tag
@@ -54,9 +54,13 @@ export default async function ({
       case 'exact':
         decimals =
           // check if the value is contained by a non-tuple arg search it based on the index that is has in `inputs`
-          args[parameters.findIndex((parameter) => parameter.name === name)] ||
+          argsOrRes[
+            parameters.findIndex((parameter) => parameter.name === name)
+          ] ||
           // or if there is a tuple arg that contains a parameter with `name`which would provide the decimals
-          args.find((item) => typeof item === 'object' && name in item)[name]
+          argsOrRes.find((item) => typeof item === 'object' && name in item)[
+            name
+          ]
 
         break
       case 'indirect':
@@ -65,7 +69,9 @@ export default async function ({
           decimals = cachedDecimals
         } else {
           tokenAddress =
-            args[parameters.findIndex((parameter) => parameter.name === name)]
+            argsOrRes[
+              parameters.findIndex((parameter) => parameter.name === name)
+            ]
           if (!tokenAddress) throw new Error('No token address found')
           decimals = <number>await readContract({
             address: tokenAddress,

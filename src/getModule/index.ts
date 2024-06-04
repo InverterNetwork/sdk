@@ -59,7 +59,8 @@ export default function getModule<
       ['pure', 'view'],
       contract,
       extras,
-      false,
+      // We need to pass simulate undefined to not override the default inputs to txHash
+      undefined,
       self
     ),
     // Prepare the simulate functions

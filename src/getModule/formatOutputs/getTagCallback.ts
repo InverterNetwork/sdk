@@ -1,5 +1,5 @@
 import { PublicClient } from 'viem'
-import { FormattedOutputsBaseParams } from '.'
+import { FormatOutputsBaseParams } from '.'
 import { InverterSDK } from '../../InverterSDK'
 import {
   DecimalsTagReturn,
@@ -15,7 +15,7 @@ export type GetTagCallbackParams<
   publicClient: PublicClient
   contract?: any
   self?: InverterSDK
-} & FormattedOutputsBaseParams<T>
+} & FormatOutputsBaseParams<T>
 
 export default function getTagCallback({
   publicClient,
@@ -31,7 +31,7 @@ export default function getTagCallback({
 
     if (type === 'formatDecimals') {
       decimalsRes = await tagProcessor.decimals({
-        args: res,
+        argsOrRes: res,
         parameters: formattedOutputs,
         extras,
         tag: tags.find((t) => t.startsWith('decimals')),
@@ -39,6 +39,8 @@ export default function getTagCallback({
         contract,
         self,
       })
+
+      console.log('decimalsRes', decimalsRes, 'arg', arg)
 
       formattedAmount = formatDecimals(arg, decimalsRes.decimals)
 
