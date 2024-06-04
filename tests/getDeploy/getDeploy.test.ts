@@ -8,6 +8,7 @@ import {
   expected_FM_BC_Restricted_BancorInputSchema,
   expectedBaseInputSchema,
 } from './expectedOutputs'
+import { USDC_SEPOLIA } from '../../src/getDeploy/constants'
 
 describe('#getDeploy', () => {
   const { publicClient, walletClient } = getTestConnectors()
