@@ -3,9 +3,10 @@ import { expect, describe, it } from 'bun:test'
 import { getTestConnectors } from '../testHelpers/getTestConnectors'
 import { getDeploy } from '../../src'
 import { isAddress } from 'viem'
-import { baseArgs, bcArgs } from './args'
+import { baseArgs, bcArgs, kpiArgs } from './args'
 import {
   expected_FM_BC_Restricted_BancorInputSchema,
+  expected_LM_PC_KPIRewarderInputSchema,
   expectedBaseInputSchema,
 } from './expectedOutputs'
 import { USDC_SEPOLIA } from '../../src/getDeploy/constants'
@@ -174,41 +175,7 @@ describe('#getDeploy', () => {
       })
     })
 
-    // LM_PC_KPIRewarder_v1 deployment presumably fails because
-    // we dont have a mock contract for ooAddr at hand
     describe('optional: LM_PC_KPIRewarder_v1', () => {
-      const expectedSchema = {
-        name: 'LM_PC_KPIRewarder_v1',
-        inputs: [
-          {
-            name: 'stakingTokenAddr',
-            type: 'address',
-            description: 'The token users stake to earn rewards.',
-            jsType: '0xstring',
-          },
-          {
-            name: 'currencyAddr',
-            type: 'address',
-            description:
-              'The token the Optimistic Oracle will charge its fee in.',
-            jsType: '0xstring',
-          },
-          {
-            name: 'ooAddr',
-            type: 'address',
-            description: 'The address of the optimisitic oracle.',
-            jsType: '0xstring',
-          },
-          {
-            name: 'liveness',
-            type: 'uint64',
-            description:
-              'How long (in seconds) a query to the oracle will be open for dispute.',
-            jsType: 'numberString',
-          },
-        ],
-      } as const
-
       describe('inputs', () => {
         it('has the correct format', async () => {
           const { inputs } = await getDeploy(publicClient, walletClient, {
@@ -218,7 +185,7 @@ describe('#getDeploy', () => {
 
           expect(inputs).toEqual({
             ...expectedBaseInputSchema,
-            optionalModules: [expectedSchema],
+            optionalModules: [expected_LM_PC_KPIRewarderInputSchema],
           })
         })
       })
@@ -233,12 +200,7 @@ describe('#getDeploy', () => {
           const simulationResult = await simulate({
             ...baseArgs,
             optionalModules: {
-              LM_PC_KPIRewarder_v1: {
-                stakingTokenAddr: USDC_SEPOLIA,
-                currencyAddr: USDC_SEPOLIA,
-                ooAddr: '0xFd9e2642a170aDD10F53Ee14a93FcF2F31924944',
-                liveness: '10000',
-              },
+              LM_PC_KPIRewarder_v1: kpiArgs,
             },
           })
           expect(isAddress(simulationResult.result as string)).toBeTrue

@@ -7,9 +7,9 @@ import {
   PopWalletClient,
 } from '../../types'
 import formatOutputs from '../formatOutputs'
-import parseInputs from '../../utils/parseInputs'
+import processInputs from '../../utils/processInputs'
 import { TOKEN_DATA_ABI } from '../../utils/constants'
-import { RequiredAllowances } from '../../utils/parseInputs/types'
+import { RequiredAllowances } from '../../types'
 import { InverterSDK } from '../../InverterSDK'
 
 const runDependencies = async (
@@ -81,7 +81,7 @@ export default function getRun<
 
   const run = async (args: GetMethodArgs<typeof formattedInputs>) => {
     // Parse the inputs, from user input to contract input
-    const { inputsWithDecimals, requiredAllowances } = await parseInputs({
+    const { processedInputs, requiredAllowances } = await processInputs({
       formattedInputs,
       args,
       extras,
@@ -101,18 +101,18 @@ export default function getRun<
       if (simulate && !hasDependencies) {
         // If extras has a wallet address, use it
         if (!!extras?.walletAddress)
-          return contract['simulate'][name](inputsWithDecimals, {
+          return contract['simulate'][name](processedInputs, {
             account: extras.walletAddress,
           })
 
         // Else, just use the parsed inputs
-        return contract['simulate'][name](inputsWithDecimals)
+        return contract['simulate'][name](processedInputs)
       }
 
       if (hasDependencies) {
         return runWithDependencies(
           contract[kind][name],
-          inputsWithDecimals,
+          processedInputs,
           requiredAllowances,
           publicClient,
           walletClient
@@ -120,7 +120,7 @@ export default function getRun<
       }
 
       // defaults to non simulate, read or write function
-      return contract[kind][name](inputsWithDecimals)
+      return contract[kind][name](processedInputs)
     })()
 
     // Format the outputs, from contract output to user output-
@@ -129,7 +129,7 @@ export default function getRun<
       StateMutability,
       Simulate,
       FormattedOutputs
-    >(formattedOutputs, res, extras)
+    >({ formattedOutputs, res, extras, publicClient, contract, self })
 
     return formattedRes
   }

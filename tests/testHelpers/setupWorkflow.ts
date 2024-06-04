@@ -1,5 +1,10 @@
 import { PublicClient } from 'viem'
-import { GetUserArgs, PopWalletClient, getDeploy } from '../../src'
+import {
+  GetUserArgs,
+  PopWalletClient,
+  RequestedModules,
+  getDeploy,
+} from '../../src'
 
 export const setupBcWorkflow = async (
   publicClient: PublicClient,
@@ -15,4 +20,21 @@ export const setupBcWorkflow = async (
   const { run } = await getDeploy(publicClient, walletClient, requestedModules)
 
   await run(args)
+}
+
+export const setupKpiWorkflow = async (
+  publicClient: PublicClient,
+  walletClient: PopWalletClient,
+  args: GetUserArgs
+) => {
+  const requestedModules = {
+    fundingManager: 'FM_Rebasing_v1',
+    paymentProcessor: 'PP_Simple_v1',
+    authorizer: 'AUT_Roles_v1',
+    optionalModules: ['LM_PC_KPIRewarder_v1'],
+  } as RequestedModules
+
+  const { run } = await getDeploy(publicClient, walletClient, requestedModules)
+
+  return await run(args)
 }

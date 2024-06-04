@@ -5,6 +5,7 @@ export const iUSD = '0xB637cE56AFDb659AB7f85d1293e20cE661445db4' // token with u
 export const deployedBcOrchestrator =
   '0x5815859FFc3cF512fDe8b65345c4698Eda0F6031'
 export const deployedBcModule = '0x815f393008b8C6aD2C3AB9E7D79bb836B8c87941'
+export const deployedKpiModule = '0x395EE25214B40bF3bE4252EEDba2a78699578e95'
 
 export const baseArgs = {
   orchestrator: {
@@ -40,4 +41,11 @@ export const bcArgs = {
     initialCollateralSupply: '33',
   },
   acceptedToken: USDC_SEPOLIA, //USDC
+} as const
+
+export const kpiArgs = {
+  stakingTokenAddr: iUSD,
+  currencyAddr: USDC_SEPOLIA,
+  ooAddr: '0xFd9e2642a170aDD10F53Ee14a93FcF2F31924944',
+  liveness: '10000',
 } as const
