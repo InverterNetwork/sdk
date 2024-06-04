@@ -16,3 +16,20 @@ export const setupBcWorkflow = async (
 
   await run(args)
 }
+
+export const setupKpiWorkflow = async (
+  publicClient: PublicClient,
+  walletClient: PopWalletClient,
+  args: GetUserArgs
+) => {
+  const requestedModules = {
+    fundingManager: 'FM_Rebasing_v1',
+    paymentProcessor: 'PP_Simple_v1',
+    authorizer: 'AUT_Roles_v1',
+    optionalModules: ['LM_PC_KPIRewarder_v1'],
+  } as const
+
+  const { run } = await getDeploy(publicClient, walletClient, requestedModules)
+
+  await run(args)
+}

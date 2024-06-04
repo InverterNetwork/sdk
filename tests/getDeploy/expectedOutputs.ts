@@ -1,5 +1,3 @@
-// ===============CONSTANTS_START================
-
 export const expectedBaseInputSchema = {
   orchestrator: {
     name: 'Orchestrator_v1',
@@ -167,6 +165,37 @@ export const expected_FM_BC_Restricted_BancorInputSchema = {
       description:
         'The address of the token that will be deposited to the funding manager',
       jsType: '0xstring',
+    },
+  ],
+} as const
+
+export const expected_LM_PC_KPIRewarderInputSchema = {
+  name: 'LM_PC_KPIRewarder_v1',
+  inputs: [
+    {
+      name: 'stakingTokenAddr',
+      type: 'address',
+      description: 'The token users stake to earn rewards.',
+      jsType: '0xstring',
+    },
+    {
+      name: 'currencyAddr',
+      type: 'address',
+      description: 'The token the Optimistic Oracle will charge its fee in.',
+      jsType: '0xstring',
+    },
+    {
+      name: 'ooAddr',
+      type: 'address',
+      description: 'The address of the optimisitic oracle.',
+      jsType: '0xstring',
+    },
+    {
+      name: 'liveness',
+      type: 'uint64',
+      description:
+        'How long (in seconds) a query to the oracle will be open for dispute.',
+      jsType: 'numberString',
     },
   ],
 } as const

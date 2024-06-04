@@ -41,3 +41,10 @@ export const bcArgs = {
   },
   acceptedToken: USDC_SEPOLIA, //USDC
 } as const
+
+export const kpiArgs = {
+  stakingTokenAddr: USDC_SEPOLIA,
+  currencyAddr: USDC_SEPOLIA,
+  ooAddr: '0xFd9e2642a170aDD10F53Ee14a93FcF2F31924944',
+  liveness: '10000',
+}
