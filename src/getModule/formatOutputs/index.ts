@@ -6,11 +6,15 @@ export default function formattedOutputs<
   StateMutability extends AbiStateMutability,
   Simulate extends boolean,
   T extends readonly FormattedAbiParameter[],
->(
-  formattedOutputs: T,
-  res: any,
+>({
+  formattedOutputs,
+  res,
+  extras,
+}: {
+  formattedOutputs: T
+  res: any
   extras?: Extras
-): GetMethodResponse<T, StateMutability, Simulate> {
+}): GetMethodResponse<T, StateMutability, Simulate> {
   // format the outputs
   const mapped = formattedOutputs.map((output) => {
     const name = output.name

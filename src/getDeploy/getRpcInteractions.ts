@@ -12,7 +12,7 @@ import {
   UserArgs,
 } from './types'
 import { assembleMetadata, getViemMethods } from './utils'
-import parseInputs from '../utils/processInputs'
+import processInputs from '../utils/processInputs'
 import formatParameters from '../utils/formatParameters'
 import { getValues } from '../utils'
 import { InverterSDK } from '../InverterSDK'
@@ -36,7 +36,7 @@ export default async <T extends RequestedModules>(
 
     // MG NOTE: Parse inputs respects the array order and struct structure
 
-    const { inputsWithDecimals } = (await parseInputs({
+    const { processedInputs } = (await processInputs({
       formattedInputs,
       args,
       publicClient,
@@ -46,7 +46,7 @@ export default async <T extends RequestedModules>(
     })) as any
 
     // Return encodedArgs
-    return encodeAbiParameters(configData, inputsWithDecimals)
+    return encodeAbiParameters(configData, processedInputs)
   }
 
   const assembleModuleArgs = async (

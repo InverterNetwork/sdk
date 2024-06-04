@@ -8,21 +8,6 @@ type TupleCaseParams = {
   extras?: Extras
 }
 
-// Tag: "any" tries to parse the result as JSON from hex, if it fails-
-// tries to parse the result as a string from hex, if it fails-
-// returns "Data is not a valid JSON string"
-export const any = (res: any) => {
-  try {
-    return JSON.parse(hexToString(res))
-  } catch {
-    try {
-      return hexToString(res)
-    } catch {
-      return 'Data is not a valid JSON string'
-    }
-  }
-}
-
 // The case for tuple outputs
 export const tuple = ({ output, res, extras }: TupleCaseParams) => {
   const formattedTuple: any = {}
@@ -47,4 +32,19 @@ export const tupleArray = ({ res, ...rest }: TupleCaseParams) =>
 export const decimals = (value: bigint, extras?: Extras) => {
   if (!extras?.decimals) throw new Error('No decimals provided')
   return formatUnits(value, extras.decimals)
+}
+
+// Tag: "any" tries to parse the result as JSON from hex, if it fails-
+// tries to parse the result as a string from hex, if it fails-
+// returns "Data is not a valid JSON string"
+export const any = (res: any) => {
+  try {
+    return JSON.parse(hexToString(res))
+  } catch {
+    try {
+      return hexToString(res)
+    } catch {
+      return 'Data is not a valid JSON string'
+    }
+  }
 }

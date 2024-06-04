@@ -4,22 +4,25 @@ import parse from './parse'
 import { RequiredAllowances } from '../../types'
 import getTagCallback, { GetTagCallbackParams } from './getTagCallback'
 
-export type ParseInputsBaseParams = {
+export type ProcessInputsBaseParams = {
   extras?: Extras
   formattedInputs: readonly FormattedAbiParameter[]
   args: any
 }
 
-export type ParseInputsParams = Omit<GetTagCallbackParams, 'requiredAllowances'>
+export type ProcessInputsParams = Omit<
+  GetTagCallbackParams,
+  'requiredAllowances'
+>
 
-export default async function processInputs(params: ParseInputsParams) {
+export default async function processInputs(params: ProcessInputsParams) {
   const requiredAllowances: RequiredAllowances[] = []
 
   const { formattedInputs, args, extras } = params
 
   // const inputs = formattedInputs as FormattedAbiParameter[]
   // parse the inputs
-  const inputsWithDecimals = await Promise.all(
+  const processedInputs = await Promise.all(
     formattedInputs.map(async (input, index) => {
       // get the argument of the same index
       const arg = Array.isArray(args) ? args[index] : args
@@ -33,5 +36,5 @@ export default async function processInputs(params: ParseInputsParams) {
     })
   )
 
-  return { inputsWithDecimals, requiredAllowances }
+  return { processedInputs, requiredAllowances }
 }

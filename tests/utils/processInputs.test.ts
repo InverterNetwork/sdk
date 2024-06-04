@@ -1,13 +1,13 @@
 import { expect, describe, it } from 'bun:test'
 
-import parseInputs from '../../src/utils/processInputs'
+import processInputs from '../../src/utils/processInputs'
 import { getTestConnectors } from '../testHelpers/getTestConnectors'
 import { TOKEN_DATA_ABI } from '../../src/utils/constants'
 import { FormattedAbiParameter } from '../../src'
 import { InverterSDK } from '../../src/InverterSDK'
 import { Tag } from '@inverter-network/abis'
 
-describe('#parseInputs', () => {
+describe('#processInputs', () => {
   const { publicClient, walletClient } = getTestConnectors()
   const USDC_SEPOLIA = '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238' // USDC has 6 decimals
   const mockAddress = '0x80f8493761a18d29fd77c131865f9cf62b15e62a'
@@ -29,7 +29,7 @@ describe('#parseInputs', () => {
   ]
   const mockContract = { address: mockAddress, abi: mockAbi }
 
-  describe('#inputsWithDecimals', () => {
+  describe('#processedInputs', () => {
     describe('with decimals tag', () => {
       describe('with the default token (tag = `decimals`)', () => {
         const formattedInputs = [
@@ -50,7 +50,7 @@ describe('#parseInputs', () => {
         const args = ['42069']
 
         it('applies the decimals from the `extras` param', async () => {
-          const { inputsWithDecimals } = await parseInputs({
+          const { processedInputs } = await processInputs({
             formattedInputs,
             args,
             extras,
@@ -58,7 +58,7 @@ describe('#parseInputs', () => {
             walletClient,
             contract: mockContract,
           })
-          expect(inputsWithDecimals[0]).toEqual(420690000000000n)
+          expect(processedInputs[0]).toEqual(420690000000000n)
         })
 
         describe('with approval tag', () => {
@@ -68,7 +68,7 @@ describe('#parseInputs', () => {
           it(
             'returns the required approvals',
             async () => {
-              const { requiredAllowances } = await parseInputs({
+              const { requiredAllowances } = await processInputs({
                 formattedInputs:
                   formattedInputsWithApproval as FormattedAbiParameter[],
                 args,
@@ -133,7 +133,7 @@ describe('#parseInputs', () => {
           ] as FormattedAbiParameter[]
 
           it('retrieves token from module and the decimals from token', async () => {
-            const { inputsWithDecimals } = await parseInputs({
+            const { processedInputs } = await processInputs({
               formattedInputs,
               args,
               extras,
@@ -141,7 +141,7 @@ describe('#parseInputs', () => {
               walletClient,
               contract: mockContract,
             })
-            expect(inputsWithDecimals[0]).toEqual(42069000000n)
+            expect(processedInputs[0]).toEqual(42069000000n)
           })
         })
 
@@ -157,14 +157,14 @@ describe('#parseInputs', () => {
           ] as FormattedAbiParameter[]
 
           it('retrieves the decimals from module which is token', async () => {
-            const { inputsWithDecimals } = await parseInputs({
+            const { processedInputs } = await processInputs({
               formattedInputs,
               args,
               extras,
               publicClient,
               contract: mockContract,
             })
-            expect(inputsWithDecimals[0]).toEqual(42069000000n)
+            expect(processedInputs[0]).toEqual(42069000000n)
           })
 
           describe('with sdk instance', () => {
@@ -176,7 +176,7 @@ describe('#parseInputs', () => {
               const formattedInputs = [
                 { ...sharedFormattedInput, tags },
               ] as FormattedAbiParameter[]
-              await parseInputs({
+              await processInputs({
                 formattedInputs,
                 args,
                 extras,
@@ -206,7 +206,7 @@ describe('#parseInputs', () => {
                 }
               )
               const start = performance.now()
-              await parseInputs({
+              await processInputs({
                 formattedInputs,
                 args,
                 extras,
@@ -258,7 +258,7 @@ describe('#parseInputs', () => {
 
         describe('with :exact', () => {
           it('applies the decimals from the user inputs', async () => {
-            const { inputsWithDecimals } = await parseInputs({
+            const { processedInputs } = await processInputs({
               formattedInputs,
               args,
               extras,
@@ -266,14 +266,14 @@ describe('#parseInputs', () => {
               walletClient,
               contract: { address: mockAddress },
             })
-            const [, initialTokenSupply, , ,] = inputsWithDecimals
+            const [, initialTokenSupply, , ,] = processedInputs
             expect(initialTokenSupply).toEqual(420000000000000000000n)
           })
         })
 
         describe('with :indirect', () => {
           it('retrieves decimals from token specified by user input', async () => {
-            const { inputsWithDecimals } = await parseInputs({
+            const { processedInputs } = await processInputs({
               formattedInputs,
               args,
               extras,
@@ -281,7 +281,7 @@ describe('#parseInputs', () => {
               walletClient,
               contract: mockContract,
             })
-            const [, , initialCollateralSupply, ,] = inputsWithDecimals
+            const [, , initialCollateralSupply, ,] = processedInputs
             expect(initialCollateralSupply).toEqual(69000000n)
           })
 
@@ -289,7 +289,7 @@ describe('#parseInputs', () => {
             const sdk = new InverterSDK(publicClient, walletClient)
 
             it('stores token info in cache', async () => {
-              await parseInputs({
+              await processInputs({
                 formattedInputs,
                 args,
                 extras,
@@ -319,7 +319,7 @@ describe('#parseInputs', () => {
                 }
               )
               const start = performance.now()
-              await parseInputs({
+              await processInputs({
                 formattedInputs,
                 args,
                 extras,

@@ -1,5 +1,5 @@
 import { PublicClient, WalletClient } from 'viem'
-import { ParseInputsBaseParams } from '.'
+import { ProcessInputsBaseParams } from '.'
 import { InverterSDK } from '../../InverterSDK'
 import { DecimalsTagReturn, RequiredAllowances, TagCallback } from '../../types'
 import tagProcessor from '../tagProcessor'
@@ -11,7 +11,7 @@ export type GetTagCallbackParams = {
   walletClient?: WalletClient
   contract?: any
   self?: InverterSDK
-} & ParseInputsBaseParams
+} & ProcessInputsBaseParams
 
 export default function getTagCallback({
   requiredAllowances,
