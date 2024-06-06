@@ -126,7 +126,7 @@ describe('#processInputs', () => {
           ]
           const mockContract = { address: mockAddress, abi: mockAbi }
           const tags = [
-            'decimals:external:indirect:tokenAddress',
+            'decimals:contract:indirect:tokenAddress',
           ] satisfies Tag[] // should resolve to usdc on sepolia w/ decimals
           const formattedInputs = [
             { ...sharedFormattedInput, tags },
@@ -151,7 +151,7 @@ describe('#processInputs', () => {
             address: mockModuleWithErc20,
             abi: TOKEN_DATA_ABI,
           }
-          const tags = ['decimals:external:exact:decimals'] as Tag[]
+          const tags = ['decimals:contract:exact:decimals'] as Tag[]
           const formattedInputs = [
             { ...sharedFormattedInput, tags },
           ] as FormattedAbiParameter[]
@@ -234,13 +234,13 @@ describe('#processInputs', () => {
             name: 'initialTokenSupply',
             type: 'uint256',
             description: 'The initial virtual issuance token supply',
-            tags: ['decimals:internal:exact:decimals'],
+            tags: ['decimals:params:exact:decimals'],
           },
           {
             name: 'initialCollateralSupply',
             type: 'uint256',
             description: 'The initial virtual collateral token supply',
-            tags: ['decimals:internal:indirect:acceptedToken'],
+            tags: ['decimals:params:indirect:acceptedToken'],
           },
           {
             name: 'acceptedToken',

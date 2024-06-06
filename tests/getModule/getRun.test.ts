@@ -1,14 +1,7 @@
 import { describe, it, beforeEach, expect } from 'bun:test'
 
 import { getTestConnectors } from '../testHelpers/getTestConnectors'
-import { setupBcWorkflow, setupKpiWorkflow } from '../testHelpers/setupWorkflow'
-import {
-  deployedBcModule,
-  iUSD,
-  baseArgs,
-  kpiArgs,
-  deployedKpiModule,
-} from '../getDeploy/args'
+import { deployedBcModule, iUSD, deployedKpiModule } from '../getDeploy/args'
 import getRun from '../../src/getModule/constructMethod/getRun'
 import { getContract } from 'viem'
 import { getModuleData } from '@inverter-network/abis'
