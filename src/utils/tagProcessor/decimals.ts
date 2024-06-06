@@ -4,6 +4,7 @@ import { Extras, FormattedAbiParameter } from '../../types'
 import { Tag } from '@inverter-network/abis'
 import { InverterSDK } from '../../InverterSDK'
 import { DecimalsTagReturn } from '../../types/tag'
+import { Split } from 'type-fest-4'
 
 const cacheToken = (
   self: InverterSDK,
@@ -42,14 +43,14 @@ export default async function ({
   let tokenAddress: `0x${string}` | undefined
   let decimals: number | undefined
 
-  const [, source, location, name] = tag?.split(':')
+  const [, source, location, name] = tag?.split(':') as Split<Tag, ':'>
   const { readContract } = publicClient
   const cachedToken = self?.tokenCache.get(`${contract.address}:${tag}`)
   // INTERNAL CASE
   if (!source) {
     decimals = extras?.decimals
     tokenAddress = extras?.defaultToken
-  } else if (source === 'internal')
+  } else if (source === 'params')
     switch (location) {
       case 'exact':
         decimals =
@@ -84,7 +85,7 @@ export default async function ({
         break
     }
   // EXTERNAL CASE
-  else if (source === 'external')
+  else if (source === 'contract')
     // ####
     switch (location) {
       case 'indirect':
