@@ -1,5 +1,4 @@
 export * from './types'
-export * from './getDeploy/types'
 export { default as getModule } from './getModule'
 export { default as getWorkflow } from './getWorkflow'
 export { default as getDeploy } from './getDeploy'

@@ -5,7 +5,7 @@ import {
   Workflow,
 } from './types'
 import getWorkflow from './getWorkflow'
-import { RequestedModules } from './getDeploy/types'
+import { RequestedModules } from './types'
 import getDeploy from './getDeploy'
 import getDeployOptions from './getDeployOptions'
 

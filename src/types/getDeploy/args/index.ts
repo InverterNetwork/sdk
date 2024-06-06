@@ -6,8 +6,8 @@ import {
   GetDeploymentInputs,
   EmptyObjectToNever,
   FormatParameter,
-} from '../../../types'
-import { FormattedParameterToPrimitiveType } from '../../../types/utils/parameter/primitive'
+  FormattedParameterToPrimitiveType,
+} from '../..'
 import { IsEmptyObject, Simplify } from 'type-fest-4'
 export * from './static'
 

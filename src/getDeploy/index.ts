@@ -1,5 +1,5 @@
 import { PublicClient } from 'viem'
-import { RequestedModules } from './types'
+import { RequestedModules } from '../types'
 import getInputs from './getInputs'
 import getRpcInteractions from './getRpcInteractions'
 import { PopWalletClient } from '../types'

@@ -10,7 +10,7 @@ import {
   GetUserArgs,
   UserModuleArg,
   UserArgs,
-} from './types'
+} from '../types'
 import { assembleMetadata, getViemMethods } from './utils'
 import processInputs from '../utils/processInputs'
 import formatParameters from '../utils/formatParameters'
