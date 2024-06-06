@@ -4,19 +4,32 @@ import {
 } from '@inverter-network/abis'
 import { Merge } from 'type-fest-4'
 
-import { OmitNever, PopWalletClient } from '../types'
+import { OmitNever, PopPublicClient, PopWalletClient } from '../types'
 import getModule from '../getModule'
+import { Hex } from 'viem'
+import { Inverter } from '../Inverter'
 
-type ModuleType = Exclude<UserFacingModuleType, 'orchestrator'>
+export type GetWorkflowParams<
+  O extends WorkflowOrientation | undefined = undefined,
+  W extends PopWalletClient | undefined = undefined,
+> = {
+  publicClient: PopPublicClient
+  walletClient?: W
+  orchestratorAddress: Hex
+  workflowOrientation?: O
+  self?: Inverter<W>
+}
+
+export type WorkflowModuleType = Exclude<UserFacingModuleType, 'orchestrator'>
 
 type OrientationPart<
-  MT extends ModuleType,
+  MT extends WorkflowModuleType,
   N extends GetModuleNameByType<MT> = GetModuleNameByType<MT>,
 > = N
 
 export type WorkflowOrientation = Merge<
   {
-    [T in Exclude<ModuleType, 'optionalModule'>]: OrientationPart<T>
+    [T in Exclude<WorkflowModuleType, 'optionalModule'>]: OrientationPart<T>
   },
   {
     optionalModules?: OrientationPart<'optionalModule'>[]
@@ -27,7 +40,7 @@ type MandatoryResult<
   W extends PopWalletClient | undefined,
   O extends WorkflowOrientation | undefined,
 > = {
-  [K in Exclude<ModuleType, 'optionalModule'>]: O extends NonNullable<O>
+  [K in Exclude<WorkflowModuleType, 'optionalModule'>]: O extends NonNullable<O>
     ? ReturnType<typeof getModule<O[K], W>>
     : ReturnType<typeof getModule<WorkflowOrientation[K], W>>
 }
@@ -51,7 +64,20 @@ type OptionalResult<
       }
 }>
 
-export type Workflow<
+export type MendatoryAndOptionalWorkflow<
   W extends PopWalletClient | undefined,
   O extends WorkflowOrientation | undefined,
 > = MandatoryResult<W, O> & OptionalResult<W, O>
+
+export type Workflow<
+  W extends PopWalletClient | undefined,
+  O extends WorkflowOrientation | undefined,
+> = Merge<
+  MendatoryAndOptionalWorkflow<W, O>,
+  {
+    orchestrator: ReturnType<typeof getModule<'Orchestrator_v1', W>>
+    erc20Module: ReturnType<typeof getModule<'ERC20', W>>
+    erc20Decimals: number
+    erc20Symbol: string
+  }
+>

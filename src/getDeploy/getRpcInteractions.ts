@@ -15,14 +15,14 @@ import { assembleMetadata, getViemMethods } from './utils'
 import processInputs from '../utils/processInputs'
 import formatParameters from '../utils/formatParameters'
 import { getValues } from '../utils'
-import { InverterSDK } from '../InverterSDK'
+import { Inverter } from '../Inverter'
 import { TOKEN_DATA_ABI } from '../utils/constants'
 
 export default async <T extends RequestedModules>(
   publicClient: PublicClient,
   walletClient: PopWalletClient,
   requestedModules: T,
-  self?: InverterSDK
+  self?: Inverter
 ) => {
   let extras: Extras
 

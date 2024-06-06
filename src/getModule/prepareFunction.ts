@@ -8,7 +8,7 @@ import {
 import { Simplify, TupleToUnion } from 'type-fest-4'
 import { ExtendedAbi, ExtendedAbiFunction } from '@inverter-network/abis'
 import { PopPublicClient } from '../types'
-import { InverterSDK } from '../InverterSDK'
+import { Inverter } from '../Inverter'
 
 // The prepareFunction function is used to prepare the functions from the abi
 export default function prepareFunction<
@@ -22,7 +22,7 @@ export default function prepareFunction<
   contract: any,
   extras?: Extras,
   simulate?: Simulate,
-  self?: InverterSDK
+  self?: Inverter<any>
 ): // The result object type, maps the function names to their return types
 Simplify<{
   [N in ExtractAbiFunctionNames<A, TupleToUnion<T>>]: ReturnType<

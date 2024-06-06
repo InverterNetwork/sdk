@@ -1,26 +1,15 @@
-import { describe, it, beforeEach, expect } from 'bun:test'
+import { describe, it, expect } from 'bun:test'
 
-import { WorkflowOrientation } from '../src/getWorkflow/types'
-import { InverterSDK } from '../src/InverterSDK'
+import { WorkflowOrientation } from '../src/types'
+import { Inverter } from '../src/Inverter'
 import { getTestConnectors } from './testHelpers/getTestConnectors'
 import { GetUserArgs, RequestedModules } from '../src'
 import { isAddress } from 'viem'
 
-interface MyWorkflowOrientation extends WorkflowOrientation {
-  authorizer: 'AUT_Roles_v1'
-  fundingManager: 'FM_Rebasing_v1'
-  paymentProcessor: 'PP_Simple_v1'
-  optionalModules: ['LM_PC_Bounties_v1']
-}
-
-describe('InverterSDK', () => {
+describe('Inverter', () => {
   const { publicClient, walletClient } = getTestConnectors()
 
-  let sdk: InverterSDK
-
-  beforeEach(async () => {
-    sdk = new InverterSDK(publicClient, walletClient)
-  })
+  const sdk = new Inverter(publicClient, walletClient)
 
   describe('#constructor', () => {
     it('instantiates the sdk with public and wallet client', async () => {
@@ -36,7 +25,7 @@ describe('InverterSDK', () => {
       fundingManager: 'FM_Rebasing_v1',
       paymentProcessor: 'PP_Simple_v1',
       optionalModules: ['LM_PC_Bounties_v1'],
-    } as MyWorkflowOrientation
+    } satisfies WorkflowOrientation
 
     describe('#getWorkflow', () => {
       it('adds the workflow to the class instance state', async () => {
@@ -53,7 +42,10 @@ describe('InverterSDK', () => {
       })
 
       it('gets the workflow', async () => {
-        const workflow = await sdk.getWorkflow(orchestratorAddress)
+        const workflow = await sdk.getWorkflow(
+          orchestratorAddress,
+          workFlowOrientation
+        )
 
         expect(workflow).toContainKeys([
           'authorizer',
@@ -63,6 +55,15 @@ describe('InverterSDK', () => {
           'orchestrator',
           'optionalModule',
         ])
+
+        describe('#runBountyFunction', () => {
+          it('runs one of the read functions of the bounty manager', async () => {
+            const result =
+              await workflow.optionalModule.LM_PC_Bounties_v1.read.BOUNTY_ISSUER_ROLE.run()
+
+            expect(result).toBeString()
+          })
+        })
       })
     })
   })

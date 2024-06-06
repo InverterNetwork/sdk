@@ -1,11 +1,14 @@
 import { Hex } from 'viem'
-import getModule from '../getModule'
+import getModule from './getModule'
 import { GetModuleNameByType } from '@inverter-network/abis'
-import { PopPublicClient, PopWalletClient } from '../types'
-import { WorkflowOrientation, Workflow } from './types'
-import { ModuleType } from '../getDeploy/types'
-import { TOKEN_DATA_ABI } from '../utils/constants'
-import { InverterSDK } from '../InverterSDK'
+import {
+  PopWalletClient,
+  WorkflowModuleType,
+  WorkflowOrientation,
+  Workflow,
+  GetWorkflowParams,
+} from './types'
+import { TOKEN_DATA_ABI } from './utils/constants'
 
 export default async function getWorkflow<
   O extends WorkflowOrientation | undefined = undefined,
@@ -16,13 +19,7 @@ export default async function getWorkflow<
   orchestratorAddress,
   workflowOrientation,
   self,
-}: {
-  publicClient: PopPublicClient
-  walletClient?: W
-  orchestratorAddress: Hex
-  workflowOrientation?: O
-  self?: InverterSDK
-}) {
+}: GetWorkflowParams<O, W>): Promise<Workflow<W, O>> {
   if (!publicClient) throw new Error('Public client not initialized')
 
   // 1. initialize orchestrator
@@ -87,7 +84,7 @@ export default async function getWorkflow<
           // address then get the title and version
           await Promise.all(
             (await orchestrator.read.listModules.run()).map(async (address) => {
-              type Name = GetModuleNameByType<ModuleType>
+              type Name = GetModuleNameByType<WorkflowModuleType>
               const flatModule = getModule({
                   publicClient,
                   walletClient,
@@ -132,7 +129,7 @@ export default async function getWorkflow<
         paymentProcessor: {},
         optionalModule: {},
       }
-    ) as unknown as Workflow<W, O>
+    ) as any
 
     return result
   })()

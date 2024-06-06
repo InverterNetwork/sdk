@@ -10,7 +10,7 @@ import formatOutputs from '../formatOutputs'
 import processInputs from '../../utils/processInputs'
 import { TOKEN_DATA_ABI } from '../../utils/constants'
 import { RequiredAllowances } from '../../types'
-import { InverterSDK } from '../../InverterSDK'
+import { Inverter } from '../../Inverter'
 
 const runDependencies = async (
   requiredAllowances: RequiredAllowances[],
@@ -74,7 +74,7 @@ export default function getRun<
   walletClient?: PopWalletClient
   extras?: Extras
   simulate?: Simulate
-  self?: InverterSDK
+  self?: Inverter
 }) {
   // Check if the function is a read or write function
   const kind = ['view', 'pure'].includes(stateMutability) ? 'read' : 'write'
