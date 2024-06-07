@@ -9,8 +9,8 @@ export const deployedKpiModule = '0x395EE25214B40bF3bE4252EEDba2a78699578e95'
 
 export const baseArgs = {
   orchestrator: {
-    owner: '0x5eb14c2e7D0cD925327d74ae4ce3fC692ff8ABEF',
-    token: '0x7AcaF5360474b8E40f619770c7e8803cf3ED1053',
+    independentUpdates: true,
+    independentUpdateAdmin: '0x7AcaF5360474b8E40f619770c7e8803cf3ED1053',
   },
   fundingManager: {
     orchestratorTokenAddress: '0x5eb14c2e7D0cD925327d74ae4ce3fC692ff8ABEF',

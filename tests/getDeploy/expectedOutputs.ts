@@ -3,16 +3,18 @@ export const expectedBaseInputSchema = {
     name: 'Orchestrator_v1',
     inputs: [
       {
-        name: 'owner',
-        type: 'address',
-        jsType: '0xstring',
-        description: 'The owner address of the workflow',
+        name: 'independentUpdates',
+        type: 'bool',
+        jsType: 'bool',
+        description:
+          'If set to false the workflow can be paused and upgraded by Inverter. If set to true only an admin determined by the user can manually upgrade the contracts (no pausing possible).',
       },
       {
-        name: 'token',
+        name: 'independentUpdateAdmin',
         type: 'address',
         jsType: '0xstring',
-        description: 'The payment token associated with the workflow',
+        description:
+          'If `independentUpdates` is set to true, determines who can upgrade a workflow.',
       },
     ],
   },
