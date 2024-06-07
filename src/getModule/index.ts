@@ -1,11 +1,8 @@
 import type { ModuleName } from '@inverter-network/abis'
 import { getModuleData } from '@inverter-network/abis'
 import { getContract } from 'viem'
-import type { Hex } from 'viem'
 import prepareFunction from './prepareFunction'
-import { Extras } from '../types/base'
-import { PopPublicClient, PopWalletClient } from '../types'
-import { InverterSDK } from '../InverterSDK'
+import { GetModuleParams, PopWalletClient } from '../types'
 
 export default function getModule<
   N extends ModuleName,
@@ -17,14 +14,7 @@ export default function getModule<
   walletClient,
   extras,
   self,
-}: {
-  name: N
-  address: Hex
-  publicClient: PopPublicClient
-  walletClient?: W
-  extras?: Extras
-  self?: InverterSDK
-}) {
+}: GetModuleParams<N, W>) {
   const mv = getModuleData(name)
 
   if (!mv) throw new Error(`Module ${name} was not found`)

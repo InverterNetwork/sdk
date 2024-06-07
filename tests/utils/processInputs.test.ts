@@ -4,7 +4,7 @@ import processInputs from '../../src/utils/processInputs'
 import { getTestConnectors } from '../testHelpers/getTestConnectors'
 import { TOKEN_DATA_ABI } from '../../src/utils/constants'
 import { FormattedAbiParameter } from '../../src'
-import { InverterSDK } from '../../src/InverterSDK'
+import { Inverter } from '../../src/Inverter'
 import { Tag } from '@inverter-network/abis'
 
 describe('#processInputs', () => {
@@ -168,7 +168,7 @@ describe('#processInputs', () => {
           })
 
           describe('with sdk instance', () => {
-            const sdk = new InverterSDK(publicClient, walletClient)
+            const sdk = new Inverter(publicClient, walletClient)
 
             // this test case is a bit confusing:
             // it passes in the USDC contract
@@ -286,7 +286,7 @@ describe('#processInputs', () => {
           })
 
           describe('with sdk instance', () => {
-            const sdk = new InverterSDK(publicClient, walletClient)
+            const sdk = new Inverter(publicClient, walletClient)
 
             it('stores token info in cache', async () => {
               await processInputs({

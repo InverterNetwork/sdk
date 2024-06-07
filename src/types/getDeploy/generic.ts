@@ -2,7 +2,7 @@ import {
   GetModuleNameByType,
   UserFacingModuleType,
 } from '@inverter-network/abis'
-import { ORCHESTRATOR_CONFIG } from '../constants'
+import { ORCHESTRATOR_CONFIG } from '../../getDeploy/constants'
 
 // Module Types Start
 export type ModuleType = Exclude<UserFacingModuleType, 'orchestrator'>

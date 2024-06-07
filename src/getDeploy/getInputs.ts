@@ -4,7 +4,7 @@ import {
   FomrattedDeploymentParameters,
   RequestedModule,
   RequestedModules,
-} from './types'
+} from '../types'
 import formatParameters from '../utils/formatParameters'
 import { getModuleData } from '@inverter-network/abis'
 
