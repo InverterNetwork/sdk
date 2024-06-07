@@ -26,13 +26,16 @@ export default async function processInputs(params: ProcessInputsParams) {
     formattedInputs.map(async (input, index) => {
       // get the argument of the same index
       const arg = Array.isArray(args) ? args[index] : args
+
       // parse the input with the argument
-      return await parse({
+      const parsed = await parse({
         input,
         arg,
         extras,
         tagCallback: getTagCallback({ requiredAllowances, ...params }),
       })
+
+      return parsed
     })
   )
 

@@ -16,9 +16,27 @@ export default async function formatOutputs<
   Simulate extends boolean,
   T extends readonly FormattedAbiParameter[],
 >(
-  props: GetTagCallbackParams<T>
+  props: GetTagCallbackParams<T>,
+
+  stateMutability: StateMutability,
+  simulate?: Simulate
 ): Promise<GetMethodResponse<T, StateMutability, Simulate>> {
   const { formattedOutputs, res, extras } = props
+
+  if (
+    (stateMutability === 'payable' || stateMutability === 'nonpayable') &&
+    simulate === false
+  )
+    // @ts-expect-error - this is a type guard
+    return {
+      hash: res as `0x${string}`,
+      waitForTransactionReceipt: (args) =>
+        props.publicClient.waitForTransactionReceipt({
+          ...args,
+          hash: res,
+        }),
+    }
+
   // format the outputs
   const mapped = await Promise.all(
     formattedOutputs.map(async (output) => {

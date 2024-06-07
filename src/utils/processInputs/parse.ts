@@ -5,7 +5,7 @@ import { parseUnits, stringToHex } from 'viem'
 
 export const parseAny = (arg: any) => {
   try {
-    stringToHex(JSON.stringify(arg))
+    return stringToHex(JSON.stringify(arg))
   } catch {
     return '0x0'
   }

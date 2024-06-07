@@ -49,13 +49,17 @@ describe('#formatOutputs', () => {
         const res = [420690000000000n]
 
         it('applies the decimals from the `extras` param', async () => {
-          const result = (await formatOutputs({
-            formattedOutputs,
-            res,
-            extras,
-            publicClient,
-            contract: mockContract,
-          })) as any
+          const result = (await formatOutputs(
+            {
+              formattedOutputs,
+              res,
+              extras,
+              publicClient,
+              contract: mockContract,
+            },
+            'pure',
+            false
+          )) as any
 
           expect(result).toEqual('42069')
         })

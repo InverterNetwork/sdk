@@ -1,5 +1,13 @@
 import { AbiStateMutability } from 'abitype'
 import { FormattedParametersToPrimitiveType } from './parameter'
+import { TransactionReceipt, WaitForTransactionReceiptParameters } from 'viem'
+
+export type NonSimulateWriteReturn = {
+  hash: `0x${string}`
+  waitForTransactionReceipt: (
+    args?: Omit<WaitForTransactionReceiptParameters, 'hash'>
+  ) => Promise<TransactionReceipt>
+}
 
 // Decides on the arguments orders
 export type GetMethodArgs<I> =
@@ -30,5 +38,5 @@ export type GetMethodResponse<
 > = Simulate extends true
   ? InferReturn<O>
   : T extends 'payable' | 'nonpayable'
-    ? `0x${string}`
+    ? NonSimulateWriteReturn
     : InferReturn<O>
