@@ -41,7 +41,7 @@ export type GetUserOptionalArgs<
 export type GetUserArgs<T extends RequestedModules = RequestedModules> =
   Simplify<
     OmitNever<{
-      orchestrator: OrchestratorArgs
+      orchestrator?: OrchestratorArgs
       fundingManager: GetUserModuleArg<T['fundingManager']>
       authorizer: GetUserModuleArg<T['authorizer']>
       paymentProcessor: GetUserModuleArg<T['paymentProcessor']>

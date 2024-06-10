@@ -16,6 +16,7 @@ import processInputs from '../utils/processInputs'
 import formatParameters from '../utils/formatParameters'
 import { getValues } from '../utils'
 import { Inverter } from '../Inverter'
+import { ADDRESS_ZERO } from '../utils/constants'
 
 export default async function getRpcInteractions<T extends RequestedModules>(
   publicClient: PublicClient,
@@ -68,9 +69,17 @@ export default async function getRpcInteractions<T extends RequestedModules>(
     requestedModules: RequestedModules,
     userArgs: UserArgs
   ) => {
+    let orchestrator = userArgs?.orchestrator
+
+    if (!orchestrator?.independentUpdates)
+      orchestrator = {
+        independentUpdates: false,
+        independentUpdateAdmin: ADDRESS_ZERO,
+      }
+
     // Initialize args
     const args = {
-      orchestrator: userArgs.orchestrator,
+      orchestrator,
       fundingManager: {},
       authorizer: {},
       paymentProcessor: {},

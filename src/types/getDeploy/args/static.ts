@@ -9,17 +9,19 @@ export type EncodedArgs = {
   configData: `0x${string}`
 }
 
-export type OrchestratorArgs = {
-  independentUpdates: boolean
-  independentUpdateAdmin: `0x${string}`
-}
+export type OrchestratorArgs =
+  | {
+      independentUpdates: boolean
+      independentUpdateAdmin: `0x${string}`
+    }
+  | undefined
 
 export type ModuleArgs = {
   metadata: Metadata
 } & EncodedArgs
 
 export type ConstructedArgs = {
-  orchestrator: OrchestratorArgs
+  orchestrator: NonNullable<OrchestratorArgs>
   fundingManager: ModuleArgs
   authorizer: ModuleArgs
   paymentProcessor: ModuleArgs
@@ -29,7 +31,7 @@ export type ConstructedArgs = {
 export type UserModuleArg = Record<string, unknown>
 
 export type UserArgs = {
-  orchestrator: OrchestratorArgs
+  orchestrator?: OrchestratorArgs
   fundingManager?: UserModuleArg
   authorizer?: UserModuleArg
   paymentProcessor?: UserModuleArg

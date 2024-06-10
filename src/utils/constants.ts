@@ -94,3 +94,5 @@ export const TOKEN_DATA_ABI: Abi = [
     type: 'function',
   },
 ] as const
+
+export const ADDRESS_ZERO = '0x0000000000000000000000000000000000000000'
