@@ -6,8 +6,8 @@ import getModule from '../../src/getModule'
 describe('Should get the verion from a module', async () => {
   const { publicClient, walletClient } = getTestConnectors(),
     moduleObj = getModule({
-      name: 'Module_v1',
-      address: '0xa23D85d8FE256a8a1eE92a6d5Ec156a8a21DCdaE',
+      name: 'LM_PC_PaymentRouter_v1',
+      address: '0xDdCe84621cB7844C0D91307733F6EaC19C7f6417',
       publicClient,
       walletClient,
     })

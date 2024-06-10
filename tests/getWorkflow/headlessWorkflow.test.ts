@@ -9,7 +9,7 @@ describe('Get A Module', async () => {
   const workflow = await getWorkflow({
     publicClient,
     walletClient,
-    orchestratorAddress: '0x8a1897E6Fa0236F68f86240C391D2a7bED3Cf85c',
+    orchestratorAddress: '0xBc986B80A3c6b274CEd09db5A3b0Ac76a4046968',
   })
 
   it('Should Log The Compiled Workflow Object', () => {

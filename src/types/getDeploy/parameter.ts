@@ -1,5 +1,5 @@
 import { ModuleName } from '@inverter-network/abis'
-import { FormatParameters, GetDeploymentInputs } from '../../types'
+import { FormatParameters, GetDeploymentInputs } from '../..'
 
 export type ConfigDataParameters<N extends ModuleName> = {
   [K in GetDeploymentInputs<N>['configData'][number]['name']]: Extract<

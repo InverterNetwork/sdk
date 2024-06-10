@@ -2,12 +2,12 @@ import { PublicClient, ReadContractParameters } from 'viem'
 import { TOKEN_DATA_ABI } from '../constants'
 import { Extras, FormattedAbiParameter } from '../../types'
 import { Tag } from '@inverter-network/abis'
-import { InverterSDK } from '../../InverterSDK'
+import { Inverter } from '../../Inverter'
 import { DecimalsTagReturn } from '../../types/tag'
 import { Split } from 'type-fest-4'
 
 const cacheToken = (
-  self: InverterSDK,
+  self: Inverter,
   tag: Tag,
   tokenAddress: `0x${string}`,
   moduleAddress: `0x${string}`,
@@ -36,7 +36,7 @@ export default async function ({
   tag?: Tag
   publicClient: PublicClient
   contract?: any
-  self?: InverterSDK
+  self?: Inverter
 }): Promise<DecimalsTagReturn> {
   if (!tag) throw new Error('No decimals tag provided')
 

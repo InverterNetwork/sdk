@@ -1,17 +1,20 @@
 import { getModuleData, ModuleName } from '@inverter-network/abis'
 import { PublicClient, WalletClient, getContract } from 'viem'
 import { METADATA_URL, DEPLOYMENTS_URL } from './constants'
+import { TOKEN_DATA_ABI } from '../utils/constants'
+import { UserModuleArg } from '..'
+
+type DeploymentResponse = {
+  orchestratorFactory: Record<string, `0x${string}`>
+}
 
 // retrieves the deployment function via viem
 export const getViemMethods = async (
   walletClient: WalletClient,
   publicClient: PublicClient
 ) => {
-  // const {
-  //   data: { orchestratorFactory },
-  // } = await fetch(DEPLOYMENTS_URL)
   const response = await fetch(DEPLOYMENTS_URL)
-  const { orchestratorFactory } = (await response.json()) as any
+  const { orchestratorFactory } = <DeploymentResponse>await response.json()
 
   const { abi } = getModuleData('OrchestratorFactory_v1')
 
@@ -47,4 +50,25 @@ export const assembleMetadata = <N extends ModuleName>(name: N) => {
     url: METADATA_URL,
     ...majorMinorVersion,
   }
+}
+
+export const getDefaultToken = async (
+  publicClient: PublicClient,
+  fundingManager: UserModuleArg
+) => {
+  const { readContract } = publicClient
+
+  let tokenAddress: `0x${string}`
+  if (fundingManager['acceptedToken']) {
+    tokenAddress = fundingManager['acceptedToken'] as `0x${string}`
+  } else if (fundingManager['orchestratorTokenAddress']) {
+    tokenAddress = fundingManager['orchestratorTokenAddress'] as `0x${string}`
+  }
+
+  const decimals = <number>await readContract({
+    address: tokenAddress!,
+    functionName: 'decimals',
+    abi: TOKEN_DATA_ABI,
+  })
+  return { defaultToken: tokenAddress!, decimals }
 }

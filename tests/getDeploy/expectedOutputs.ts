@@ -1,21 +1,7 @@
+import { ORCHESTRATOR_CONFIG } from '../../src/getDeploy/constants'
+
 export const expectedBaseInputSchema = {
-  orchestrator: {
-    name: 'Orchestrator_v1',
-    inputs: [
-      {
-        name: 'owner',
-        type: 'address',
-        jsType: '0xstring',
-        description: 'The owner address of the workflow',
-      },
-      {
-        name: 'token',
-        type: 'address',
-        jsType: '0xstring',
-        description: 'The payment token associated with the workflow',
-      },
-    ],
-  },
+  orchestrator: ORCHESTRATOR_CONFIG,
 
   fundingManager: {
     name: 'FM_Rebasing_v1',
@@ -34,16 +20,10 @@ export const expectedBaseInputSchema = {
     name: 'AUT_Roles_v1',
     inputs: [
       {
-        name: 'initialOwner',
+        name: 'initialAdmin',
         type: 'address',
         jsType: '0xstring',
-        description: 'The initial owner of the workflow',
-      },
-      {
-        name: 'initialManager',
-        type: 'address',
-        jsType: '0xstring',
-        description: 'The initial manager of the workflow',
+        description: 'The initial admin of the workflow',
       },
     ],
   },

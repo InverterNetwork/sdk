@@ -1,6 +1,6 @@
 import { PublicClient } from 'viem'
 import { FormatOutputsBaseParams } from '.'
-import { InverterSDK } from '../../InverterSDK'
+import { Inverter } from '../../Inverter'
 import {
   DecimalsTagReturn,
   FormattedAbiParameter,
@@ -14,7 +14,7 @@ export type GetTagCallbackParams<
 > = {
   publicClient: PublicClient
   contract?: any
-  self?: InverterSDK
+  self?: Inverter
 } & FormatOutputsBaseParams<T>
 
 export default function getTagCallback({
