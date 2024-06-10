@@ -2,16 +2,18 @@ export const ORCHESTRATOR_CONFIG = {
     name: 'Orchestrator_v1',
     inputs: [
       {
-        name: 'owner',
-        type: 'address',
-        jsType: '0xstring',
-        description: 'The owner address of the workflow',
+        name: 'indepedentUpdates',
+        type: 'bool',
+        jsType: 'boolean',
+        description:
+          'Default is false - Whether this workflow’s updates to Orchestrator and Modules shall be self-governed.',
       },
       {
-        name: 'token',
+        name: 'independentUpdateAdmin',
         type: 'address',
         jsType: '0xstring',
-        description: 'The payment token associated with the workflow',
+        description:
+          'Should only be set if independentUpdates is true  - The address that will be responsible for updates to Orchestrator and Modules of the workflow.',
       },
     ],
   } as const,

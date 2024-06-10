@@ -10,8 +10,8 @@ export type EncodedArgs = {
 }
 
 export type OrchestratorArgs = {
-  owner: `0x${string}`
-  token: `0x${string}`
+  independentUpdates: boolean
+  independentUpdateAdmin: `0x${string}`
 }
 
 export type ModuleArgs = {

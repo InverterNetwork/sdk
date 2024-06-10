@@ -17,7 +17,7 @@ export const getModuleSchema = <
   name: T
   inputs: Inputs
 } => {
-  const { deploymentInputs } = getModuleData(name as any)
+  const { deploymentInputs } = getModuleData(name as RequestedModule)
 
   const { configData } = deploymentInputs
 

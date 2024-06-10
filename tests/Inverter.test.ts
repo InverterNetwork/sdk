@@ -81,15 +81,14 @@ describe('Inverter', () => {
       paymentProcessor: 'PP_Simple_v1'
     }> = {
       orchestrator: {
-        owner: '0x86fda565A5E96f4232f8136141C92Fd79F2BE950',
-        token: '0x86fda565A5E96f4232f8136141C92Fd79F2BE950',
+        independentUpdates: true,
+        independentUpdateAdmin: '0x86fda565A5E96f4232f8136141C92Fd79F2BE950',
       },
       fundingManager: {
         orchestratorTokenAddress: '0x5eb14c2e7D0cD925327d74ae4ce3fC692ff8ABEF',
       },
       authorizer: {
-        initialOwner: '0x86fda565A5E96f4232f8136141C92Fd79F2BE950',
-        initialManager: '0x86fda565A5E96f4232f8136141C92Fd79F2BE950',
+        initialAdmin: '0x86fda565A5E96f4232f8136141C92Fd79F2BE950',
       },
     }
 
