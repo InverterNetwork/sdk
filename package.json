@@ -1,6 +1,6 @@
 {
   "name": "@inverter-network/sdk",
-  "version": "0.1.0-alpha.14",
+  "version": "0.1.0-alpha.15",
   "description": "INVERTER typescript SDK",
   "main": "./dist/cjs/index.js",
   "module": "./dist/index.js",
