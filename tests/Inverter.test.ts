@@ -19,12 +19,12 @@ describe('Inverter', () => {
   })
 
   describe('operations', () => {
-    const orchestratorAddress = '0x614aFB457ad58f15ED7b32615417c628e30C0c65'
+    const orchestratorAddress = '0xBc986B80A3c6b274CEd09db5A3b0Ac76a4046968'
     const workFlowOrientation = {
       authorizer: 'AUT_Roles_v1',
-      fundingManager: 'FM_Rebasing_v1',
-      paymentProcessor: 'PP_Simple_v1',
-      optionalModules: ['LM_PC_Bounties_v1'],
+      fundingManager: 'FM_BC_Restricted_Bancor_Redeeming_VirtualSupply_v1',
+      paymentProcessor: 'PP_Streaming_v1',
+      optionalModules: ['LM_PC_PaymentRouter_v1'],
     } satisfies WorkflowOrientation
 
     describe('#getWorkflow', () => {
@@ -59,7 +59,7 @@ describe('Inverter', () => {
         describe('#runBountyFunction', () => {
           it('runs one of the read functions of the bounty manager', async () => {
             const result =
-              await workflow.optionalModule.LM_PC_Bounties_v1.read.BOUNTY_ISSUER_ROLE.run()
+              await workflow.optionalModule.LM_PC_PaymentRouter_v1.read.title.run()
 
             expect(result).toBeString()
           })
@@ -85,7 +85,7 @@ describe('Inverter', () => {
         independentUpdateAdmin: '0x86fda565A5E96f4232f8136141C92Fd79F2BE950',
       },
       fundingManager: {
-        orchestratorTokenAddress: '0x5eb14c2e7D0cD925327d74ae4ce3fC692ff8ABEF',
+        orchestratorTokenAddress: '0x6ce9fe09c5fa9c43fd0206f4c33a03cb11d1a179',
       },
       authorizer: {
         initialAdmin: '0x86fda565A5E96f4232f8136141C92Fd79F2BE950',

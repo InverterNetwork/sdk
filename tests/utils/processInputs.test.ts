@@ -9,13 +9,13 @@ import { Tag } from '@inverter-network/abis'
 
 describe('#processInputs', () => {
   const { publicClient, walletClient } = getTestConnectors()
-  const USDC_SEPOLIA = '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238' // USDC has 6 decimals
-  const mockAddress = '0x80f8493761a18d29fd77c131865f9cf62b15e62a'
+  const USDC_SEPOLIA = '0x5fd84259d66Cd46123540766Be93DFE6D43130D7' // USDC has 6 decimals
+  const mockAddress = '0xa2c6191878a2ad73047F6a37442141FF2B3cAbBA'
   const mockAbi = [
     {
       constant: true,
       inputs: [],
-      name: 'tokenAddress',
+      name: 'token',
       outputs: [
         {
           name: '',
@@ -81,7 +81,7 @@ describe('#processInputs', () => {
               expect(requiredAllowances).toHaveLength(1)
               expect(requiredAllowances[0]).toEqual({
                 amount: 420690000000000n,
-                spender: '0x80f8493761a18d29fd77c131865f9cf62b15e62a',
+                spender: '0xa2c6191878a2ad73047F6a37442141FF2B3cAbBA',
                 owner: walletClient.account.address,
                 token: USDC_SEPOLIA,
               })
@@ -107,12 +107,12 @@ describe('#processInputs', () => {
         }
 
         describe('with :indirect', () => {
-          const mockAddress = '0x80f8493761a18d29fd77c131865f9cf62b15e62a' // self-deployed mock contract
+          const mockAddress = '0xa2c6191878a2ad73047F6a37442141FF2B3cAbBA' // self-deployed mock contract
           const mockAbi = [
             {
               constant: true,
               inputs: [],
-              name: 'tokenAddress',
+              name: 'token',
               outputs: [
                 {
                   name: '',
@@ -125,9 +125,7 @@ describe('#processInputs', () => {
             },
           ]
           const mockContract = { address: mockAddress, abi: mockAbi }
-          const tags = [
-            'decimals:contract:indirect:tokenAddress',
-          ] satisfies Tag[] // should resolve to usdc on sepolia w/ decimals
+          const tags = ['decimals:contract:indirect:token'] satisfies Tag[] // should resolve to usdc on sepolia w/ decimals
           const formattedInputs = [
             { ...sharedFormattedInput, tags },
           ] as FormattedAbiParameter[]
@@ -141,7 +139,7 @@ describe('#processInputs', () => {
               walletClient,
               contract: mockContract,
             })
-            expect(processedInputs[0]).toEqual(42069000000n)
+            expect(processedInputs[0]).toEqual(42069000000000000000000n)
           })
         })
 

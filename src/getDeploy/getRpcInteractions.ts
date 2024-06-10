@@ -11,19 +11,18 @@ import {
   UserModuleArg,
   UserArgs,
 } from '../types'
-import { assembleMetadata, getViemMethods } from './utils'
+import { assembleMetadata, getDefaultToken, getViemMethods } from './utils'
 import processInputs from '../utils/processInputs'
 import formatParameters from '../utils/formatParameters'
 import { getValues } from '../utils'
 import { Inverter } from '../Inverter'
-import { TOKEN_DATA_ABI } from '../utils/constants'
 
-export default async <T extends RequestedModules>(
+export default async function getRpcInteractions<T extends RequestedModules>(
   publicClient: PublicClient,
   walletClient: PopWalletClient,
   requestedModules: T,
   self?: Inverter
-) => {
+) {
   let extras: Extras
 
   const getEncodedArgs = async (
@@ -65,24 +64,6 @@ export default async <T extends RequestedModules>(
     return moduleArgs
   }
 
-  const getDefaultToken = async (fundingManager: UserModuleArg) => {
-    const { readContract } = publicClient
-
-    let tokenAddress: `0x${string}`
-    if (fundingManager['acceptedToken']) {
-      tokenAddress = fundingManager['acceptedToken'] as `0x${string}`
-    } else if (fundingManager['orchestratorTokenAddress']) {
-      tokenAddress = fundingManager['orchestratorTokenAddress'] as `0x${string}`
-    }
-
-    const decimals = <number>await readContract({
-      address: tokenAddress!,
-      functionName: 'decimals',
-      abi: TOKEN_DATA_ABI,
-    })
-    return { defaultToken: tokenAddress!, decimals }
-  }
-
   const constructArgs = async (
     requestedModules: RequestedModules,
     userArgs: UserArgs
@@ -96,9 +77,8 @@ export default async <T extends RequestedModules>(
       optionalModules: [],
     } as unknown as ConstructedArgs
 
-    if (userArgs.fundingManager) {
-      extras = await getDefaultToken(userArgs!.fundingManager)
-    }
+    if (userArgs.fundingManager)
+      extras = await getDefaultToken(publicClient, userArgs!.fundingManager)
 
     const mandatoryModuleArgs = await Promise.all(
       MANDATORY_MODULES.map((moduleType) =>
