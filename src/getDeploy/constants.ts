@@ -2,7 +2,7 @@ export const ORCHESTRATOR_CONFIG = {
     name: 'Orchestrator_v1',
     inputs: [
       {
-        name: 'indepedentUpdates',
+        name: 'independentUpdates',
         type: 'bool',
         jsType: 'boolean',
         description:
