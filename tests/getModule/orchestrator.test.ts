@@ -7,7 +7,7 @@ describe('Should get the verion from a module', async () => {
   const { publicClient, walletClient } = getTestConnectors(),
     moduleObj = getModule({
       name: 'Orchestrator_v1',
-      address: '0x4B3a97fE6588b6E2731a4939aA633dc4A86c0636',
+      address: '0xBc986B80A3c6b274CEd09db5A3b0Ac76a4046968',
       publicClient,
       walletClient,
     })

@@ -9,7 +9,7 @@ import { Tag } from '@inverter-network/abis'
 
 describe('#processInputs', () => {
   const { publicClient, walletClient } = getTestConnectors()
-  const USDC_SEPOLIA = '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238' // USDC has 6 decimals
+  const USDC_SEPOLIA = '0x5fd84259d66Cd46123540766Be93DFE6D43130D7' // USDC has 6 decimals
   const mockAddress = '0x80f8493761a18d29fd77c131865f9cf62b15e62a'
   const mockAbi = [
     {

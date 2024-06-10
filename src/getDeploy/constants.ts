@@ -25,4 +25,4 @@ export const ORCHESTRATOR_CONFIG = {
   DEPLOYMENTS_URL =
     'https://raw.githubusercontent.com/InverterNetwork/deployments/main/deployments.json' as const,
   METADATA_URL = 'https://github.com/InverterNetwork/inverter-contracts',
-  USDC_SEPOLIA = '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238'
+  USDC_SEPOLIA = '0x5fd84259d66Cd46123540766Be93DFE6D43130D7'

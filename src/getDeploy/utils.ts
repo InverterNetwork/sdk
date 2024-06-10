@@ -7,16 +7,14 @@ export const getViemMethods = async (
   walletClient: WalletClient,
   publicClient: PublicClient
 ) => {
-  // const {
-  //   data: { orchestratorFactory },
-  // } = await fetch(DEPLOYMENTS_URL)
-  const response = await fetch(DEPLOYMENTS_URL)
-  const { orchestratorFactory } = (await response.json()) as any
+  // const response = await fetch(DEPLOYMENTS_URL)
+  // const { orchestratorFactory } = (await response.json()) as any
 
   const { abi } = getModuleData('OrchestratorFactory_v1')
 
   const { write, simulate } = getContract({
-    address: orchestratorFactory[publicClient!.chain!.id],
+    address: '0x61a4ABC15311EE7F2fe02b5F5b2e8B15c1E907be',
+    // address: orchestratorFactory[publicClient!.chain!.id],
     abi,
     client: {
       wallet: walletClient,
