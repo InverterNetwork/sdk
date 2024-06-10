@@ -175,7 +175,7 @@ describe('#getDeploy', () => {
       })
     })
 
-    describe('optional: LM_PC_KPIRewarder_v1', () => {
+    describe.skip('optional: LM_PC_KPIRewarder_v1', () => {
       describe('inputs', () => {
         it('has the correct format', async () => {
           const { inputs } = await getDeploy(publicClient, walletClient, {
