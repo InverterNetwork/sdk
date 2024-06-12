@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.1](https://github.com/InverterNetwork/sdk/compare/v0.1.0...v0.1.1) (2024-06-12)
+
+
+### Bug Fixes
+
+* un ordered tuple args ([b0710e6](https://github.com/InverterNetwork/sdk/commit/b0710e615247543ad7d22800adda8f6b340e0a3a))
+
 ## [0.1.0](https://github.com/InverterNetwork/sdk/compare/v0.1.0-beta.0...v0.1.0) (2024-06-11)
 
 ### [0.0.8](https://github.com/InverterNetwork/sdk/compare/v0.0.7...v0.0.8) (2024-04-29)
