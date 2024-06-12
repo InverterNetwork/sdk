@@ -47,8 +47,10 @@ export default async function getRpcInteractions<T extends RequestedModules>(
       extras,
     })) as any
 
+    const encodedArgs = encodeAbiParameters(configData, processedInputs)
+
     // Return encodedArgs
-    return encodeAbiParameters(configData, processedInputs)
+    return encodedArgs
   }
 
   const assembleModuleArgs = async (
