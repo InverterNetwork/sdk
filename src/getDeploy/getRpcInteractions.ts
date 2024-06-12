@@ -14,7 +14,6 @@ import {
 import { assembleMetadata, getDefaultToken, getViemMethods } from './utils'
 import processInputs from '../utils/processInputs'
 import formatParameters from '../utils/formatParameters'
-import { getValues } from '../utils'
 import { Inverter } from '../Inverter'
 import { ADDRESS_ZERO } from '../utils/constants'
 
@@ -30,9 +29,12 @@ export default async function getRpcInteractions<T extends RequestedModules>(
     { configData }: GetDeploymentInputs,
     userModuleArg?: UserModuleArg
   ) => {
+    // we need to make sure here formatted outputs array order mathces with the args order
     const formattedInputs = formatParameters(configData)
 
-    const args = userModuleArg ? getValues(userModuleArg) : '0x00'
+    const args = userModuleArg
+      ? formattedInputs.map((input) => userModuleArg?.[input.name])
+      : '0x00'
 
     // MG NOTE: Parse inputs respects the array order and struct structure
 
