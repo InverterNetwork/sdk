@@ -45,7 +45,7 @@ export default async function ({
 
   const [, source, location, name] = tag?.split(':') as Split<Tag, ':'>
   const { readContract } = publicClient
-  const cachedToken = self?.tokenCache.get(`${contract.address}:${tag}`)
+  const cachedToken = self?.tokenCache.get(`${contract?.address}:${tag}`)
   // INTERNAL CASE
   if (!source) {
     decimals = extras?.decimals
@@ -80,7 +80,7 @@ export default async function ({
             functionName: 'decimals',
           })
           if (self)
-            cacheToken(self, tag, tokenAddress, contract.address, decimals)
+            cacheToken(self, tag, tokenAddress, contract?.address, decimals)
         }
         break
     }
@@ -94,7 +94,7 @@ export default async function ({
           decimals = cachedDecimals
         } else {
           tokenAddress = <`0x${string}`>await readContract({
-            address: contract.address,
+            address: contract?.address,
             abi: contract.abi,
             functionName: name,
           } as ReadContractParameters)
@@ -104,7 +104,7 @@ export default async function ({
             functionName: 'decimals',
           })
           if (self)
-            cacheToken(self, tag, tokenAddress, contract.address, decimals)
+            cacheToken(self, tag, tokenAddress, contract?.address, decimals)
         }
         break
       case 'exact':
@@ -112,7 +112,7 @@ export default async function ({
           const { decimals: cachedDecimals } = cachedToken
           decimals = cachedDecimals
         } else {
-          tokenAddress = contract.address
+          tokenAddress = contract?.address
           if (!tokenAddress) throw new Error('No token address found')
           decimals = <number>await readContract({
             address: tokenAddress,
@@ -120,7 +120,7 @@ export default async function ({
             functionName: name,
           })
           if (self) {
-            cacheToken(self, tag, tokenAddress, contract.address, decimals)
+            cacheToken(self, tag, tokenAddress, contract?.address, decimals)
           }
         }
 

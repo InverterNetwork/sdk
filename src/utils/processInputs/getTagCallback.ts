@@ -45,7 +45,7 @@ export default function getTagCallback({
           await tagProcessor.approval({
             transferAmount: parsedAmount,
             publicClient,
-            spenderAddress: contract.address,
+            spenderAddress: contract?.address,
             tokenAddress: decimalsRes.tokenAddress,
             userAddress: walletClient?.account?.address,
           })

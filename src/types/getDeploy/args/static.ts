@@ -11,8 +11,12 @@ export type EncodedArgs = {
 
 export type OrchestratorArgs =
   | {
-      independentUpdates: boolean
+      independentUpdates: true
       independentUpdateAdmin: `0x${string}`
+    }
+  | {
+      independentUpdates: false
+      independentUpdateAdmin: '0x0000000000000000000000000000000000000000'
     }
   | undefined
 
