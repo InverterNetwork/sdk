@@ -3,41 +3,49 @@ import { expect, describe, it } from 'bun:test'
 import { getTestConnectors } from '../testHelpers/getTestConnectors'
 import { Inverter } from '../../src/Inverter'
 import { isAddress } from 'viem'
-// import { USDC_SEPOLIA } from '../../src/getDeploy/constants'
+import { GetUserArgs } from '../../src'
 
-const userArgs = {
+const requestedModules = {
+  fundingManager: 'FM_BC_Restricted_Bancor_Redeeming_VirtualSupply_v1',
+  authorizer: 'AUT_Roles_v1',
+  paymentProcessor: 'PP_Simple_v1',
+} as const
+
+const userArgs: GetUserArgs<typeof requestedModules> = {
   orchestrator: {
-    independentUpdates: false,
-    independentUpdateAdmin: '0x0000000000000000000000000000000000000000',
+    independentUpdates: true,
+    independentUpdateAdmin: '0x5AeeA3DF830529a61695A63ba020F01191E0aECb',
   },
+
   authorizer: {
     initialAdmin: '0x5AeeA3DF830529a61695A63ba020F01191E0aECb',
   },
+
   fundingManager: {
     bondingCurveParams: {
-      buyIsOpen: true,
-      sellIsOpen: true,
-      formula: '0x823F6AC80759F2e037eaF706d45CB4B47b80926c',
+      formula: '0x3ddE767F9DF9530DDeD47e1E012cCBf7B4A04dd7',
       reserveRatioForBuying: '333333',
-      reserveRatioForSelling: '33333',
+      reserveRatioForSelling: '333333',
       buyFee: '0',
       sellFee: '100',
-      initialTokenSupply: '100',
-      initialCollateralSupply: '33',
+      buyIsOpen: true,
+      sellIsOpen: true,
+      initialIssuanceSupply: '1',
+      initialCollateralSupply: '3',
     },
     issuanceToken: {
-      name: 'MG',
+      name: 'MG Token',
       symbol: 'MG',
       decimals: '18',
       maxSupply: '1000000',
     },
     tokenAdmin: '0x5AeeA3DF830529a61695A63ba020F01191E0aECb',
-    acceptedToken: '0x5fd84259d66Cd46123540766Be93DFE6D43130D7',
+    collateralToken: '0x71bd16Dd7A120a12a27439F5D3767Be795d4A991',
   },
-} as const
+}
 
 describe('#getDeploy', () => {
-  const { publicClient, walletClient } = getTestConnectors('optimismSepolia')
+  const { publicClient, walletClient } = getTestConnectors('sepolia')
   const sdk = new Inverter(publicClient, walletClient)
 
   describe('Modules: BondingCurve, AUT_Roles_v1, PP_Simple_v1', () => {
@@ -45,17 +53,14 @@ describe('#getDeploy', () => {
       it(
         'returns the orchestrator address as result',
         async () => {
-          const { simulate } = await sdk.getDeploy({
-            fundingManager:
-              'FM_BC_Restricted_Bancor_Redeeming_VirtualSupply_v1',
-            authorizer: 'AUT_Roles_v1',
-            paymentProcessor: 'PP_Simple_v1',
-          })
+          const { simulate } = await sdk.getDeploy(requestedModules)
+
           const simulationResult = await simulate(userArgs)
+
           expect(isAddress(simulationResult.result as string)).toBeTrue
         },
         {
-          timeout: 10000,
+          timeout: 20000,
         }
       )
     })

@@ -15,11 +15,13 @@ export const getViemMethods = async (
 ) => {
   const response = await fetch(DEPLOYMENTS_URL)
   const { orchestratorFactory } = <DeploymentResponse>await response.json()
+  const chainId = publicClient.chain!.id
+  const address = orchestratorFactory[chainId]
 
   const { abi } = getModuleData('OrchestratorFactory_v1')
 
   const { write, simulate } = getContract({
-    address: orchestratorFactory[publicClient!.chain!.id],
+    address,
     abi,
     client: {
       wallet: walletClient,
@@ -58,12 +60,8 @@ export const getDefaultToken = async (
 ) => {
   const { readContract } = publicClient
 
-  let tokenAddress: `0x${string}`
-  if (fundingManager['acceptedToken']) {
-    tokenAddress = fundingManager['acceptedToken'] as `0x${string}`
-  } else if (fundingManager['orchestratorTokenAddress']) {
-    tokenAddress = fundingManager['orchestratorTokenAddress'] as `0x${string}`
-  }
+  const tokenAddress = (fundingManager['collateralToken'] ??
+    fundingManager['orchestratorTokenAddress']) as `0x${string}`
 
   const decimals = <number>await readContract({
     address: tokenAddress!,

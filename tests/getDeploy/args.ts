@@ -36,10 +36,10 @@ export const bcArgs = {
     sellFee: '100',
     buyIsOpen: true,
     sellIsOpen: true,
-    initialTokenSupply: '100',
+    initialIssuanceSupply: '100',
     initialCollateralSupply: '33',
   },
-  acceptedToken: USDC_SEPOLIA, //USDC
+  collateralToken: USDC_SEPOLIA, //USDC
 } as const
 
 export const kpiArgs = {

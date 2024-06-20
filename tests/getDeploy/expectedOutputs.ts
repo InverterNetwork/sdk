@@ -52,7 +52,8 @@ export const expected_FM_BC_Restricted_BancorInputSchema = {
         {
           name: 'decimals',
           type: 'uint8',
-          description: 'The decimals used within the issuance token',
+          description:
+            'The decimals used within the issuance token ( should be bigger or equal to 7 and bigger or equel to the collateral token decimals )',
           jsType: 'numberString',
         },
         {
@@ -122,17 +123,15 @@ export const expected_FM_BC_Restricted_BancorInputSchema = {
           jsType: 'boolean',
         },
         {
-          name: 'initialTokenSupply',
+          name: 'initialIssuanceSupply',
           type: 'uint256',
           description: 'The initial virtual issuance token supply',
-          tags: ['decimals:params:exact:decimals'],
           jsType: 'numberString',
         },
         {
           name: 'initialCollateralSupply',
           type: 'uint256',
           description: 'The initial virtual collateral token supply',
-          tags: ['decimals:params:indirect:acceptedToken'],
           jsType: 'numberString',
         },
       ],
@@ -140,7 +139,7 @@ export const expected_FM_BC_Restricted_BancorInputSchema = {
       type: 'tuple',
     },
     {
-      name: 'acceptedToken',
+      name: 'collateralToken',
       type: 'address',
       description:
         'The address of the token that will be deposited to the funding manager',
