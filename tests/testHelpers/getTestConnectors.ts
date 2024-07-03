@@ -13,14 +13,14 @@ export const getTestConnectors = (chainKey: ChainKey = 'optimismSepolia') => {
   // Public Client: This is used to read from the blockchain.
   const publicClient = createPublicClient({
     chain,
-    transport: http("https://optimism-sepolia.infura.io/v3/f68c18ab72e848bf8a2f12e25d5b4097"),
+    transport: http(),
   })
 
   // Wallet Client used to write data to the blockchain
   const walletClient = createWalletClient({
     account: privateKeyToAccount(privKey),
     chain,
-    transport: http("https://optimism-sepolia.infura.io/v3/f68c18ab72e848bf8a2f12e25d5b4097"),
+    transport: http(),
   })
 
   return {

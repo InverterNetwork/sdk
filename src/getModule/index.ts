@@ -51,7 +51,8 @@ export default function getModule<
       extras,
       // We need to pass simulate undefined to not override the default inputs to txHash
       undefined,
-      self
+      self,
+      walletClient
     ),
     // Prepare the simulate functions
     simulate = prepareFunction(
@@ -61,7 +62,8 @@ export default function getModule<
       contract,
       extras,
       true,
-      self
+      self,
+      walletClient
     ),
     // Prepare the write functions if the walletClient is valid
     write = !!walletClient
@@ -72,7 +74,8 @@ export default function getModule<
           contract,
           extras,
           false,
-          self
+          self,
+          walletClient
         )
       : undefined
 

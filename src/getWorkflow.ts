@@ -106,6 +106,7 @@ export default async function getWorkflow<
         publicClient,
         walletClient,
         extras: {
+          defaultToken: erc20Address,
           decimals: erc20Decimals,
         },
         self,
