@@ -18,7 +18,7 @@ const cacheToken = (props: CacheTokenProps) => {
   const key = `${props.moduleAddress}:${props.tag}`
   const value = {
     address: props?.tokenAddress,
-    decimals,
+    decimals: props.decimals,
   }
   props.self.tokenCache.set(key, value)
 }
@@ -99,7 +99,7 @@ export default async function decimals({
         tokenAddress = <`0x${string}` | undefined>await contract?.read?.[name]()
 
         if (!tokenAddress)
-          throw new Error('No token address found @ contract:indirect:name')
+          throw new Error(`No token address found @ contract:indirect:${name}`)
 
         console.log('DECIMALS TAG TOKEN ADDRESS:', tokenAddress)
 

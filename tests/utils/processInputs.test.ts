@@ -6,6 +6,7 @@ import { ERC20_ABI } from '../../src/utils/constants'
 import { FormattedAbiParameter } from '../../src'
 import { Inverter } from '../../src/Inverter'
 import { Tag } from '@inverter-network/abis'
+import { testToken } from '../testHelpers/getTestArgs'
 
 describe('#processInputs', () => {
   const { publicClient, walletClient } = getTestConnectors()
@@ -93,7 +94,7 @@ describe('#processInputs', () => {
         })
       })
 
-      describe('with :external', () => {
+      describe('with :contract', () => {
         const sharedFormattedInput = {
           internalType: 'uint256',
           name: 'mockInputName',
@@ -107,25 +108,10 @@ describe('#processInputs', () => {
         }
 
         describe('with :indirect', () => {
-          const mockAddress = '0xa2c6191878a2ad73047F6a37442141FF2B3cAbBA' // self-deployed mock contract
-          const mockAbi = [
-            {
-              constant: true,
-              inputs: [],
-              name: 'token',
-              outputs: [
-                {
-                  name: '',
-                  type: 'address',
-                },
-              ],
-              payable: false,
-              stateMutability: 'view',
-              type: 'function',
-            },
-          ]
-          const mockContract = { address: mockAddress, abi: mockAbi }
-          const tags = ['decimals:contract:indirect:token'] satisfies Tag[] // should resolve to usdc on sepolia w/ decimals
+          const mockContract = { read: { issuanceToken: () => testToken } }
+          const tags = [
+            'decimals:contract:indirect:issuanceToken',
+          ] satisfies Tag[] // should resolve to usdc on sepolia w/ decimals
           const formattedInputs = [
             { ...sharedFormattedInput, tags },
           ] as FormattedAbiParameter[]
