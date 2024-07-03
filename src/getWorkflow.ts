@@ -8,7 +8,7 @@ import {
   Workflow,
   GetWorkflowParams,
 } from './types'
-import { TOKEN_DATA_ABI } from './utils/constants'
+import { ERC20_ABI } from './utils/constants'
 
 export default async function getWorkflow<
   O extends WorkflowOrientation | undefined = undefined,
@@ -38,17 +38,17 @@ export default async function getWorkflow<
   // 2. gather extras
   const erc20Address = <Hex>await readContract({
       address: fundingManagerAddress,
-      abi: TOKEN_DATA_ABI,
+      abi: ERC20_ABI,
       functionName: 'token',
     }),
     erc20Decimals = <number>await readContract({
       address: erc20Address,
-      abi: TOKEN_DATA_ABI,
+      abi: ERC20_ABI,
       functionName: 'decimals',
     }),
     erc20Symbol = <string>await readContract({
       address: erc20Address,
-      abi: TOKEN_DATA_ABI,
+      abi: ERC20_ABI,
       functionName: 'symbol',
     }),
     erc20Module = getModule({

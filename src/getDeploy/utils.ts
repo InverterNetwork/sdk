@@ -1,7 +1,7 @@
 import { getModuleData, ModuleName } from '@inverter-network/abis'
 import { PublicClient, WalletClient, getContract } from 'viem'
 import { METADATA_URL, DEPLOYMENTS_URL } from './constants'
-import { TOKEN_DATA_ABI } from '../utils/constants'
+import { ERC20_ABI } from '../utils/constants'
 import { UserModuleArg } from '..'
 
 type DeploymentResponse = {
@@ -66,7 +66,7 @@ export const getDefaultToken = async (
   const decimals = <number>await readContract({
     address: tokenAddress!,
     functionName: 'decimals',
-    abi: TOKEN_DATA_ABI,
+    abi: ERC20_ABI,
   })
   return { defaultToken: tokenAddress!, decimals }
 }

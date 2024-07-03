@@ -1,6 +1,6 @@
 import { Abi } from 'abitype'
 
-export const TOKEN_DATA_ABI: Abi = [
+export const ERC20_ABI: Abi = [
   {
     inputs: [],
     name: 'decimals',

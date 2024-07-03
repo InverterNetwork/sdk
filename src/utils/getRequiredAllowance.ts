@@ -1,5 +1,5 @@
 import { PublicClient } from 'viem'
-import { TOKEN_DATA_ABI } from './constants'
+import { ERC20_ABI } from './constants'
 
 export type GetRequiredAllowanceProps = {
   transferAmount: bigint
@@ -23,7 +23,7 @@ export default async function getRequiredAllowance({
 
   const currentAllowance = <bigint>await publicClient.readContract({
     address: tokenAddress,
-    abi: TOKEN_DATA_ABI,
+    abi: ERC20_ABI,
     functionName: 'allowance',
     args: [userAddress, spenderAddress],
   })

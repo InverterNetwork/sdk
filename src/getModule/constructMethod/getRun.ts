@@ -8,7 +8,7 @@ import {
 } from '../../types'
 import formatOutputs from '../formatOutputs'
 import processInputs from '../../utils/processInputs'
-import { TOKEN_DATA_ABI } from '../../utils/constants'
+import { ERC20_ABI } from '../../utils/constants'
 import { RequiredAllowances } from '../../types'
 import { Inverter } from '../../Inverter'
 
@@ -25,7 +25,7 @@ const runDependencies = async (
         account: walletClient.account,
         functionName: 'approve',
         args: [requiredAllowance.spender, requiredAllowance.amount],
-        abi: TOKEN_DATA_ABI,
+        abi: ERC20_ABI,
       })
     })
   )

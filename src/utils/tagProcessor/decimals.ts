@@ -1,10 +1,11 @@
-import { PublicClient, ReadContractParameters } from 'viem'
-import { TOKEN_DATA_ABI } from '../constants'
+import { PublicClient, ReadContractParameters, getContract } from 'viem'
+import { ERC20_ABI } from '../constants'
 import { Extras, FormattedAbiParameter } from '../../types'
 import { Tag } from '@inverter-network/abis'
 import { Inverter } from '../../Inverter'
 import { DecimalsTagReturn } from '../../types/tag'
 import { Split } from 'type-fest-4'
+import { getTestConnectors } from '../../../tests/testHelpers/getTestConnectors'
 
 const cacheToken = (
   self: Inverter,
@@ -44,10 +45,13 @@ export default async function ({
   let decimals: number | undefined
 
   const [, source, location, name] = tag?.split(':') as Split<Tag, ':'>
+
   const { readContract } = publicClient
   const cachedToken = self?.tokenCache.get(`${contract?.address}:${tag}`)
   // INTERNAL CASE
   if (!source) {
+    console.log('!source')
+    console.log(extras)
     decimals = extras?.decimals
     tokenAddress = extras?.defaultToken
   } else if (source === 'params')
@@ -76,7 +80,7 @@ export default async function ({
           if (!tokenAddress) throw new Error('No token address found')
           decimals = <number>await readContract({
             address: tokenAddress,
-            abi: TOKEN_DATA_ABI,
+            abi: ERC20_ABI,
             functionName: 'decimals',
           })
           if (self)
@@ -89,18 +93,50 @@ export default async function ({
     // ####
     switch (location) {
       case 'indirect':
+        console.log('decimals > contract > indirect')
+        console.log()
         if (cachedToken) {
           const { decimals: cachedDecimals } = cachedToken
           decimals = cachedDecimals
         } else {
+          console.log('contract.address')
+          console.log(contract.address)
+          console.log(1)
+          console.log(contract?.address)
+          console.log(name)
+          console.log('WTF')
+
+          const { publicClient: p } = getTestConnectors()
+
+          const x = await p.readContract({
+            abi: [
+              {
+                type: 'function',
+                name: 'getIssuanceToken',
+                inputs: [],
+                outputs: [
+                  { name: '', type: 'address', internalType: 'address' },
+                ],
+                stateMutability: 'view',
+              },
+            ],
+            address: '0x047a97A52aBF809235025C4cf8272FAD746C3f10',
+            functionName: 'getIssuanceToken',
+          })
+          console.log('x')
+          console.log(x)
+
           tokenAddress = <`0x${string}`>await readContract({
             address: contract?.address,
             abi: contract.abi,
             functionName: name,
           } as ReadContractParameters)
+          console.log(2)
+          console.log('tokenAddress')
+          console.log(tokenAddress)
           decimals = <number>await readContract({
             address: tokenAddress,
-            abi: TOKEN_DATA_ABI,
+            abi: ERC20_ABI,
             functionName: 'decimals',
           })
           if (self)
@@ -116,7 +152,7 @@ export default async function ({
           if (!tokenAddress) throw new Error('No token address found')
           decimals = <number>await readContract({
             address: tokenAddress,
-            abi: TOKEN_DATA_ABI,
+            abi: ERC20_ABI,
             functionName: name,
           })
           if (self) {
@@ -128,6 +164,9 @@ export default async function ({
     }
 
   if (!decimals) throw new Error('No decimals provided')
+
+  console.log('tokenAddress')
+  console.log(tokenAddress)
 
   return { decimals, tokenAddress }
 }

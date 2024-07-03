@@ -2,7 +2,7 @@ import { expect, describe, it } from 'bun:test'
 
 import processInputs from '../../src/utils/processInputs'
 import { getTestConnectors } from '../testHelpers/getTestConnectors'
-import { TOKEN_DATA_ABI } from '../../src/utils/constants'
+import { ERC20_ABI } from '../../src/utils/constants'
 import { FormattedAbiParameter } from '../../src'
 import { Inverter } from '../../src/Inverter'
 import { Tag } from '@inverter-network/abis'
@@ -147,7 +147,7 @@ describe('#processInputs', () => {
           const mockModuleWithErc20 = USDC_SEPOLIA
           const mockContract = {
             address: mockModuleWithErc20,
-            abi: TOKEN_DATA_ABI,
+            abi: ERC20_ABI,
           }
           const tags = ['decimals:contract:exact:decimals'] as Tag[]
           const formattedInputs = [
