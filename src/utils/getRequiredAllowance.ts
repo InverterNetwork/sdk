@@ -27,10 +27,9 @@ export default async function getRequiredAllowance({
     functionName: 'allowance',
     args: [userAddress, spenderAddress],
   })
-  const requiredAllowance = transferAmount - currentAllowance
 
   return {
-    amount: requiredAllowance,
+    amount: transferAmount > currentAllowance ? transferAmount : 0n,
     spender: spenderAddress,
     owner: userAddress,
     token: tokenAddress,

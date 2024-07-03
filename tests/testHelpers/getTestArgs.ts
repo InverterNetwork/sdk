@@ -12,7 +12,7 @@ export const getBcArgs = (tokenAdmin: string) => {
     },
     tokenAdmin,
     bondingCurveParams: {
-      formula: '0x823F6AC80759F2e037eaF706d45CB4B47b80926c',
+      formula: '0x91c1538be9647946830F881Dd7c1F41E990Dbe8C',
       reserveRatioForBuying: '333333',
       reserveRatioForSelling: '333333',
       buyFee: '10',
