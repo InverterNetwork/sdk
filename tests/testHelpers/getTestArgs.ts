@@ -1,9 +1,11 @@
-import { RequestedModules } from "../../src"
+// @ts-nocheck
+
+import { RequestedModules } from '../../src'
 
 export const testToken = '0xd5018fA63924d1BE2C2C42aBDc24bD754499F97c'
 
 export const getBcArgs = (tokenAdmin: string) => {
- return {
+  return {
     issuanceToken: {
       name: 'Test Issuance Token',
       symbol: 'TIT',
@@ -27,29 +29,41 @@ export const getBcArgs = (tokenAdmin: string) => {
 }
 
 export const getAuthorizerArgs = (initialAdmin: string) => {
-    return {
-        initialAdmin,
-    }
-}
-
-export const getOrchestratorArgs = (independentUpdateAdmin: `0x${string}` | string = "") => {
-  return independentUpdateAdmin ? {
-    independentUpdates: true,
-    independentUpdateAdmin,
-  } : {
-    independentUpdates: false,
-    independentUpdateAdmin: '0x0000000000000000000000000000000000000000',
+  return {
+    initialAdmin,
   }
 }
 
-export const getDeployArgs = (requestedModules: RequestedModules, deployer: string) => {
-  const args = {}
-  const {fundingManager} = requestedModules
-  args["orchestrator"] = getOrchestratorArgs(deployer)
-  args["authorizer"] = getAuthorizerArgs(deployer)
+export const getOrchestratorArgs = (
+  independentUpdateAdmin: `0x${string}` | string = ''
+) => {
+  return independentUpdateAdmin
+    ? {
+        independentUpdates: true,
+        independentUpdateAdmin,
+      }
+    : {
+        independentUpdates: false,
+        independentUpdateAdmin: '0x0000000000000000000000000000000000000000',
+      }
+}
 
-  if(["FM_BC_Restricted_Bancor_Redeeming_VirtualSupply_v1", "FM_BC_Bancor_Redeeming_VirtualSupply_v1"].includes(fundingManager)) {
-    args["fundingManager"] = getBcArgs(deployer)
+export const getDeployArgs = (
+  requestedModules: RequestedModules,
+  deployer: string
+) => {
+  const args = {}
+  const { fundingManager } = requestedModules
+  args['orchestrator'] = getOrchestratorArgs(deployer)
+  args['authorizer'] = getAuthorizerArgs(deployer)
+
+  if (
+    [
+      'FM_BC_Restricted_Bancor_Redeeming_VirtualSupply_v1',
+      'FM_BC_Bancor_Redeeming_VirtualSupply_v1',
+    ].includes(fundingManager)
+  ) {
+    args['fundingManager'] = getBcArgs(deployer)
   }
 
   return args

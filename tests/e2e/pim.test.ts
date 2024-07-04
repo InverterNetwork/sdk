@@ -1,4 +1,4 @@
-import { expect, describe, it, beforeAll } from 'bun:test'
+import { expect, describe, it } from 'bun:test'
 
 import { getTestConnectors } from '../testHelpers/getTestConnectors'
 import { Inverter } from '../../src/Inverter'
