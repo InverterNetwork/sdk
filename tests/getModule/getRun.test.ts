@@ -5,7 +5,7 @@ import { deployedBcModule, iUSD, deployedKpiModule } from '../getDeploy/args'
 import getRun from '../../src/getModule/constructMethod/getRun'
 import { getContract } from 'viem'
 import { getModuleData } from '@inverter-network/abis'
-import { TOKEN_DATA_ABI } from '../../src/utils/constants'
+import { ERC20_ABI } from '../../src/utils/constants'
 import { Extras, FormattedAbiParameter } from '../../src'
 import { USDC_SEPOLIA } from '../../src/getDeploy/constants'
 
@@ -26,7 +26,7 @@ describe('#getRun', () => {
     console.log('Minting Tokens')
     const mintHash = await walletClient.writeContract({
       address: iUSD,
-      abi: TOKEN_DATA_ABI,
+      abi: ERC20_ABI,
       functionName: 'mint',
       account: walletClient.account,
       args: [
@@ -40,7 +40,7 @@ describe('#getRun', () => {
     console.log('Done')
     const hash = await walletClient.writeContract({
       address: iUSD,
-      abi: TOKEN_DATA_ABI,
+      abi: ERC20_ABI,
       functionName: 'approve',
       account: walletClient.account,
       args: [deployedBcModule, 0n],
@@ -52,7 +52,7 @@ describe('#getRun', () => {
     console.log('DONE')
     const allowance = await publicClient.readContract({
       address: iUSD,
-      abi: TOKEN_DATA_ABI,
+      abi: ERC20_ABI,
       functionName: 'allowance',
       args: [walletClient.account.address, deployedBcModule],
     })

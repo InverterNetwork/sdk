@@ -40,16 +40,17 @@ export default function getTagCallback({
 
       parsedAmount = parseDecimals(arg, decimalsRes.decimals)
 
-      if (tags.includes('approval' as any))
-        requiredAllowances.push(
-          await tagProcessor.approval({
-            transferAmount: parsedAmount,
-            publicClient,
-            spenderAddress: contract?.address,
-            tokenAddress: decimalsRes.tokenAddress,
-            userAddress: walletClient?.account?.address,
-          })
-        )
+      if (tags.includes('approval' as any)) {
+        const requiredAllowance = await tagProcessor.getRequiredAllowance({
+          transferAmount: parsedAmount,
+          publicClient,
+          spenderAddress: contract?.address,
+          tokenAddress: decimalsRes.tokenAddress,
+          userAddress: walletClient?.account?.address,
+        })
+
+        requiredAllowances.push(requiredAllowance)
+      }
 
       return parsedAmount
     }

@@ -1,5 +1,5 @@
 import formatParameters from '../../utils/formatParameters'
-import { Extras, PopPublicClient } from '../../types'
+import { Extras, PopPublicClient, PopWalletClient } from '../../types'
 import getRun from './getRun'
 import { ExtendedAbiFunction } from '@inverter-network/abis'
 import { Inverter } from '../../Inverter'
@@ -24,7 +24,9 @@ export default function constructMethod<
   simulate,
   publicClient,
   self,
+  walletClient,
 }: {
+  walletClient?: PopWalletClient
   publicClient: PopPublicClient
   abiFunction: TAbiFunction
   contract: any
@@ -49,6 +51,7 @@ export default function constructMethod<
     formattedOutputs,
     extras,
     simulate,
+    walletClient,
     publicClient,
     self,
   })

@@ -1,7 +1,7 @@
-import approval from './approval'
+import getRequiredAllowance from '../getRequiredAllowance'
 import decimals from './decimals'
 
 export default {
   decimals,
-  approval,
+  getRequiredAllowance,
 }

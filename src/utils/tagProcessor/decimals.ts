@@ -1,27 +1,29 @@
-import { PublicClient, ReadContractParameters } from 'viem'
-import { TOKEN_DATA_ABI } from '../constants'
+import { PublicClient } from 'viem'
+import { ERC20_ABI } from '../constants'
 import { Extras, FormattedAbiParameter } from '../../types'
 import { Tag } from '@inverter-network/abis'
 import { Inverter } from '../../Inverter'
 import { DecimalsTagReturn } from '../../types/tag'
 import { Split } from 'type-fest-4'
 
-const cacheToken = (
-  self: Inverter,
-  tag: Tag,
-  tokenAddress: `0x${string}`,
-  moduleAddress: `0x${string}`,
+type CacheTokenProps = {
+  self: Inverter
+  tag: Tag
+  tokenAddress?: `0x${string}`
+  moduleAddress: `0x${string}`
   decimals: number
-) => {
-  const key = `${moduleAddress}:${tag}`
-  const value = {
-    address: tokenAddress,
-    decimals,
-  }
-  self.tokenCache.set(key, value)
 }
 
-export default async function ({
+const cacheToken = (props: CacheTokenProps) => {
+  const key = `${props.moduleAddress}:${props.tag}`
+  const value = {
+    address: props?.tokenAddress,
+    decimals: props.decimals,
+  }
+  props.self.tokenCache.set(key, value)
+}
+
+export default async function decimals({
   argsOrRes,
   parameters,
   extras,
@@ -38,96 +40,104 @@ export default async function ({
   contract?: any
   self?: Inverter
 }): Promise<DecimalsTagReturn> {
-  if (!tag) throw new Error('No decimals tag provided')
-
   let tokenAddress: `0x${string}` | undefined
   let decimals: number | undefined
+  const { readContract } = publicClient
+
+  if (!tag) throw new Error('No decimals tag provided')
+
+  console.log('tag', tag)
 
   const [, source, location, name] = tag?.split(':') as Split<Tag, ':'>
-  const { readContract } = publicClient
   const cachedToken = self?.tokenCache.get(`${contract?.address}:${tag}`)
-  // INTERNAL CASE
+
+  // INTERNAL CASE (NO SOURCE)
   if (!source) {
     decimals = extras?.decimals
     tokenAddress = extras?.defaultToken
-  } else if (source === 'params')
-    switch (location) {
-      case 'exact':
+  } else if (!!cachedToken) {
+    decimals = cachedToken.decimals
+    tokenAddress = cachedToken.address
+  } else {
+    // SOURCE PARAMS
+    if (source === 'params') {
+      // EXACT LOCATION
+      if (location === 'exact') {
         decimals =
-          // check if the value is contained by a non-tuple arg search it based on the index that is has in `inputs`
+          // check if the value is contained by a non-tuple arg search it-
+          // based on the index that is has in `inputs`
           argsOrRes[
             parameters.findIndex((parameter) => parameter.name === name)
           ] ||
-          // or if there is a tuple arg that contains a parameter with `name`which would provide the decimals
+          // or if there is a tuple arg that contains a parameter with-
+          // `name`which would provide the decimals
           argsOrRes.find((item) => typeof item === 'object' && name in item)[
             name
           ]
+      }
 
-        break
-      case 'indirect':
-        if (cachedToken) {
-          const { decimals: cachedDecimals } = cachedToken
-          decimals = cachedDecimals
-        } else {
-          tokenAddress =
-            argsOrRes[
-              parameters.findIndex((parameter) => parameter.name === name)
-            ]
-          if (!tokenAddress) throw new Error('No token address found')
-          decimals = <number>await readContract({
-            address: tokenAddress,
-            abi: TOKEN_DATA_ABI,
-            functionName: 'decimals',
-          })
-          if (self)
-            cacheToken(self, tag, tokenAddress, contract?.address, decimals)
-        }
-        break
-    }
-  // EXTERNAL CASE
-  else if (source === 'contract')
-    // ####
-    switch (location) {
-      case 'indirect':
-        if (cachedToken) {
-          const { decimals: cachedDecimals } = cachedToken
-          decimals = cachedDecimals
-        } else {
-          tokenAddress = <`0x${string}`>await readContract({
-            address: contract?.address,
-            abi: contract.abi,
-            functionName: name,
-          } as ReadContractParameters)
-          decimals = <number>await readContract({
-            address: tokenAddress,
-            abi: TOKEN_DATA_ABI,
-            functionName: 'decimals',
-          })
-          if (self)
-            cacheToken(self, tag, tokenAddress, contract?.address, decimals)
-        }
-        break
-      case 'exact':
-        if (cachedToken) {
-          const { decimals: cachedDecimals } = cachedToken
-          decimals = cachedDecimals
-        } else {
-          tokenAddress = contract?.address
-          if (!tokenAddress) throw new Error('No token address found')
-          decimals = <number>await readContract({
-            address: tokenAddress,
-            abi: TOKEN_DATA_ABI,
-            functionName: name,
-          })
-          if (self) {
-            cacheToken(self, tag, tokenAddress, contract?.address, decimals)
-          }
-        }
+      // INDIRECT LOCATION
+      if (location === 'indirect') {
+        tokenAddress =
+          argsOrRes[
+            parameters.findIndex((parameter) => parameter.name === name)
+          ]
 
-        break
+        if (!tokenAddress) throw new Error('No token address found')
+
+        decimals = <number>await readContract({
+          address: tokenAddress,
+          abi: ERC20_ABI,
+          functionName: 'decimals',
+        })
+      }
     }
+
+    // SOURCE CONTRACT
+    if (source === 'contract') {
+      if (location === 'indirect') {
+        tokenAddress = <`0x${string}` | undefined>await contract?.read?.[name]()
+
+        if (!tokenAddress)
+          throw new Error(`No token address found @ contract:indirect:${name}`)
+
+        console.log('DECIMALS TAG TOKEN ADDRESS:', tokenAddress)
+
+        decimals = <number>await readContract({
+          address: tokenAddress,
+          abi: ERC20_ABI,
+          functionName: 'decimals',
+        })
+
+        console.log('DECIMALS TAG DECIMALS:', decimals)
+      }
+
+      if (location === 'exact') {
+        tokenAddress = contract?.address
+
+        if (!tokenAddress) throw new Error('No token address found')
+
+        decimals = <number>await readContract({
+          address: tokenAddress,
+          abi: ERC20_ABI,
+          functionName: name,
+        })
+      }
+    }
+  }
 
   if (!decimals) throw new Error('No decimals provided')
 
-  return { decimals, tokenAddress }
+  if (!!self)
+    cacheToken({
+      self,
+      tag,
+      tokenAddress,
+      moduleAddress: contract?.address,
+      decimals,
+    })
+
+  const result = { decimals, tokenAddress }
+
+  return result
 }
