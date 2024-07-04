@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.4](https://github.com/InverterNetwork/sdk/compare/v0.1.3...v0.1.4) (2024-07-04)
+
+
+### Bug Fixes
+
+* caching function instead of decimals ([545756b](https://github.com/InverterNetwork/sdk/commit/545756be028c9a38672cfc052ba1cf1cd2359918))
+* formula address & allowance amount calc ([b14ff2e](https://github.com/InverterNetwork/sdk/commit/b14ff2e4f6d835741e635ea7cdc436745020cb79))
+* missing defaultToken and missing wC ( todo replace redun wC with extras userWallet ) ([be616ab](https://github.com/InverterNetwork/sdk/commit/be616ab11d55e9be395f68202585f2a8d289399f))
+
 ### [0.1.3](https://github.com/InverterNetwork/sdk/compare/v0.1.2...v0.1.3) (2024-06-20)
 
 ### [0.1.2](https://github.com/InverterNetwork/sdk/compare/v0.1.1...v0.1.2) (2024-06-12)
