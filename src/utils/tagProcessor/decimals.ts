@@ -46,8 +46,6 @@ export default async function decimals({
 
   if (!tag) throw new Error('No decimals tag provided')
 
-  console.log('tag', tag)
-
   const [, source, location, name] = tag?.split(':') as Split<Tag, ':'>
   const cachedToken = self?.tokenCache.get(`${contract?.address}:${tag}`)
 
@@ -101,15 +99,11 @@ export default async function decimals({
         if (!tokenAddress)
           throw new Error(`No token address found @ contract:indirect:${name}`)
 
-        console.log('DECIMALS TAG TOKEN ADDRESS:', tokenAddress)
-
         decimals = <number>await readContract({
           address: tokenAddress,
           abi: ERC20_ABI,
           functionName: 'decimals',
         })
-
-        console.log('DECIMALS TAG DECIMALS:', decimals)
       }
 
       if (location === 'exact') {

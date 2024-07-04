@@ -64,7 +64,7 @@ describe('#getDeploy decimals error', () => {
 
           try {
             await simulate(userArgs)
-          } catch (e) {
+          } catch (e: any) {
             const signature = e.cause.signature
 
             const value = decodeErrorResult({

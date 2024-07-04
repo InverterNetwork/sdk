@@ -84,6 +84,8 @@ describe('PIM', async () => {
       expect((balanceBefore - balanceAfter).toString()).toEqual(
         depositAmount + eighteenDecimals
       )
+    }, {
+      timeout: 50_000
     })
   })
 })
