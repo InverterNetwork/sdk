@@ -1,7 +1,7 @@
 {
   "name": "@inverter-network/sdk",
   "homepage": "https://github.com/InverterNetwork/sdk",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "INVERTER typescript SDK",
   "author": "InverterNetwork <github@InverterNetwork>",
   "license": "LGPL-3.0",
