@@ -2,7 +2,7 @@ import { expect, describe, it } from 'bun:test'
 
 import { getTestConnectors } from '../testHelpers/getTestConnectors'
 import { Inverter } from '../../src/Inverter'
-import { decodeErrorResult } from 'viem'
+import { assertRequest, decodeErrorResult } from 'viem'
 import { GetUserArgs, RequestedModules } from '../../src'
 import { getModuleData } from '@inverter-network/abis'
 
@@ -82,15 +82,14 @@ describe('#getDeploy decimals error', () => {
         try {
           await simulate(userArgs)
         } catch (e: any) {
-          const signature = e?.cause?.signature
+          if (!e?.message?.includes?.('Unable to decode signature')) throw e
 
-          if (!signature) throw e
-
+          const signature = e.cause.signature as `0x${string}`
           const errorName = getErrorName(requestedModules, signature)
 
           if (!errorName) throw e
 
-          console.log(errorName)
+          console.error(errorName)
 
           expect(errorName).toBeDefined()
         }
