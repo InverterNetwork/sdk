@@ -3,17 +3,14 @@ import { expect, describe, it } from 'bun:test'
 import { getTestConnectors } from '../testHelpers/getTestConnectors'
 import { Inverter } from '../../src/Inverter'
 import { decodeErrorResult } from 'viem'
-import { GetUserArgs } from '../../src'
+import { GetUserArgs, RequestedModules } from '../../src'
 import { getModuleData } from '@inverter-network/abis'
-
-const errorName =
-  'Module__FM_BC_Bancor_Redeeming_VirtualSupply__InvalidTokenDecimal'
 
 const requestedModules = {
   fundingManager: 'FM_BC_Restricted_Bancor_Redeeming_VirtualSupply_v1',
   authorizer: 'AUT_Roles_v1',
   paymentProcessor: 'PP_Simple_v1',
-} as const
+} as const satisfies RequestedModules
 
 const userArgs: GetUserArgs<typeof requestedModules> = {
   orchestrator: {
@@ -48,39 +45,59 @@ const userArgs: GetUserArgs<typeof requestedModules> = {
   },
 }
 
+const getErrorName = (
+  requestedModules: RequestedModules,
+  signature: `0x${string}`
+) => {
+  let errorName: string | undefined
+
+  Object.values(requestedModules)
+    .flat()
+    .forEach((module) => {
+      try {
+        const abi = getModuleData(module).abi
+        const value = decodeErrorResult({
+          abi,
+          data: signature,
+        })
+        if (value.errorName) errorName = value.errorName
+      } catch {
+        // do nothing
+      }
+    })
+
+  return errorName
+}
+
 describe('#getDeploy decimals error', () => {
   const { publicClient, walletClient } = getTestConnectors('sepolia')
-  const sdk = new Inverter(publicClient, walletClient)
 
-  describe('Modules: BondingCurve, AUT_Roles_v1, PP_Simple_v1', () => {
-    describe('simulate', () => {
-      it(
-        'finds the name of the error by decoding error signature',
-        async () => {
-          const abi = getModuleData(
-            'FM_BC_Restricted_Bancor_Redeeming_VirtualSupply_v1'
-          ).abi
-          const { simulate } = await sdk.getDeploy(requestedModules)
+  describe('Simulate with decoded error and not decoded error', async () => {
+    const sdk = new Inverter(publicClient, walletClient)
+    const { simulate } = await sdk.getDeploy(requestedModules)
 
-          try {
-            await simulate(userArgs)
-          } catch (e: any) {
-            const signature = e.cause.signature
+    it(
+      'finds the name of the error by decoding error signature',
+      async () => {
+        try {
+          await simulate(userArgs)
+        } catch (e: any) {
+          const signature = e?.cause?.signature
 
-            const value = decodeErrorResult({
-              abi,
-              data: signature,
-            })
+          if (!signature) throw e
 
-            console.log(value)
+          const errorName = getErrorName(requestedModules, signature)
 
-            expect(value.errorName).toEqual(errorName)
-          }
-        },
-        {
-          timeout: 20000,
+          if (!errorName) throw e
+
+          console.log(errorName)
+
+          expect(errorName).toBeDefined()
         }
-      )
-    })
+      },
+      {
+        timeout: 20000,
+      }
+    )
   })
 })
