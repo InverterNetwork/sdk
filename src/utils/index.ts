@@ -23,6 +23,8 @@ export const getJsType = (
   if (/^u?int.*\[\]$/.test(type)) return 'numberString[]'
   if (/^bytes(?!.*\]$)/.test(type)) return '0xstring'
   if (/^bytes.*\[\]$/.test(type)) return '0xstring[]'
+
+  return
 }
 
 export const getEntries = <T extends object>(obj: T): Entries<T> =>

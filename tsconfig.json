@@ -1,31 +1,11 @@
 {
+  // This configuration is used for local development and type checking.
+  "extends": "./tsconfig.base.json",
+  "include": ["src", "tests", "tools"],
   "compilerOptions": {
-    // enable latest features
-    "lib": ["ESNext"],
-    "target": "ESNext",
+    "composite": true,
     "module": "ESNext",
-    "moduleDetection": "force",
-    "allowJs": true, // allow importing `.js` from `.ts`
-
-    // Best practices
-    "strict": true,
-    "skipLibCheck": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    // "noFallthroughCasesInSwitch": true,
-
-    // Some stricter flags
-    "useUnknownInCatchVariables": true,
-    "noPropertyAccessFromIndexSignature": true,
-
-    "moduleResolution": "Node10",
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "declaration": true /* Generates corresponding '.d.ts' file. */,
-    "outDir": "./dist" /* Redirect output structure to the directory. */,
-
-    // Enable check for type imports
-    "verbatimModuleSyntax": true
-  },
-  "include": ["src/**/*"]
+    "moduleResolution": "Node",
+    "noEmit": true
+  }
 }

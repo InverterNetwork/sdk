@@ -1,8 +1,0 @@
-{
-  "extends": "./tsconfig.json",
-  "exclude": ["**/bak/*"],
-  "include": ["tests/**/*", "tools/**/*"],
-  "compilerOptions": {
-    "noEmit": true
-  }
-}

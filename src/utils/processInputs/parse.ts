@@ -5,7 +5,7 @@ import type { Extras, FormattedAbiParameter, TagCallback } from '../../types'
 
 export const parseAny = (arg: any) => {
   try {
-    stringToHex(JSON.stringify(arg))
+    return stringToHex(JSON.stringify(arg))
   } catch {
     return '0x0'
   }
