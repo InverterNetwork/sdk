@@ -1,6 +1,6 @@
-import { ExtendedAbiParameter } from '@inverter-network/abis'
-import { JsType } from '../types'
-import { Entries } from 'type-fest-4'
+import type { ExtendedAbiParameter } from '@inverter-network/abis'
+import type { JsType } from '../types'
+import type { Entries } from 'type-fest-4'
 
 export const getJsType = (
   parameter: ExtendedAbiParameter

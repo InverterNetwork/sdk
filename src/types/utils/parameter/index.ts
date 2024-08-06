@@ -1,13 +1,14 @@
-import {
+import type {
   ExtendedAbiParameter,
   NonTupleType,
   Tag,
   TupleType,
 } from '@inverter-network/abis'
-import { SolidityBytes, SolidityInt } from 'abitype'
-import { FormattedParameterToPrimitiveType } from './primitive'
-import { OmitNever } from '..'
-import { IfUnknown, Simplify } from 'type-fest-4'
+import type { SolidityBytes, SolidityInt } from 'abitype'
+import type { FormattedParameterToPrimitiveType } from './primitive'
+import type { OmitNever } from '..'
+import type { IfUnknown, Simplify } from 'type-fest-4'
+
 export * from './primitive'
 
 type JsTypeWithTag<P extends readonly Tag[] | undefined> =

@@ -1,12 +1,13 @@
 import { MANDATORY_MODULES, ORCHESTRATOR_CONFIG } from './constants'
-import {
+import formatParameters from '../utils/formatParameters'
+import { getModuleData } from '@inverter-network/abis'
+
+import type {
   DeploySchema,
   FomrattedDeploymentParameters,
   RequestedModule,
   RequestedModules,
 } from '../types'
-import formatParameters from '../utils/formatParameters'
-import { getModuleData } from '@inverter-network/abis'
 
 export const getModuleSchema = <
   T extends RequestedModule,

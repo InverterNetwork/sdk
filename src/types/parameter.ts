@@ -1,9 +1,10 @@
-import {
+import { type JsType } from './base'
+
+import type {
   ExtendedAbiParameter,
   NonTupleType,
   TupleType,
 } from '@inverter-network/abis'
-import { JsType } from './base'
 
 // AbiParameter without components field + description, tag and jsType fields
 export type NonTupleFormattedAbiParameter = Exclude<

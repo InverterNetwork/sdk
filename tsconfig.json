@@ -22,7 +22,10 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "declaration": true /* Generates corresponding '.d.ts' file. */,
-    "outDir": "./dist" /* Redirect output structure to the directory. */
+    "outDir": "./dist" /* Redirect output structure to the directory. */,
+
+    // Enable check for type imports
+    "verbatimModuleSyntax": true
   },
   "include": ["src/**/*"]
 }

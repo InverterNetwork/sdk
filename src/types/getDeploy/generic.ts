@@ -1,4 +1,4 @@
-import {
+import type {
   GetModuleNameByType,
   UserFacingModuleType,
 } from '@inverter-network/abis'

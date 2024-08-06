@@ -1,13 +1,14 @@
-import {
+import getWorkflow from './getWorkflow'
+import getDeploy from './getDeploy'
+import getDeployOptions from './getDeployOptions'
+
+import type {
   PopPublicClient,
   PopWalletClient,
   WorkflowOrientation,
   Workflow,
+  RequestedModules,
 } from './types'
-import getWorkflow from './getWorkflow'
-import { RequestedModules } from './types'
-import getDeploy from './getDeploy'
-import getDeployOptions from './getDeployOptions'
 
 export class Inverter<W extends PopWalletClient | undefined = undefined> {
   readonly publicClient: PopPublicClient

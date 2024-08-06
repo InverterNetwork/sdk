@@ -1,8 +1,9 @@
 import { expect, describe, it } from 'bun:test'
 
 import { getTestConnectors } from '../testHelpers/getTestConnectors'
-import { FormattedAbiParameter } from '../../src'
 import formatOutputs from '../../src/getModule/formatOutputs'
+
+import { type FormattedAbiParameter } from '../../src'
 
 describe('#formatOutputs', () => {
   const { publicClient } = getTestConnectors()

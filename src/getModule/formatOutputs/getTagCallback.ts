@@ -1,13 +1,14 @@
-import { PublicClient } from 'viem'
-import { FormatOutputsBaseParams } from '.'
 import { Inverter } from '../../Inverter'
-import {
+import tagProcessor from '../../utils/tagProcessor'
+import { formatDecimals } from './utils'
+
+import { type PublicClient } from 'viem'
+import { type FormatOutputsBaseParams } from '.'
+import type {
   DecimalsTagReturn,
   FormattedAbiParameter,
   TagCallback,
 } from '../../types'
-import tagProcessor from '../../utils/tagProcessor'
-import { formatDecimals } from './utils'
 
 export type GetTagCallbackParams<
   T extends readonly FormattedAbiParameter[] = readonly FormattedAbiParameter[],

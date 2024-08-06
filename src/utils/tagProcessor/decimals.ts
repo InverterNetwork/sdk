@@ -1,10 +1,14 @@
-import { PublicClient } from 'viem'
 import { ERC20_ABI } from '../constants'
-import { Extras, FormattedAbiParameter } from '../../types'
-import { Tag } from '@inverter-network/abis'
 import { Inverter } from '../../Inverter'
-import { DecimalsTagReturn } from '../../types/tag'
-import { Split } from 'type-fest-4'
+
+import type { PublicClient } from 'viem'
+import type {
+  Extras,
+  FormattedAbiParameter,
+  DecimalsTagReturn,
+} from '../../types'
+import type { Tag } from '@inverter-network/abis'
+import type { Split } from 'type-fest-4'
 
 type CacheTokenProps = {
   self: Inverter

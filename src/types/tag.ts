@@ -1,4 +1,4 @@
-import { Tag } from '@inverter-network/abis'
+import type { Tag } from '@inverter-network/abis'
 
 export type RequiredAllowances = {
   amount: bigint

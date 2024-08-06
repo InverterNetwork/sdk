@@ -1,9 +1,14 @@
-import { PublicClient, WalletClient } from 'viem'
-import { ProcessInputsBaseParams } from '.'
 import { Inverter } from '../../Inverter'
-import { DecimalsTagReturn, RequiredAllowances, TagCallback } from '../../types'
 import tagProcessor from '../tagProcessor'
 import { parseDecimals } from './parse'
+
+import type { PublicClient, WalletClient } from 'viem'
+import { type ProcessInputsBaseParams } from '.'
+import type {
+  DecimalsTagReturn,
+  RequiredAllowances,
+  TagCallback,
+} from '../../types'
 
 export type GetTagCallbackParams = {
   requiredAllowances: RequiredAllowances[]

@@ -1,6 +1,6 @@
-import { GetModuleNameByType } from '@inverter-network/abis'
-import { MendatoryModuleType, ModuleType } from '.'
-import { Simplify } from 'type-fest-4'
+import type { GetModuleNameByType } from '@inverter-network/abis'
+import type { MendatoryModuleType, ModuleType } from '.'
+import type { Simplify } from 'type-fest-4'
 
 export type RequestedModule<
   MT extends ModuleType = ModuleType,

@@ -2,7 +2,8 @@ import type { ModuleName } from '@inverter-network/abis'
 import { getModuleData } from '@inverter-network/abis'
 import { getContract } from 'viem'
 import prepareFunction from './prepareFunction'
-import { GetModuleParams, PopWalletClient } from '../types'
+
+import type { GetModuleParams, PopWalletClient } from '../types'
 
 export default function getModule<
   N extends ModuleName,

@@ -1,5 +1,5 @@
-import { AbiStateMutability } from 'abitype'
-import { FormattedParametersToPrimitiveType } from './parameter'
+import type { AbiStateMutability } from 'abitype'
+import type { FormattedParametersToPrimitiveType } from './parameter'
 
 // Decides on the arguments orders
 export type GetMethodArgs<I> =

@@ -3,7 +3,7 @@ import { expect, describe, it } from 'bun:test'
 import { getTestConnectors } from '../testHelpers/getTestConnectors'
 import { Inverter } from '../../src/Inverter'
 import { isAddress } from 'viem'
-import { GetUserArgs } from '../../src'
+import type { GetUserArgs } from '../../src'
 
 const requestedModules = {
   fundingManager: 'FM_BC_Restricted_Bancor_Redeeming_VirtualSupply_v1',

@@ -2,8 +2,8 @@ import { expect, describe, it } from 'bun:test'
 
 import { getTestConnectors } from '../testHelpers/getTestConnectors'
 import { Inverter } from '../../src/Inverter'
-import { assertRequest, decodeErrorResult } from 'viem'
-import { GetUserArgs, RequestedModules } from '../../src'
+import { decodeErrorResult } from 'viem'
+import type { GetUserArgs, RequestedModules } from '../../src'
 import { getModuleData } from '@inverter-network/abis'
 
 const requestedModules = {
