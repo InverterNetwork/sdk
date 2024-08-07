@@ -22,7 +22,7 @@ export const getViemMethods = async (
 
   const { abi } = getModuleData('OrchestratorFactory_v1')
 
-  const { write, simulate } = getContract({
+  const { write, simulate, estimateGas } = getContract({
     address,
     abi,
     client: {
@@ -34,6 +34,7 @@ export const getViemMethods = async (
   return {
     simulateWrite: simulate.createOrchestrator,
     write: write.createOrchestrator,
+    estimateGas: estimateGas.createOrchestrator,
   }
 }
 
