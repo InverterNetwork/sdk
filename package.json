@@ -1,10 +1,7 @@
 {
   "name": "@inverter-network/sdk",
-  "homepage": "https://github.com/InverterNetwork/sdk",
-  "version": "0.1.7-alpha.0",
   "description": "INVERTER typescript SDK",
-  "author": "InverterNetwork <github@InverterNetwork>",
-  "license": "LGPL-3.0",
+  "version": "0.1.7-alpha.2",
   "exports": {
     ".": {
       "types": "./dist/types/index.d.ts",
@@ -34,7 +31,7 @@
     "build:esm": "tsc --project ./tsconfig.build.json --module ESNext --outDir ./dist/esm && printf '{\"type\": \"module\",\"sideEffects\":false}' > ./dist/esm/package.json",
     "build:types": "tsc --project ./tsconfig.build.json --module esnext --declarationDir ./dist/types --emitDeclarationOnly --declaration --declarationMap",
     "clean": "rm -rf dist tsconfig.tsbuildinfo tsconfig.build.tsbuildinfo",
-    "postinstall": "husky",
+    "postinstall": "husky || true",
     "prepack": "pinst --disable",
     "package": "bun run build && npm pack",
     "postpack": "pinst --enable",
@@ -53,6 +50,16 @@
       "bun prettier:fix"
     ]
   },
+  "peerDependencies": {
+    "abitype": "^1",
+    "eslint": "^8",
+    "typescript": "^5",
+    "viem": "^2.7.6"
+  },
+  "dependencies": {
+    "@inverter-network/abis": "0.1.6-alpha.1",
+    "type-fest-4": "npm:type-fest@^4"
+  },
   "devDependencies": {
     "@commitlint/cli": "^18",
     "@commitlint/config-conventional": "^18",
@@ -67,15 +74,15 @@
     "prettier": "^3",
     "standard-version": "^9"
   },
-  "peerDependencies": {
-    "abitype": "^1",
-    "eslint": "^8",
-    "typescript": "^5",
-    "viem": "^2.7.6"
-  },
-  "dependencies": {
-    "@inverter-network/abis": "0.1.5",
-    "type-fest-4": "npm:type-fest@^4"
+  "license": "LGPL-3.0",
+  "homepage": "https://github.com/InverterNetwork/sdk",
+  "repository": "inverter-network/sdk",
+  "authors": [
+    "mguleryuz",
+    "fabianschu"
+  ],
+  "bugs": {
+    "url": "https://github.com/InverterNetwork/sdk"
   },
   "keywords": [
     "InverterNetwork",
@@ -86,12 +93,5 @@
     "solidity",
     "evm",
     "sdk"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "git+ssh://git@github.com/InverterNetwork/sdk.git"
-  },
-  "bugs": {
-    "url": "https://github.com/InverterNetwork/sdk"
-  }
+  ]
 }
