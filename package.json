@@ -57,7 +57,7 @@
     "viem": "^2.7.6"
   },
   "dependencies": {
-    "@inverter-network/abis": "0.1.6-alpha.1",
+    "@inverter-network/abis": "0.1.6",
     "type-fest-4": "npm:type-fest@^4"
   },
   "devDependencies": {
@@ -75,8 +75,8 @@
     "standard-version": "^9"
   },
   "license": "LGPL-3.0",
-  "homepage": "https://github.com/InverterNetwork/sdk",
-  "repository": "inverter-network/sdk",
+  "homepage": "https://inverter.network",
+  "repository": "InverterNetwork/sdk",
   "authors": [
     "mguleryuz",
     "fabianschu"
@@ -87,6 +87,7 @@
   "keywords": [
     "InverterNetwork",
     "npm",
+    "bun",
     "contracts",
     "web3",
     "ethereum",
