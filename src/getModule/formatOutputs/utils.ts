@@ -1,6 +1,11 @@
 import { formatUnits, hexToString } from 'viem'
-import { TupleFormattedAbiParameter, Extras, TagCallback } from '../../types'
 import format from './format'
+
+import type {
+  TupleFormattedAbiParameter,
+  Extras,
+  TagCallback,
+} from '../../types'
 
 type TupleCaseParams = {
   output: TupleFormattedAbiParameter

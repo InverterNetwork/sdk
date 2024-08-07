@@ -1,14 +1,15 @@
-import { Hex } from 'viem'
 import getModule from './getModule'
-import { GetModuleNameByType } from '@inverter-network/abis'
-import {
+import { ERC20_ABI } from './utils/constants'
+
+import { type Hex } from 'viem'
+import type { GetModuleNameByType } from '@inverter-network/abis'
+import type {
   PopWalletClient,
   WorkflowModuleType,
   WorkflowOrientation,
   Workflow,
   GetWorkflowParams,
 } from './types'
-import { ERC20_ABI } from './utils/constants'
 
 export default async function getWorkflow<
   O extends WorkflowOrientation | undefined = undefined,

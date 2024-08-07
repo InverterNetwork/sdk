@@ -1,5 +1,6 @@
-import { Extras, FormattedAbiParameter, TagCallback } from '../../types'
 import { tuple, tupleArray, formatAny } from './utils'
+
+import type { Extras, FormattedAbiParameter, TagCallback } from '../../types'
 
 export default async function format({
   output,

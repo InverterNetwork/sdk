@@ -1,11 +1,11 @@
-import { Extras, FormattedAbiParameter } from '../../types'
 import { tuple, tupleArray } from './utils'
-import { TagCallback } from '../../types'
 import { parseUnits, stringToHex } from 'viem'
+
+import type { Extras, FormattedAbiParameter, TagCallback } from '../../types'
 
 export const parseAny = (arg: any) => {
   try {
-    stringToHex(JSON.stringify(arg))
+    return stringToHex(JSON.stringify(arg))
   } catch {
     return '0x0'
   }

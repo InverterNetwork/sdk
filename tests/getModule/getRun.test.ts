@@ -6,7 +6,7 @@ import getRun from '../../src/getModule/constructMethod/getRun'
 import { getContract } from 'viem'
 import { getModuleData } from '@inverter-network/abis'
 import { ERC20_ABI } from '../../src/utils/constants'
-import { Extras, FormattedAbiParameter } from '../../src'
+import type { Extras, FormattedAbiParameter } from '../../src'
 import { USDC_SEPOLIA } from '../../src/getDeploy/constants'
 
 describe('#getRun', () => {

@@ -1,8 +1,9 @@
 import formatParameters from '../../utils/formatParameters'
-import { Extras, PopPublicClient, PopWalletClient } from '../../types'
 import getRun from './getRun'
-import { ExtendedAbiFunction } from '@inverter-network/abis'
 import { Inverter } from '../../Inverter'
+
+import type { Extras, PopPublicClient, PopWalletClient } from '../../types'
+import type { ExtendedAbiFunction } from '@inverter-network/abis'
 
 // The PreservedProps type is used to preserve the properties of the abiFunction
 type PreservedProps<F extends ExtendedAbiFunction> = {

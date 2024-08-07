@@ -1,14 +1,14 @@
 import constructMethod from './constructMethod'
-import { Extras } from '../types/base'
-import {
+import { Inverter } from '../Inverter'
+
+import type {
   AbiStateMutability,
   ExtractAbiFunctionNames,
   ExtractAbiFunction,
 } from 'abitype'
-import { Simplify, TupleToUnion } from 'type-fest-4'
-import { ExtendedAbi, ExtendedAbiFunction } from '@inverter-network/abis'
-import { PopPublicClient, PopWalletClient } from '../types'
-import { Inverter } from '../Inverter'
+import type { Simplify, TupleToUnion } from 'type-fest-4'
+import type { ExtendedAbi, ExtendedAbiFunction } from '@inverter-network/abis'
+import type { Extras, PopPublicClient, PopWalletClient } from '../types'
 
 // The prepareFunction function is used to prepare the functions from the abi
 export default function prepareFunction<

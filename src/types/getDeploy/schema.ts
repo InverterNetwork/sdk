@@ -1,9 +1,9 @@
-import { ModuleName } from '@inverter-network/abis'
-import { OrchestratorInputs } from './generic'
-import { FomrattedDeploymentParameters } from './parameter'
-import { RequestedModules } from './requested'
-import { EmptyObjectToNever, OmitNever } from '../../'
-import { Simplify } from 'type-fest-4'
+import type { ModuleName } from '@inverter-network/abis'
+import type { OrchestratorInputs } from './generic'
+import type { FomrattedDeploymentParameters } from './parameter'
+import type { RequestedModules } from './requested'
+import type { EmptyObjectToNever, OmitNever } from '../../'
+import type { Simplify } from 'type-fest-4'
 
 export type ModuleSchema<N extends ModuleName = ModuleName> = {
   name: N

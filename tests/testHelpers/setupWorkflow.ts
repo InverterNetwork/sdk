@@ -1,10 +1,7 @@
-import { PublicClient } from 'viem'
-import {
-  GetUserArgs,
-  PopWalletClient,
-  RequestedModules,
-  getDeploy,
-} from '../../src'
+import { getDeploy } from '../../src'
+
+import { type PublicClient } from 'viem'
+import type { GetUserArgs, PopWalletClient, RequestedModules } from '../../src'
 
 export const setupBcWorkflow = async (
   publicClient: PublicClient,

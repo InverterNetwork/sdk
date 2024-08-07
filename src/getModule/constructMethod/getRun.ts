@@ -1,16 +1,17 @@
-import { AbiStateMutability } from 'viem'
-import {
+import formatOutputs from '../formatOutputs'
+import processInputs from '../../utils/processInputs'
+import { ERC20_ABI } from '../../utils/constants'
+import { Inverter } from '../../Inverter'
+
+import { type AbiStateMutability } from 'viem'
+import type {
   Extras,
   GetMethodArgs,
   PopPublicClient,
   FormattedAbiParameter,
   PopWalletClient,
+  RequiredAllowances,
 } from '../../types'
-import formatOutputs from '../formatOutputs'
-import processInputs from '../../utils/processInputs'
-import { ERC20_ABI } from '../../utils/constants'
-import { RequiredAllowances } from '../../types'
-import { Inverter } from '../../Inverter'
 
 const runDependencies = async (
   requiredAllowances: RequiredAllowances[],

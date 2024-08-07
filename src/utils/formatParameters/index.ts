@@ -1,6 +1,7 @@
-import { FormatParameters } from '../../types'
 import format from './format'
-import { ExtendedAbiParameter } from '@inverter-network/abis'
+
+import type { FormatParameters } from '../../types'
+import type { ExtendedAbiParameter } from '@inverter-network/abis'
 
 // This function is used to format the parameters of a function
 export default function formatParameters<

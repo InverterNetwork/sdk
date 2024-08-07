@@ -1,7 +1,12 @@
-import { AbiStateMutability } from 'abitype'
-import { FormattedAbiParameter, Extras, GetMethodResponse } from '../../types'
 import format from './format'
-import getTagCallback, { GetTagCallbackParams } from './getTagCallback'
+
+import type {
+  FormattedAbiParameter,
+  Extras,
+  GetMethodResponse,
+} from '../../types'
+import type { AbiStateMutability } from 'abitype'
+import getTagCallback, { type GetTagCallbackParams } from './getTagCallback'
 
 export type FormatOutputsBaseParams<
   T extends readonly FormattedAbiParameter[] = readonly FormattedAbiParameter[],

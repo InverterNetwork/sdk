@@ -1,6 +1,6 @@
-import { ExtendedAbiParameter } from '@inverter-network/abis'
+import type { ExtendedAbiParameter } from '@inverter-network/abis'
 import {
-  FormattedAbiParameter,
+  type FormattedAbiParameter,
   isTupleFormattedAbiParameter,
   isNonTupleFormattedAbiParameter,
 } from '../../types'

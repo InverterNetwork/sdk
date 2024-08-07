@@ -1,13 +1,13 @@
-import {
+import getModule from '../getModule'
+import { Inverter } from '../Inverter'
+
+import type {
   UserFacingModuleType,
   GetModuleNameByType,
 } from '@inverter-network/abis'
-import { Merge } from 'type-fest-4'
-
-import { OmitNever, PopPublicClient, PopWalletClient } from '../types'
-import getModule from '../getModule'
-import { Hex } from 'viem'
-import { Inverter } from '../Inverter'
+import type { Merge } from 'type-fest-4'
+import type { OmitNever, PopPublicClient, PopWalletClient } from '../types'
+import type { Hex } from 'viem'
 
 export type GetWorkflowParams<
   O extends WorkflowOrientation | undefined = undefined,

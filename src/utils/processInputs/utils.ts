@@ -1,6 +1,10 @@
-import { TupleFormattedAbiParameter, Extras } from '../../types'
 import parse from './parse'
-import { TagCallback } from '../../types'
+
+import type {
+  TupleFormattedAbiParameter,
+  Extras,
+  TagCallback,
+} from '../../types'
 
 type TupleCaseParams = {
   input: TupleFormattedAbiParameter

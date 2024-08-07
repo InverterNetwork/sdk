@@ -1,4 +1,4 @@
-import { Abi } from 'abitype'
+import type { Abi } from 'abitype'
 
 export const ERC20_ABI: Abi = [
   {

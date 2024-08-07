@@ -1,8 +1,10 @@
-import { getModuleData, ModuleName } from '@inverter-network/abis'
-import { PublicClient, WalletClient, getContract } from 'viem'
+import { getModuleData, type ModuleName } from '@inverter-network/abis'
+import { getContract } from 'viem'
 import { METADATA_URL, DEPLOYMENTS_URL } from './constants'
 import { ERC20_ABI } from '../utils/constants'
-import { UserModuleArg } from '..'
+
+import type { PublicClient, WalletClient } from 'viem'
+import type { UserModuleArg } from '..'
 
 type DeploymentResponse = {
   orchestratorFactory: Record<string, `0x${string}`>

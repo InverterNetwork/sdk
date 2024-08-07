@@ -1,4 +1,4 @@
-import { createPublicClient, http, createWalletClient, Chain } from 'viem'
+import { createPublicClient, http, createWalletClient, type Chain } from 'viem'
 import { privateKeyToAccount } from 'viem/accounts'
 import * as chains from 'viem/chains'
 

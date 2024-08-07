@@ -1,5 +1,6 @@
-import { PublicClient } from 'viem'
 import { ERC20_ABI } from './constants'
+
+import type { PublicClient } from 'viem'
 
 export type GetRequiredAllowanceProps = {
   transferAmount: bigint

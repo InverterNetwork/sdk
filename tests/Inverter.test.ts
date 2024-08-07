@@ -1,9 +1,8 @@
 import { describe, it, expect } from 'bun:test'
 
-import { WorkflowOrientation } from '../src/types'
 import { Inverter } from '../src/Inverter'
 import { getTestConnectors } from './testHelpers/getTestConnectors'
-import { GetUserArgs, RequestedModules } from '../src'
+import type { GetUserArgs, RequestedModules, WorkflowOrientation } from '../src'
 import { isAddress } from 'viem'
 
 describe('Inverter', () => {

@@ -1,8 +1,16 @@
 import { getModuleData } from '@inverter-network/abis'
-import { PublicClient, encodeAbiParameters } from 'viem'
-import { Extras, GetDeploymentInputs, PopWalletClient } from '../types'
 import { MANDATORY_MODULES } from './constants'
-import {
+import { assembleMetadata, getDefaultToken, getViemMethods } from './utils'
+import processInputs from '../utils/processInputs'
+import formatParameters from '../utils/formatParameters'
+import { Inverter } from '../Inverter'
+import { ADDRESS_ZERO } from '../utils/constants'
+
+import { type PublicClient, encodeAbiParameters } from 'viem'
+import type {
+  Extras,
+  GetDeploymentInputs,
+  PopWalletClient,
   ConstructedArgs,
   ModuleArgs,
   RequestedModule,
@@ -11,11 +19,6 @@ import {
   UserModuleArg,
   UserArgs,
 } from '../types'
-import { assembleMetadata, getDefaultToken, getViemMethods } from './utils'
-import processInputs from '../utils/processInputs'
-import formatParameters from '../utils/formatParameters'
-import { Inverter } from '../Inverter'
-import { ADDRESS_ZERO } from '../utils/constants'
 
 export default async function getRpcInteractions<T extends RequestedModules>(
   publicClient: PublicClient,

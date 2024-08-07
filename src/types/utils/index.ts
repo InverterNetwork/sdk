@@ -1,5 +1,5 @@
-import { GetModuleData, ModuleName } from '@inverter-network/abis'
-import { IfNever, IsEmptyObject } from 'type-fest-4'
+import type { GetModuleData, ModuleName } from '@inverter-network/abis'
+import type { IfNever, IsEmptyObject } from 'type-fest-4'
 
 export * from './parameter'
 export * from './method'
