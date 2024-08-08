@@ -57,7 +57,7 @@ describe('#bondingDeployDecimal', () => {
   const configData = getModuleData(requestedModule).deploymentInputs.configData
 
   it('match: expected proccessedInputs with hard coded', async () => {
-    const formattedInputs = formatParameters(configData)
+    const formattedInputs = formatParameters({ parameters: configData })
 
     const orderedArgs = args
       ? formattedInputs.map((input) => args?.[input.name])
@@ -68,6 +68,7 @@ describe('#bondingDeployDecimal', () => {
       args: orderedArgs,
       publicClient,
       walletClient,
+      kind: 'write',
     })
 
     expect(processedInputs).toStrictEqual(expectedProccessed)

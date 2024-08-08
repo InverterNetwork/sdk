@@ -20,11 +20,17 @@ describe('PIM', async () => {
   let orchestrator: any
 
   describe('estimate gas', () => {
-    it('estimates gas for deployment', async () => {
-      const { estimateGas } = await sdk.getDeploy(requestedModules)
-      const gasEstimate = await estimateGas(deployArgs)
-      expect(Number(gasEstimate.formatted)).toBeGreaterThan(0)
-    })
+    it(
+      'estimates gas for deployment',
+      async () => {
+        const { estimateGas } = await sdk.getDeploy(requestedModules)
+        const gasEstimate = await estimateGas(deployArgs)
+        expect(Number(gasEstimate.formatted)).toBeGreaterThan(0)
+      },
+      {
+        timeout: 50_000,
+      }
+    )
   })
 
   describe('deployment', () => {

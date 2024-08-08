@@ -3,7 +3,6 @@ import processInputs from '../../utils/processInputs'
 import { ERC20_ABI } from '../../utils/constants'
 import { Inverter } from '../../Inverter'
 
-import { type AbiStateMutability } from 'viem'
 import type {
   Extras,
   GetMethodArgs,
@@ -11,7 +10,9 @@ import type {
   FormattedAbiParameter,
   PopWalletClient,
   RequiredAllowances,
+  MethodKind,
 } from '../../types'
+import { formatEther } from 'viem'
 
 const runDependencies = async (
   requiredAllowances: RequiredAllowances[],
@@ -52,34 +53,28 @@ const runWithDependencies = async (
 export default function getRun<
   FormattedInputs extends readonly FormattedAbiParameter[],
   FormattedOutputs extends readonly FormattedAbiParameter[],
-  StateMutability extends AbiStateMutability,
-  Simulate extends boolean = false,
+  Kind extends MethodKind,
 >({
   publicClient,
   walletClient,
   name,
   contract,
-  stateMutability,
   formattedInputs,
   formattedOutputs,
   extras,
-  simulate,
+  kind,
   self,
 }: {
   publicClient: PopPublicClient
   name: string
   contract: any
-  stateMutability: StateMutability
   formattedInputs: FormattedInputs
   formattedOutputs: FormattedOutputs
   walletClient?: PopWalletClient
   extras?: Extras
-  simulate?: Simulate
+  kind: Kind
   self?: Inverter
 }) {
-  // Check if the function is a read or write function
-  const kind = ['view', 'pure'].includes(stateMutability) ? 'read' : 'write'
-
   const run = async (args: GetMethodArgs<typeof formattedInputs>) => {
     // Parse the inputs, from user input to contract input
     const { processedInputs, requiredAllowances } = await processInputs({
@@ -90,6 +85,7 @@ export default function getRun<
       walletClient,
       contract,
       self,
+      kind,
     })
 
     const hasDependencies = requiredAllowances.find(
@@ -97,40 +93,52 @@ export default function getRun<
     )
 
     // Get the result from the contract, based on the kind and simulate params
-    const res = await (() => {
-      // If simulate is true
-      if (simulate && !hasDependencies) {
-        // If extras has a wallet address, use it
-        if (!!extras?.walletAddress)
-          return contract['simulate'][name](processedInputs, {
-            account: extras.walletAddress,
-          })
+    const res = await (async () => {
+      switch (kind) {
+        case 'simulate':
+          // if no dependencies, run the simulate function
+          if (!hasDependencies) {
+            return await contract['simulate'][name](processedInputs, {
+              // If extras has a wallet address, use it
+              ...(extras?.walletAddress && {
+                account: extras.walletAddress,
+              }),
+            })
+          }
+          break
+        case 'write':
+        case 'read':
+          if (hasDependencies)
+            return await runWithDependencies(
+              contract[kind][name],
+              processedInputs,
+              requiredAllowances,
+              publicClient,
+              walletClient
+            )
+          else return contract[kind][name](processedInputs)
+        case 'estimateGas':
+          const value = await contract['estimateGas'][name](processedInputs)
 
-        // Else, just use the parsed inputs
-        return contract['simulate'][name](processedInputs)
+          const formatted = formatEther(value)
+
+          return {
+            formatted,
+            value,
+          }
       }
-
-      if (hasDependencies) {
-        return runWithDependencies(
-          contract[kind][name],
-          processedInputs,
-          requiredAllowances,
-          publicClient,
-          walletClient
-        )
-      }
-
-      // defaults to non simulate, read or write function
-      return contract[kind][name](processedInputs)
     })()
 
     // Format the outputs, from contract output to user output-
     // and pass the return type to type param
-    const formattedRes = formatOutputs<
-      StateMutability,
-      Simulate,
-      FormattedOutputs
-    >({ formattedOutputs, res, extras, publicClient, contract, self })
+    const formattedRes = formatOutputs<Kind, FormattedOutputs>({
+      formattedOutputs,
+      res,
+      extras,
+      publicClient,
+      contract,
+      self,
+    })
 
     return formattedRes
   }

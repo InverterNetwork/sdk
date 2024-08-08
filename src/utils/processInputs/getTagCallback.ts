@@ -27,6 +27,7 @@ export default function getTagCallback({
   formattedInputs,
   extras,
   args,
+  kind,
 }: GetTagCallbackParams) {
   const tagCallback: TagCallback = async (type, tags, arg) => {
     let decimalsRes: DecimalsTagReturn
@@ -45,7 +46,7 @@ export default function getTagCallback({
 
       parsedAmount = parseDecimals(arg, decimalsRes.decimals)
 
-      if (tags.includes('approval' as any)) {
+      if (kind === 'write' && tags.includes('approval' as any)) {
         const requiredAllowance = await tagProcessor.getRequiredAllowance({
           transferAmount: parsedAmount,
           publicClient,

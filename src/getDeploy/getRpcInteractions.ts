@@ -18,17 +18,22 @@ import type {
   GetUserArgs,
   UserModuleArg,
   UserArgs,
+  MethodKind,
 } from '../types'
 
 let extras: Extras
 
+type JointParams = {
+  publicClient: PublicClient
+  walletClient: PopWalletClient
+  kind: MethodKind
+  self?: Inverter
+}
+
 type GetEncodedArgsParams = {
   deploymentInputs: GetDeploymentInputs
   userModuleArg?: UserModuleArg
-  publicClient: PublicClient
-  walletClient: PopWalletClient
-  self?: Inverter
-}
+} & JointParams
 
 /**
  * Encodes arguments for a module based on configuration data and user-provided arguments.
@@ -39,12 +44,10 @@ type GetEncodedArgsParams = {
 export const getEncodedArgs = async ({
   deploymentInputs,
   userModuleArg,
-  publicClient,
-  walletClient,
-  self,
+  ...params
 }: GetEncodedArgsParams): Promise<`0x${string}`> => {
   const { configData } = deploymentInputs
-  const formattedInputs = formatParameters(configData)
+  const formattedInputs = formatParameters({ parameters: configData })
   const args = userModuleArg
     ? formattedInputs.map((input) => userModuleArg?.[input.name])
     : '0x00'
@@ -52,10 +55,8 @@ export const getEncodedArgs = async ({
   const { processedInputs } = <any>await processInputs({
     formattedInputs,
     args,
-    publicClient,
-    walletClient,
-    self,
     extras,
+    ...params,
   })
 
   return encodeAbiParameters(configData, processedInputs)
@@ -63,11 +64,8 @@ export const getEncodedArgs = async ({
 
 type AssembleModuleArgsParams = {
   name: RequestedModule
-  userModuleArgs?: UserModuleArg
-  publicClient: PublicClient
-  walletClient: PopWalletClient
-  self?: Inverter
-}
+  userModuleArg?: UserModuleArg
+} & JointParams
 
 /**
  * Assembles module arguments based on the module name and user-provided arguments.
@@ -77,18 +75,12 @@ type AssembleModuleArgsParams = {
  */
 export const assembleModuleArgs = async ({
   name,
-  userModuleArgs,
-  publicClient,
-  walletClient,
-  self,
+  ...params
 }: AssembleModuleArgsParams): Promise<ModuleArgs> => {
   const { deploymentInputs } = getModuleData(name)
   const encodedArgs = await getEncodedArgs({
     deploymentInputs,
-    userModuleArg: userModuleArgs,
-    publicClient,
-    walletClient,
-    self,
+    ...params,
   })
 
   return {
@@ -100,10 +92,7 @@ export const assembleModuleArgs = async ({
 type ConstructArgsParams = {
   requestedModules: RequestedModules
   userArgs: UserArgs
-  publicClient: PublicClient
-  walletClient: PopWalletClient
-  self?: Inverter
-}
+} & JointParams
 
 /**
  * Constructs the arguments required for the requested modules.
@@ -117,6 +106,7 @@ export const constructArgs = async ({
   publicClient,
   walletClient,
   self,
+  kind,
 }: ConstructArgsParams): Promise<ConstructedArgs> => {
   let orchestrator = userArgs?.orchestrator
 
@@ -141,10 +131,11 @@ export const constructArgs = async ({
     MANDATORY_MODULES.map((moduleType) =>
       assembleModuleArgs({
         name: requestedModules[moduleType],
-        userModuleArgs: userArgs[moduleType],
+        userModuleArg: userArgs[moduleType],
         publicClient,
         walletClient,
         self,
+        kind,
       })
     )
   )
@@ -159,10 +150,11 @@ export const constructArgs = async ({
       optionalModules.map((optionalModule) =>
         assembleModuleArgs({
           name: optionalModule,
-          userModuleArgs: userArgs.optionalModules?.[optionalModule],
+          userModuleArg: userArgs.optionalModules?.[optionalModule],
           publicClient,
           walletClient,
           self,
+          kind,
         })
       )
     )
@@ -178,10 +170,7 @@ export const constructArgs = async ({
 type GetArgsParams<T extends RequestedModules> = {
   requestedModules: T
   userArgs: GetUserArgs<T>
-  publicClient: PublicClient
-  walletClient: PopWalletClient
-  self?: Inverter
-}
+} & JointParams
 
 /**
  * Retrieves the arguments required for the requested modules.
@@ -189,20 +178,10 @@ type GetArgsParams<T extends RequestedModules> = {
  * @param {GetArgsParams<T>} params - The parameters for retrieving arguments.
  * @returns The array of arguments.
  */
-export async function getArgs<T extends RequestedModules>({
-  requestedModules,
-  userArgs,
-  publicClient,
-  walletClient,
-  self,
-}: GetArgsParams<T>) {
-  const constructed = await constructArgs({
-    requestedModules,
-    userArgs,
-    publicClient,
-    walletClient,
-    self,
-  })
+export async function getArgs<T extends RequestedModules>(
+  props: GetArgsParams<T>
+) {
+  const constructed = await constructArgs(props)
   return [
     constructed.orchestrator,
     constructed.fundingManager,
@@ -212,12 +191,9 @@ export async function getArgs<T extends RequestedModules>({
   ] as const
 }
 
-interface GetRpcInteractionsParams<T extends RequestedModules> {
-  publicClient: PublicClient
-  walletClient: PopWalletClient
+type GetRpcInteractionsParams<T extends RequestedModules> = {
   requestedModules: T
-  self?: Inverter
-}
+} & Omit<JointParams, 'kind'>
 
 /**
  * Provides RPC interactions for the requested modules.
@@ -237,26 +213,27 @@ export default async function getRpcInteractions<T extends RequestedModules>({
     estimateGas: esitmateGasOrg,
   } = await getViemMethods(walletClient, publicClient)
 
-  const handleGetArgs = async (userArgs: GetUserArgs<T>) => {
+  const handleGetArgs = async (userArgs: GetUserArgs<T>, kind: MethodKind) => {
     const arr = await getArgs({
       requestedModules,
       userArgs,
       publicClient,
       walletClient,
       self,
+      kind,
     })
     return arr
   }
 
   const simulate = async (userArgs: GetUserArgs<T>) => {
-    const arr = await handleGetArgs(userArgs)
+    const arr = await handleGetArgs(userArgs, 'simulate')
     return await simulateWrite(arr, {
       account: walletClient.account.address,
     })
   }
 
   const run = async (userArgs: GetUserArgs<T>) => {
-    const arr = await handleGetArgs(userArgs)
+    const arr = await handleGetArgs(userArgs, 'write')
 
     const simulationRes = await simulateWrite(arr, {
       account: walletClient.account.address,
@@ -273,7 +250,7 @@ export default async function getRpcInteractions<T extends RequestedModules>({
   }
 
   const estimateGas = async (userArgs: GetUserArgs<T>) => {
-    const arr = await handleGetArgs(userArgs)
+    const arr = await handleGetArgs(userArgs, 'estimateGas')
 
     const value = await esitmateGasOrg(arr, {
       account: walletClient.account.address,
