@@ -20,5 +20,10 @@ export default async function getDeploy<T extends RequestedModules>(
     self,
   })
 
-  return { inputs, run, simulate, estimateGas }
+  return {
+    inputs,
+    run,
+    simulate,
+    estimateGas,
+  }
 }

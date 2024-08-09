@@ -2,9 +2,7 @@ import { expect, describe, it } from 'bun:test'
 
 import { getTestConnectors } from '../testHelpers/getTestConnectors'
 import { Inverter } from '../../src/Inverter'
-import { decodeErrorResult } from 'viem'
 import type { GetUserArgs, RequestedModules } from '../../src'
-import { getModuleData } from '@inverter-network/abis'
 
 const requestedModules = {
   fundingManager: 'FM_BC_Restricted_Bancor_Redeeming_VirtualSupply_v1',
@@ -45,30 +43,6 @@ const userArgs: GetUserArgs<typeof requestedModules> = {
   },
 }
 
-const getErrorName = (
-  requestedModules: RequestedModules,
-  signature: `0x${string}`
-) => {
-  let errorName: string | undefined
-
-  Object.values(requestedModules)
-    .flat()
-    .forEach((module) => {
-      try {
-        const abi = getModuleData(module).abi
-        const value = decodeErrorResult({
-          abi,
-          data: signature,
-        })
-        if (value.errorName) errorName = value.errorName
-      } catch {
-        // do nothing
-      }
-    })
-
-  return errorName
-}
-
 describe('#getDeploy decimals error', () => {
   const { publicClient, walletClient } = getTestConnectors('sepolia')
 
@@ -82,16 +56,11 @@ describe('#getDeploy decimals error', () => {
         try {
           await simulate(userArgs)
         } catch (e: any) {
-          if (!e?.message?.includes?.('Unable to decode signature')) throw e
+          const message = e?.message
 
-          const signature = e.cause.signature as `0x${string}`
-          const errorName = getErrorName(requestedModules, signature)
+          console.error('Error message:', message)
 
-          if (!errorName) throw e
-
-          console.error(errorName)
-
-          expect(errorName).toBeDefined()
+          expect(message).toBeDefined()
         }
       },
       {

@@ -141,15 +141,7 @@ export default function getRun<
             return await estimateGas()
         }
       } catch (e: any) {
-        const signature = e?.cause?.signature as `0x${string}` | undefined
-        if (!signature) throw e
-        const value = decodeErrorResult({
-          abi: contract.abi,
-          data: signature,
-        })
-        const errorName = value.errorName
-        if (!errorName) throw e
-        throw new Error(errorName)
+        throw handleError(contract.abi, e)
       }
     })()
 
@@ -168,4 +160,29 @@ export default function getRun<
   }
 
   return run
+}
+
+const handleError = (abi: any, error: any) => {
+  if (!error?.message?.includes?.('Unable to decode signature')) return error
+  const signature = error.cause.signature as `0x${string}`
+
+  let errorName: string | undefined
+
+  const abis = [abi]
+
+  abis.forEach((i) => {
+    try {
+      const value = decodeErrorResult({
+        abi: i,
+        data: signature,
+      })
+      if (value.errorName) errorName = value.errorName
+    } catch {
+      // do nothing
+    }
+  })
+
+  if (!errorName) return error
+
+  return new Error(errorName)
 }

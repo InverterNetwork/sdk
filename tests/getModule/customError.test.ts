@@ -20,7 +20,7 @@ describe('#getModule decimals error', () => {
     const sdk = new Inverter(publicClient, walletClient)
     const workflow = await sdk.getWorkflow(orchestrator, requestedModules)
 
-    it.skip(
+    it(
       'finds the name of the error by decoding error signature',
       async () => {
         try {
