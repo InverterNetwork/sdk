@@ -3,6 +3,7 @@ import parse from './parse'
 import type {
   Extras,
   FormattedAbiParameter,
+  MethodKind,
   RequiredAllowances,
 } from '../../types'
 import getTagCallback, { type GetTagCallbackParams } from './getTagCallback'
@@ -11,6 +12,7 @@ export type ProcessInputsBaseParams = {
   extras?: Extras
   formattedInputs: readonly FormattedAbiParameter[]
   args: any
+  kind: MethodKind
 }
 
 export type ProcessInputsParams = Omit<

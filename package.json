@@ -53,7 +53,7 @@
   "peerDependencies": {
     "abitype": "^1",
     "eslint": "^8",
-    "typescript": "^5",
+    "typescript": "^5.5.4",
     "viem": "^2.7.6"
   },
   "dependencies": {

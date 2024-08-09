@@ -6,7 +6,12 @@ import formatParameters from '../utils/formatParameters'
 import { Inverter } from '../Inverter'
 import { ADDRESS_ZERO } from '../utils/constants'
 
-import { type PublicClient, encodeAbiParameters } from 'viem'
+import {
+  type PublicClient,
+  decodeErrorResult,
+  encodeAbiParameters,
+  formatEther,
+} from 'viem'
 import type {
   Extras,
   GetDeploymentInputs,
@@ -18,162 +23,298 @@ import type {
   GetUserArgs,
   UserModuleArg,
   UserArgs,
+  MethodKind,
+  EstimateGasReturn,
 } from '../types'
 
-export default async function getRpcInteractions<T extends RequestedModules>(
-  publicClient: PublicClient,
-  walletClient: PopWalletClient,
-  requestedModules: T,
+let extras: Extras
+
+type JointParams = {
+  publicClient: PublicClient
+  walletClient: PopWalletClient
+  kind: MethodKind
   self?: Inverter
+}
+
+type GetEncodedArgsParams = {
+  deploymentInputs: GetDeploymentInputs
+  userModuleArg?: UserModuleArg
+} & JointParams
+
+/**
+ * Encodes arguments for a module based on configuration data and user-provided arguments.
+ *
+ * @param {GetEncodedArgsParams} params - The parameters for encoding arguments.
+ * @returns {Promise<string>} - The encoded arguments.
+ */
+export const getEncodedArgs = async ({
+  deploymentInputs,
+  userModuleArg,
+  ...params
+}: GetEncodedArgsParams): Promise<`0x${string}`> => {
+  const { configData } = deploymentInputs
+  const formattedInputs = formatParameters({ parameters: configData })
+  const args = userModuleArg
+    ? formattedInputs.map((input) => userModuleArg?.[input.name])
+    : '0x00'
+
+  const { processedInputs } = <any>await processInputs({
+    formattedInputs,
+    args,
+    extras,
+    ...params,
+  })
+
+  return encodeAbiParameters(configData, processedInputs)
+}
+
+type AssembleModuleArgsParams = {
+  name: RequestedModule
+  userModuleArg?: UserModuleArg
+} & JointParams
+
+/**
+ * Assembles module arguments based on the module name and user-provided arguments.
+ *
+ * @param {AssembleModuleArgsParams} params - The parameters for assembling module arguments.
+ * @returns {Promise<ModuleArgs>} - The assembled module arguments.
+ */
+export const assembleModuleArgs = async ({
+  name,
+  ...params
+}: AssembleModuleArgsParams): Promise<ModuleArgs> => {
+  const { deploymentInputs } = getModuleData(name)
+  const encodedArgs = await getEncodedArgs({
+    deploymentInputs,
+    ...params,
+  })
+
+  return {
+    configData: encodedArgs,
+    metadata: assembleMetadata(name),
+  }
+}
+
+type ConstructArgsParams = {
+  requestedModules: RequestedModules
+  userArgs: UserArgs
+} & JointParams
+
+/**
+ * Constructs the arguments required for the requested modules.
+ *
+ * @param {ConstructArgsParams} params - The parameters for constructing arguments.
+ * @returns {Promise<ConstructedArgs>} - The constructed arguments.
+ */
+export const constructArgs = async ({
+  requestedModules,
+  userArgs,
+  publicClient,
+  walletClient,
+  self,
+  kind,
+}: ConstructArgsParams): Promise<ConstructedArgs> => {
+  let orchestrator = userArgs?.orchestrator
+
+  if (!orchestrator?.independentUpdates)
+    orchestrator = {
+      independentUpdates: false,
+      independentUpdateAdmin: ADDRESS_ZERO,
+    }
+
+  const args = {
+    orchestrator,
+    fundingManager: {},
+    authorizer: {},
+    paymentProcessor: {},
+    optionalModules: [],
+  } as unknown as ConstructedArgs
+
+  if (userArgs.fundingManager)
+    extras = await getDefaultToken(publicClient, userArgs.fundingManager)
+
+  const mandatoryModuleArgs = await Promise.all(
+    MANDATORY_MODULES.map((moduleType) =>
+      assembleModuleArgs({
+        name: requestedModules[moduleType],
+        userModuleArg: userArgs[moduleType],
+        publicClient,
+        walletClient,
+        self,
+        kind,
+      })
+    )
+  )
+
+  mandatoryModuleArgs.forEach((argObj, idx) => {
+    args[MANDATORY_MODULES[idx]] = argObj
+  })
+
+  const { optionalModules } = requestedModules
+  if (optionalModules && optionalModules.length > 0) {
+    const optionalModulesArgs = await Promise.all(
+      optionalModules.map((optionalModule) =>
+        assembleModuleArgs({
+          name: optionalModule,
+          userModuleArg: userArgs.optionalModules?.[optionalModule],
+          publicClient,
+          walletClient,
+          self,
+          kind,
+        })
+      )
+    )
+
+    optionalModulesArgs.forEach((argObj) => {
+      args.optionalModules.push(argObj)
+    })
+  }
+
+  return args
+}
+
+type GetArgsParams<T extends RequestedModules> = {
+  requestedModules: T
+  userArgs: GetUserArgs<T>
+} & JointParams
+
+/**
+ * Retrieves the arguments required for the requested modules.
+ *
+ * @param {GetArgsParams<T>} params - The parameters for retrieving arguments.
+ * @returns The array of arguments.
+ */
+export async function getArgs<T extends RequestedModules>(
+  props: GetArgsParams<T>
 ) {
-  let extras: Extras
+  const constructed = await constructArgs(props)
+  return [
+    constructed.orchestrator,
+    constructed.fundingManager,
+    constructed.authorizer,
+    constructed.paymentProcessor,
+    constructed.optionalModules,
+  ] as const
+}
 
-  const getEncodedArgs = async (
-    { configData }: GetDeploymentInputs,
-    userModuleArg?: UserModuleArg
-  ) => {
-    // we need to make sure here formatted outputs array order mathces with the args order
-    const formattedInputs = formatParameters(configData)
+type GetRpcInteractionsParams<T extends RequestedModules> = {
+  requestedModules: T
+} & Omit<JointParams, 'kind'>
 
-    const args = userModuleArg
-      ? formattedInputs.map((input) => userModuleArg?.[input.name])
-      : '0x00'
+/**
+ * Provides RPC interactions for the requested modules.
+ *
+ * @param {GetRpcInteractionsParams<T>} params - The parameters for RPC interactions.
+ * @returns {Promise<{ run: Function, simulate: Function }>} - The RPC interaction functions.
+ */
+export default async function getRpcInteractions<T extends RequestedModules>({
+  publicClient,
+  walletClient,
+  requestedModules,
+  self,
+}: GetRpcInteractionsParams<T>) {
+  const {
+    write,
+    simulateWrite,
+    estimateGas: esitmateGasOrg,
+  } = await getViemMethods(walletClient, publicClient)
 
-    // MG NOTE: Parse inputs respects the array order and struct structure
-
-    const { processedInputs } = (await processInputs({
-      formattedInputs,
-      args,
+  const handleGetArgs = async (userArgs: GetUserArgs<T>, kind: MethodKind) => {
+    const arr = await getArgs({
+      requestedModules,
+      userArgs,
       publicClient,
       walletClient,
       self,
-      extras,
-    })) as any
-
-    const encodedArgs = encodeAbiParameters(configData, processedInputs)
-
-    // Return encodedArgs
-    return encodedArgs
-  }
-
-  const assembleModuleArgs = async (
-    name: RequestedModule,
-    userModuleArgs?: UserModuleArg
-  ): Promise<ModuleArgs> => {
-    const { deploymentInputs } = getModuleData(name)
-
-    const encodedArgs = await getEncodedArgs(deploymentInputs, userModuleArgs)
-
-    const moduleArgs = {
-      configData: encodedArgs,
-      metadata: assembleMetadata(name),
-    }
-
-    return moduleArgs
-  }
-
-  const constructArgs = async (
-    requestedModules: RequestedModules,
-    userArgs: UserArgs
-  ) => {
-    let orchestrator = userArgs?.orchestrator
-
-    if (!orchestrator?.independentUpdates)
-      orchestrator = {
-        independentUpdates: false,
-        independentUpdateAdmin: ADDRESS_ZERO,
-      }
-
-    // Initialize args
-    const args = {
-      orchestrator,
-      fundingManager: {},
-      authorizer: {},
-      paymentProcessor: {},
-      optionalModules: [],
-    } as unknown as ConstructedArgs
-
-    if (userArgs.fundingManager)
-      extras = await getDefaultToken(publicClient, userArgs!.fundingManager)
-
-    const mandatoryModuleArgs = await Promise.all(
-      MANDATORY_MODULES.map((moduleType) =>
-        assembleModuleArgs(requestedModules[moduleType], userArgs[moduleType]!)
-      )
-    )
-
-    mandatoryModuleArgs.forEach((argObj, idx) => {
-      args[MANDATORY_MODULES[idx]] = argObj
+      kind,
     })
-
-    // optional modules
-    const { optionalModules } = requestedModules
-    if (optionalModules && optionalModules?.length > 0) {
-      const optionalModulesArgs = await Promise.all(
-        optionalModules.map((optionalModule) => {
-          const userModuleArg = userArgs.optionalModules?.[optionalModule]
-          return assembleModuleArgs(optionalModule, userModuleArg)
-        })
-      )
-
-      optionalModulesArgs.forEach((argObj) => {
-        args.optionalModules.push(argObj)
-      })
-    }
-
-    return args
+    return arr
   }
 
-  async function getArgs<T extends RequestedModules>(
-    requestedModules: T,
-    userArgs: GetUserArgs<T>
-  ) {
-    const constructed = await constructArgs(requestedModules, userArgs)
-
-    return [
-      constructed.orchestrator,
-      constructed.fundingManager,
-      constructed.authorizer,
-      constructed.paymentProcessor,
-      constructed.optionalModules,
-    ] as const
-  }
-
-  async function getRpcInteractions<T extends RequestedModules>(
-    requestedModules: T
-  ) {
-    const { write, simulateWrite } = await getViemMethods(
-      walletClient,
-      publicClient
-    )
-
-    const simulate = async (userArgs: GetUserArgs<T>) => {
-      const arr = await getArgs(requestedModules, userArgs)
-
+  const simulate = async (userArgs: GetUserArgs<T>) => {
+    try {
+      const arr = await handleGetArgs(userArgs, 'simulate')
       return await simulateWrite(arr, {
         account: walletClient.account.address,
       })
+    } catch (e: any) {
+      throw handleError(requestedModules, e)
     }
-
-    const run = async (userArgs: GetUserArgs<T>) => {
-      const arr = await getArgs(requestedModules, userArgs)
-      // Return the write function with the args
-      return (async () => {
-        // prettier-ignore
-        const orchestratorAddress = (await simulateWrite(arr, {
-        account: walletClient.account.address,
-      })).result
-        const transactionHash = await write(arr, {} as any)
-
-        return {
-          orchestratorAddress,
-          transactionHash,
-        }
-      })()
-    }
-
-    return { run, simulate }
   }
 
-  return await getRpcInteractions(requestedModules)
+  const run = async (userArgs: GetUserArgs<T>) => {
+    try {
+      const arr = await handleGetArgs(userArgs, 'write')
+
+      const simulationRes = await simulateWrite(arr, {
+        account: walletClient.account.address,
+      })
+
+      const orchestratorAddress = simulationRes.result
+
+      const transactionHash = await write(arr, {} as any)
+
+      return {
+        orchestratorAddress,
+        transactionHash,
+      }
+    } catch (e: any) {
+      throw handleError(requestedModules, e)
+    }
+  }
+
+  const estimateGas = async (
+    userArgs: GetUserArgs<T>
+  ): Promise<EstimateGasReturn> => {
+    try {
+      const arr = await handleGetArgs(userArgs, 'estimateGas')
+
+      const value = String(
+        await esitmateGasOrg(arr, {
+          account: walletClient.account.address,
+        })
+      )
+
+      const formatted = formatEther(BigInt(value))
+
+      return {
+        value,
+        formatted,
+      }
+    } catch (e: any) {
+      throw handleError(requestedModules, e)
+    }
+  }
+
+  return { run, simulate, estimateGas }
+}
+
+const handleError = (requestedModules: RequestedModules, error: any) => {
+  if (!error?.message?.includes?.('Unable to decode signature')) return error
+  const signature = error.cause.signature as `0x${string}`
+
+  let errorName: string | undefined
+
+  const abis = [
+    getModuleData('OrchestratorFactory_v1').abi,
+    ...Object.values(requestedModules)
+      .flat()
+      .map((i) => getModuleData(i).abi),
+  ]
+
+  abis.forEach((abi) => {
+    try {
+      const value = decodeErrorResult({
+        abi,
+        data: signature,
+      })
+      if (value.errorName) errorName = value.errorName
+    } catch {
+      // do nothing
+    }
+  })
+
+  if (!errorName) return error
+
+  return new Error(errorName)
 }

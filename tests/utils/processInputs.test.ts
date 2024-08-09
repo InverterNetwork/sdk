@@ -59,6 +59,7 @@ describe('#processInputs', () => {
             publicClient,
             walletClient,
             contract: mockContract,
+            kind: 'read',
           })
           expect(processedInputs[0]).toEqual(420690000000000n)
         })
@@ -78,6 +79,7 @@ describe('#processInputs', () => {
                 publicClient,
                 walletClient,
                 contract: mockContract,
+                kind: 'write',
               })
 
               expect(requiredAllowances).toHaveLength(1)
@@ -125,6 +127,7 @@ describe('#processInputs', () => {
               publicClient,
               walletClient,
               contract: mockContract,
+              kind: 'read',
             })
             expect(processedInputs[0]).toEqual(42069000000000000000000n)
           })
@@ -148,6 +151,7 @@ describe('#processInputs', () => {
               extras,
               publicClient,
               contract: mockContract,
+              kind: 'read',
             })
             expect(processedInputs[0]).toEqual(42069000000n)
           })
@@ -169,6 +173,7 @@ describe('#processInputs', () => {
                 walletClient,
                 contract: mockContract,
                 self: sdk,
+                kind: 'read',
               })
               expect(
                 sdk.tokenCache.get(
@@ -199,6 +204,7 @@ describe('#processInputs', () => {
                 walletClient,
                 contract: mockContract,
                 self: sdk,
+                kind: 'read',
               })
               const ms = performance.now() - start
               expect(ms).toBeLessThan(1)
@@ -250,6 +256,7 @@ describe('#processInputs', () => {
               publicClient,
               walletClient,
               contract: { address: mockAddress },
+              kind: 'read',
             })
             const [, initialTokenSupply, , ,] = processedInputs
             expect(initialTokenSupply).toEqual(420000000000000000000n)
@@ -265,6 +272,7 @@ describe('#processInputs', () => {
               publicClient,
               walletClient,
               contract: mockContract,
+              kind: 'read',
             })
             const [, , initialCollateralSupply, ,] = processedInputs
             expect(initialCollateralSupply).toEqual(69000000n)
@@ -282,6 +290,7 @@ describe('#processInputs', () => {
                 walletClient,
                 contract: mockContract,
                 self: sdk,
+                kind: 'read',
               })
               expect(
                 sdk.tokenCache.get(
@@ -312,6 +321,7 @@ describe('#processInputs', () => {
                 walletClient,
                 contract: mockContract,
                 self: sdk,
+                kind: 'read',
               })
               const ms = performance.now() - start
               expect(ms).toBeLessThan(1)

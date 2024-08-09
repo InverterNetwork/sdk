@@ -44,40 +44,51 @@ export default function getModule<
     })
 
   // Prepare the read functions
-  const read = prepareFunction(
+  const read = prepareFunction({
       publicClient,
       abi,
-      ['pure', 'view'],
+      type: ['pure', 'view'],
       contract,
       extras,
       // We need to pass simulate undefined to not override the default inputs to txHash
-      undefined,
+      kind: 'read',
       self,
-      walletClient
-    ),
+      walletClient,
+    }),
     // Prepare the simulate functions
-    simulate = prepareFunction(
+    simulate = prepareFunction({
       publicClient,
       abi,
-      ['nonpayable', 'payable'],
+      type: ['nonpayable', 'payable'],
       contract,
       extras,
-      true,
+      kind: 'simulate',
       self,
-      walletClient
-    ),
+      walletClient,
+    }),
+    // Prepare estimateGas functions
+    estimateGas = prepareFunction({
+      publicClient,
+      abi,
+      type: ['nonpayable', 'payable'],
+      contract,
+      extras,
+      kind: 'estimateGas',
+      self,
+      walletClient,
+    }),
     // Prepare the write functions if the walletClient is valid
     write = !!walletClient
-      ? prepareFunction(
+      ? prepareFunction({
           publicClient,
           abi,
-          ['nonpayable', 'payable'],
+          type: ['nonpayable', 'payable'],
           contract,
           extras,
-          false,
+          kind: 'write',
           self,
-          walletClient
-        )
+          walletClient,
+        })
       : undefined
 
   // The result object, covers the whole module
@@ -88,6 +99,7 @@ export default function getModule<
     description,
     read,
     simulate,
+    estimateGas,
     write: write as W extends undefined ? never : NonNullable<typeof write>,
   }
 

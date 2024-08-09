@@ -26,7 +26,7 @@ export const tuple = async ({
   await Promise.all(
     output.components.map(async (c, index) => {
       // try the name of the component, if it doesn't exist, use the index
-      formattedTuple[c.name ?? `_${index}`] = format({
+      formattedTuple[c.name ?? `_${index}`] = await format({
         output: c,
         res: res[c.name ?? index],
         extras,
@@ -39,8 +39,10 @@ export const tuple = async ({
 }
 
 // The case for tuple[] outputs
-export const tupleArray = ({ res, ...rest }: TupleCaseParams) =>
-  res.map((resI: any) => tuple({ res: resI, ...rest }))
+export const tupleArray = async ({ res, ...rest }: TupleCaseParams) =>
+  await Promise.all(
+    res.map(async (resI: any) => await tuple({ res: resI, ...rest }))
+  )
 
 // The case for decimal outputs
 export const formatDecimals = (value: bigint, decimals?: number) => {

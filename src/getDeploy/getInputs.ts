@@ -22,7 +22,7 @@ export const getModuleSchema = <
 
   const { configData } = deploymentInputs
 
-  const inputs = formatParameters(configData) as any
+  const inputs = formatParameters({ parameters: configData }) as any
 
   return { name, inputs }
 }

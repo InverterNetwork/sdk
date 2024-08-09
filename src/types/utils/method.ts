@@ -1,5 +1,11 @@
-import type { AbiStateMutability } from 'abitype'
 import type { FormattedParametersToPrimitiveType } from './parameter'
+
+export type MethodKind = 'read' | 'write' | 'simulate' | 'estimateGas'
+
+export type EstimateGasReturn = {
+  value: string
+  formatted: string
+}
 
 // Decides on the arguments orders
 export type GetMethodArgs<I> =
@@ -23,12 +29,10 @@ type InferReturn<O> =
     : never
 
 // Get the return type of the method, based on read, write or simulate
-export type GetMethodResponse<
-  O,
-  T extends AbiStateMutability,
-  Simulate extends boolean = false,
-> = Simulate extends true
-  ? InferReturn<O>
-  : T extends 'payable' | 'nonpayable'
-    ? `0x${string}`
-    : InferReturn<O>
+export type GetMethodResponse<O, T extends MethodKind> = T extends 'estimateGas'
+  ? EstimateGasReturn
+  : T extends 'simulate'
+    ? InferReturn<O>
+    : T extends 'write'
+      ? `0x${string}`
+      : InferReturn<O>
