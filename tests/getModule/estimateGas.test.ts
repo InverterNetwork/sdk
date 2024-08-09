@@ -18,8 +18,7 @@ describe('Should estimate a write methods gas', async () => {
     })
 
   it('Estimate the gas', async () => {
-    const res = await moduleObj.estimateGas.buy.run(['1000000', '0'])
-    console.log('Gas Res: \n', res)
+    const res = await moduleObj.estimateGas.openBuy.run()
     expect(res).toContainKeys(['value', 'formatted'])
   })
 })

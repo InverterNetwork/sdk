@@ -3,7 +3,7 @@ import type { FormattedParametersToPrimitiveType } from './parameter'
 export type MethodKind = 'read' | 'write' | 'simulate' | 'estimateGas'
 
 export type EstimateGasReturn = {
-  value: bigint
+  value: string
   formatted: string
 }
 

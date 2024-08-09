@@ -21,6 +21,7 @@ export default async function formatOutputs<
   T extends readonly FormattedAbiParameter[],
 >(props: GetTagCallbackParams<T>): Promise<GetMethodResponse<T, Kind>> {
   const { formattedOutputs, res, extras } = props
+
   // format the outputs
   const mapped = await Promise.all(
     formattedOutputs.map(async (output) => {
@@ -36,13 +37,16 @@ export default async function formatOutputs<
         // if name is not defined or the result is not an object or array
         return res
       })()
+
       // format the output with the argument
-      return await format({
+      const formatted = await format({
         output,
         res: selectedRes,
         extras,
         tagCallback: getTagCallback(props),
       })
+
+      return formatted
     })
   )
 

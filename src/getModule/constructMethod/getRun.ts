@@ -12,13 +12,17 @@ import type {
   RequiredAllowances,
   MethodKind,
 } from '../../types'
-import { formatEther } from 'viem'
+import { decodeErrorResult, formatEther } from 'viem'
 
-const runDependencies = async (
-  requiredAllowances: RequiredAllowances[],
-  publicClient: PopPublicClient,
+const runDependencies = async ({
+  requiredAllowances,
+  publicClient,
+  walletClient,
+}: {
+  requiredAllowances: RequiredAllowances[]
+  publicClient: PopPublicClient
   walletClient?: PopWalletClient
-) => {
+}) => {
   if (!walletClient) return
   const dependencyTxHashes = await Promise.all(
     requiredAllowances.map((requiredAllowance) => {
@@ -31,6 +35,7 @@ const runDependencies = async (
       })
     })
   )
+
   return await Promise.all(
     dependencyTxHashes.map((hash) => {
       return publicClient.waitForTransactionReceipt({ hash })
@@ -38,14 +43,18 @@ const runDependencies = async (
   )
 }
 
-const runWithDependencies = async (
-  mainFunction: any,
-  mainArgs: any,
-  requiredAllowances: RequiredAllowances[],
-  publicClient: PopPublicClient,
+const runWithDependencies = async ({
+  mainArgs,
+  mainFunction,
+  ...params
+}: {
+  mainFunction: any
+  mainArgs: any
+  requiredAllowances: RequiredAllowances[]
+  publicClient: PopPublicClient
   walletClient?: PopWalletClient
-) => {
-  await runDependencies(requiredAllowances, publicClient, walletClient)
+}) => {
+  await runDependencies(params)
   return mainFunction(mainArgs)
 }
 
@@ -92,46 +101,61 @@ export default function getRun<
       (requiredAllowance) => requiredAllowance.amount > 0n
     )
 
+    const estimateGas = async () => {
+      const value = await contract['estimateGas'][name](processedInputs)
+      const formatted = formatEther(value)
+      const result = {
+        value,
+        formatted,
+      }
+      return result
+    }
+
     // Get the result from the contract, based on the kind and simulate params
     const res = await (async () => {
-      switch (kind) {
-        case 'simulate':
-          // if no dependencies, run the simulate function
-          if (!hasDependencies) {
-            return await contract['simulate'][name](processedInputs, {
-              // If extras has a wallet address, use it
-              ...(extras?.walletAddress && {
-                account: extras.walletAddress,
-              }),
-            })
-          }
-          break
-        case 'write':
-        case 'read':
-          if (hasDependencies)
-            return await runWithDependencies(
-              contract[kind][name],
-              processedInputs,
-              requiredAllowances,
-              publicClient,
-              walletClient
-            )
-          else return contract[kind][name](processedInputs)
-        case 'estimateGas':
-          const value = await contract['estimateGas'][name](processedInputs)
-
-          const formatted = formatEther(value)
-
-          return {
-            formatted,
-            value,
-          }
+      try {
+        switch (kind) {
+          case 'simulate':
+            // if no dependencies, run the simulate function
+            if (!hasDependencies) {
+              return await contract['simulate'][name](processedInputs, {
+                // If extras has a wallet address, use it
+                ...(extras?.walletAddress && {
+                  account: extras.walletAddress,
+                }),
+              })
+            }
+            break
+          case 'write':
+          case 'read':
+            if (hasDependencies)
+              return await runWithDependencies({
+                mainFunction: contract[kind][name],
+                mainArgs: processedInputs,
+                requiredAllowances,
+                publicClient,
+                walletClient,
+              })
+            else return await contract[kind][name](processedInputs)
+          case 'estimateGas':
+            return await estimateGas()
+        }
+      } catch (e: any) {
+        const signature = e?.cause?.signature as `0x${string}` | undefined
+        if (!signature) throw e
+        const value = decodeErrorResult({
+          abi: contract.abi,
+          data: signature,
+        })
+        const errorName = value.errorName
+        if (!errorName) throw e
+        throw new Error(errorName)
       }
     })()
 
     // Format the outputs, from contract output to user output-
     // and pass the return type to type param
-    const formattedRes = formatOutputs<Kind, FormattedOutputs>({
+    const formattedRes = await formatOutputs<Kind, FormattedOutputs>({
       formattedOutputs,
       res,
       extras,

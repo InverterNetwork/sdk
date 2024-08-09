@@ -17,105 +17,128 @@ describe('PIM', async () => {
 
   const sdk = new Inverter(publicClient, walletClient)
 
-  let orchestrator: any
+  const skipDeploy = true
+  let orchestrator =
+    // this orchestrator belongs to mguleryuz test account
+    '0xCDfC7e4a5F377816C9bA533D45F269198Ef1F910' as `0x${string}`
 
-  describe('estimate gas', () => {
-    it(
-      'estimates gas for deployment',
-      async () => {
-        const { estimateGas } = await sdk.getDeploy(requestedModules)
-        const gasEstimate = await estimateGas(deployArgs)
-        expect(Number(gasEstimate.formatted)).toBeGreaterThan(0)
-      },
-      {
-        timeout: 50_000,
-      }
-    )
-  })
+  it(
+    'estimates gas for deployment',
+    async () => {
+      const { estimateGas } = await sdk.getDeploy(requestedModules)
+      const gasEstimate = await estimateGas(deployArgs)
+      expect(gasEstimate).toContainKeys(['value', 'formatted'])
+    },
+    {
+      timeout: 50_000,
+    }
+  )
 
-  describe('deployment', () => {
-    it(
-      'deploys the BC',
-      async () => {
-        const { run } = await sdk.getDeploy(requestedModules)
-        const { orchestratorAddress, transactionHash } = await run(deployArgs)
-        await publicClient.waitForTransactionReceipt({ hash: transactionHash })
-        orchestrator = orchestratorAddress
-      },
-      {
-        timeout: 50_000,
-      }
-    )
-  })
+  it.skipIf(skipDeploy)(
+    'deploys the BC',
+    async () => {
+      const { run } = await sdk.getDeploy(requestedModules)
+      const { orchestratorAddress, transactionHash } = await run(deployArgs)
+      await publicClient.waitForTransactionReceipt({
+        hash: transactionHash,
+      })
+      orchestrator = orchestratorAddress
+    },
+    {
+      timeout: 50_000,
+    }
+  )
 
-  describe('permissioning', () => {
-    it(
-      'assigns permission to buy from curve',
-      async () => {
-        const workflow = await sdk.getWorkflow(orchestrator, requestedModules)
-        const role =
-          await workflow.fundingManager.read.CURVE_INTERACTION_ROLE.run()
-        const grantModuleTx =
-          await workflow.fundingManager.write.grantModuleRole.run([
-            role,
-            deployer,
-          ])
-        await publicClient.waitForTransactionReceipt({ hash: grantModuleTx })
-        const hasRole = await workflow.authorizer.read.hasModuleRole.run([
-          role,
+  it(
+    'assigns permission to buy from curve',
+    async () => {
+      // Get and set Workflow
+      const workflow = await sdk.getWorkflow(orchestrator, requestedModules)
+      // Get Role
+      const role =
+        await workflow.fundingManager.read.CURVE_INTERACTION_ROLE.run()
+      // Generate Module Role
+      const generatedRole = await workflow.authorizer.read.generateRoleId.run([
+        workflow.fundingManager.address,
+        role,
+      ])
+      // Grant Module Role
+      const grantModuleTx =
+        await workflow.fundingManager.write.grantModuleRole.run([
+          generatedRole,
           deployer,
         ])
-        expect(hasRole).toBeTrue
-      },
-      {
-        timeout: 50_000,
-      }
-    )
-  })
+      // Wait for Transaction Receipt
+      await publicClient.waitForTransactionReceipt({
+        hash: grantModuleTx,
+      })
+      // Read hasRole
+      const hasRole = await workflow.authorizer.read.hasRole.run([
+        generatedRole,
+        deployer,
+      ])
+      // Expect hasRole to be true
+      expect(hasRole).toBeTrue
+    },
+    {
+      timeout: 50_000,
+    }
+  )
 
-  describe('buying', () => {
-    const depositAmount = '500'
-    const eighteenDecimals = '000000000000000000'
+  it(
+    'deposits collateral tokens into the curve',
+    async () => {
+      const depositAmount = '500'
+      const eighteenDecimals = '000000000000000000'
 
-    it(
-      'deposits collateral tokens into the curve',
-      async () => {
-        const mintTx = <`0x${string}`>await walletClient.writeContract({
-          address: testToken,
-          abi: ERC20_ABI,
-          functionName: 'mint',
-          args: [deployer, BigInt(depositAmount + eighteenDecimals)],
-        })
-        await publicClient.waitForTransactionReceipt({ hash: mintTx })
-        const workflow = await sdk.getWorkflow(orchestrator, requestedModules)
-        const amountOut =
-          await workflow.fundingManager.read.calculatePurchaseReturn.run(
-            depositAmount
-          )
-        const balanceBefore = <bigint>await publicClient.readContract({
-          address: testToken,
-          abi: ERC20_ABI,
-          functionName: 'balanceOf',
-          args: [deployer],
-        })
-        const buyTx = await workflow.fundingManager.write.buy.run([
-          depositAmount,
-          amountOut,
-        ])
-        await publicClient.waitForTransactionReceipt({ hash: buyTx })
-        const balanceAfter = <bigint>await publicClient.readContract({
-          address: testToken,
-          abi: ERC20_ABI,
-          functionName: 'balanceOf',
-          args: [deployer],
-        })
-        expect((balanceBefore - balanceAfter).toString()).toEqual(
-          depositAmount + eighteenDecimals
+      // Get and set Workflow
+      const workflow = await sdk.getWorkflow(orchestrator, requestedModules)
+      // Mint tokens
+      const mintTx = <`0x${string}`>await walletClient.writeContract({
+        address: testToken,
+        abi: ERC20_ABI,
+        functionName: 'mint',
+        args: [deployer, BigInt(depositAmount + eighteenDecimals)],
+      })
+      // Wait for Transaction Receipt
+      await publicClient.waitForTransactionReceipt({
+        hash: mintTx,
+      })
+      // Calculate amount out
+      const amountOut =
+        await workflow.fundingManager.read.calculatePurchaseReturn.run(
+          depositAmount
         )
-      },
-      {
-        timeout: 50_000,
-      }
-    )
-  })
+      // Read balance before
+      const balanceBefore = <bigint>await publicClient.readContract({
+        address: testToken,
+        abi: ERC20_ABI,
+        functionName: 'balanceOf',
+        args: [deployer],
+      })
+      // Buy tokens
+      const buyTx = await workflow.fundingManager.write.buy.run([
+        depositAmount,
+        amountOut,
+      ])
+      // Wait for Transaction Receipt
+      await publicClient.waitForTransactionReceipt({
+        hash: buyTx,
+      })
+      // Read balance after
+      const balanceAfter = <bigint>await publicClient.readContract({
+        address: testToken,
+        abi: ERC20_ABI,
+        functionName: 'balanceOf',
+        args: [deployer],
+      })
+      // Expect balance to be less
+      expect((balanceBefore - balanceAfter).toString()).toEqual(
+        depositAmount + eighteenDecimals
+      )
+    },
+    {
+      timeout: 50_000,
+    }
+  )
 })

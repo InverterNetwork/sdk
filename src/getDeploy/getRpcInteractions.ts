@@ -19,6 +19,7 @@ import type {
   UserModuleArg,
   UserArgs,
   MethodKind,
+  EstimateGasReturn,
 } from '../types'
 
 let extras: Extras
@@ -249,14 +250,18 @@ export default async function getRpcInteractions<T extends RequestedModules>({
     }
   }
 
-  const estimateGas = async (userArgs: GetUserArgs<T>) => {
+  const estimateGas = async (
+    userArgs: GetUserArgs<T>
+  ): Promise<EstimateGasReturn> => {
     const arr = await handleGetArgs(userArgs, 'estimateGas')
 
-    const value = await esitmateGasOrg(arr, {
-      account: walletClient.account.address,
-    })
+    const value = String(
+      await esitmateGasOrg(arr, {
+        account: walletClient.account.address,
+      })
+    )
 
-    const formatted = formatEther(value)
+    const formatted = formatEther(BigInt(value))
 
     return {
       value,

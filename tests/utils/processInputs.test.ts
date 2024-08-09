@@ -79,7 +79,7 @@ describe('#processInputs', () => {
                 publicClient,
                 walletClient,
                 contract: mockContract,
-                kind: 'read',
+                kind: 'write',
               })
 
               expect(requiredAllowances).toHaveLength(1)
