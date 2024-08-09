@@ -6,7 +6,12 @@ import formatParameters from '../utils/formatParameters'
 import { Inverter } from '../Inverter'
 import { ADDRESS_ZERO } from '../utils/constants'
 
-import { type PublicClient, encodeAbiParameters, formatEther } from 'viem'
+import {
+  type PublicClient,
+  decodeErrorResult,
+  encodeAbiParameters,
+  formatEther,
+} from 'viem'
 import type {
   Extras,
   GetDeploymentInputs,
@@ -227,47 +232,89 @@ export default async function getRpcInteractions<T extends RequestedModules>({
   }
 
   const simulate = async (userArgs: GetUserArgs<T>) => {
-    const arr = await handleGetArgs(userArgs, 'simulate')
-    return await simulateWrite(arr, {
-      account: walletClient.account.address,
-    })
+    try {
+      const arr = await handleGetArgs(userArgs, 'simulate')
+      return await simulateWrite(arr, {
+        account: walletClient.account.address,
+      })
+    } catch (e: any) {
+      throw handleError(requestedModules, e)
+    }
   }
 
   const run = async (userArgs: GetUserArgs<T>) => {
-    const arr = await handleGetArgs(userArgs, 'write')
+    try {
+      const arr = await handleGetArgs(userArgs, 'write')
 
-    const simulationRes = await simulateWrite(arr, {
-      account: walletClient.account.address,
-    })
+      const simulationRes = await simulateWrite(arr, {
+        account: walletClient.account.address,
+      })
 
-    const orchestratorAddress = simulationRes.result
+      const orchestratorAddress = simulationRes.result
 
-    const transactionHash = await write(arr, {} as any)
+      const transactionHash = await write(arr, {} as any)
 
-    return {
-      orchestratorAddress,
-      transactionHash,
+      return {
+        orchestratorAddress,
+        transactionHash,
+      }
+    } catch (e: any) {
+      throw handleError(requestedModules, e)
     }
   }
 
   const estimateGas = async (
     userArgs: GetUserArgs<T>
   ): Promise<EstimateGasReturn> => {
-    const arr = await handleGetArgs(userArgs, 'estimateGas')
+    try {
+      const arr = await handleGetArgs(userArgs, 'estimateGas')
 
-    const value = String(
-      await esitmateGasOrg(arr, {
-        account: walletClient.account.address,
-      })
-    )
+      const value = String(
+        await esitmateGasOrg(arr, {
+          account: walletClient.account.address,
+        })
+      )
 
-    const formatted = formatEther(BigInt(value))
+      const formatted = formatEther(BigInt(value))
 
-    return {
-      value,
-      formatted,
+      return {
+        value,
+        formatted,
+      }
+    } catch (e: any) {
+      throw handleError(requestedModules, e)
     }
   }
 
   return { run, simulate, estimateGas }
+}
+
+const handleError = (requestedModules: RequestedModules, error: any) => {
+  if (!error?.message?.includes?.('Unable to decode signature')) return error
+  const signature = error.cause.signature as `0x${string}`
+
+  let errorName: string | undefined
+
+  const abis = [
+    getModuleData('OrchestratorFactory_v1').abi,
+    ...Object.values(requestedModules)
+      .flat()
+      .map((i) => getModuleData(i).abi),
+  ]
+
+  abis.forEach((abi) => {
+    try {
+      const value = decodeErrorResult({
+        abi,
+        data: signature,
+      })
+      if (value.errorName) errorName = value.errorName
+    } catch {
+      // do nothing
+    }
+  })
+
+  if (!errorName) return error
+
+  return new Error(errorName)
 }
