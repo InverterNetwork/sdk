@@ -38,5 +38,7 @@ export const tuple = async ({
 }
 
 // The case for tuple[] arguments
-export const tupleArray = ({ arg, ...rest }: TupleCaseParams) =>
-  arg.map((argI: any) => tuple({ arg: argI, ...rest }))
+export const tupleArray = async ({ arg, ...rest }: TupleCaseParams) =>
+  await Promise.all(
+    arg.map(async (argI: any) => await tuple({ arg: argI, ...rest }))
+  )

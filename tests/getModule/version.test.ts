@@ -14,7 +14,6 @@ describe('Should get the verion from a module', async () => {
 
   it('Fetch the version', async () => {
     const res = await moduleObj.read.version.run()
-    console.log('Version Res: \n', res)
     expect(res).toBeArray()
   })
 })

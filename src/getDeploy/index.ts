@@ -13,12 +13,12 @@ export default async function getDeploy<T extends RequestedModules>(
 ) {
   const inputs = getInputs(requestedModules)
 
-  const { run, simulate } = await getRpcInteractions(
+  const { run, simulate, estimateGas } = await getRpcInteractions({
     publicClient,
     walletClient,
     requestedModules,
-    self
-  )
+    self,
+  })
 
-  return { inputs, run, simulate }
+  return { inputs, run, simulate, estimateGas }
 }

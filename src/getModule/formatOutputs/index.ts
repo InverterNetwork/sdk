@@ -4,8 +4,8 @@ import type {
   FormattedAbiParameter,
   Extras,
   GetMethodResponse,
+  MethodKind,
 } from '../../types'
-import type { AbiStateMutability } from 'abitype'
 import getTagCallback, { type GetTagCallbackParams } from './getTagCallback'
 
 export type FormatOutputsBaseParams<
@@ -17,13 +17,11 @@ export type FormatOutputsBaseParams<
 }
 
 export default async function formatOutputs<
-  StateMutability extends AbiStateMutability,
-  Simulate extends boolean,
+  Kind extends MethodKind,
   T extends readonly FormattedAbiParameter[],
->(
-  props: GetTagCallbackParams<T>
-): Promise<GetMethodResponse<T, StateMutability, Simulate>> {
+>(props: GetTagCallbackParams<T>): Promise<GetMethodResponse<T, Kind>> {
   const { formattedOutputs, res, extras } = props
+
   // format the outputs
   const mapped = await Promise.all(
     formattedOutputs.map(async (output) => {
@@ -39,13 +37,16 @@ export default async function formatOutputs<
         // if name is not defined or the result is not an object or array
         return res
       })()
+
       // format the output with the argument
-      return await format({
+      const formatted = await format({
         output,
         res: selectedRes,
         extras,
         tagCallback: getTagCallback(props),
       })
+
+      return formatted
     })
   )
 

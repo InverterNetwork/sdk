@@ -14,7 +14,6 @@ describe('#getRun', () => {
 
   const minAmountOut = '1'
   const depositAmount = '1000000'
-  const stateMutability = 'nonpayable'
   const formattedOutputs = [
     {
       name: 'txHash',
@@ -102,12 +101,11 @@ describe('#getRun', () => {
           publicClient,
           walletClient,
           name,
-          stateMutability,
+          kind: 'write',
           formattedInputs,
           formattedOutputs,
           extras,
           contract,
-          simulate: false,
         })
 
         expect(await run([depositAmount, minAmountOut])).pass()
@@ -125,7 +123,6 @@ describe('#getRun', () => {
 
     describe('with approval', () => {
       const name = 'stake'
-      const stateMutability = 'nonpayable'
       const formattedInputs = [
         {
           name: 'amount',
@@ -152,12 +149,11 @@ describe('#getRun', () => {
           publicClient,
           walletClient,
           name,
-          stateMutability,
+          kind: 'write',
           formattedInputs,
           formattedOutputs,
           extras,
           contract,
-          simulate: false,
         })
         expect(await run([depositAmount])).pass()
       })
