@@ -11,6 +11,7 @@ import {
   decodeErrorResult,
   encodeAbiParameters,
   formatEther,
+  parseUnits,
 } from 'viem'
 import type {
   Extras,
@@ -25,6 +26,7 @@ import type {
   UserArgs,
   MethodKind,
   EstimateGasReturn,
+  FactoryType,
 } from '../types'
 
 let extras: Extras
@@ -36,204 +38,223 @@ type JointParams = {
   self?: Inverter
 }
 
-type GetEncodedArgsParams = {
-  deploymentInputs: GetDeploymentInputs
-  userModuleArg?: UserModuleArg
-} & JointParams
-
 /**
  * Encodes arguments for a module based on configuration data and user-provided arguments.
- *
- * @param {GetEncodedArgsParams} params - The parameters for encoding arguments.
- * @returns {Promise<string>} - The encoded arguments.
  */
 export const getEncodedArgs = async ({
   deploymentInputs,
   userModuleArg,
   ...params
-}: GetEncodedArgsParams): Promise<`0x${string}`> => {
+}: {
+  deploymentInputs: GetDeploymentInputs
+  userModuleArg?: UserModuleArg
+} & JointParams): Promise<`0x${string}`> => {
+  // Get the configuration data for the module
   const { configData } = deploymentInputs
+  // Format the configuration data
   const formattedInputs = formatParameters({ parameters: configData })
+  // Itterate through the formatted inputs and get the user provided arguments
   const args = userModuleArg
     ? formattedInputs.map((input) => userModuleArg?.[input.name])
     : '0x00'
-
+  // Process the inputs
   const { processedInputs } = <any>await processInputs({
     formattedInputs,
     args,
     extras,
     ...params,
   })
-
-  return encodeAbiParameters(configData, processedInputs)
+  // Encode the processed inputs
+  const encodedArgs = encodeAbiParameters(configData, processedInputs)
+  // Return the encoded arguments
+  return encodedArgs
 }
 
-type AssembleModuleArgsParams = {
-  name: RequestedModule
-  userModuleArg?: UserModuleArg
-} & JointParams
-
-/**
- * Assembles module arguments based on the module name and user-provided arguments.
- *
- * @param {AssembleModuleArgsParams} params - The parameters for assembling module arguments.
- * @returns {Promise<ModuleArgs>} - The assembled module arguments.
- */
 export const assembleModuleArgs = async ({
   name,
   ...params
-}: AssembleModuleArgsParams): Promise<ModuleArgs> => {
+}: {
+  name: RequestedModule
+  userModuleArg?: UserModuleArg
+} & JointParams): Promise<ModuleArgs> => {
+  // Get the deployment inputs for the module
   const { deploymentInputs } = getModuleData(name)
-  const encodedArgs = await getEncodedArgs({
+  // Get the encoded arguments for the module = encoded configData
+  const configData = await getEncodedArgs({
     deploymentInputs,
     ...params,
   })
-
+  // Assempble the metadata for the module
+  const metadata = assembleMetadata(name)
+  // Return the module arguments
   return {
-    configData: encodedArgs,
-    metadata: assembleMetadata(name),
+    configData,
+    metadata,
   }
 }
 
-type ConstructArgsParams = {
-  requestedModules: RequestedModules
-  userArgs: UserArgs
-} & JointParams
-
 /**
  * Constructs the arguments required for the requested modules.
- *
- * @param {ConstructArgsParams} params - The parameters for constructing arguments.
- * @returns {Promise<ConstructedArgs>} - The constructed arguments.
  */
 export const constructArgs = async ({
   requestedModules,
   userArgs,
-  publicClient,
-  walletClient,
-  self,
-  kind,
-}: ConstructArgsParams): Promise<ConstructedArgs> => {
+  factoryType,
+  ...rest
+}: {
+  factoryType: FactoryType
+  requestedModules: RequestedModules
+  userArgs: UserArgs
+} & JointParams) => {
   let orchestrator = userArgs?.orchestrator
-
+  // If orchestrator is not provided, set it to default values
   if (!orchestrator?.independentUpdates)
     orchestrator = {
       independentUpdates: false,
       independentUpdateAdmin: ADDRESS_ZERO,
     }
 
+  // Set up the initial arguments
   const args = {
     orchestrator,
     fundingManager: {},
     authorizer: {},
     paymentProcessor: {},
     optionalModules: [],
+    issuanceToken: {},
   } as unknown as ConstructedArgs
 
+  // Get the default token if the funding manager is provided
   if (userArgs.fundingManager)
-    extras = await getDefaultToken(publicClient, userArgs.fundingManager)
+    extras = await getDefaultToken(rest.publicClient, userArgs.fundingManager)
 
-  const mandatoryModuleArgs = await Promise.all(
-    MANDATORY_MODULES.map((moduleType) =>
-      assembleModuleArgs({
+  // Get the arguments for the mandatory modules
+  await Promise.all(
+    MANDATORY_MODULES.map(async (moduleType, idx) => {
+      // Get the arguments for the module
+      const argObj = await assembleModuleArgs({
         name: requestedModules[moduleType],
         userModuleArg: userArgs[moduleType],
-        publicClient,
-        walletClient,
-        self,
-        kind,
+        ...rest,
       })
-    )
+      // Assign the mandatory module arguments to the args object
+      args[MANDATORY_MODULES[idx]] = argObj
+    })
   )
 
-  mandatoryModuleArgs.forEach((argObj, idx) => {
-    args[MANDATORY_MODULES[idx]] = argObj
-  })
-
   const { optionalModules } = requestedModules
+
+  // If optional modules are provided, get the arguments for them
   if (optionalModules && optionalModules.length > 0) {
-    const optionalModulesArgs = await Promise.all(
-      optionalModules.map((optionalModule) =>
-        assembleModuleArgs({
+    await Promise.all(
+      optionalModules.map(async (optionalModule) => {
+        // Get the arguments for the optional module
+        const argObj = await assembleModuleArgs({
           name: optionalModule,
           userModuleArg: userArgs.optionalModules?.[optionalModule],
-          publicClient,
-          walletClient,
-          self,
-          kind,
+          ...rest,
         })
-      )
+        // Assign the optional module arguments to the args object
+        args.optionalModules.push(argObj)
+      })
     )
+  }
 
-    optionalModulesArgs.forEach((argObj) => {
-      args.optionalModules.push(argObj)
-    })
+  if (factoryType === 'restricted-pim') {
+    if (!userArgs.issuanceToken) throw new Error('Issuance token is required')
+    args.issuanceToken = {
+      ...userArgs.issuanceToken,
+      maxSupply: String(
+        parseUnits(
+          userArgs.issuanceToken.maxSupply,
+          Number(userArgs.issuanceToken.decimals)
+        )
+      ),
+    }
   }
 
   return args
 }
 
-type GetArgsParams<T extends RequestedModules> = {
-  requestedModules: T
-  userArgs: GetUserArgs<T>
-} & JointParams
-
 /**
  * Retrieves the arguments required for the requested modules.
- *
- * @param {GetArgsParams<T>} params - The parameters for retrieving arguments.
- * @returns The array of arguments.
  */
-export async function getArgs<T extends RequestedModules>(
-  props: GetArgsParams<T>
+export async function getArgs<
+  T extends RequestedModules,
+  FT extends FactoryType = 'default',
+>(
+  params: {
+    requestedModules: T
+    factoryType: FT
+    userArgs: GetUserArgs<T, FT>
+  } & JointParams
 ) {
-  const constructed = await constructArgs(props)
-  return [
+  // Construct the arguments in a object
+  const constructed = await constructArgs(params)
+  // Return the arguments as an array
+  const baseArr = [
     constructed.orchestrator,
     constructed.fundingManager,
     constructed.authorizer,
     constructed.paymentProcessor,
     constructed.optionalModules,
   ] as const
-}
 
-type GetRpcInteractionsParams<T extends RequestedModules> = {
-  requestedModules: T
-} & Omit<JointParams, 'kind'>
+  const restrictedPimArr = [
+    ...baseArr,
+    (constructed as ConstructedArgs).issuanceToken,
+  ] as const
+
+  const result = (
+    params.factoryType === 'restricted-pim' ? restrictedPimArr : baseArr
+  ) as FT extends 'restricted-pim' ? typeof restrictedPimArr : typeof baseArr
+
+  return result
+}
 
 /**
  * Provides RPC interactions for the requested modules.
- *
- * @param {GetRpcInteractionsParams<T>} params - The parameters for RPC interactions.
- * @returns {Promise<{ run: Function, simulate: Function }>} - The RPC interaction functions.
  */
-export default async function getRpcInteractions<T extends RequestedModules>({
-  publicClient,
-  walletClient,
-  requestedModules,
-  self,
-}: GetRpcInteractionsParams<T>) {
+export default async function getRpcInteractions<
+  T extends RequestedModules,
+  FT extends FactoryType,
+>(
+  params: {
+    requestedModules: T
+    factoryType: FT
+  } & Omit<JointParams, 'kind'>
+) {
+  const { publicClient, walletClient, requestedModules, factoryType } = params
+
+  const abi = getModuleData(
+    (() => {
+      switch (factoryType) {
+        case 'default':
+          return 'OrchestratorFactory_v1'
+        case 'restricted-pim':
+          return 'Restricted_PIM_Factory_v1'
+        default:
+          throw new Error('Unsupported factory type')
+      }
+    })()
+  ).abi
+
+  // Get the methods from the Viem handler
   const {
     write,
     simulateWrite,
     estimateGas: esitmateGasOrg,
-  } = await getViemMethods(walletClient, publicClient)
+  } = await getViemMethods({
+    walletClient,
+    publicClient,
+    factoryType,
+    abi,
+  })
 
-  const handleGetArgs = async (userArgs: GetUserArgs<T>, kind: MethodKind) => {
-    const arr = await getArgs({
-      requestedModules,
-      userArgs,
-      publicClient,
-      walletClient,
-      self,
-      kind,
-    })
-    return arr
-  }
-
-  const simulate = async (userArgs: GetUserArgs<T>) => {
+  // Simulate the deployment
+  const simulate = async (userArgs: GetUserArgs<T, FT>) => {
     try {
-      const arr = await handleGetArgs(userArgs, 'simulate')
+      const arr = await getArgs({ userArgs, kind: 'simulate', ...params })
       return await simulateWrite(arr, {
         account: walletClient.account.address,
       })
@@ -242,9 +263,10 @@ export default async function getRpcInteractions<T extends RequestedModules>({
     }
   }
 
-  const run = async (userArgs: GetUserArgs<T>) => {
+  // Run the deployment = write
+  const run = async (userArgs: GetUserArgs<T, FT>) => {
     try {
-      const arr = await handleGetArgs(userArgs, 'write')
+      const arr = await getArgs({ userArgs, kind: 'write', ...params })
 
       const simulationRes = await simulateWrite(arr, {
         account: walletClient.account.address,
@@ -263,11 +285,12 @@ export default async function getRpcInteractions<T extends RequestedModules>({
     }
   }
 
+  // Estimate the gas for the deployment
   const estimateGas = async (
-    userArgs: GetUserArgs<T>
+    userArgs: GetUserArgs<T, FT>
   ): Promise<EstimateGasReturn> => {
     try {
-      const arr = await handleGetArgs(userArgs, 'estimateGas')
+      const arr = await getArgs({ userArgs, kind: 'estimateGas', ...params })
 
       const value = String(
         await esitmateGasOrg(arr, {

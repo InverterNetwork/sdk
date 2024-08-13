@@ -1,5 +1,5 @@
 import type { ModuleName } from '@inverter-network/abis'
-import type { OrchestratorArgs } from './static'
+import type { IssuanceTokenArgs, OrchestratorArgs } from './static'
 import type {
   OmitNever,
   GetDeploymentInputs,
@@ -7,6 +7,7 @@ import type {
   FormatParameter,
   FormattedParameterToPrimitiveType,
   RequestedModules,
+  FactoryType,
 } from '../..'
 import type { IsEmptyObject, Simplify } from 'type-fest-4'
 
@@ -39,13 +40,16 @@ export type GetUserOptionalArgs<
   }>
 >
 
-export type GetUserArgs<T extends RequestedModules = RequestedModules> =
-  Simplify<
-    OmitNever<{
-      orchestrator?: OrchestratorArgs
-      fundingManager: GetUserModuleArg<T['fundingManager']>
-      authorizer: GetUserModuleArg<T['authorizer']>
-      paymentProcessor: GetUserModuleArg<T['paymentProcessor']>
-      optionalModules: GetUserOptionalArgs<T['optionalModules']>
-    }>
-  >
+export type GetUserArgs<
+  T extends RequestedModules = RequestedModules,
+  FT extends FactoryType = 'default',
+> = Simplify<
+  OmitNever<{
+    orchestrator?: OrchestratorArgs
+    fundingManager: GetUserModuleArg<T['fundingManager']>
+    authorizer: GetUserModuleArg<T['authorizer']>
+    paymentProcessor: GetUserModuleArg<T['paymentProcessor']>
+    optionalModules: GetUserOptionalArgs<T['optionalModules']>
+    issuanceToken: FT extends 'restricted-pim' ? IssuanceTokenArgs : never
+  }>
+>

@@ -8,6 +8,7 @@ import type {
   WorkflowOrientation,
   Workflow,
   RequestedModules,
+  FactoryType,
 } from './types'
 
 export class Inverter<W extends PopWalletClient | undefined = undefined> {
@@ -44,16 +45,20 @@ export class Inverter<W extends PopWalletClient | undefined = undefined> {
 
   getDeployOptions = getDeployOptions
 
-  getDeploy<T extends RequestedModules>(requestedModules: T) {
+  getDeploy<T extends RequestedModules<FT>, FT extends FactoryType = 'default'>(
+    requestedModules: T,
+    factoryType?: FT
+  ) {
     if (!this.walletClient)
       throw new Error('Wallet client is required for deploy')
 
-    const result = getDeploy(
-      this.publicClient,
-      this.walletClient,
+    const result = getDeploy({
+      publicClient: this.publicClient,
+      walletClient: this.walletClient,
       requestedModules,
-      this
-    )
+      self: this,
+      factoryType,
+    })
 
     return result as W extends undefined ? never : typeof result
   }

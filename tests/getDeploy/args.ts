@@ -21,13 +21,7 @@ export const baseArgs = {
 } as const
 
 export const bcArgs = {
-  issuanceToken: {
-    name: 'Project Issuance Token',
-    symbol: 'QACC',
-    decimals: '18',
-    maxSupply: '115792',
-  },
-  tokenAdmin: '0x823F6AC80759F2e037eaF706d45CB4B47b80926c',
+  issuanceToken: '0x5432BbeA7895882B2CF2A0147cf6d872407f47D5',
   bondingCurveParams: {
     formula: '0x823F6AC80759F2e037eaF706d45CB4B47b80926c',
     reserveRatioForBuying: '333333',

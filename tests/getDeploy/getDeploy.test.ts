@@ -24,11 +24,11 @@ describe('#getDeploy', () => {
     describe('optionalModules: none', () => {
       describe('inputs', () => {
         it('has the correct format', async () => {
-          const { inputs } = await getDeploy(
+          const { inputs } = await getDeploy({
             publicClient,
             walletClient,
-            requestedModules
-          )
+            requestedModules,
+          })
 
           expect(inputs).toEqual(expectedBaseInputSchema)
         })
@@ -36,11 +36,11 @@ describe('#getDeploy', () => {
 
       describe('simulate', () => {
         it('returns the orchestrator address as result', async () => {
-          const { simulate } = await getDeploy(
+          const { simulate } = await getDeploy({
             publicClient,
             walletClient,
-            requestedModules
-          )
+            requestedModules,
+          })
           const simulationResult = await simulate(baseArgs)
           expect(isAddress(simulationResult.result as string)).toBeTrue
         })
@@ -50,9 +50,13 @@ describe('#getDeploy', () => {
     describe('optional: LM_PC_Bounties_v1', () => {
       describe('inputs', () => {
         it('has the correct format', async () => {
-          const { inputs } = await getDeploy(publicClient, walletClient, {
-            ...requestedModules,
-            optionalModules: ['LM_PC_Bounties_v1'],
+          const { inputs } = await getDeploy({
+            publicClient,
+            walletClient,
+            requestedModules: {
+              ...requestedModules,
+              optionalModules: ['LM_PC_Bounties_v1'],
+            },
           })
 
           expect(inputs).toEqual({
@@ -69,9 +73,13 @@ describe('#getDeploy', () => {
 
       describe('simulate', () => {
         it('returns the orchestrator address as result', async () => {
-          const { simulate } = await getDeploy(publicClient, walletClient, {
-            ...requestedModules,
-            optionalModules: ['LM_PC_Bounties_v1'],
+          const { simulate } = await getDeploy({
+            publicClient,
+            walletClient,
+            requestedModules: {
+              ...requestedModules,
+              optionalModules: ['LM_PC_Bounties_v1'],
+            },
           })
           const simulationResult = await simulate(baseArgs)
           expect(isAddress(simulationResult.result as string)).toBeTrue
@@ -95,9 +103,13 @@ describe('#getDeploy', () => {
 
       describe('inputs', () => {
         it('has the correct format', async () => {
-          const { inputs } = await getDeploy(publicClient, walletClient, {
-            ...requestedModules,
-            optionalModules: ['LM_PC_RecurringPayments_v1'],
+          const { inputs } = await getDeploy({
+            publicClient,
+            walletClient,
+            requestedModules: {
+              ...requestedModules,
+              optionalModules: ['LM_PC_RecurringPayments_v1'],
+            },
           })
 
           expect(inputs).toEqual({
@@ -109,9 +121,13 @@ describe('#getDeploy', () => {
 
       describe('simulate', () => {
         it('returns the orchestrator address as result', async () => {
-          const { simulate } = await getDeploy(publicClient, walletClient, {
-            ...requestedModules,
-            optionalModules: ['LM_PC_RecurringPayments_v1'],
+          const { simulate } = await getDeploy({
+            publicClient,
+            walletClient,
+            requestedModules: {
+              ...requestedModules,
+              optionalModules: ['LM_PC_RecurringPayments_v1'],
+            },
           })
 
           const simulationResult = await simulate({
@@ -143,9 +159,13 @@ describe('#getDeploy', () => {
 
       describe('inputs', () => {
         it('has the correct format', async () => {
-          const { inputs } = await getDeploy(publicClient, walletClient, {
-            ...requestedModules,
-            optionalModules: ['LM_PC_Staking_v1'],
+          const { inputs } = await getDeploy({
+            publicClient,
+            walletClient,
+            requestedModules: {
+              ...requestedModules,
+              optionalModules: ['LM_PC_Staking_v1'],
+            },
           })
 
           expect(inputs).toEqual({
@@ -157,9 +177,13 @@ describe('#getDeploy', () => {
 
       describe('simulate', () => {
         it('returns the orchestrator address as result', async () => {
-          const { simulate } = await getDeploy(publicClient, walletClient, {
-            ...requestedModules,
-            optionalModules: ['LM_PC_Staking_v1'],
+          const { simulate } = await getDeploy({
+            publicClient,
+            walletClient,
+            requestedModules: {
+              ...requestedModules,
+              optionalModules: ['LM_PC_Staking_v1'],
+            },
           })
 
           const simulationResult = await simulate({
@@ -178,9 +202,13 @@ describe('#getDeploy', () => {
     describe.skip('optional: LM_PC_KPIRewarder_v1', () => {
       describe('inputs', () => {
         it('has the correct format', async () => {
-          const { inputs } = await getDeploy(publicClient, walletClient, {
-            ...requestedModules,
-            optionalModules: ['LM_PC_KPIRewarder_v1'],
+          const { inputs } = await getDeploy({
+            publicClient,
+            walletClient,
+            requestedModules: {
+              ...requestedModules,
+              optionalModules: ['LM_PC_KPIRewarder_v1'],
+            },
           })
 
           expect(inputs).toEqual({
@@ -192,9 +220,13 @@ describe('#getDeploy', () => {
 
       describe('simulate', () => {
         it('returns the orchestrator address as result', async () => {
-          const { simulate } = await getDeploy(publicClient, walletClient, {
-            ...requestedModules,
-            optionalModules: ['LM_PC_KPIRewarder_v1'],
+          const { simulate } = await getDeploy({
+            publicClient,
+            walletClient,
+            requestedModules: {
+              ...requestedModules,
+              optionalModules: ['LM_PC_KPIRewarder_v1'],
+            },
           })
 
           const simulationResult = await simulate({
@@ -227,22 +259,22 @@ describe('#getDeploy', () => {
     describe('optionalModules: none', () => {
       describe('inputs', () => {
         it('has the correct format', async () => {
-          const { inputs } = await getDeploy(
+          const { inputs } = await getDeploy({
             publicClient,
             walletClient,
-            requestedModules
-          )
+            requestedModules,
+          })
           expect(inputs).toEqual(expectedInputSchema)
         })
       })
 
       describe('simulate', () => {
         it('returns the orchestrator address as result', async () => {
-          const { simulate } = await getDeploy(
+          const { simulate } = await getDeploy({
             publicClient,
             walletClient,
-            requestedModules
-          )
+            requestedModules,
+          })
           const simulationResult = await simulate(baseArgs)
           expect(isAddress(simulationResult.result as string)).toBeTrue
         })
@@ -259,11 +291,11 @@ describe('#getDeploy', () => {
 
     describe('inputs', () => {
       it('has the correct format', async () => {
-        const { inputs } = await getDeploy(
+        const { inputs } = await getDeploy({
           publicClient,
           walletClient,
-          requestedModules
-        )
+          requestedModules,
+        })
         expect(inputs).toEqual({
           ...expectedBaseInputSchema,
           fundingManager: expected_FM_BC_Restricted_BancorInputSchema,
@@ -273,11 +305,11 @@ describe('#getDeploy', () => {
 
     describe('simulate', () => {
       it('returns the orchestrator address as result', async () => {
-        const { simulate } = await getDeploy(
+        const { simulate } = await getDeploy({
           publicClient,
           walletClient,
-          requestedModules
-        )
+          requestedModules,
+        })
 
         const simulationResult = await simulate({
           ...baseArgs,

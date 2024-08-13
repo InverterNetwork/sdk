@@ -1,26 +1,58 @@
-import { getModuleData, type ModuleName } from '@inverter-network/abis'
+import { type ModuleName } from '@inverter-network/abis'
 import { getContract } from 'viem'
 import { METADATA_URL, DEPLOYMENTS_URL } from './constants'
 import { ERC20_ABI } from '../utils/constants'
 
 import type { PublicClient, WalletClient } from 'viem'
-import type { UserModuleArg } from '..'
+import type { FactoryType, UserModuleArg } from '..'
+import type { Abi } from 'abitype'
 
 type DeploymentResponse = {
-  orchestratorFactory: Record<string, `0x${string}`>
+  orchestratorFactory: Record<string, `0x${string}` | undefined>
+  restrictedPimFactory: Record<string, `0x${string}` | undefined>
+}
+
+export type GetViemMethodsParams<FT extends FactoryType> = {
+  walletClient: WalletClient
+  publicClient: PublicClient
+  factoryType: FT
+  abi: Abi
 }
 
 // retrieves the deployment function via viem
-export const getViemMethods = async (
-  walletClient: WalletClient,
+export const getViemMethods = async <FT extends FactoryType>({
+  walletClient,
+  publicClient,
+  factoryType,
+  abi,
+}: {
+  walletClient: WalletClient
   publicClient: PublicClient
-) => {
+  factoryType: FT
+  abi: Abi
+}) => {
   const response = await fetch(DEPLOYMENTS_URL)
-  const { orchestratorFactory } = <DeploymentResponse>await response.json()
-  const chainId = publicClient.chain!.id
-  const address = orchestratorFactory[chainId]
+  const deployment = <DeploymentResponse>await response.json()
+  const chainId = publicClient.chain?.id
 
-  const { abi } = getModuleData('OrchestratorFactory_v1')
+  if (!chainId) throw new Error('Chain ID not found')
+
+  const address =
+    deployment[
+      (() => {
+        switch (factoryType) {
+          case 'default':
+            return 'orchestratorFactory'
+          case 'restricted-pim':
+            return 'restrictedPimFactory'
+          default:
+            throw new Error('Unsupported factory type')
+        }
+      })()
+    ]?.[chainId]
+
+  if (!address)
+    throw new Error('Chain ID is not supported @ deployment factory address')
 
   const { write, simulate, estimateGas } = getContract({
     address,

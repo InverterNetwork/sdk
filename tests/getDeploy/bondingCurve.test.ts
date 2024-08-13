@@ -33,13 +33,7 @@ const userArgs: GetUserArgs<typeof requestedModules> = {
       initialIssuanceSupply: '1',
       initialCollateralSupply: '3',
     },
-    issuanceToken: {
-      name: 'MG Token',
-      symbol: 'MG',
-      decimals: '18',
-      maxSupply: '1000000',
-    },
-    tokenAdmin: '0x5AeeA3DF830529a61695A63ba020F01191E0aECb',
+    issuanceToken: '0x5432BbeA7895882B2CF2A0147cf6d872407f47D5',
     collateralToken: '0x71bd16Dd7A120a12a27439F5D3767Be795d4A991',
   },
 }

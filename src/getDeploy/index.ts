@@ -1,23 +1,21 @@
 import getInputs from './getInputs'
 import getRpcInteractions from './getRpcInteractions'
-import { Inverter } from '../Inverter'
+import type { FactoryType, GetDeployParams, RequestedModules } from '../types'
 
-import { type PublicClient } from 'viem'
-import type { PopWalletClient, RequestedModules } from '../types'
+export default async function getDeploy<
+  T extends RequestedModules<FT>,
+  FT extends FactoryType = 'default',
+>({
+  requestedModules,
+  factoryType = 'default' as FT,
+  ...rest
+}: GetDeployParams<T, FT>) {
+  const inputs = getInputs(requestedModules, factoryType)
 
-export default async function getDeploy<T extends RequestedModules>(
-  publicClient: PublicClient,
-  walletClient: PopWalletClient,
-  requestedModules: T,
-  self?: Inverter
-) {
-  const inputs = getInputs(requestedModules)
-
-  const { run, simulate, estimateGas } = await getRpcInteractions({
-    publicClient,
-    walletClient,
+  const { run, simulate, estimateGas } = await getRpcInteractions<T, FT>({
     requestedModules,
-    self,
+    factoryType,
+    ...rest,
   })
 
   return {

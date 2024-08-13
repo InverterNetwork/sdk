@@ -14,7 +14,11 @@ export const setupBcWorkflow = async (
     authorizer: 'AUT_Roles_v1',
   } as const
 
-  const { run } = await getDeploy(publicClient, walletClient, requestedModules)
+  const { run } = await getDeploy({
+    publicClient,
+    walletClient,
+    requestedModules,
+  })
 
   await run(args)
 }
@@ -31,7 +35,11 @@ export const setupKpiWorkflow = async (
     optionalModules: ['LM_PC_KPIRewarder_v1'],
   } as RequestedModules
 
-  const { run } = await getDeploy(publicClient, walletClient, requestedModules)
+  const { run } = await getDeploy({
+    publicClient,
+    walletClient,
+    requestedModules,
+  })
 
   return await run(args)
 }

@@ -38,39 +38,10 @@ export const expected_FM_BC_Restricted_BancorInputSchema = {
   name: 'FM_BC_Restricted_Bancor_Redeeming_VirtualSupply_v1',
   inputs: [
     {
-      components: [
-        {
-          name: 'name',
-          type: 'string',
-          description: 'The name of the issuance token',
-        },
-        {
-          name: 'symbol',
-          type: 'string',
-          description: 'The symbol of the issuance token',
-        },
-        {
-          name: 'decimals',
-          type: 'uint8',
-          description:
-            'The decimals used within the issuance token ( should be bigger or equal to 7 and bigger or equel to the collateral token decimals )',
-          jsType: 'numberString',
-        },
-        {
-          name: 'maxSupply',
-          type: 'uint256',
-          description: 'The max total supply of the token',
-          tags: ['decimals:params:exact:decimals'],
-          jsType: 'numberString',
-        },
-      ],
       name: 'issuanceToken',
-      type: 'tuple',
-    },
-    {
-      name: 'tokenAdmin',
       type: 'address',
-      description: 'The admin of the token',
+      description:
+        'The address of the token that is being issued by the bonding curve',
       jsType: '0xstring',
     },
     {
