@@ -38,7 +38,7 @@ const userArgs: GetUserArgs<typeof requestedModules> = {
 }
 
 describe('#getDeploy decimals error', () => {
-  const { publicClient, walletClient } = getTestConnectors('sepolia')
+  const { publicClient, walletClient } = getTestConnectors()
 
   describe('Simulate with decoded error and not decoded error', async () => {
     const sdk = new Inverter(publicClient, walletClient)
@@ -52,7 +52,9 @@ describe('#getDeploy decimals error', () => {
         } catch (e: any) {
           const message = e?.message
 
-          console.error('Error message:', message)
+          // TODO: Uncomment this line when the error message is fixed
+          // right now its not a custom error, was unable to find a case to test it out
+          // console.error('Error message:', message)
 
           expect(message).toBeDefined()
         }

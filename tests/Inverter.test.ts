@@ -24,7 +24,7 @@ describe('Inverter', () => {
       fundingManager: 'FM_BC_Restricted_Bancor_Redeeming_VirtualSupply_v1',
       paymentProcessor: 'PP_Streaming_v1',
       optionalModules: ['LM_PC_PaymentRouter_v1'],
-    } satisfies WorkflowOrientation
+    } as const satisfies WorkflowOrientation
 
     describe('#getWorkflow', () => {
       it('adds the workflow to the class instance state', async () => {

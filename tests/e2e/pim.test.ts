@@ -13,11 +13,11 @@ describe('PIM', async () => {
     authorizer: 'AUT_Roles_v1',
     paymentProcessor: 'PP_Simple_v1',
   } as const
-  const deployArgs = getDeployArgs(requestedModules, deployer) as any
+  const deployArgs = getDeployArgs(requestedModules, deployer)
 
   const sdk = new Inverter(publicClient, walletClient)
 
-  const skipDeploy = true
+  const skipDeploy = false
   let orchestrator =
     // this orchestrator belongs to mguleryuz test account
     '0xCDfC7e4a5F377816C9bA533D45F269198Ef1F910' as `0x${string}`
@@ -38,11 +38,14 @@ describe('PIM', async () => {
     'deploys the BC',
     async () => {
       const { run } = await sdk.getDeploy(requestedModules)
+      console.log('deployArgs:', deployArgs)
       const { orchestratorAddress, transactionHash } = await run(deployArgs)
       await publicClient.waitForTransactionReceipt({
         hash: transactionHash,
       })
       orchestrator = orchestratorAddress
+
+      console.log('orchestratorAddress:', orchestratorAddress)
     },
     {
       timeout: 50_000,

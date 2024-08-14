@@ -1,10 +1,14 @@
-import { type ModuleName } from '@inverter-network/abis'
-import { getContract } from 'viem'
+import {
+  getModuleData,
+  type GetModuleData,
+  type ModuleName,
+} from '@inverter-network/abis'
+import { decodeErrorResult, getContract } from 'viem'
 import { METADATA_URL, DEPLOYMENTS_URL } from './constants'
 import { ERC20_ABI } from '../utils/constants'
 
 import type { PublicClient, WalletClient } from 'viem'
-import type { FactoryType, UserModuleArg } from '..'
+import type { FactoryType, RequestedModules, UserModuleArg } from '..'
 import type { Abi } from 'abitype'
 
 type DeploymentResponse = {
@@ -19,20 +23,30 @@ export type GetViemMethodsParams<FT extends FactoryType> = {
   abi: Abi
 }
 
+export type DeploymentVersion = 'v0.2'
+
+export const fetchDeployment = async (
+  version: DeploymentVersion
+): Promise<DeploymentResponse> => {
+  const response = await fetch(`${DEPLOYMENTS_URL}/${version}.json`)
+  return await response.json()
+}
+
 // retrieves the deployment function via viem
-export const getViemMethods = async <FT extends FactoryType>({
+export const getViemMethods = async ({
   walletClient,
   publicClient,
   factoryType,
   abi,
+  version,
 }: {
   walletClient: WalletClient
   publicClient: PublicClient
-  factoryType: FT
+  factoryType: FactoryType
   abi: Abi
+  version: DeploymentVersion
 }) => {
-  const response = await fetch(DEPLOYMENTS_URL)
-  const deployment = <DeploymentResponse>await response.json()
+  const deployment = await fetchDeployment(version)
   const chainId = publicClient.chain?.id
 
   if (!chainId) throw new Error('Chain ID not found')
@@ -104,4 +118,55 @@ export const getDefaultToken = async (
     abi: ERC20_ABI,
   })
   return { defaultToken: tokenAddress!, decimals }
+}
+
+export const getAbi = <FT extends FactoryType>(factoryType: FT) => {
+  const abi = getModuleData(
+    (() => {
+      switch (factoryType) {
+        case 'default':
+          return 'OrchestratorFactory_v1'
+        case 'restricted-pim':
+          return 'Restricted_PIM_Factory_v1'
+        default:
+          throw new Error('Unsupported factory type')
+      }
+    })()
+  ).abi as GetModuleData<
+    FT extends 'restricted-pim'
+      ? 'Restricted_PIM_Factory_v1'
+      : 'OrchestratorFactory_v1'
+  >['abi']
+
+  return abi
+}
+
+export const handleError = (requestedModules: RequestedModules, error: any) => {
+  if (!error?.message?.includes?.('Unable to decode signature')) return error
+  const signature = error.cause.signature as `0x${string}`
+
+  let errorName: string | undefined
+
+  const abis = [
+    getModuleData('OrchestratorFactory_v1').abi,
+    ...Object.values(requestedModules)
+      .flat()
+      .map((i) => getModuleData(i).abi),
+  ]
+
+  abis.forEach((abi) => {
+    try {
+      const value = decodeErrorResult({
+        abi,
+        data: signature,
+      })
+      if (value.errorName) errorName = value.errorName
+    } catch {
+      // do nothing
+    }
+  })
+
+  if (!errorName) return error
+
+  return new Error(errorName)
 }

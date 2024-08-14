@@ -39,7 +39,7 @@ const userArgs: GetUserArgs<typeof requestedModules> = {
 }
 
 describe('#getDeploy', () => {
-  const { publicClient, walletClient } = getTestConnectors('sepolia')
+  const { publicClient, walletClient } = getTestConnectors()
   const sdk = new Inverter(publicClient, walletClient)
 
   describe('Modules: BondingCurve, AUT_Roles_v1, PP_Simple_v1', () => {

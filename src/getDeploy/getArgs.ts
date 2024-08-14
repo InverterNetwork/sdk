@@ -1,18 +1,12 @@
 import { getModuleData } from '@inverter-network/abis'
 import { MANDATORY_MODULES } from './constants'
-import { assembleMetadata, getDefaultToken, getViemMethods } from './utils'
+import { assembleMetadata, getDefaultToken } from './utils'
 import processInputs from '../utils/processInputs'
 import formatParameters from '../utils/formatParameters'
 import { Inverter } from '../Inverter'
 import { ADDRESS_ZERO } from '../utils/constants'
 
-import {
-  type PublicClient,
-  decodeErrorResult,
-  encodeAbiParameters,
-  formatEther,
-  parseUnits,
-} from 'viem'
+import { type PublicClient, encodeAbiParameters, parseUnits } from 'viem'
 import type {
   Extras,
   GetDeploymentInputs,
@@ -25,13 +19,12 @@ import type {
   UserModuleArg,
   UserArgs,
   MethodKind,
-  EstimateGasReturn,
   FactoryType,
 } from '../types'
 
 let extras: Extras
 
-type JointParams = {
+export type JointParams = {
   publicClient: PublicClient
   walletClient: PopWalletClient
   kind: MethodKind
@@ -179,7 +172,7 @@ export const constructArgs = async ({
 /**
  * Retrieves the arguments required for the requested modules.
  */
-export async function getArgs<
+export default async function getArgs<
   T extends RequestedModules,
   FT extends FactoryType = 'default',
 >(
@@ -210,134 +203,4 @@ export async function getArgs<
   ) as FT extends 'restricted-pim' ? typeof restrictedPimArr : typeof baseArr
 
   return result
-}
-
-/**
- * Provides RPC interactions for the requested modules.
- */
-export default async function getRpcInteractions<
-  T extends RequestedModules,
-  FT extends FactoryType,
->(
-  params: {
-    requestedModules: T
-    factoryType: FT
-  } & Omit<JointParams, 'kind'>
-) {
-  const { publicClient, walletClient, requestedModules, factoryType } = params
-
-  const abi = getModuleData(
-    (() => {
-      switch (factoryType) {
-        case 'default':
-          return 'OrchestratorFactory_v1'
-        case 'restricted-pim':
-          return 'Restricted_PIM_Factory_v1'
-        default:
-          throw new Error('Unsupported factory type')
-      }
-    })()
-  ).abi
-
-  // Get the methods from the Viem handler
-  const {
-    write,
-    simulateWrite,
-    estimateGas: esitmateGasOrg,
-  } = await getViemMethods({
-    walletClient,
-    publicClient,
-    factoryType,
-    abi,
-  })
-
-  // Simulate the deployment
-  const simulate = async (userArgs: GetUserArgs<T, FT>) => {
-    try {
-      const arr = await getArgs({ userArgs, kind: 'simulate', ...params })
-      return await simulateWrite(arr, {
-        account: walletClient.account.address,
-      })
-    } catch (e: any) {
-      throw handleError(requestedModules, e)
-    }
-  }
-
-  // Run the deployment = write
-  const run = async (userArgs: GetUserArgs<T, FT>) => {
-    try {
-      const arr = await getArgs({ userArgs, kind: 'write', ...params })
-
-      const simulationRes = await simulateWrite(arr, {
-        account: walletClient.account.address,
-      })
-
-      const orchestratorAddress = simulationRes.result
-
-      const transactionHash = await write(arr, {} as any)
-
-      return {
-        orchestratorAddress,
-        transactionHash,
-      }
-    } catch (e: any) {
-      throw handleError(requestedModules, e)
-    }
-  }
-
-  // Estimate the gas for the deployment
-  const estimateGas = async (
-    userArgs: GetUserArgs<T, FT>
-  ): Promise<EstimateGasReturn> => {
-    try {
-      const arr = await getArgs({ userArgs, kind: 'estimateGas', ...params })
-
-      const value = String(
-        await esitmateGasOrg(arr, {
-          account: walletClient.account.address,
-        })
-      )
-
-      const formatted = formatEther(BigInt(value))
-
-      return {
-        value,
-        formatted,
-      }
-    } catch (e: any) {
-      throw handleError(requestedModules, e)
-    }
-  }
-
-  return { run, simulate, estimateGas }
-}
-
-const handleError = (requestedModules: RequestedModules, error: any) => {
-  if (!error?.message?.includes?.('Unable to decode signature')) return error
-  const signature = error.cause.signature as `0x${string}`
-
-  let errorName: string | undefined
-
-  const abis = [
-    getModuleData('OrchestratorFactory_v1').abi,
-    ...Object.values(requestedModules)
-      .flat()
-      .map((i) => getModuleData(i).abi),
-  ]
-
-  abis.forEach((abi) => {
-    try {
-      const value = decodeErrorResult({
-        abi,
-        data: signature,
-      })
-      if (value.errorName) errorName = value.errorName
-    } catch {
-      // do nothing
-    }
-  })
-
-  if (!errorName) return error
-
-  return new Error(errorName)
 }

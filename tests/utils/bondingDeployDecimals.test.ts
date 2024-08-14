@@ -8,6 +8,7 @@ const requestedModule =
   'FM_BC_Restricted_Bancor_Redeeming_VirtualSupply_v1' as const
 
 const args = {
+  issuanceToken: '0x381BaFEA95ef0475cA544D38d6a404CEFcE93b9a',
   bondingCurveParams: {
     formula: '0x3ddE767F9DF9530DDeD47e1E012cCBf7B4A04dd7',
     reserveRatioForBuying: '333333',
@@ -19,24 +20,11 @@ const args = {
     initialIssuanceSupply: '1',
     initialCollateralSupply: '3',
   },
-  issuanceToken: {
-    name: 'MG Token',
-    symbol: 'MG',
-    decimals: '9',
-    maxSupply: '1000000',
-  },
-  tokenAdmin: '0x5AeeA3DF830529a61695A63ba020F01191E0aECb',
   collateralToken: '0x71bd16Dd7A120a12a27439F5D3767Be795d4A991',
 } as const
 
 const expectedProccessed = [
-  {
-    name: 'MG Token',
-    symbol: 'MG',
-    decimals: 9n,
-    maxSupply: 1000000000000000n,
-  },
-  '0x5AeeA3DF830529a61695A63ba020F01191E0aECb',
+  '0x381BaFEA95ef0475cA544D38d6a404CEFcE93b9a',
   {
     buyIsOpen: true,
     sellIsOpen: true,
@@ -52,7 +40,7 @@ const expectedProccessed = [
 ]
 
 describe('#bondingDeployDecimal', () => {
-  const { publicClient, walletClient } = getTestConnectors('sepolia')
+  const { publicClient, walletClient } = getTestConnectors()
 
   const configData = getModuleData(requestedModule).deploymentInputs.configData
 

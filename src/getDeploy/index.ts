@@ -1,6 +1,6 @@
 import getInputs from './getInputs'
-import getRpcInteractions from './getRpcInteractions'
 import type { FactoryType, GetDeployParams, RequestedModules } from '../types'
+import getMethods from './getMethods'
 
 export default async function getDeploy<
   T extends RequestedModules<FT>,
@@ -8,14 +8,18 @@ export default async function getDeploy<
 >({
   requestedModules,
   factoryType = 'default' as FT,
-  ...rest
+  ...params
 }: GetDeployParams<T, FT>) {
   const inputs = getInputs(requestedModules, factoryType)
 
-  const { run, simulate, estimateGas } = await getRpcInteractions<T, FT>({
+  const { publicClient, walletClient } = params
+
+  // Get the methods from the Viem handler
+  const { run, simulate, estimateGas } = await getMethods({
     requestedModules,
     factoryType,
-    ...rest,
+    publicClient,
+    walletClient,
   })
 
   return {

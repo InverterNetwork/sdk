@@ -1,18 +1,12 @@
 // @ts-nocheck
 
-import { RequestedModules } from '../../src'
+import { RequestedModules, type FilterByPrefix } from '../../src'
 
 export const testToken = '0xd5018fA63924d1BE2C2C42aBDc24bD754499F97c'
 
-export const getBcArgs = (tokenAdmin: string) => {
+export const getBcArgs = () => {
   return {
-    issuanceToken: {
-      name: 'Test Issuance Token',
-      symbol: 'TIT',
-      decimals: '18',
-      maxSupply: '1000000000',
-    },
-    tokenAdmin,
+    issuanceToken: '0x5432BbeA7895882B2CF2A0147cf6d872407f47D5',
     bondingCurveParams: {
       formula: '0x91c1538be9647946830F881Dd7c1F41E990Dbe8C',
       reserveRatioForBuying: '333333',
@@ -25,45 +19,52 @@ export const getBcArgs = (tokenAdmin: string) => {
       initialCollateralSupply: '33',
     },
     collateralToken: testToken, //USDC
-  }
+  } as const
 }
 
 export const getAuthorizerArgs = (initialAdmin: string) => {
   return {
-    initialAdmin,
+    initialAdmin: initialAdmin as `0x${string}`,
   }
 }
 
 export const getOrchestratorArgs = (
   independentUpdateAdmin: `0x${string}` | string = ''
 ) => {
+  const admin = <`0x${string}`>independentUpdateAdmin
+
   return independentUpdateAdmin
-    ? {
+    ? ({
         independentUpdates: true,
-        independentUpdateAdmin,
-      }
-    : {
+        independentUpdateAdmin: admin,
+      } as const)
+    : ({
         independentUpdates: false,
         independentUpdateAdmin: '0x0000000000000000000000000000000000000000',
-      }
+      } as const)
 }
 
-export const getDeployArgs = (
-  requestedModules: RequestedModules,
-  deployer: string
-) => {
-  const args = {}
-  const { fundingManager } = requestedModules
-  args['orchestrator'] = getOrchestratorArgs(deployer)
-  args['authorizer'] = getAuthorizerArgs(deployer)
+type GetDeployArgsReturnBase = {
+  orchestrator: ReturnType<typeof getOrchestratorArgs>
+  authorizer: ReturnType<typeof getAuthorizerArgs>
+}
 
-  if (
-    [
-      'FM_BC_Restricted_Bancor_Redeeming_VirtualSupply_v1',
-      'FM_BC_Bancor_Redeeming_VirtualSupply_v1',
-    ].includes(fundingManager)
-  ) {
-    args['fundingManager'] = getBcArgs(deployer)
+export const getDeployArgs = <T extends RequestedModules>(
+  requestedModules: T,
+  deployer: string
+): T['fundingManager'] extends FilterByPrefix<T['fundingManager'], 'FM_BC'>
+  ? GetDeployArgsReturnBase & {
+      fundingManager: ReturnType<typeof getBcArgs>
+    }
+  : GetDeployArgsReturnBase => {
+  const { fundingManager } = requestedModules
+
+  const args = {
+    orchestrator: getOrchestratorArgs(deployer),
+    authorizer: getAuthorizerArgs(deployer),
+    ...(fundingManager.includes('FM_BC') && {
+      fundingManager: getBcArgs(deployer),
+    }),
   }
 
   return args
