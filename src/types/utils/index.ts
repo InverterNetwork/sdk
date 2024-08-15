@@ -34,3 +34,6 @@ export type RemoveIndexes<
     ? Item[]
     : never
   : never
+
+export type FlattenObjectValues<T> =
+  T extends Record<string, infer U> ? (U extends any[] ? U[number] : U) : never

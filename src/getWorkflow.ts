@@ -2,13 +2,14 @@ import getModule from './getModule'
 import { ERC20_ABI } from './utils/constants'
 
 import { type Hex } from 'viem'
-import type { GetModuleNameByType } from '@inverter-network/abis'
+import { getModuleData, type GetModuleNameByType } from '@inverter-network/abis'
 import type {
   PopWalletClient,
   WorkflowModuleType,
   WorkflowOrientation,
   Workflow,
   GetWorkflowParams,
+  FlattenObjectValues,
 } from './types'
 
 export default async function getWorkflow<
@@ -18,7 +19,6 @@ export default async function getWorkflow<
   publicClient,
   walletClient,
   orchestratorAddress,
-  workflowOrientation,
   self,
 }: GetWorkflowParams<O, W>): Promise<Workflow<W, O>> {
   if (!publicClient) throw new Error('Public client not initialized')
@@ -66,38 +66,26 @@ export default async function getWorkflow<
   // 3. initialize modules with extras
   const modules = await (async () => {
     // 0. Define the source data based on the optional workflowOrientation
-    const source =
-      // 1. Check if workflowOrientation is defined
-      !!workflowOrientation
-        ? // 2. If defined, map over the values and find the address of the module
-          await Promise.all(
-            Object.values(workflowOrientation)
-              .flat()
-              .map(async (name) => {
-                const address =
-                  await orchestrator.read.findModuleAddressInOrchestrator.run(
-                    name
-                  )
-                return { name, address }
-              })
-          )
-        : // 3. If not defined, list all modules from the orchestrator for their-
-          // address then get the title and version
-          await Promise.all(
-            (await orchestrator.read.listModules.run()).map(async (address) => {
-              type Name = GetModuleNameByType<WorkflowModuleType>
-              const flatModule = getModule({
-                  publicClient,
-                  walletClient,
-                  address,
-                  name: 'Module_v1',
-                  self,
-                }),
-                name = <Name>await flatModule.read.title.run()
+    const source = await (async () => {
+      type Name = O extends WorkflowOrientation
+        ? FlattenObjectValues<O>
+        : GetModuleNameByType<WorkflowModuleType>
 
-              return { name, address }
-            })
-          )
+      // 1. fetch the module addresses
+      const moduleAddresses = await orchestrator.read.listModules.run()
+      // 2. fetch flat modules
+      return await Promise.all(
+        moduleAddresses.map(async (address) => {
+          const name = <Name>await publicClient.readContract({
+            address,
+            abi: getModuleData('Module_v1').abi,
+            functionName: 'title',
+          })
+
+          return { name, address }
+        })
+      )
+    })()
 
     // 4. Map the module array using the source data
     const modulesArray = source.map(({ name, address }) => {
@@ -130,7 +118,7 @@ export default async function getWorkflow<
         fundingManager: {},
         paymentProcessor: {},
         optionalModule: {},
-      }
+      } as Record<string, any>
     ) as any
 
     return result
