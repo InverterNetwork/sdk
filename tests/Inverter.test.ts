@@ -69,13 +69,13 @@ describe('Inverter', () => {
 
   describe('#getDeploy', () => {
     const requestedModules = {
-      fundingManager: 'FM_Rebasing_v1',
+      fundingManager: 'FM_DepositVault_v1',
       paymentProcessor: 'PP_Simple_v1',
       authorizer: 'AUT_TokenGated_Roles_v1',
     } satisfies RequestedModules
 
     const args: GetUserArgs<{
-      fundingManager: 'FM_Rebasing_v1'
+      fundingManager: 'FM_DepositVault_v1'
       authorizer: 'AUT_TokenGated_Roles_v1'
       paymentProcessor: 'PP_Simple_v1'
     }> = {

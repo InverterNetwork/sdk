@@ -1,7 +1,7 @@
 import { expect, describe, it } from 'bun:test'
 
 import { getTestConnectors } from '../testHelpers/getTestConnectors'
-import { getDeploy } from '../../src'
+import { getDeploy, type RequestedModules } from '../../src'
 import { isAddress } from 'viem'
 import { baseArgs, bcArgs, kpiArgs } from './args'
 import {
@@ -14,12 +14,12 @@ import { USDC_SEPOLIA } from '../../src/getDeploy/constants'
 describe('#getDeploy', () => {
   const { publicClient, walletClient } = getTestConnectors()
 
-  describe('Modules: FM_Rebasing_v1, AUT_Roles_v1, PP_Simple_v1', () => {
+  describe('Modules: FM_DepositVault_v1, AUT_Roles_v1, PP_Simple_v1', () => {
     const requestedModules = {
-      fundingManager: 'FM_Rebasing_v1',
+      fundingManager: 'FM_DepositVault_v1',
       paymentProcessor: 'PP_Simple_v1',
       authorizer: 'AUT_Roles_v1',
-    } as const
+    } as const satisfies RequestedModules
 
     describe('optionalModules: none', () => {
       describe('inputs', () => {
@@ -241,9 +241,9 @@ describe('#getDeploy', () => {
     })
   })
 
-  describe('Modules: FM_Rebasing_v1, AUT_TokenGated_Roles_v1, PP_Simple_v1', () => {
+  describe('Modules: FM_DepositVault_v1, AUT_TokenGated_Roles_v1, PP_Simple_v1', () => {
     const requestedModules = {
-      fundingManager: 'FM_Rebasing_v1',
+      fundingManager: 'FM_DepositVault_v1',
       paymentProcessor: 'PP_Simple_v1',
       authorizer: 'AUT_TokenGated_Roles_v1',
     } as const

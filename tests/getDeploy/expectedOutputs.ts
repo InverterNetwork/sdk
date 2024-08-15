@@ -4,14 +4,13 @@ export const expectedBaseInputSchema = {
   orchestrator: ORCHESTRATOR_CONFIG,
 
   fundingManager: {
-    name: 'FM_Rebasing_v1',
+    name: 'FM_DepositVault_v1',
     inputs: [
       {
         name: 'orchestratorTokenAddress',
         type: 'address',
         jsType: '0xstring',
-        description:
-          'The address of the token that will be deposited to the funding manager',
+        description: 'The distribution token of the funding manager',
       },
     ],
   },
@@ -40,8 +39,7 @@ export const expected_FM_BC_Restricted_BancorInputSchema = {
     {
       name: 'issuanceToken',
       type: 'address',
-      description:
-        'The address of the token that is being issued by the bonding curve',
+      description: 'The address of the token that will be issued',
       jsType: '0xstring',
     },
     {
@@ -133,6 +131,12 @@ export const expected_LM_PC_KPIRewarderInputSchema = {
       type: 'address',
       description: 'The token the Optimistic Oracle will charge its fee in.',
       jsType: '0xstring',
+    },
+    {
+      name: 'defaultBond',
+      type: 'uint256',
+      description: 'The default bond amount for assertions.',
+      jsType: 'numberString',
     },
     {
       name: 'ooAddr',

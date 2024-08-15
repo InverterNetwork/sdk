@@ -39,6 +39,7 @@ export const bcArgs = {
 export const kpiArgs = {
   stakingTokenAddr: iUSD,
   currencyAddr: USDC_SEPOLIA,
+  defaultBond: '1000',
   ooAddr: '0xFd9e2642a170aDD10F53Ee14a93FcF2F31924944',
   liveness: '10000',
 } as const

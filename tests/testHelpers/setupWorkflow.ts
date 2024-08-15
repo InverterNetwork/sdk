@@ -29,7 +29,7 @@ export const setupKpiWorkflow = async (
   args: GetUserArgs
 ) => {
   const requestedModules = {
-    fundingManager: 'FM_Rebasing_v1',
+    fundingManager: 'FM_DepositVault_v1',
     paymentProcessor: 'PP_Simple_v1',
     authorizer: 'AUT_Roles_v1',
     optionalModules: ['LM_PC_KPIRewarder_v1'],
