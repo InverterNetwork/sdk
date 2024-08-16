@@ -111,7 +111,9 @@ export const getDeployArgs = <T extends RequestedModules>(
     authorizer: getAuthorizerArgs(deployer),
     fundingManager: fundingManager.includes('FM_BC') ? bcArgs : simpleFMArgs,
     ...(!!kpi && {
-      [kpi]: getKpiArgs(deployer),
+      optionalModules: {
+        [kpi]: getKpiArgs(deployer),
+      },
     }),
   }
 
