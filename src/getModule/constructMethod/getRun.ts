@@ -12,7 +12,8 @@ import type {
   RequiredAllowances,
   MethodKind,
 } from '../../types'
-import { decodeErrorResult, formatEther } from 'viem'
+import { formatEther } from 'viem'
+import { handleError } from '../../utils'
 
 const runDependencies = async ({
   requiredAllowances,
@@ -141,7 +142,7 @@ export default function getRun<
             return await estimateGas()
         }
       } catch (e: any) {
-        throw handleError(contract.abi, e)
+        throw handleError({ abi: contract.abi, error: e })
       }
     })()
 
@@ -160,29 +161,4 @@ export default function getRun<
   }
 
   return run
-}
-
-const handleError = (abi: any, error: any) => {
-  if (!error?.message?.includes?.('Unable to decode signature')) return error
-  const signature = error.cause.signature as `0x${string}`
-
-  let errorName: string | undefined
-
-  const abis = [abi]
-
-  abis.forEach((i) => {
-    try {
-      const value = decodeErrorResult({
-        abi: i,
-        data: signature,
-      })
-      if (value.errorName) errorName = value.errorName
-    } catch {
-      // do nothing
-    }
-  })
-
-  if (!errorName) return error
-
-  return new Error(errorName)
 }

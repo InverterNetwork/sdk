@@ -7,8 +7,9 @@ import type {
   PopWalletClient,
   RequestedModules,
 } from '..'
-import { getAbi, getViemMethods, handleError } from './utils'
+import { getAbi, getViemMethods } from './utils'
 import getArgs from './getArgs'
+import { handleError } from '../utils'
 
 /**
  * Provides RPC interactions for the requested modules.
@@ -48,7 +49,7 @@ export default async function getMethods<
         account: walletClient.account.address,
       })
     } catch (e: any) {
-      throw handleError(requestedModules, e)
+      throw handleError({ requestedModules, error: e })
     }
   }
 
@@ -70,7 +71,7 @@ export default async function getMethods<
         transactionHash,
       }
     } catch (e: any) {
-      throw handleError(requestedModules, e)
+      throw handleError({ requestedModules, error: e })
     }
   }
 
@@ -94,7 +95,7 @@ export default async function getMethods<
         formatted,
       }
     } catch (e: any) {
-      throw handleError(requestedModules, e)
+      throw handleError({ requestedModules, error: e })
     }
   }
 

@@ -3,12 +3,12 @@ import {
   type GetModuleData,
   type ModuleName,
 } from '@inverter-network/abis'
-import { decodeErrorResult, getContract } from 'viem'
+import { getContract } from 'viem'
 import { METADATA_URL, DEPLOYMENTS_URL } from './constants'
 import { ERC20_ABI } from '../utils/constants'
 
 import type { PublicClient, WalletClient } from 'viem'
-import type { FactoryType, RequestedModules, UserModuleArg } from '..'
+import type { FactoryType, UserModuleArg } from '..'
 import type { Abi } from 'abitype'
 
 type DeploymentResponse = {
@@ -158,41 +158,4 @@ export const getAbi = <FT extends FactoryType>(factoryType: FT) => {
   >['abi']
 
   return abi
-}
-
-export const handleError = (requestedModules: RequestedModules, error: any) => {
-  if (!error?.message?.includes?.('Unable to decode signature'))
-    return error as Error
-  const signature = error.cause.signature as `0x${string}`
-
-  let errorName: string | undefined
-
-  const errors = [
-    ERC20_ABI,
-    getModuleData('OrchestratorFactory_v1').abi,
-    getModuleData('Restricted_PIM_Factory_v1').abi,
-    ...Object.values(requestedModules)
-      .flat()
-      .map((i) => getModuleData(i).abi),
-  ]
-    .flat()
-    .filter((i) => i.type === 'error')
-
-  try {
-    const value = decodeErrorResult({
-      abi: errors,
-      data: signature,
-    })
-
-    if (value.errorName) {
-      errorName = value.errorName
-    }
-  } catch (e) {
-    console.log('decode error', e)
-    // do nothing
-  }
-
-  if (!errorName) return error as Error
-
-  return new Error(errorName)
 }
