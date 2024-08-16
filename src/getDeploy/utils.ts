@@ -79,10 +79,21 @@ export const getViemMethods = async ({
     },
   })
 
+  const methodName = (() => {
+    switch (factoryType) {
+      case 'default':
+        return 'createOrchestrator'
+      case 'restricted-pim':
+        return 'createPIMWorkflow'
+      default:
+        throw new Error('Unsupported factory type')
+    }
+  })()
+
   return {
-    simulateWrite: simulate.createOrchestrator,
-    write: write.createOrchestrator,
-    estimateGas: estimateGas.createOrchestrator,
+    simulateWrite: simulate[methodName],
+    write: write[methodName],
+    estimateGas: estimateGas[methodName],
   }
 }
 
@@ -150,31 +161,38 @@ export const getAbi = <FT extends FactoryType>(factoryType: FT) => {
 }
 
 export const handleError = (requestedModules: RequestedModules, error: any) => {
-  if (!error?.message?.includes?.('Unable to decode signature')) return error
+  if (!error?.message?.includes?.('Unable to decode signature'))
+    return error as Error
   const signature = error.cause.signature as `0x${string}`
 
   let errorName: string | undefined
 
-  const abis = [
+  const errors = [
+    ERC20_ABI,
     getModuleData('OrchestratorFactory_v1').abi,
+    getModuleData('Restricted_PIM_Factory_v1').abi,
     ...Object.values(requestedModules)
       .flat()
       .map((i) => getModuleData(i).abi),
   ]
+    .flat()
+    .filter((i) => i.type === 'error')
 
-  abis.forEach((abi) => {
-    try {
-      const value = decodeErrorResult({
-        abi,
-        data: signature,
-      })
-      if (value.errorName) errorName = value.errorName
-    } catch {
-      // do nothing
+  try {
+    const value = decodeErrorResult({
+      abi: errors,
+      data: signature,
+    })
+
+    if (value.errorName) {
+      errorName = value.errorName
     }
-  })
+  } catch (e) {
+    console.log('decode error', e)
+    // do nothing
+  }
 
-  if (!errorName) return error
+  if (!errorName) return error as Error
 
   return new Error(errorName)
 }
