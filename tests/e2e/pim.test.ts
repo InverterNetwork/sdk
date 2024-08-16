@@ -2,7 +2,11 @@ import { expect, describe, it } from 'bun:test'
 
 import { getTestConnectors } from '../testHelpers/getTestConnectors'
 import { Inverter } from '../../src/Inverter'
-import { getDeployArgs, testToken } from '../testHelpers/getTestArgs'
+import {
+  deployedBcOrchestrator,
+  getDeployArgs,
+  iUSD,
+} from '../testHelpers/getTestArgs'
 import { ERC20_ABI } from '../../src'
 
 describe('PIM', async () => {
@@ -17,10 +21,8 @@ describe('PIM', async () => {
 
   const sdk = new Inverter(publicClient, walletClient)
 
-  const skipDeploy = false
-  let orchestrator =
-    // this orchestrator belongs to mguleryuz test account
-    '0xCDfC7e4a5F377816C9bA533D45F269198Ef1F910' as `0x${string}`
+  const skipDeploy = true
+  let orchestrator = deployedBcOrchestrator
 
   it(
     'estimates gas for deployment',
@@ -38,14 +40,13 @@ describe('PIM', async () => {
     'deploys the BC',
     async () => {
       const { run } = await sdk.getDeploy(requestedModules)
-      console.log('deployArgs:', deployArgs)
       const { orchestratorAddress, transactionHash } = await run(deployArgs)
       await publicClient.waitForTransactionReceipt({
         hash: transactionHash,
       })
       orchestrator = orchestratorAddress
 
-      console.log('orchestratorAddress:', orchestratorAddress)
+      console.log('Orchestrator Address:', orchestrator)
     },
     {
       timeout: 50_000,
@@ -98,7 +99,7 @@ describe('PIM', async () => {
       const workflow = await sdk.getWorkflow(orchestrator, requestedModules)
       // Mint tokens
       const mintTx = <`0x${string}`>await walletClient.writeContract({
-        address: testToken,
+        address: iUSD,
         abi: ERC20_ABI,
         functionName: 'mint',
         args: [deployer, BigInt(depositAmount + eighteenDecimals)],
@@ -114,7 +115,7 @@ describe('PIM', async () => {
         )
       // Read balance before
       const balanceBefore = <bigint>await publicClient.readContract({
-        address: testToken,
+        address: iUSD,
         abi: ERC20_ABI,
         functionName: 'balanceOf',
         args: [deployer],
@@ -130,7 +131,7 @@ describe('PIM', async () => {
       })
       // Read balance after
       const balanceAfter = <bigint>await publicClient.readContract({
-        address: testToken,
+        address: iUSD,
         abi: ERC20_ABI,
         functionName: 'balanceOf',
         args: [deployer],

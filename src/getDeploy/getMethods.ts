@@ -37,7 +37,7 @@ export default async function getMethods<
     publicClient,
     factoryType,
     abi,
-    version: 'v0.2',
+    version: 'v1.0.0',
   })
 
   // Simulate the deployment

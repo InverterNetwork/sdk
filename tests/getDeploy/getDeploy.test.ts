@@ -3,16 +3,17 @@ import { expect, describe, it } from 'bun:test'
 import { getTestConnectors } from '../testHelpers/getTestConnectors'
 import { getDeploy, type RequestedModules } from '../../src'
 import { isAddress } from 'viem'
-import { baseArgs, bcArgs, kpiArgs } from './args'
 import {
   expected_FM_BC_Restricted_BancorInputSchema,
   expected_LM_PC_KPIRewarderInputSchema,
   expectedBaseInputSchema,
 } from './expectedOutputs'
 import { USDC_SEPOLIA } from '../../src/getDeploy/constants'
+import { getDeployArgs, getKpiArgs } from '../testHelpers/getTestArgs'
 
 describe('#getDeploy', () => {
   const { publicClient, walletClient } = getTestConnectors()
+  const address = walletClient.account.address
 
   describe('Modules: FM_DepositVault_v1, AUT_Roles_v1, PP_Simple_v1', () => {
     const requestedModules = {
@@ -41,7 +42,9 @@ describe('#getDeploy', () => {
             walletClient,
             requestedModules,
           })
-          const simulationResult = await simulate(baseArgs)
+          const simulationResult = await simulate(
+            getDeployArgs(requestedModules, address)
+          )
           expect(isAddress(simulationResult.result as string)).toBeTrue
         })
       })
@@ -81,7 +84,9 @@ describe('#getDeploy', () => {
               optionalModules: ['LM_PC_Bounties_v1'],
             },
           })
-          const simulationResult = await simulate(baseArgs)
+          const simulationResult = await simulate(
+            getDeployArgs(requestedModules, address)
+          )
           expect(isAddress(simulationResult.result as string)).toBeTrue
         })
       })
@@ -131,7 +136,7 @@ describe('#getDeploy', () => {
           })
 
           const simulationResult = await simulate({
-            ...baseArgs,
+            ...getDeployArgs(requestedModules, address),
             optionalModules: {
               LM_PC_RecurringPayments_v1: {
                 epochLength: '604800', // 1 week in seconds,
@@ -187,7 +192,7 @@ describe('#getDeploy', () => {
           })
 
           const simulationResult = await simulate({
-            ...baseArgs,
+            ...getDeployArgs(requestedModules, address),
             optionalModules: {
               LM_PC_Staking_v1: {
                 stakingToken: USDC_SEPOLIA, // 1 week in seconds,
@@ -230,9 +235,9 @@ describe('#getDeploy', () => {
           })
 
           const simulationResult = await simulate({
-            ...baseArgs,
+            ...getDeployArgs(requestedModules, address),
             optionalModules: {
-              LM_PC_KPIRewarder_v1: kpiArgs,
+              LM_PC_KPIRewarder_v1: getKpiArgs(address),
             },
           })
           expect(isAddress(simulationResult.result as string)).toBeTrue
@@ -275,7 +280,9 @@ describe('#getDeploy', () => {
             walletClient,
             requestedModules,
           })
-          const simulationResult = await simulate(baseArgs)
+          const simulationResult = await simulate(
+            getDeployArgs(requestedModules, address)
+          )
           expect(isAddress(simulationResult.result as string)).toBeTrue
         })
       })
@@ -287,7 +294,7 @@ describe('#getDeploy', () => {
       fundingManager: 'FM_BC_Restricted_Bancor_Redeeming_VirtualSupply_v1',
       paymentProcessor: 'PP_Simple_v1',
       authorizer: 'AUT_Roles_v1',
-    } as const
+    } as const satisfies RequestedModules
 
     describe('inputs', () => {
       it('has the correct format', async () => {
@@ -311,10 +318,10 @@ describe('#getDeploy', () => {
           requestedModules,
         })
 
-        const simulationResult = await simulate({
-          ...baseArgs,
-          fundingManager: bcArgs,
-        })
+        const simulationResult = await simulate(
+          getDeployArgs(requestedModules, address)
+        )
+
         expect(isAddress(simulationResult.result as string)).toBeTrue
       })
     })

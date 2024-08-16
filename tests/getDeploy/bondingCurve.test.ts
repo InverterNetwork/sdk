@@ -4,6 +4,7 @@ import { getTestConnectors } from '../testHelpers/getTestConnectors'
 import { Inverter } from '../../src/Inverter'
 import { isAddress } from 'viem'
 import type { GetUserArgs } from '../../src'
+import { getDeployArgs } from '../testHelpers/getTestArgs'
 
 const requestedModules = {
   fundingManager: 'FM_BC_Restricted_Bancor_Redeeming_VirtualSupply_v1',
@@ -11,32 +12,10 @@ const requestedModules = {
   paymentProcessor: 'PP_Simple_v1',
 } as const
 
-const userArgs: GetUserArgs<typeof requestedModules> = {
-  orchestrator: {
-    independentUpdates: true,
-    independentUpdateAdmin: '0x5AeeA3DF830529a61695A63ba020F01191E0aECb',
-  },
-
-  authorizer: {
-    initialAdmin: '0x5AeeA3DF830529a61695A63ba020F01191E0aECb',
-  },
-
-  fundingManager: {
-    bondingCurveParams: {
-      formula: '0x3ddE767F9DF9530DDeD47e1E012cCBf7B4A04dd7',
-      reserveRatioForBuying: '333333',
-      reserveRatioForSelling: '333333',
-      buyFee: '0',
-      sellFee: '100',
-      buyIsOpen: true,
-      sellIsOpen: true,
-      initialIssuanceSupply: '1',
-      initialCollateralSupply: '3',
-    },
-    issuanceToken: '0x5432BbeA7895882B2CF2A0147cf6d872407f47D5',
-    collateralToken: '0x71bd16Dd7A120a12a27439F5D3767Be795d4A991',
-  },
-}
+const userArgs: GetUserArgs<typeof requestedModules> = getDeployArgs(
+  requestedModules,
+  '0x5AeeA3DF830529a61695A63ba020F01191E0aECb'
+)
 
 describe('#getDeploy', () => {
   const { publicClient, walletClient } = getTestConnectors()

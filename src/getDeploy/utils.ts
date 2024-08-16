@@ -12,6 +12,8 @@ import type { FactoryType, RequestedModules, UserModuleArg } from '..'
 import type { Abi } from 'abitype'
 
 type DeploymentResponse = {
+  bancorFormula: Record<string, `0x${string}` | undefined>
+  erc20Mock: Record<string, `0x${string}` | undefined>
   orchestratorFactory: Record<string, `0x${string}` | undefined>
   restrictedPimFactory: Record<string, `0x${string}` | undefined>
 }
@@ -23,7 +25,7 @@ export type GetViemMethodsParams<FT extends FactoryType> = {
   abi: Abi
 }
 
-export type DeploymentVersion = 'v0.2'
+export type DeploymentVersion = 'v1.0.0'
 
 export const fetchDeployment = async (
   version: DeploymentVersion
@@ -84,23 +86,29 @@ export const getViemMethods = async ({
   }
 }
 
-export const getMajorMinorVersion = (name: ModuleName) => {
+export const getVersions = (name: ModuleName) => {
   const nameParts = name.split('_'),
     majorString = nameParts[nameParts.length - 1].slice(1),
     major = Number(majorString) > 1 ? 1 : Number(majorString),
     majorBigint = BigInt(major),
-    minorBigint = BigInt(0) // TODO: find a way to get the latest minor version
-  return { majorVersion: majorBigint, minorVersion: minorBigint }
+    minorBigint = BigInt(0), // TODO: find a way to get the latest minor version
+    pathcBigint = BigInt(0) // TODO: find a way to get the latest patch version
+  return {
+    majorVersion: majorBigint,
+    minorVersion: minorBigint,
+    patchVersion: pathcBigint,
+  }
 }
 
 // returns the MetaData struct that the deploy function requires for each module
 export const assembleMetadata = <N extends ModuleName>(name: N) => {
-  const majorMinorVersion = getMajorMinorVersion(name)
-  return {
+  const versions = getVersions(name)
+  const assembled = {
     title: name,
     url: METADATA_URL,
-    ...majorMinorVersion,
+    ...versions,
   }
+  return assembled
 }
 
 export const getDefaultToken = async (

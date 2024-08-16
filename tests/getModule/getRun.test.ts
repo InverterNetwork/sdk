@@ -1,13 +1,17 @@
 import { describe, it, beforeEach, expect } from 'bun:test'
 
 import { getTestConnectors } from '../testHelpers/getTestConnectors'
-import { deployedBcModule, iUSD, deployedKpiModule } from '../getDeploy/args'
 import getRun from '../../src/getModule/constructMethod/getRun'
 import { getContract } from 'viem'
 import { getModuleData } from '@inverter-network/abis'
 import { ERC20_ABI } from '../../src/utils/constants'
 import type { Extras, FormattedAbiParameter } from '../../src'
 import { USDC_SEPOLIA } from '../../src/getDeploy/constants'
+import {
+  deployedBcModule,
+  deployedKpiModule,
+  iUSD,
+} from '../testHelpers/getTestArgs'
 
 describe('#getRun', () => {
   const { publicClient, walletClient } = getTestConnectors()
