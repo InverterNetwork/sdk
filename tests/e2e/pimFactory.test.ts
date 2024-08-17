@@ -10,7 +10,7 @@ describe('#PIM_FACTORY', async () => {
   const deployer = walletClient.account.address
 
   const requestedModules = {
-    fundingManager: 'FM_BC_Bancor_Redeeming_VirtualSupply_v1',
+    fundingManager: 'FM_BC_Restricted_Bancor_Redeeming_VirtualSupply_v1',
     authorizer: 'AUT_Roles_v1',
     paymentProcessor: 'PP_Simple_v1',
   } as const satisfies RequestedModules<'restricted-pim'>
