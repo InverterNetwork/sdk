@@ -53,7 +53,8 @@ describe('#PIM_FACTORY', async () => {
       await publicClient.waitForTransactionReceipt({
         hash: transactionHash,
       })
-      orchestrator = orchestratorAddress
+      // TODO: change after PimFactory has been adapted to only return orchestrator address
+      orchestrator = orchestratorAddress[0]
 
       console.log('Orchestrator Address:', orchestrator)
     },
