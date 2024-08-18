@@ -53,29 +53,29 @@ export const handleError = (
     return error as Error
   const signature = error.cause.signature as `0x${string}`
 
+  if (signature === '0xfb8f41b2') return new Error('ERC20InsufficientAllowance')
+
   let errorName: string | undefined
 
   const srcAbis = (() => {
-    let abis: any[] = []
+    let abis: any[] = [ERC20_ABI]
 
     if ('abi' in params) abis = [...abis, params.abi]
 
     if ('requestedModules' in params)
-      abis = Object.values(params.requestedModules)
-        .flat()
-        .map((i) => getModuleData(i).abi)
+      abis = [
+        getModuleData('OrchestratorFactory_v1').abi,
+        getModuleData('Restricted_PIM_Factory_v1').abi,
+        ...abis,
+        ...Object.values(params.requestedModules)
+          .flat()
+          .map((i) => getModuleData(i).abi),
+      ]
 
     return abis
   })()
 
-  const errors = [
-    ...srcAbis,
-    ERC20_ABI,
-    getModuleData('OrchestratorFactory_v1').abi,
-    getModuleData('Restricted_PIM_Factory_v1').abi,
-  ]
-    .flat()
-    .filter((i) => i.type === 'error')
+  const errors = srcAbis.flat().filter((i) => i.type === 'error')
 
   try {
     const value = decodeErrorResult({
