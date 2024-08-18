@@ -1,5 +1,5 @@
 import { parseUnits } from 'viem'
-import { ERC20_ABI, ERC20_BYTECODE } from '../utils/constants'
+import { ERC20_DEPLOY_ABI, ERC20_BYTECODE } from '../utils/constants'
 import type { DeployERC20Params } from '..'
 
 export default async function ({
@@ -14,7 +14,7 @@ export default async function ({
 
   // Encode the deployment data
   const deploymentData = {
-    abi: ERC20_ABI,
+    abi: ERC20_DEPLOY_ABI,
     bytecode: ERC20_BYTECODE,
     args: [name, symbol, decimals, parsedInitialSupply],
   } as const

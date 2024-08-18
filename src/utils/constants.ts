@@ -3,21 +3,22 @@ import type { Hex } from 'viem'
 
 export const ADDRESS_ZERO = '0x0000000000000000000000000000000000000000'
 
-export const ERC20_ABI: Abi = [
+export const FM_BASE: Abi = [
   {
-    type: 'constructor',
-    inputs: [
-      { name: 'name', type: 'string', internalType: 'string' },
-      { name: 'symbol', type: 'string', internalType: 'string' },
-      { name: 'decimals_', type: 'uint8', internalType: 'uint8' },
+    inputs: [],
+    name: 'token',
+    outputs: [
       {
-        name: 'initialSupply',
-        type: 'uint256',
-        internalType: 'uint256',
+        name: '',
+        type: 'address',
       },
     ],
-    stateMutability: 'nonpayable',
+    stateMutability: 'view',
+    type: 'function',
   },
+]
+
+export const ERC20_ABI: Abi = [
   {
     type: 'function',
     name: 'allowance',
@@ -181,6 +182,38 @@ export const ERC20_ABI: Abi = [
     type: 'error',
     name: 'ERC20InvalidSpender',
     inputs: [{ name: 'spender', type: 'address', internalType: 'address' }],
+  },
+] as const
+
+export const ERC20_DEPLOY_ABI: Abi = [
+  ...ERC20_ABI,
+  {
+    type: 'constructor',
+    inputs: [
+      { name: 'name', type: 'string', internalType: 'string' },
+      { name: 'symbol', type: 'string', internalType: 'string' },
+      { name: 'decimals_', type: 'uint8', internalType: 'uint8' },
+      {
+        name: 'initialSupply',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
+    ],
+    stateMutability: 'nonpayable',
+  },
+] as const
+
+export const ERC20_MINTABLE_ABI: Abi = [
+  ...ERC20_ABI,
+  {
+    inputs: [
+      { internalType: 'address', name: 'to', type: 'address' },
+      { internalType: 'uint256', name: 'value', type: 'uint256' },
+    ],
+    name: 'mint',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
   },
 ] as const
 

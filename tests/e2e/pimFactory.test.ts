@@ -3,7 +3,7 @@ import { expect, describe, it } from 'bun:test'
 import { getTestConnectors } from '../testHelpers/getTestConnectors'
 import { Inverter } from '../../src/Inverter'
 import { getDeployArgs, iUSD } from '../testHelpers/getTestArgs'
-import { ERC20_ABI, type RequestedModules } from '../../src'
+import { ERC20_MINTABLE_ABI, type RequestedModules } from '../../src'
 
 describe('#PIM_FACTORY', async () => {
   const { publicClient, walletClient } = getTestConnectors()
@@ -77,7 +77,7 @@ describe('#PIM_FACTORY', async () => {
       // Mint tokens
       const mintTx = <`0x${string}`>await walletClient.writeContract({
         address: iUSD,
-        abi: ERC20_ABI,
+        abi: ERC20_MINTABLE_ABI,
         functionName: 'mint',
         args: [deployer, BigInt(depositAmount + eighteenDecimals)],
       })
@@ -93,7 +93,7 @@ describe('#PIM_FACTORY', async () => {
       // Read balance before
       const balanceBefore = <bigint>await publicClient.readContract({
         address: iUSD,
-        abi: ERC20_ABI,
+        abi: ERC20_MINTABLE_ABI,
         functionName: 'balanceOf',
         args: [deployer],
       })
@@ -109,7 +109,7 @@ describe('#PIM_FACTORY', async () => {
       // Read balance after
       const balanceAfter = <bigint>await publicClient.readContract({
         address: iUSD,
-        abi: ERC20_ABI,
+        abi: ERC20_MINTABLE_ABI,
         functionName: 'balanceOf',
         args: [deployer],
       })

@@ -27,7 +27,7 @@ export type OptionalModules<T extends RequestedModules['optionalModules']> =
   >
 
 export type DeploySchema<
-  T extends RequestedModules,
+  T extends RequestedModules = RequestedModules,
   FT extends FactoryType = 'default',
 > = Simplify<
   OmitNever<{

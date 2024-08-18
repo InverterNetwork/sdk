@@ -7,7 +7,7 @@ import {
   getDeployArgs,
   iUSD,
 } from '../testHelpers/getTestArgs'
-import { ERC20_ABI } from '../../src'
+import { ERC20_MINTABLE_ABI } from '../../src'
 
 describe('PIM', async () => {
   const { publicClient, walletClient } = getTestConnectors()
@@ -106,7 +106,7 @@ describe('PIM', async () => {
       // Mint tokens
       const mintTx = <`0x${string}`>await walletClient.writeContract({
         address: iUSD,
-        abi: ERC20_ABI,
+        abi: ERC20_MINTABLE_ABI,
         functionName: 'mint',
         args: [deployer, BigInt(depositAmount + eighteenDecimals)],
       })
@@ -122,7 +122,7 @@ describe('PIM', async () => {
       // Read balance before
       const balanceBefore = <bigint>await publicClient.readContract({
         address: iUSD,
-        abi: ERC20_ABI,
+        abi: ERC20_MINTABLE_ABI,
         functionName: 'balanceOf',
         args: [deployer],
       })
@@ -138,7 +138,7 @@ describe('PIM', async () => {
       // Read balance after
       const balanceAfter = <bigint>await publicClient.readContract({
         address: iUSD,
-        abi: ERC20_ABI,
+        abi: ERC20_MINTABLE_ABI,
         functionName: 'balanceOf',
         args: [deployer],
       })

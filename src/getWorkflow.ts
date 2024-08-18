@@ -1,5 +1,5 @@
 import getModule from './getModule'
-import { ERC20_ABI } from './utils/constants'
+import { ERC20_ABI, FM_BASE } from './utils/constants'
 
 import { type Hex } from 'viem'
 import { getModuleData, type GetModuleNameByType } from '@inverter-network/abis'
@@ -39,7 +39,7 @@ export default async function getWorkflow<
   // 2. gather extras
   const erc20Address = <Hex>await readContract({
       address: fundingManagerAddress,
-      abi: ERC20_ABI,
+      abi: FM_BASE,
       functionName: 'token',
     }),
     erc20Decimals = <number>await readContract({

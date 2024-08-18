@@ -2,7 +2,7 @@ import { expect, describe, it } from 'bun:test'
 
 import processInputs from '../../src/utils/processInputs'
 import { getTestConnectors } from '../testHelpers/getTestConnectors'
-import { ERC20_ABI } from '../../src/utils/constants'
+import { ERC20_ABI, FM_BASE } from '../../src/utils/constants'
 import { Inverter } from '../../src/Inverter'
 import { iUSD } from '../testHelpers/getTestArgs'
 
@@ -13,23 +13,7 @@ describe('#processInputs', () => {
   const { publicClient, walletClient } = getTestConnectors()
   const USDC_SEPOLIA = '0x5fd84259d66Cd46123540766Be93DFE6D43130D7' // USDC has 6 decimals
   const mockAddress = '0xa2c6191878a2ad73047F6a37442141FF2B3cAbBA'
-  const mockAbi = [
-    {
-      constant: true,
-      inputs: [],
-      name: 'token',
-      outputs: [
-        {
-          name: '',
-          type: 'address',
-        },
-      ],
-      payable: false,
-      stateMutability: 'view',
-      type: 'function',
-    },
-  ]
-  const mockContract = { address: mockAddress, abi: mockAbi }
+  const mockContract = { address: mockAddress, abi: FM_BASE }
 
   describe('#processedInputs', () => {
     describe('with decimals tag', () => {
