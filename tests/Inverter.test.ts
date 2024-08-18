@@ -24,7 +24,7 @@ describe('Inverter', () => {
       fundingManager: 'FM_BC_Restricted_Bancor_Redeeming_VirtualSupply_v1',
       paymentProcessor: 'PP_Streaming_v1',
       optionalModules: ['LM_PC_PaymentRouter_v1'],
-    } satisfies WorkflowOrientation
+    } as const satisfies WorkflowOrientation
 
     describe('#getWorkflow', () => {
       it('adds the workflow to the class instance state', async () => {
@@ -69,13 +69,13 @@ describe('Inverter', () => {
 
   describe('#getDeploy', () => {
     const requestedModules = {
-      fundingManager: 'FM_Rebasing_v1',
+      fundingManager: 'FM_DepositVault_v1',
       paymentProcessor: 'PP_Simple_v1',
       authorizer: 'AUT_TokenGated_Roles_v1',
     } satisfies RequestedModules
 
     const args: GetUserArgs<{
-      fundingManager: 'FM_Rebasing_v1'
+      fundingManager: 'FM_DepositVault_v1'
       authorizer: 'AUT_TokenGated_Roles_v1'
       paymentProcessor: 'PP_Simple_v1'
     }> = {

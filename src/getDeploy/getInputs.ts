@@ -1,9 +1,14 @@
-import { MANDATORY_MODULES, ORCHESTRATOR_CONFIG } from './constants'
+import {
+  MANDATORY_MODULES,
+  ORCHESTRATOR_CONFIG,
+  PIM_ISSUANCE_TOKEN_CONFIG,
+} from './constants'
 import formatParameters from '../utils/formatParameters'
 import { getModuleData } from '@inverter-network/abis'
 
 import type {
   DeploySchema,
+  FactoryType,
   FomrattedDeploymentParameters,
   RequestedModule,
   RequestedModules,
@@ -27,9 +32,10 @@ export const getModuleSchema = <
   return { name, inputs }
 }
 
-export default function getInputs<T extends RequestedModules>(
-  requestedModules: T
-): DeploySchema<T> {
+export default function getInputs<
+  T extends RequestedModules,
+  FT extends FactoryType = 'default',
+>(requestedModules: T, factoryType: FT): DeploySchema<T, FT> {
   const mandatoryResult = MANDATORY_MODULES.reduce(
     (result, moduleType) => {
       const moduleSchema = getModuleSchema(requestedModules[moduleType])
@@ -39,7 +45,7 @@ export default function getInputs<T extends RequestedModules>(
     },
     {
       orchestrator: ORCHESTRATOR_CONFIG,
-    } as DeploySchema<Omit<T, 'optionalModules'>>
+    } as DeploySchema<Omit<T, 'optionalModules'>, FT>
   )
 
   if (!requestedModules.optionalModules?.length) return mandatoryResult
@@ -51,5 +57,8 @@ export default function getInputs<T extends RequestedModules>(
   return {
     ...mandatoryResult,
     optionalModules,
+    ...(factoryType === 'restricted-pim' && {
+      issuanceToken: PIM_ISSUANCE_TOKEN_CONFIG,
+    }),
   }
 }

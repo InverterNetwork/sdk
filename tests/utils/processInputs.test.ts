@@ -4,7 +4,7 @@ import processInputs from '../../src/utils/processInputs'
 import { getTestConnectors } from '../testHelpers/getTestConnectors'
 import { ERC20_ABI } from '../../src/utils/constants'
 import { Inverter } from '../../src/Inverter'
-import { testToken } from '../testHelpers/getTestArgs'
+import { iUSD } from '../testHelpers/getTestArgs'
 
 import { type FormattedAbiParameter } from '../../src'
 import type { Tag } from '@inverter-network/abis'
@@ -111,7 +111,7 @@ describe('#processInputs', () => {
         }
 
         describe('with :indirect', () => {
-          const mockContract = { read: { issuanceToken: () => testToken } }
+          const mockContract = { read: { issuanceToken: () => iUSD } }
           const tags = [
             'decimals:contract:indirect:issuanceToken',
           ] satisfies Tag[] // should resolve to usdc on sepolia w/ decimals

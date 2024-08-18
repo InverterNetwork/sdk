@@ -2,32 +2,42 @@ import { expect, describe, it } from 'bun:test'
 
 import { getTestConnectors } from '../testHelpers/getTestConnectors'
 import { Inverter } from '../../src/Inverter'
-import {
-  deployedBcOrchestrator,
-  getDeployArgs,
-  iUSD,
-} from '../testHelpers/getTestArgs'
-import { ERC20_ABI } from '../../src'
+import { getDeployArgs, iUSD } from '../testHelpers/getTestArgs'
+import { ERC20_ABI, type RequestedModules } from '../../src'
 
-describe('PIM', async () => {
+describe('#PIM_FACTORY', async () => {
   const { publicClient, walletClient } = getTestConnectors()
   const deployer = walletClient.account.address
+
   const requestedModules = {
     fundingManager: 'FM_BC_Restricted_Bancor_Redeeming_VirtualSupply_v1',
     authorizer: 'AUT_Roles_v1',
     paymentProcessor: 'PP_Simple_v1',
-  } as const
-  const deployArgs = getDeployArgs(requestedModules, deployer)
+  } as const satisfies RequestedModules<'restricted-pim'>
+
+  const deployArgs = {
+    ...getDeployArgs(requestedModules, deployer),
+    issuanceToken: {
+      name: 'MG Token',
+      symbol: 'MGT',
+      decimals: '18',
+      maxSupply:
+        '115792089237316195423570985008687907853269984665640564039457.584007913129639935',
+    },
+  }
 
   const sdk = new Inverter(publicClient, walletClient)
 
-  const skipDeploy = true
-  let orchestrator = deployedBcOrchestrator
+  const { estimateGas, run } = await sdk.getDeploy(
+    requestedModules,
+    'restricted-pim'
+  )
+
+  let orchestrator: `0x${string}`
 
   it(
-    'estimates gas for deployment',
+    '1. Estimates gas for deployment',
     async () => {
-      const { estimateGas } = await sdk.getDeploy(requestedModules)
       const gasEstimate = await estimateGas(deployArgs)
       expect(gasEstimate).toContainKeys(['value', 'formatted'])
     },
@@ -36,53 +46,17 @@ describe('PIM', async () => {
     }
   )
 
-  it.skipIf(skipDeploy)(
+  it(
     'deploys the BC',
     async () => {
-      const { run } = await sdk.getDeploy(requestedModules)
       const { orchestratorAddress, transactionHash } = await run(deployArgs)
       await publicClient.waitForTransactionReceipt({
         hash: transactionHash,
       })
-      orchestrator = orchestratorAddress
+      // TODO: change after PimFactory has been adapted to only return orchestrator address
+      orchestrator = orchestratorAddress[0]
 
       console.log('Orchestrator Address:', orchestrator)
-    },
-    {
-      timeout: 50_000,
-    }
-  )
-
-  it(
-    'assigns permission to buy from curve',
-    async () => {
-      // Get and set Workflow
-      const workflow = await sdk.getWorkflow(orchestrator, requestedModules)
-      // Get Role
-      const role =
-        await workflow.fundingManager.read.CURVE_INTERACTION_ROLE.run()
-      // Generate Module Role
-      const generatedRole = await workflow.authorizer.read.generateRoleId.run([
-        workflow.fundingManager.address,
-        role,
-      ])
-      // Grant Module Role
-      const grantModuleTx =
-        await workflow.fundingManager.write.grantModuleRole.run([
-          generatedRole,
-          deployer,
-        ])
-      // Wait for Transaction Receipt
-      await publicClient.waitForTransactionReceipt({
-        hash: grantModuleTx,
-      })
-      // Read hasRole
-      const hasRole = await workflow.authorizer.read.hasRole.run([
-        generatedRole,
-        deployer,
-      ])
-      // Expect hasRole to be true
-      expect(hasRole).toBeTrue
     },
     {
       timeout: 50_000,

@@ -32,19 +32,13 @@ const userArgs: GetUserArgs<typeof requestedModules> = {
       initialIssuanceSupply: '1',
       initialCollateralSupply: '3',
     },
-    issuanceToken: {
-      name: 'MG Token',
-      symbol: 'MG',
-      decimals: '9',
-      maxSupply: '1000000',
-    },
-    tokenAdmin: '0x5AeeA3DF830529a61695A63ba020F01191E0aECb',
+    issuanceToken: '0x5432BbeA7895882B2CF2A0147cf6d872407f47D5',
     collateralToken: '0x71bd16Dd7A120a12a27439F5D3767Be795d4A991',
   },
 }
 
 describe('#getDeploy decimals error', () => {
-  const { publicClient, walletClient } = getTestConnectors('sepolia')
+  const { publicClient, walletClient } = getTestConnectors()
 
   describe('Simulate with decoded error and not decoded error', async () => {
     const sdk = new Inverter(publicClient, walletClient)
@@ -58,7 +52,9 @@ describe('#getDeploy decimals error', () => {
         } catch (e: any) {
           const message = e?.message
 
-          console.error('Error message:', message)
+          // TODO: Uncomment this line when the error message is fixed
+          // right now its not a custom error, was unable to find a case to test it out
+          // console.error('Error message:', message)
 
           expect(message).toBeDefined()
         }
