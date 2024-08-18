@@ -19,7 +19,7 @@ describe('PIM', async () => {
   } as const
   const deployArgs = getDeployArgs(requestedModules, deployer)
 
-  const sdk = new Inverter(publicClient, walletClient)
+  const sdk = new Inverter({ publicClient, walletClient })
 
   const skipDeploy = true
   let orchestrator = deployedBcOrchestrator
@@ -27,7 +27,7 @@ describe('PIM', async () => {
   it(
     'estimates gas for deployment',
     async () => {
-      const { estimateGas } = await sdk.getDeploy(requestedModules)
+      const { estimateGas } = await sdk.getDeploy({ requestedModules })
       const gasEstimate = await estimateGas(deployArgs)
       expect(gasEstimate).toContainKeys(['value', 'formatted'])
     },
@@ -39,7 +39,7 @@ describe('PIM', async () => {
   it.skipIf(skipDeploy)(
     'deploys the BC',
     async () => {
-      const { run } = await sdk.getDeploy(requestedModules)
+      const { run } = await sdk.getDeploy({ requestedModules })
       const { orchestratorAddress, transactionHash } = await run(deployArgs)
       await publicClient.waitForTransactionReceipt({
         hash: transactionHash,
@@ -57,7 +57,10 @@ describe('PIM', async () => {
     'assigns permission to buy from curve',
     async () => {
       // Get and set Workflow
-      const workflow = await sdk.getWorkflow(orchestrator, requestedModules)
+      const workflow = await sdk.getWorkflow({
+        orchestratorAddress: orchestrator,
+        requestedModules,
+      })
       // Get Role
       const role =
         await workflow.fundingManager.read.CURVE_INTERACTION_ROLE.run()
@@ -96,7 +99,10 @@ describe('PIM', async () => {
       const eighteenDecimals = '000000000000000000'
 
       // Get and set Workflow
-      const workflow = await sdk.getWorkflow(orchestrator, requestedModules)
+      const workflow = await sdk.getWorkflow({
+        orchestratorAddress: orchestrator,
+        requestedModules,
+      })
       // Mint tokens
       const mintTx = <`0x${string}`>await walletClient.writeContract({
         address: iUSD,

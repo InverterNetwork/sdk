@@ -2,13 +2,17 @@ import { describe, it, expect } from 'bun:test'
 
 import { Inverter } from '../src/Inverter'
 import { getTestConnectors } from './testHelpers/getTestConnectors'
-import type { GetUserArgs, RequestedModules, WorkflowOrientation } from '../src'
+import type {
+  GetUserArgs,
+  RequestedModules,
+  WorkflowRequestedModules,
+} from '../src'
 import { isAddress } from 'viem'
 
 describe('Inverter', () => {
   const { publicClient, walletClient } = getTestConnectors()
 
-  const sdk = new Inverter(publicClient, walletClient)
+  const sdk = new Inverter({ publicClient, walletClient })
 
   describe('#constructor', () => {
     it('instantiates the sdk with public and wallet client', async () => {
@@ -19,16 +23,16 @@ describe('Inverter', () => {
 
   describe('operations', () => {
     const orchestratorAddress = '0xBc986B80A3c6b274CEd09db5A3b0Ac76a4046968'
-    const workFlowOrientation = {
+    const requestedModules = {
       authorizer: 'AUT_Roles_v1',
       fundingManager: 'FM_BC_Restricted_Bancor_Redeeming_VirtualSupply_v1',
       paymentProcessor: 'PP_Streaming_v1',
       optionalModules: ['LM_PC_PaymentRouter_v1'],
-    } as const satisfies WorkflowOrientation
+    } as const satisfies WorkflowRequestedModules
 
     describe('#getWorkflow', () => {
       it('adds the workflow to the class instance state', async () => {
-        await sdk.getWorkflow(orchestratorAddress, workFlowOrientation)
+        await sdk.getWorkflow({ orchestratorAddress, requestedModules })
 
         expect(await sdk.workflows.get(orchestratorAddress)).toContainKeys([
           'authorizer',
@@ -41,10 +45,10 @@ describe('Inverter', () => {
       })
 
       it('gets the workflow', async () => {
-        const workflow = await sdk.getWorkflow(
+        const workflow = await sdk.getWorkflow({
           orchestratorAddress,
-          workFlowOrientation
-        )
+          requestedModules,
+        })
 
         expect(workflow).toContainKeys([
           'authorizer',
@@ -93,7 +97,7 @@ describe('Inverter', () => {
 
     describe('#simulate', () => {
       it('simulates the deployment tx', async () => {
-        const { simulate } = await sdk.getDeploy(requestedModules)
+        const { simulate } = await sdk.getDeploy({ requestedModules })
         const { result } = await simulate(args)
         expect(isAddress(result)).toBeTrue
       })

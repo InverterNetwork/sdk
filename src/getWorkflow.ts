@@ -6,14 +6,14 @@ import { getModuleData, type GetModuleNameByType } from '@inverter-network/abis'
 import type {
   PopWalletClient,
   WorkflowModuleType,
-  WorkflowOrientation,
+  WorkflowRequestedModules,
   Workflow,
   GetWorkflowParams,
   FlattenObjectValues,
 } from './types'
 
 export default async function getWorkflow<
-  O extends WorkflowOrientation | undefined = undefined,
+  O extends WorkflowRequestedModules | undefined = undefined,
   W extends PopWalletClient | undefined = undefined,
 >({
   publicClient,
@@ -65,9 +65,9 @@ export default async function getWorkflow<
 
   // 3. initialize modules with extras
   const modules = await (async () => {
-    // 0. Define the source data based on the optional workflowOrientation
+    // 0. Define the source data based on the optional requestedModules
     const source = await (async () => {
-      type Name = O extends WorkflowOrientation
+      type Name = O extends WorkflowRequestedModules
         ? FlattenObjectValues<O>
         : GetModuleNameByType<WorkflowModuleType>
 
