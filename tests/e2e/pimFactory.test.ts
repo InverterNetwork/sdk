@@ -26,12 +26,12 @@ describe('#PIM_FACTORY', async () => {
     },
   }
 
-  const sdk = new Inverter(publicClient, walletClient)
+  const sdk = new Inverter({ publicClient, walletClient })
 
-  const { estimateGas, run } = await sdk.getDeploy(
+  const { estimateGas, run } = await sdk.getDeploy({
     requestedModules,
-    'restricted-pim'
-  )
+    factoryType: 'restricted-pim',
+  })
 
   let orchestrator: `0x${string}`
 
@@ -70,7 +70,10 @@ describe('#PIM_FACTORY', async () => {
       const eighteenDecimals = '000000000000000000'
 
       // Get and set Workflow
-      const workflow = await sdk.getWorkflow(orchestrator, requestedModules)
+      const workflow = await sdk.getWorkflow({
+        orchestratorAddress: orchestrator,
+        requestedModules,
+      })
       // Mint tokens
       const mintTx = <`0x${string}`>await walletClient.writeContract({
         address: iUSD,

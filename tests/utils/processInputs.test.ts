@@ -157,7 +157,7 @@ describe('#processInputs', () => {
           })
 
           describe('with sdk instance', () => {
-            const sdk = new Inverter(publicClient, walletClient)
+            const sdk = new Inverter({ publicClient, walletClient })
 
             // this test case is a bit confusing:
             // it passes in the USDC contract
@@ -279,7 +279,7 @@ describe('#processInputs', () => {
           })
 
           describe('with sdk instance', () => {
-            const sdk = new Inverter(publicClient, walletClient)
+            const sdk = new Inverter({ publicClient, walletClient })
 
             it('stores token info in cache', async () => {
               await processInputs({

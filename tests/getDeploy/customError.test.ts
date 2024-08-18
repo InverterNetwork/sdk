@@ -41,8 +41,8 @@ describe('#getDeploy decimals error', () => {
   const { publicClient, walletClient } = getTestConnectors()
 
   describe('Simulate with decoded error and not decoded error', async () => {
-    const sdk = new Inverter(publicClient, walletClient)
-    const { simulate } = await sdk.getDeploy(requestedModules)
+    const sdk = new Inverter({ publicClient, walletClient })
+    const { simulate } = await sdk.getDeploy({ requestedModules })
 
     it(
       'finds the name of the error by decoding error signature',

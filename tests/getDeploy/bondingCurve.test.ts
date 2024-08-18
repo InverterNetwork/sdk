@@ -19,14 +19,14 @@ const userArgs: GetUserArgs<typeof requestedModules> = getDeployArgs(
 
 describe('#getDeploy', () => {
   const { publicClient, walletClient } = getTestConnectors()
-  const sdk = new Inverter(publicClient, walletClient)
+  const sdk = new Inverter({ publicClient, walletClient })
 
   describe('Modules: BondingCurve, AUT_Roles_v1, PP_Simple_v1', () => {
     describe('simulate', () => {
       it(
         'returns the orchestrator address as result',
         async () => {
-          const { simulate } = await sdk.getDeploy(requestedModules)
+          const { simulate } = await sdk.getDeploy({ requestedModules })
 
           const simulationResult = await simulate(userArgs)
 

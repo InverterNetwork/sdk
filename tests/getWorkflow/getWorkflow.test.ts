@@ -10,7 +10,7 @@ describe('Get A Module', async () => {
     publicClient,
     walletClient,
     orchestratorAddress: '0xBc986B80A3c6b274CEd09db5A3b0Ac76a4046968',
-    workflowOrientation: {
+    requestedModules: {
       authorizer: 'AUT_Roles_v1',
       fundingManager: 'FM_BC_Restricted_Bancor_Redeeming_VirtualSupply_v1',
       paymentProcessor: 'PP_Streaming_v1',

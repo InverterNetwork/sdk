@@ -10,13 +10,13 @@ import type { OmitNever, PopPublicClient, PopWalletClient } from '../types'
 import type { Hex } from 'viem'
 
 export type GetWorkflowParams<
-  O extends WorkflowOrientation | undefined = undefined,
+  O extends WorkflowRequestedModules | undefined = undefined,
   W extends PopWalletClient | undefined = undefined,
 > = {
   publicClient: PopPublicClient
   walletClient?: W
   orchestratorAddress: Hex
-  workflowOrientation?: O
+  requestedModules?: O
   self?: Inverter<W>
 }
 
@@ -27,7 +27,7 @@ type OrientationPart<
   N extends GetModuleNameByType<MT> = GetModuleNameByType<MT>,
 > = N
 
-export type WorkflowOrientation = Merge<
+export type WorkflowRequestedModules = Merge<
   {
     [T in Exclude<WorkflowModuleType, 'optionalModule'>]: OrientationPart<T>
   },
@@ -38,16 +38,16 @@ export type WorkflowOrientation = Merge<
 
 type MandatoryResult<
   W extends PopWalletClient | undefined,
-  O extends WorkflowOrientation | undefined,
+  O extends WorkflowRequestedModules | undefined,
 > = {
   [K in Exclude<WorkflowModuleType, 'optionalModule'>]: O extends NonNullable<O>
     ? ReturnType<typeof getModule<O[K], W>>
-    : ReturnType<typeof getModule<WorkflowOrientation[K], W>>
+    : ReturnType<typeof getModule<WorkflowRequestedModules[K], W>>
 }
 
 type OptionalResult<
   W extends PopWalletClient | undefined,
-  O extends WorkflowOrientation | undefined,
+  O extends WorkflowRequestedModules | undefined,
 > = OmitNever<{
   optionalModule: O extends NonNullable<O>
     ? O['optionalModules'] extends NonNullable<O['optionalModules']>
@@ -59,19 +59,19 @@ type OptionalResult<
       : never
     : {
         [K in NonNullable<
-          WorkflowOrientation['optionalModules']
+          WorkflowRequestedModules['optionalModules']
         >[number]]: ReturnType<typeof getModule<K, W>>
       }
 }>
 
 export type MendatoryAndOptionalWorkflow<
   W extends PopWalletClient | undefined,
-  O extends WorkflowOrientation | undefined,
+  O extends WorkflowRequestedModules | undefined,
 > = MandatoryResult<W, O> & OptionalResult<W, O>
 
 export type Workflow<
   W extends PopWalletClient | undefined,
-  O extends WorkflowOrientation | undefined,
+  O extends WorkflowRequestedModules | undefined,
 > = Merge<
   MendatoryAndOptionalWorkflow<W, O>,
   {

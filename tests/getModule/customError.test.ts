@@ -9,7 +9,7 @@ const requestedModules = {
   paymentProcessor: 'PP_Simple_v1',
 } as const
 
-const orchestrator =
+const orchestratorAddress =
   // this orchestrator belongs to mguleryuz test account
   '0xCDfC7e4a5F377816C9bA533D45F269198Ef1F910' as `0x${string}`
 
@@ -17,8 +17,11 @@ describe('#getModule decimals error', () => {
   const { publicClient, walletClient } = getTestConnectors()
 
   describe('Simulate with decoded error and not decoded error', async () => {
-    const sdk = new Inverter(publicClient, walletClient)
-    const workflow = await sdk.getWorkflow(orchestrator, requestedModules)
+    const sdk = new Inverter({ publicClient, walletClient })
+    const workflow = await sdk.getWorkflow({
+      orchestratorAddress,
+      requestedModules,
+    })
 
     it(
       'finds the name of the error by decoding error signature',
