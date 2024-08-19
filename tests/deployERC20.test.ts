@@ -16,6 +16,7 @@ describe('#deployERC20', async () => {
         symbol: 'MT',
         decimals: 18,
         initialSupply: '1000000',
+        initialAdmin: walletClient.account.address,
       })
 
       console.log('Deployed ERC20:', data.tokenAddress)

@@ -21,6 +21,10 @@ export type DeployERC20Params = {
    * @example '1000'
    */
   initialSupply: string
+  /**
+   * The address of the initial admin
+   */
+  initialAdmin: `0x${string}`
   walletClient: PopWalletClient
   publicClient: PopPublicClient
 }
