@@ -40,11 +40,11 @@ describe('deploying regularly, assigning permissions, and depositing collateral'
 
   describe('deploying an issuance token', () => {
     it('returns the issuance token address', async () => {
-      const data = await sdk.deployERC20({
+      const data = await sdk.deploy('ERC20Issuance', {
         name: 'My Token',
         symbol: 'MT',
         decimals: 18,
-        initialSupply: '1000000',
+        maxSupply: '1000000',
         initialAdmin: walletClient.account.address,
       })
 
