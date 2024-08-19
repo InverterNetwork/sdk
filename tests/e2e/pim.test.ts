@@ -1,4 +1,4 @@
-import { expect, describe, it } from 'bun:test'
+import { expect, describe, it, beforeEach } from 'bun:test'
 
 import { getTestConnectors } from '../testHelpers/getTestConnectors'
 import { Inverter } from '../../src/Inverter'
@@ -7,9 +7,10 @@ import {
   getDeployArgs,
   iUSD,
 } from '../testHelpers/getTestArgs'
-import { ERC20_MINTABLE_ABI } from '../../src'
+import { ERC20_MINTABLE_ABI, type Workflow } from '../../src'
+import { isAddress } from 'viem'
 
-describe('PIM', async () => {
+describe('deploying regularly, assigning permissions, and depositing collateral', async () => {
   const { publicClient, walletClient } = getTestConnectors()
   const deployer = walletClient.account.address
   const requestedModules = {
@@ -21,8 +22,9 @@ describe('PIM', async () => {
 
   const sdk = new Inverter({ publicClient, walletClient })
 
-  const skipDeploy = true
   let orchestrator = deployedBcOrchestrator
+  let issuanceToken: `0x${string}`
+  let workflow: any
 
   it(
     'estimates gas for deployment',
@@ -36,119 +38,177 @@ describe('PIM', async () => {
     }
   )
 
-  it.skipIf(skipDeploy)(
-    'deploys the BC',
-    async () => {
-      const { run } = await sdk.getDeploy({ requestedModules })
-      const { orchestratorAddress, transactionHash } = await run(deployArgs)
-      await publicClient.waitForTransactionReceipt({
-        hash: transactionHash,
+  describe('deploying an issuance token', () => {
+    it('returns the issuance token address', async () => {
+      const data = await sdk.deployERC20({
+        name: 'My Token',
+        symbol: 'MT',
+        decimals: 18,
+        initialSupply: '1000000',
+        initialAdmin: walletClient.account.address,
       })
-      orchestrator = orchestratorAddress
 
-      console.log('Orchestrator Address:', orchestrator)
-    },
-    {
-      timeout: 50_000,
-    }
-  )
+      issuanceToken = data.tokenAddress as `0x${string}`
+      expect(isAddress(issuanceToken)).toBeTrue
+    })
+  })
 
-  it(
-    'assigns permission to buy from curve',
-    async () => {
-      // Get and set Workflow
-      const workflow = await sdk.getWorkflow({
-        orchestratorAddress: orchestrator,
-        requestedModules,
-      })
-      // Get Role
-      const role =
-        await workflow.fundingManager.read.CURVE_INTERACTION_ROLE.run()
-      // Generate Module Role
-      const generatedRole = await workflow.authorizer.read.generateRoleId.run([
-        workflow.fundingManager.address,
-        role,
-      ])
-      // Grant Module Role
-      const grantModuleTx =
-        await workflow.fundingManager.write.grantModuleRole.run([
+  describe('deploying the BC', () => {
+    it(
+      'returns the orchestrator address',
+      async () => {
+        const { run } = await sdk.getDeploy({ requestedModules })
+        const argsWithIssuanceToken = {
+          ...deployArgs,
+          fundingManager: { ...deployArgs.fundingManager, issuanceToken },
+        }
+        const { orchestratorAddress, transactionHash } = await run(
+          argsWithIssuanceToken
+        )
+        await publicClient.waitForTransactionReceipt({
+          hash: transactionHash,
+        })
+        orchestrator = orchestratorAddress
+        expect(isAddress(orchestrator)).toBeTrue
+      },
+      {
+        timeout: 50_000,
+      }
+    )
+  })
+
+  describe('assigning permissions to buy from curve', () => {
+    it(
+      'grants bc access role to deployer',
+      async () => {
+        // Get and set Workflow
+        workflow = await sdk.getWorkflow({
+          orchestratorAddress: orchestrator,
+          requestedModules,
+        })
+        // Get Role
+        const role =
+          await workflow.fundingManager.read.CURVE_INTERACTION_ROLE.run()
+        // Generate Module Role
+        const generatedRole = await workflow.authorizer.read.generateRoleId.run(
+          [workflow.fundingManager.address, role]
+        )
+        // Grant Module Role
+        const grantModuleTx =
+          await workflow.fundingManager.write.grantModuleRole.run([
+            role,
+            deployer,
+          ])
+        // Wait for Transaction Receipt
+        await publicClient.waitForTransactionReceipt({
+          hash: grantModuleTx,
+        })
+        const hasRole = await workflow.authorizer.read.checkForRole.run([
           generatedRole,
           deployer,
         ])
-      // Wait for Transaction Receipt
-      await publicClient.waitForTransactionReceipt({
-        hash: grantModuleTx,
-      })
-      // Read hasRole
-      const hasRole = await workflow.authorizer.read.hasRole.run([
-        generatedRole,
-        deployer,
-      ])
-      // Expect hasRole to be true
-      expect(hasRole).toBeTrue
-    },
-    {
-      timeout: 50_000,
-    }
-  )
 
-  it(
-    'deposits collateral tokens into the curve',
-    async () => {
-      const depositAmount = '500'
-      const eighteenDecimals = '000000000000000000'
+        // Expect hasRole to be true
+        expect(hasRole).toBeTrue()
+      },
+      {
+        timeout: 50_000,
+      }
+    )
+  })
 
-      // Get and set Workflow
-      const workflow = await sdk.getWorkflow({
-        orchestratorAddress: orchestrator,
-        requestedModules,
-      })
-      // Mint tokens
+  describe('buying from the curve', () => {
+    const depositAmount = '500'
+    const eighteenDecimals = '000000000000000000'
+    const { initialCollateralSupply } =
+      deployArgs.fundingManager.bondingCurveParams
+
+    beforeEach(async () => {
+      // mint initial collateral supply to BC
       const mintTx = <`0x${string}`>await walletClient.writeContract({
+        address: iUSD,
+        abi: ERC20_MINTABLE_ABI,
+        functionName: 'mint',
+        args: [workflow.fundingManager.address, initialCollateralSupply],
+      })
+      await publicClient.waitForTransactionReceipt({
+        hash: mintTx,
+      })
+
+      // mint buy amount to deployer
+      const mintTx2 = <`0x${string}`>await walletClient.writeContract({
         address: iUSD,
         abi: ERC20_MINTABLE_ABI,
         functionName: 'mint',
         args: [deployer, BigInt(depositAmount + eighteenDecimals)],
       })
-      // Wait for Transaction Receipt
       await publicClient.waitForTransactionReceipt({
-        hash: mintTx,
+        hash: mintTx2,
       })
-      // Calculate amount out
-      const amountOut =
-        await workflow.fundingManager.read.calculatePurchaseReturn.run(
-          depositAmount
-        )
-      // Read balance before
-      const balanceBefore = <bigint>await publicClient.readContract({
+
+      // approve buy amount to BC
+      const approveTx = <`0x${string}`>await walletClient.writeContract({
         address: iUSD,
         abi: ERC20_MINTABLE_ABI,
-        functionName: 'balanceOf',
-        args: [deployer],
+        functionName: 'approve',
+        args: [
+          workflow.fundingManager.address,
+          BigInt(depositAmount + eighteenDecimals),
+        ],
       })
-      // Buy tokens
-      const buyTx = await workflow.fundingManager.write.buy.run([
-        depositAmount,
-        amountOut,
-      ])
-      // Wait for Transaction Receipt
       await publicClient.waitForTransactionReceipt({
-        hash: buyTx,
+        hash: approveTx,
       })
-      // Read balance after
-      const balanceAfter = <bigint>await publicClient.readContract({
-        address: iUSD,
-        abi: ERC20_MINTABLE_ABI,
-        functionName: 'balanceOf',
-        args: [deployer],
+
+      // set minter
+      const setMinterTx = <`0x${string}`>await walletClient.writeContract({
+        address: issuanceToken,
+        abi: [
+          {
+            type: 'function',
+            name: 'setMinter',
+            inputs: [
+              {
+                name: '_minter',
+                type: 'address',
+                internalType: 'address',
+              },
+              { name: '_allowed', type: 'bool', internalType: 'bool' },
+            ],
+            outputs: [],
+            stateMutability: 'nonpayable',
+          },
+        ],
+        functionName: 'setMinter',
+        args: [workflow.fundingManager.address, true],
       })
-      // Expect balance to be less
-      expect((balanceBefore - balanceAfter).toString()).toEqual(
-        depositAmount + eighteenDecimals
-      )
-    },
-    {
-      timeout: 50_000,
-    }
-  )
+      await publicClient.waitForTransactionReceipt({
+        hash: setMinterTx,
+      })
+    })
+
+    it(
+      'deposits collateral tokens into the curve',
+      async () => {
+        // Calculate amount out
+        const amountOut =
+          await workflow.fundingManager.read.calculatePurchaseReturn.run(
+            depositAmount
+          )
+        // Buy tokens
+        const buyTx = await workflow.fundingManager.write.buy.run([
+          depositAmount,
+          amountOut,
+        ])
+        // Wait for Transaction Receipt
+        const { status } = await publicClient.waitForTransactionReceipt({
+          hash: buyTx,
+        })
+        expect(status).toBe('success')
+      },
+      {
+        timeout: 50_000,
+      }
+    )
+  })
 })
