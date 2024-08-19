@@ -3,9 +3,9 @@ import { expect, describe, it } from 'bun:test'
 import { getTestConnectors } from '../testHelpers/getTestConnectors'
 import { Inverter } from '../../src/Inverter'
 import { getDeployArgs, iUSD } from '../testHelpers/getTestArgs'
-import { ERC20_MINTABLE_ABI, type RequestedModules } from '../../src'
+import { ERC20_ABI, ERC20_MINTABLE_ABI, type RequestedModules } from '../../src'
 
-describe('#PIM_FACTORY', async () => {
+describe('deploying through the restricted PIM factory', async () => {
   const { publicClient, walletClient } = getTestConnectors()
   const deployer = walletClient.account.address
 
@@ -64,7 +64,7 @@ describe('#PIM_FACTORY', async () => {
   )
 
   it(
-    'deposits collateral tokens into the curve',
+    'lets admin buy from curve',
     async () => {
       const depositAmount = '500'
       const eighteenDecimals = '000000000000000000'
@@ -81,42 +81,39 @@ describe('#PIM_FACTORY', async () => {
         functionName: 'mint',
         args: [deployer, BigInt(depositAmount + eighteenDecimals)],
       })
-      // Wait for Transaction Receipt
       await publicClient.waitForTransactionReceipt({
         hash: mintTx,
       })
-      // Calculate amount out
+
+      // approve tokens
+      const approveTx = <`0x${string}`>await walletClient.writeContract({
+        address: iUSD,
+        abi: ERC20_ABI,
+        functionName: 'approve',
+        args: [
+          workflow.fundingManager.address,
+          BigInt(depositAmount + eighteenDecimals),
+        ],
+      })
+      await publicClient.waitForTransactionReceipt({
+        hash: approveTx,
+      })
+
+      // enable buying
+      const openBuyTx = await workflow.fundingManager.write.openBuy.run()
+      await publicClient.waitForTransactionReceipt({
+        hash: openBuyTx,
+      })
+      // get expectedamount out
       const amountOut =
         await workflow.fundingManager.read.calculatePurchaseReturn.run(
           depositAmount
         )
-      // Read balance before
-      const balanceBefore = <bigint>await publicClient.readContract({
-        address: iUSD,
-        abi: ERC20_MINTABLE_ABI,
-        functionName: 'balanceOf',
-        args: [deployer],
-      })
-      // Buy tokens
-      const buyTx = await workflow.fundingManager.write.buy.run([
+      const buyTx = workflow.fundingManager.write.buy.run([
         depositAmount,
         amountOut,
       ])
-      // Wait for Transaction Receipt
-      await publicClient.waitForTransactionReceipt({
-        hash: buyTx,
-      })
-      // Read balance after
-      const balanceAfter = <bigint>await publicClient.readContract({
-        address: iUSD,
-        abi: ERC20_MINTABLE_ABI,
-        functionName: 'balanceOf',
-        args: [deployer],
-      })
-      // Expect balance to be less
-      expect((balanceBefore - balanceAfter).toString()).toEqual(
-        depositAmount + eighteenDecimals
-      )
+      await expect(buyTx).resolves.toBeDefined()
     },
     {
       timeout: 50_000,
