@@ -9,9 +9,9 @@ import type {
   Workflow,
   RequestedModules,
   FactoryType,
-  DeployERC20Params,
+  DeployParamsByKey,
 } from './types'
-import deployERC20 from './deployERC20'
+import deploy from './deploy'
 
 export class Inverter<W extends PopWalletClient | undefined = undefined> {
   readonly publicClient: PopPublicClient
@@ -83,13 +83,14 @@ export class Inverter<W extends PopWalletClient | undefined = undefined> {
     return result as W extends undefined ? never : typeof result
   }
 
-  deployERC20(
-    params: Omit<DeployERC20Params, 'walletClient' | 'publicClient'>
+  deploy<K extends keyof typeof deploy>(
+    key: K,
+    params: Omit<DeployParamsByKey<K>, 'walletClient' | 'publicClient'>
   ) {
     if (!this.walletClient)
       throw new Error('Wallet client is required for deploy')
 
-    return deployERC20({
+    return deploy[key]({
       ...params,
       walletClient: this.walletClient,
       publicClient: this.publicClient,

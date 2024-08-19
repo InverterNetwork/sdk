@@ -1,7 +1,7 @@
 import { expect, describe, it } from 'bun:test'
 
-import { getTestConnectors } from './testHelpers/getTestConnectors'
-import { Inverter } from '../src'
+import { getTestConnectors } from '../testHelpers/getTestConnectors'
+import { Inverter } from '../../src'
 
 describe('#deployERC20', async () => {
   const { publicClient, walletClient } = getTestConnectors()
@@ -11,15 +11,15 @@ describe('#deployERC20', async () => {
   it(
     'should run the deployer function',
     async () => {
-      const data = await sdk.deployERC20({
+      const data = await sdk.deploy('ERC20Issuance', {
         name: 'My Token',
         symbol: 'MT',
         decimals: 18,
-        initialSupply: '1000000',
+        maxSupply: '1000000',
         initialAdmin: walletClient.account.address,
       })
 
-      console.log('Deployed ERC20:', data.tokenAddress)
+      console.log('Deployed ERC20Issuance:', data.tokenAddress)
 
       expect(data).toContainKeys(['tokenAddress', 'transactionHash'])
     },

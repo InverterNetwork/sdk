@@ -1,23 +1,23 @@
 import { parseUnits } from 'viem'
-import type { DeployERC20Params } from '..'
+import type { DeployERC20IssuanceParams } from '..'
 import { bytecodes, getModuleData } from '@inverter-network/abis'
 
 export default async function ({
   name,
   symbol,
   decimals,
-  initialSupply,
+  maxSupply,
   initialAdmin,
   walletClient,
   publicClient,
-}: DeployERC20Params) {
-  const parsedInitialSupply = parseUnits(initialSupply, decimals)
+}: DeployERC20IssuanceParams) {
+  const parsedMaxSupply = parseUnits(maxSupply, decimals)
 
   // Deploy the contract
   const txHash = await walletClient.deployContract({
     abi: getModuleData('ERC20Issuance_v1').abi,
     bytecode: bytecodes.ERC20Issuance_v1,
-    args: [name, symbol, decimals, parsedInitialSupply, initialAdmin],
+    args: [name, symbol, decimals, parsedMaxSupply, initialAdmin],
   })
 
   // Wait for the transaction to be mined

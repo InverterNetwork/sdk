@@ -1,6 +1,6 @@
-import type { PopPublicClient, PopWalletClient } from '../types'
+import type { PopPublicClient, PopWalletClient } from '..'
 
-export type DeployERC20Params = {
+export type DeployERC20IssuanceParams = {
   /**
    * The name of the token
    * @example 'My Token'
@@ -17,10 +17,10 @@ export type DeployERC20Params = {
    */
   decimals: number
   /**
-   * The initial supply of the token, in the human-readable format
+   * The maximum supply of the token - in human readable format
    * @example '1000'
    */
-  initialSupply: string
+  maxSupply: string
   /**
    * The address of the initial admin
    */
