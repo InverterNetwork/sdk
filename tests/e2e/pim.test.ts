@@ -7,7 +7,7 @@ import {
   getDeployArgs,
   iUSD,
 } from '../testHelpers/getTestArgs'
-import { ERC20_MINTABLE_ABI, type Workflow } from '../../src'
+import { ERC20_MINTABLE_ABI } from '../../src'
 import { isAddress } from 'viem'
 
 describe('deploying regularly, assigning permissions, and depositing collateral', async () => {

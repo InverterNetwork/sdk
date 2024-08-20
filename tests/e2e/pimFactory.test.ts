@@ -4,6 +4,7 @@ import { getTestConnectors } from '../testHelpers/getTestConnectors'
 import { Inverter } from '../../src/Inverter'
 import { getDeployArgs, iUSD } from '../testHelpers/getTestArgs'
 import { ERC20_ABI, ERC20_MINTABLE_ABI, type RequestedModules } from '../../src'
+import { isHex } from 'viem'
 
 describe('deploying through the restricted PIM factory', async () => {
   const { publicClient, walletClient } = getTestConnectors()
@@ -109,11 +110,13 @@ describe('deploying through the restricted PIM factory', async () => {
         await workflow.fundingManager.read.calculatePurchaseReturn.run(
           depositAmount
         )
-      const buyTx = workflow.fundingManager.write.buy.run([
+
+      const buyTx = await workflow.fundingManager.write.buy.run([
         depositAmount,
         amountOut,
       ])
-      await expect(buyTx).resolves.toBeDefined()
+
+      expect(isHex(buyTx)).toBeTrue()
     },
     {
       timeout: 50_000,
