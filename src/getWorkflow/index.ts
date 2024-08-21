@@ -1,7 +1,6 @@
-import getModule from './getModule'
-import { ERC20_ABI, FM_BASE } from './utils/constants'
+import getModule from '../getModule'
+import getTokenResults from './getTokenResults'
 
-import { type Hex } from 'viem'
 import { getModuleData, type GetModuleNameByType } from '@inverter-network/abis'
 import type {
   PopWalletClient,
@@ -10,7 +9,7 @@ import type {
   Workflow,
   GetWorkflowParams,
   FlattenObjectValues,
-} from './types'
+} from '../types'
 
 export default async function getWorkflow<
   O extends WorkflowRequestedModules | undefined = undefined,
@@ -34,34 +33,12 @@ export default async function getWorkflow<
 
   const fundingManagerAddress = await orchestrator.read.fundingManager.run()
 
-  const { readContract } = publicClient
-
-  // 2. gather extras
-  const erc20Address = <Hex>await readContract({
-      address: fundingManagerAddress,
-      abi: FM_BASE,
-      functionName: 'token',
-    }),
-    erc20Decimals = <number>await readContract({
-      address: erc20Address,
-      abi: ERC20_ABI,
-      functionName: 'decimals',
-    }),
-    erc20Symbol = <string>await readContract({
-      address: erc20Address,
-      abi: ERC20_ABI,
-      functionName: 'symbol',
-    }),
-    erc20Module = getModule({
-      publicClient,
-      walletClient,
-      address: erc20Address,
-      name: 'ERC20',
-      extras: {
-        decimals: erc20Decimals,
-      },
-      self,
-    })
+  const fundingToken = await getTokenResults.getFundingTokenResults({
+    fundingManagerAddress,
+    publicClient,
+    walletClient,
+    self,
+  })
 
   // 3. initialize modules with extras
   const modules = await (async () => {
@@ -95,8 +72,8 @@ export default async function getWorkflow<
         publicClient,
         walletClient,
         extras: {
-          defaultToken: erc20Address,
-          decimals: erc20Decimals,
+          defaultToken: fundingToken.address,
+          decimals: fundingToken.decimals,
         },
         self,
       })
@@ -124,13 +101,21 @@ export default async function getWorkflow<
     return result
   })()
 
+  const issuanceToken = modules?.fundingManager?.name?.includes?.('FM_BC')
+    ? await getTokenResults.getIssuanceTokenResults({
+        fundingManagerAddress,
+        publicClient,
+        walletClient,
+        self,
+      })
+    : null
+
   // RETURN WORKFLOW CONFIG
   const returns = {
     ...modules,
     orchestrator,
-    erc20Module,
-    erc20Decimals,
-    erc20Symbol,
+    fundingToken,
+    ...(issuanceToken && { issuanceToken }),
   }
 
   return returns

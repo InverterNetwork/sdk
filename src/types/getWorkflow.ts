@@ -1,4 +1,3 @@
-import getModule from '../getModule'
 import { Inverter } from '../Inverter'
 
 import type {
@@ -6,7 +5,13 @@ import type {
   GetModuleNameByType,
 } from '@inverter-network/abis'
 import type { Merge } from 'type-fest-4'
-import type { OmitNever, PopPublicClient, PopWalletClient } from '../types'
+import type {
+  FilterByPrefix,
+  GetModuleReturn,
+  OmitNever,
+  PopPublicClient,
+  PopWalletClient,
+} from '../types'
 import type { Hex } from 'viem'
 
 export type GetWorkflowParams<
@@ -41,8 +46,8 @@ type MandatoryResult<
   O extends WorkflowRequestedModules | undefined,
 > = {
   [K in Exclude<WorkflowModuleType, 'optionalModule'>]: O extends NonNullable<O>
-    ? ReturnType<typeof getModule<O[K], W>>
-    : ReturnType<typeof getModule<WorkflowRequestedModules[K], W>>
+    ? GetModuleReturn<O[K], W>
+    : GetModuleReturn<WorkflowRequestedModules[K], W>
 }
 
 type OptionalResult<
@@ -52,15 +57,13 @@ type OptionalResult<
   optionalModule: O extends NonNullable<O>
     ? O['optionalModules'] extends NonNullable<O['optionalModules']>
       ? {
-          [K in O['optionalModules'][number]]: ReturnType<
-            typeof getModule<K, W>
-          >
+          [K in O['optionalModules'][number]]: GetModuleReturn<K, W>
         }
       : never
     : {
         [K in NonNullable<
           WorkflowRequestedModules['optionalModules']
-        >[number]]: ReturnType<typeof getModule<K, W>>
+        >[number]]: GetModuleReturn<K, W>
       }
 }>
 
@@ -69,15 +72,31 @@ export type MendatoryAndOptionalWorkflow<
   O extends WorkflowRequestedModules | undefined,
 > = MandatoryResult<W, O> & OptionalResult<W, O>
 
+export type TokenModuleData<W extends PopWalletClient | undefined> = {
+  address: Hex
+  module: GetModuleReturn<'ERC20', W>
+  decimals: number
+  symbol: string
+}
+
+export type ConditionalIssuanceToken<
+  W extends PopWalletClient | undefined,
+  O extends WorkflowRequestedModules | undefined,
+> =
+  O extends NonNullable<O>
+    ? FilterByPrefix<O['fundingManager'], 'FM_BC'> extends never
+      ? TokenModuleData<W> | undefined
+      : TokenModuleData<W>
+    : never
+
 export type Workflow<
   W extends PopWalletClient | undefined,
   O extends WorkflowRequestedModules | undefined,
 > = Merge<
   MendatoryAndOptionalWorkflow<W, O>,
-  {
-    orchestrator: ReturnType<typeof getModule<'Orchestrator_v1', W>>
-    erc20Module: ReturnType<typeof getModule<'ERC20', W>>
-    erc20Decimals: number
-    erc20Symbol: string
-  }
+  OmitNever<{
+    orchestrator: GetModuleReturn<'Orchestrator_v1', W>
+    fundingToken: TokenModuleData<W>
+    issuanceToken: ConditionalIssuanceToken<W, O>
+  }>
 >

@@ -16,6 +16,13 @@ export const FM_BASE: Abi = [
     stateMutability: 'view',
     type: 'function',
   },
+  {
+    inputs: [],
+    name: 'getIssuanceToken',
+    outputs: [{ internalType: 'address', name: '_0', type: 'address' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
 ]
 
 export const ERC20_ABI: Abi = getModuleData('ERC20').abi
