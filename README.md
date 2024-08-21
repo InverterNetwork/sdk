@@ -7,7 +7,7 @@
 
 </div>
 
-## Inverter / TS SDK ( PROTOCOL VERSION BETA )
+## Inverter / TS SDK
 
 Bun + Npm + Type Safe Formatted Functions
 
