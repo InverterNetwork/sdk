@@ -1,37 +1,9 @@
+import { getModuleData } from '@inverter-network/abis'
 import type { Abi } from 'abitype'
 
-export const ERC20_ABI: Abi = [
-  {
-    constant: true,
-    inputs: [
-      {
-        name: '_owner',
-        type: 'address',
-      },
-    ],
-    name: 'balanceOf',
-    outputs: [
-      {
-        name: 'balance',
-        type: 'uint256',
-      },
-    ],
-    payable: false,
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'decimals',
-    outputs: [
-      {
-        name: '',
-        type: 'uint8',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
+export const ADDRESS_ZERO = '0x0000000000000000000000000000000000000000'
+
+export const FM_BASE: Abi = [
   {
     inputs: [],
     name: 'token',
@@ -46,62 +18,17 @@ export const ERC20_ABI: Abi = [
   },
   {
     inputs: [],
-    name: 'symbol',
-    outputs: [
-      {
-        name: '',
-        type: 'string',
-      },
-    ],
+    name: 'getIssuanceToken',
+    outputs: [{ internalType: 'address', name: '_0', type: 'address' }],
     stateMutability: 'view',
     type: 'function',
   },
-  {
-    constant: true,
-    inputs: [
-      {
-        name: '_owner',
-        type: 'address',
-      },
-      {
-        name: '_spender',
-        type: 'address',
-      },
-    ],
-    name: 'allowance',
-    outputs: [
-      {
-        name: '',
-        type: 'uint256',
-      },
-    ],
-    payable: false,
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    constant: false,
-    inputs: [
-      {
-        name: '_spender',
-        type: 'address',
-      },
-      {
-        name: '_value',
-        type: 'uint256',
-      },
-    ],
-    name: 'approve',
-    outputs: [
-      {
-        name: '',
-        type: 'bool',
-      },
-    ],
-    payable: false,
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
+]
+
+export const ERC20_ABI: Abi = getModuleData('ERC20').abi
+
+export const ERC20_MINTABLE_ABI: Abi = [
+  ...ERC20_ABI,
   {
     inputs: [
       { internalType: 'address', name: 'to', type: 'address' },
@@ -113,5 +40,3 @@ export const ERC20_ABI: Abi = [
     type: 'function',
   },
 ] as const
-
-export const ADDRESS_ZERO = '0x0000000000000000000000000000000000000000'

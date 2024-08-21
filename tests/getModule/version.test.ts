@@ -2,12 +2,13 @@ import { expect, describe, it } from 'bun:test'
 
 import { getTestConnectors } from '../testHelpers/getTestConnectors'
 import getModule from '../../src/getModule'
+import { deployedBCFundingManager } from '../testHelpers/getTestArgs'
 
 describe('Should get the verion from a module', async () => {
   const { publicClient, walletClient } = getTestConnectors(),
     moduleObj = getModule({
-      name: 'LM_PC_PaymentRouter_v1',
-      address: '0xDdCe84621cB7844C0D91307733F6EaC19C7f6417',
+      name: 'FM_BC_Restricted_Bancor_Redeeming_VirtualSupply_v1',
+      address: deployedBCFundingManager,
       publicClient,
       walletClient,
     })

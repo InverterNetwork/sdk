@@ -1,5 +1,9 @@
 import type { ModuleName } from '@inverter-network/abis'
-import type { OrchestratorInputs } from './generic'
+import type {
+  FactoryType,
+  OrchestratorInputs,
+  PIMIssuanceTokenInputs,
+} from './generic'
 import type { FomrattedDeploymentParameters } from './parameter'
 import type { RequestedModules } from './requested'
 import type { EmptyObjectToNever, OmitNever } from '../../'
@@ -22,13 +26,16 @@ export type OptionalModules<T extends RequestedModules['optionalModules']> =
         }
   >
 
-export type DeploySchema<T extends RequestedModules = RequestedModules> =
-  Simplify<
-    OmitNever<{
-      orchestrator: OrchestratorInputs
-      paymentProcessor: ModuleSchema<T['paymentProcessor']>
-      fundingManager: ModuleSchema<T['fundingManager']>
-      authorizer: ModuleSchema<T['authorizer']>
-      optionalModules: EmptyObjectToNever<OptionalModules<T['optionalModules']>>
-    }>
-  >
+export type DeploySchema<
+  T extends RequestedModules = RequestedModules,
+  FT extends FactoryType = 'default',
+> = Simplify<
+  OmitNever<{
+    orchestrator: OrchestratorInputs
+    paymentProcessor: ModuleSchema<T['paymentProcessor']>
+    fundingManager: ModuleSchema<T['fundingManager']>
+    authorizer: ModuleSchema<T['authorizer']>
+    optionalModules: EmptyObjectToNever<OptionalModules<T['optionalModules']>>
+    issuanceToken: FT extends 'restricted-pim' ? PIMIssuanceTokenInputs : never
+  }>
+>

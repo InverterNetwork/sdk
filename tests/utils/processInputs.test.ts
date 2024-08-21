@@ -2,9 +2,9 @@ import { expect, describe, it } from 'bun:test'
 
 import processInputs from '../../src/utils/processInputs'
 import { getTestConnectors } from '../testHelpers/getTestConnectors'
-import { ERC20_ABI } from '../../src/utils/constants'
+import { ERC20_ABI, FM_BASE } from '../../src/utils/constants'
 import { Inverter } from '../../src/Inverter'
-import { testToken } from '../testHelpers/getTestArgs'
+import { iUSD } from '../testHelpers/getTestArgs'
 
 import { type FormattedAbiParameter } from '../../src'
 import type { Tag } from '@inverter-network/abis'
@@ -13,23 +13,7 @@ describe('#processInputs', () => {
   const { publicClient, walletClient } = getTestConnectors()
   const USDC_SEPOLIA = '0x5fd84259d66Cd46123540766Be93DFE6D43130D7' // USDC has 6 decimals
   const mockAddress = '0xa2c6191878a2ad73047F6a37442141FF2B3cAbBA'
-  const mockAbi = [
-    {
-      constant: true,
-      inputs: [],
-      name: 'token',
-      outputs: [
-        {
-          name: '',
-          type: 'address',
-        },
-      ],
-      payable: false,
-      stateMutability: 'view',
-      type: 'function',
-    },
-  ]
-  const mockContract = { address: mockAddress, abi: mockAbi }
+  const mockContract = { address: mockAddress, abi: FM_BASE }
 
   describe('#processedInputs', () => {
     describe('with decimals tag', () => {
@@ -111,7 +95,7 @@ describe('#processInputs', () => {
         }
 
         describe('with :indirect', () => {
-          const mockContract = { read: { issuanceToken: () => testToken } }
+          const mockContract = { read: { issuanceToken: () => iUSD } }
           const tags = [
             'decimals:contract:indirect:issuanceToken',
           ] satisfies Tag[] // should resolve to usdc on sepolia w/ decimals
@@ -157,7 +141,7 @@ describe('#processInputs', () => {
           })
 
           describe('with sdk instance', () => {
-            const sdk = new Inverter(publicClient, walletClient)
+            const sdk = new Inverter({ publicClient, walletClient })
 
             // this test case is a bit confusing:
             // it passes in the USDC contract
@@ -279,7 +263,7 @@ describe('#processInputs', () => {
           })
 
           describe('with sdk instance', () => {
-            const sdk = new Inverter(publicClient, walletClient)
+            const sdk = new Inverter({ publicClient, walletClient })
 
             it('stores token info in cache', async () => {
               await processInputs({

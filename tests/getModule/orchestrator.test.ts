@@ -2,12 +2,13 @@ import { expect, describe, it } from 'bun:test'
 
 import { getTestConnectors } from '../testHelpers/getTestConnectors'
 import getModule from '../../src/getModule'
+import { deployedBcOrchestrator } from '../testHelpers/getTestArgs'
 
 describe('Should get the verion from a module', async () => {
   const { publicClient, walletClient } = getTestConnectors(),
     moduleObj = getModule({
       name: 'Orchestrator_v1',
-      address: '0xBc986B80A3c6b274CEd09db5A3b0Ac76a4046968',
+      address: deployedBcOrchestrator,
       publicClient,
       walletClient,
     })

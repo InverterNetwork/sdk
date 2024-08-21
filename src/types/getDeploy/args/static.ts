@@ -20,6 +20,13 @@ export type OrchestratorArgs =
     }
   | undefined
 
+export type IssuanceTokenArgs = {
+  name: string
+  symbol: string
+  decimals: string
+  maxSupply: string
+}
+
 export type ModuleArgs = {
   metadata: Metadata
 } & EncodedArgs
@@ -30,6 +37,7 @@ export type ConstructedArgs = {
   authorizer: ModuleArgs
   paymentProcessor: ModuleArgs
   optionalModules: ModuleArgs[]
+  issuanceToken: IssuanceTokenArgs
 }
 
 export type UserModuleArg = Record<string, unknown>
@@ -40,4 +48,5 @@ export type UserArgs = {
   authorizer?: UserModuleArg
   paymentProcessor?: UserModuleArg
   optionalModules?: Record<string, UserModuleArg>
+  issuanceToken?: IssuanceTokenArgs
 }
