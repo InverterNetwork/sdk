@@ -40,16 +40,16 @@ describe('#getWorkflow', async () => {
     })
 
     it('Should have fundingToken / issuanceToken, address, module, decimals, symbol', () => {
-      expect(workflow?.fundingToken).toBeDefined()
-      expect(workflow?.fundingToken).toContainKeys([
+      expect(workflow.fundingToken).toBeDefined()
+      expect(workflow.fundingToken).toContainKeys([
         'address',
         'module',
         'decimals',
         'symbol',
       ])
 
-      expect(workflow?.issuanceToken).toBeDefined()
-      expect(workflow?.issuanceToken).toContainKeys([
+      expect(workflow.issuanceToken).toBeDefined()
+      expect(workflow.issuanceToken).toContainKeys([
         'address',
         'module',
         'decimals',
@@ -81,8 +81,8 @@ describe('#getWorkflow', async () => {
     })
 
     it('Should have fundingToken, address, module, decimals, symbol', () => {
-      expect(workflow?.fundingToken).toBeDefined()
-      expect(workflow?.fundingToken).toContainKeys([
+      expect(workflow.fundingToken).toBeDefined()
+      expect(workflow.fundingToken).toContainKeys([
         'address',
         'module',
         'decimals',

@@ -87,16 +87,16 @@ export type ConditionalIssuanceToken<
     ? FilterByPrefix<O['fundingManager'], 'FM_BC'> extends never
       ? TokenModuleData<W> | undefined
       : TokenModuleData<W>
-    : never
+    : TokenModuleData<W> | undefined
 
 export type Workflow<
   W extends PopWalletClient | undefined,
   O extends WorkflowRequestedModules | undefined,
 > = Merge<
   MendatoryAndOptionalWorkflow<W, O>,
-  OmitNever<{
+  {
     orchestrator: GetModuleReturn<'Orchestrator_v1', W>
     fundingToken: TokenModuleData<W>
     issuanceToken: ConditionalIssuanceToken<W, O>
-  }>
+  }
 >

@@ -4,8 +4,9 @@ import { getTestConnectors } from '../testHelpers/getTestConnectors'
 import utils from '../../tools'
 import getWorkflow from '../../src/getWorkflow'
 
-describe('Get A Module', async () => {
+describe('#headlessWorkflow', async () => {
   const { publicClient, walletClient } = getTestConnectors()
+
   const workflow = await getWorkflow({
     publicClient,
     walletClient,
@@ -20,5 +21,17 @@ describe('Get A Module', async () => {
     })
 
     expect(workflow).toBeObject()
+  })
+
+  it('Should Have The Funding Token', () => {
+    expect(workflow.fundingToken).toBeObject()
+  })
+
+  it('Should possibly have the issuanceToken', () => {
+    if (workflow.issuanceToken !== undefined) {
+      expect(workflow.issuanceToken).toBeObject()
+    } else {
+      expect(workflow.issuanceToken).toBeUndefined()
+    }
   })
 })
