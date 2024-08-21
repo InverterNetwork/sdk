@@ -2,6 +2,7 @@ import getWorkflow from './getWorkflow'
 import getDeploy from './getDeploy'
 import getDeployOptions from './getDeployOptions'
 
+import type { ModuleName } from '@inverter-network/abis'
 import type {
   PopPublicClient,
   PopWalletClient,
@@ -10,8 +11,11 @@ import type {
   RequestedModules,
   FactoryType,
   DeployParamsByKey,
+  DeployKeys,
+  GetModuleParams,
 } from './types'
 import deploy from './deploy'
+import { getModule } from '.'
 
 export class Inverter<W extends PopWalletClient | undefined = undefined> {
   readonly publicClient: PopPublicClient
@@ -83,7 +87,7 @@ export class Inverter<W extends PopWalletClient | undefined = undefined> {
     return result as W extends undefined ? never : typeof result
   }
 
-  deploy<K extends keyof typeof deploy>(
+  deploy<K extends DeployKeys>(
     key: K,
     params: Omit<DeployParamsByKey<K>, 'walletClient' | 'publicClient'>
   ) {
@@ -94,6 +98,15 @@ export class Inverter<W extends PopWalletClient | undefined = undefined> {
       ...params,
       walletClient: this.walletClient,
       publicClient: this.publicClient,
+    })
+  }
+
+  getModule<N extends ModuleName>(params: GetModuleParams<N, W>) {
+    return getModule({
+      ...params,
+      publicClient: this.publicClient,
+      walletClient: this.walletClient,
+      self: this,
     })
   }
 }
