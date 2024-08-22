@@ -1,14 +1,21 @@
 import {
   getModuleData,
   type GetModuleData,
+  type GetModuleNameByType,
   type ModuleName,
 } from '@inverter-network/abis'
-import { getContract } from 'viem'
+import { formatUnits, getContract, parseUnits } from 'viem'
 import { METADATA_URL, DEPLOYMENTS_URL } from './constants'
 import { ERC20_ABI } from '../utils/constants'
 
 import type { PublicClient, WalletClient } from 'viem'
-import type { FactoryType, UserModuleArg } from '..'
+import type {
+  FactoryType,
+  FilterByPrefix,
+  GetUserArgs,
+  PopWalletClient,
+  UserModuleArg,
+} from '..'
 import type { Abi } from 'abitype'
 
 type DeploymentResponse = {
@@ -91,6 +98,7 @@ export const getViemMethods = async ({
   })()
 
   return {
+    deployment,
     simulateWrite: simulate[methodName],
     write: write[methodName],
     estimateGas: estimateGas[methodName],
@@ -158,4 +166,74 @@ export const getAbi = <FT extends FactoryType>(factoryType: FT) => {
   >['abi']
 
   return abi
+}
+
+const isPimArgs = (
+  args: any
+): args is GetUserArgs<
+  {
+    fundingManager: FilterByPrefix<
+      GetModuleNameByType<'fundingManager'>,
+      'FM_BC'
+    >
+    paymentProcessor: GetModuleNameByType<'paymentProcessor'>
+    authorizer: GetModuleNameByType<'authorizer'>
+  },
+  'restricted-pim'
+> => {
+  return !!args?.fundingManager?.bondingCurveParams?.initialCollateralSupply
+}
+
+export const handlePimFactoryApprove = async (params: {
+  factoryType: FactoryType
+  deployment: DeploymentResponse
+  userArgs: any
+  walletClient: PopWalletClient
+  publicClient: PublicClient
+}) => {
+  const { factoryType, deployment, userArgs, walletClient, publicClient } =
+    params
+
+  if (factoryType !== 'restricted-pim') return
+
+  if (isPimArgs(userArgs)) {
+    const collateralTokenAddress = userArgs.fundingManager.collateralToken
+    const initialCollateralSupply =
+      userArgs.fundingManager.bondingCurveParams.initialCollateralSupply
+
+    const chainId = publicClient.chain?.id
+    if (!chainId) throw new Error('Chain ID not found')
+    const factoryAddress = deployment.restrictedPimFactory[chainId]
+    if (!factoryAddress)
+      throw new Error('Chain ID is not supported @ deployment factory address')
+
+    const contract = getContract({
+      address: collateralTokenAddress,
+      abi: ERC20_ABI,
+      client: { wallet: walletClient, public: publicClient },
+    })
+
+    const decimals = await contract.read.decimals()
+
+    const allowance = await contract.read.allowance([
+      walletClient.account.address,
+      factoryAddress,
+    ])
+
+    const formattedAllowance = formatUnits(allowance, decimals)
+
+    const hasEnoughAllowance =
+      Number(formattedAllowance) >= Number(initialCollateralSupply)
+
+    if (hasEnoughAllowance) return
+
+    const hash = await contract.write.approve([
+      factoryAddress,
+      parseUnits(initialCollateralSupply, decimals),
+    ])
+
+    await publicClient.waitForTransactionReceipt({ hash })
+  }
+
+  return
 }

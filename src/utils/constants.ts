@@ -1,9 +1,8 @@
 import { getModuleData } from '@inverter-network/abis'
-import type { Abi } from 'abitype'
 
 export const ADDRESS_ZERO = '0x0000000000000000000000000000000000000000'
 
-export const FM_BASE: Abi = [
+export const FM_BASE = [
   {
     inputs: [],
     name: 'token',
@@ -25,9 +24,9 @@ export const FM_BASE: Abi = [
   },
 ]
 
-export const ERC20_ABI: Abi = getModuleData('ERC20').abi
+export const ERC20_ABI = getModuleData('ERC20').abi
 
-export const ERC20_MINTABLE_ABI: Abi = [
+export const ERC20_MINTABLE_ABI = [
   ...ERC20_ABI,
   {
     inputs: [

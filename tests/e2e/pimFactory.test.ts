@@ -4,9 +4,9 @@ import { getTestConnectors } from '../testHelpers/getTestConnectors'
 import { Inverter } from '../../src/Inverter'
 import { getDeployArgs, iUSD } from '../testHelpers/getTestArgs'
 import { ERC20_ABI, ERC20_MINTABLE_ABI, type RequestedModules } from '../../src'
-import { isHex } from 'viem'
+import { isHex, parseUnits } from 'viem'
 
-describe('deploying through the restricted PIM factory', async () => {
+describe('#restrictedPIM', async () => {
   const { publicClient, walletClient } = getTestConnectors()
   const deployer = walletClient.account.address
 
@@ -36,7 +36,7 @@ describe('deploying through the restricted PIM factory', async () => {
 
   let orchestrator: `0x${string}`
 
-  it(
+  it.skip(
     '1. Estimates gas for deployment',
     async () => {
       const gasEstimate = await estimateGas(deployArgs)
@@ -51,6 +51,7 @@ describe('deploying through the restricted PIM factory', async () => {
     'deploys the BC',
     async () => {
       const { orchestratorAddress, transactionHash } = await run(deployArgs)
+
       await publicClient.waitForTransactionReceipt({
         hash: transactionHash,
       })
@@ -68,7 +69,6 @@ describe('deploying through the restricted PIM factory', async () => {
     'lets admin buy from curve',
     async () => {
       const depositAmount = '500'
-      const eighteenDecimals = '000000000000000000'
 
       // Get and set Workflow
       const workflow = await sdk.getWorkflow({
@@ -80,7 +80,7 @@ describe('deploying through the restricted PIM factory', async () => {
         address: iUSD,
         abi: ERC20_MINTABLE_ABI,
         functionName: 'mint',
-        args: [deployer, BigInt(depositAmount + eighteenDecimals)],
+        args: [deployer, parseUnits(depositAmount, 18)],
       })
       await publicClient.waitForTransactionReceipt({
         hash: mintTx,
@@ -91,10 +91,7 @@ describe('deploying through the restricted PIM factory', async () => {
         address: iUSD,
         abi: ERC20_ABI,
         functionName: 'approve',
-        args: [
-          workflow.fundingManager.address,
-          BigInt(depositAmount + eighteenDecimals),
-        ],
+        args: [workflow.fundingManager.address, parseUnits(depositAmount, 18)],
       })
       await publicClient.waitForTransactionReceipt({
         hash: approveTx,

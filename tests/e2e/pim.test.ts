@@ -8,16 +8,18 @@ import {
   iUSD,
 } from '../testHelpers/getTestArgs'
 import { ERC20_MINTABLE_ABI } from '../../src'
-import { isAddress } from 'viem'
+import { isAddress, parseUnits } from 'viem'
 
-describe('deploying regularly, assigning permissions, and depositing collateral', async () => {
+describe('#defaultPIM', async () => {
   const { publicClient, walletClient } = getTestConnectors()
   const deployer = walletClient.account.address
+
   const requestedModules = {
     fundingManager: 'FM_BC_Restricted_Bancor_Redeeming_VirtualSupply_v1',
     authorizer: 'AUT_Roles_v1',
     paymentProcessor: 'PP_Simple_v1',
   } as const
+
   const deployArgs = getDeployArgs(requestedModules, deployer)
 
   const sdk = new Inverter({ publicClient, walletClient })
@@ -103,6 +105,7 @@ describe('deploying regularly, assigning permissions, and depositing collateral'
         await publicClient.waitForTransactionReceipt({
           hash: grantModuleTx,
         })
+
         const hasRole = await workflow.authorizer.read.checkForRole.run([
           generatedRole,
           deployer,
@@ -129,7 +132,10 @@ describe('deploying regularly, assigning permissions, and depositing collateral'
         address: iUSD,
         abi: ERC20_MINTABLE_ABI,
         functionName: 'mint',
-        args: [workflow.fundingManager.address, initialCollateralSupply],
+        args: [
+          workflow.fundingManager.address,
+          parseUnits(initialCollateralSupply, 18),
+        ],
       })
       await publicClient.waitForTransactionReceipt({
         hash: mintTx,

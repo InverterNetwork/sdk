@@ -10,8 +10,8 @@ export const curveShape = {
     reserveRatioForSelling: '333_333'.replace(/_/g, ''),
     buyIsOpen: true,
     sellIsOpen: true,
-    initialIssuanceSupply: '200_002_999_999_999_999_998_676'.replace(/_/g, ''),
-    initialCollateralSupply: '296_306_333_665_498_798_599'.replace(/_/g, ''),
+    initialIssuanceSupply: '200002.999999999999998676',
+    initialCollateralSupply: '296.306333665498798599',
   },
 } as const
 
