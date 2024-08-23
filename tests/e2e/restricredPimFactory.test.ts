@@ -5,6 +5,7 @@ import { Inverter } from '../../src/Inverter'
 import { getDeployArgs, iUSD } from '../testHelpers/getTestArgs'
 import { ERC20_ABI, ERC20_MINTABLE_ABI, type RequestedModules } from '../../src'
 import { isHex, parseUnits } from 'viem'
+import { getModuleSchema } from '../../src/getDeploy/getInputs'
 
 describe('#restrictedPIM', async () => {
   const { publicClient, walletClient } = getTestConnectors()
@@ -29,12 +30,27 @@ describe('#restrictedPIM', async () => {
 
   const sdk = new Inverter({ publicClient, walletClient })
 
-  const { estimateGas, run } = await sdk.getDeploy({
+  const { estimateGas, run, inputs } = await sdk.getDeploy({
     requestedModules,
     factoryType: 'restricted-pim',
   })
 
   let orchestrator: `0x${string}`
+
+  it('match expected inputs', () => {
+    expect(inputs).toEqual({
+      orchestrator: getModuleSchema('OrchestratorFactory_v1'),
+      authorizer: getModuleSchema('AUT_Roles_v1'),
+      fundingManager: getModuleSchema(
+        'FM_BC_Restricted_Bancor_Redeeming_VirtualSupply_v1'
+      ),
+      paymentProcessor: getModuleSchema('PP_Simple_v1'),
+      issuanceToken: getModuleSchema(
+        'Restricted_PIM_Factory_v1',
+        'issuanceToken'
+      ),
+    })
+  })
 
   it.skip(
     '1. Estimates gas for deployment',
@@ -56,7 +72,7 @@ describe('#restrictedPIM', async () => {
         hash: transactionHash,
       })
       // TODO: change after PimFactory has been adapted to only return orchestrator address
-      orchestrator = orchestratorAddress[0]
+      orchestrator = orchestratorAddress as typeof orchestrator
 
       console.log('Orchestrator Address:', orchestrator)
     },

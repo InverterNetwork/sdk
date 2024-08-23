@@ -38,6 +38,7 @@ export type ConstructedArgs = {
   paymentProcessor: ModuleArgs
   optionalModules: ModuleArgs[]
   issuanceToken: IssuanceTokenArgs
+  initialPurchaseAmount: string
 }
 
 export type UserModuleArg = Record<string, unknown>
@@ -49,4 +50,5 @@ export type UserArgs = {
   paymentProcessor?: UserModuleArg
   optionalModules?: Record<string, UserModuleArg>
   issuanceToken?: IssuanceTokenArgs
+  initialPurchaseAmount?: string
 }

@@ -30,7 +30,7 @@ export default async function getMethods<
 
   // Get the methods from the Viem handler
   const {
-    deployment,
+    factoryAddress,
     write,
     simulateWrite,
     estimateGas: esitmateGasOrg,
@@ -46,9 +46,12 @@ export default async function getMethods<
   const simulate = async (userArgs: GetUserArgs<T, FT>) => {
     try {
       const arr = await getArgs({ userArgs, kind: 'simulate', ...params })
-      return await simulateWrite(arr, {
+
+      const res = await simulateWrite(arr, {
         account: walletClient.account.address,
       })
+
+      return { result: res.result as `0x${string}`, request: res.request }
     } catch (e: any) {
       throw handleError({ requestedModules, error: e })
     }
@@ -59,7 +62,7 @@ export default async function getMethods<
     try {
       await handlePimFactoryApprove({
         factoryType,
-        deployment,
+        factoryAddress,
         publicClient,
         walletClient,
         userArgs,
@@ -71,7 +74,7 @@ export default async function getMethods<
         account: walletClient.account.address,
       })
 
-      const orchestratorAddress = simulationRes.result
+      const orchestratorAddress = simulationRes.result as `0x${string}`
 
       const transactionHash = await write(arr, {} as any)
 

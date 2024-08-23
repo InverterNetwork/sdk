@@ -9,6 +9,7 @@ import {
 } from '../testHelpers/getTestArgs'
 import { ERC20_MINTABLE_ABI } from '../../src'
 import { isAddress, parseUnits } from 'viem'
+import { getModuleSchema } from '../../src/getDeploy/getInputs'
 
 describe('#defaultPIM', async () => {
   const { publicClient, walletClient } = getTestConnectors()
@@ -28,10 +29,22 @@ describe('#defaultPIM', async () => {
   let issuanceToken: `0x${string}`
   let workflow: any
 
+  const { estimateGas, run, inputs } = await sdk.getDeploy({ requestedModules })
+
+  it('match expected inputs', () => {
+    expect(inputs).toEqual({
+      orchestrator: getModuleSchema('OrchestratorFactory_v1'),
+      authorizer: getModuleSchema('AUT_Roles_v1'),
+      fundingManager: getModuleSchema(
+        'FM_BC_Restricted_Bancor_Redeeming_VirtualSupply_v1'
+      ),
+      paymentProcessor: getModuleSchema('PP_Simple_v1'),
+    })
+  })
+
   it(
     'estimates gas for deployment',
     async () => {
-      const { estimateGas } = await sdk.getDeploy({ requestedModules })
       const gasEstimate = await estimateGas(deployArgs)
       expect(gasEstimate).toContainKeys(['value', 'formatted'])
     },
@@ -59,18 +72,17 @@ describe('#defaultPIM', async () => {
     it(
       'returns the orchestrator address',
       async () => {
-        const { run } = await sdk.getDeploy({ requestedModules })
-        const argsWithIssuanceToken = {
+        const { orchestratorAddress, transactionHash } = await run({
           ...deployArgs,
           fundingManager: { ...deployArgs.fundingManager, issuanceToken },
-        }
-        const { orchestratorAddress, transactionHash } = await run(
-          argsWithIssuanceToken
-        )
+        })
+
         await publicClient.waitForTransactionReceipt({
           hash: transactionHash,
         })
-        orchestrator = orchestratorAddress
+
+        orchestrator = orchestratorAddress as typeof orchestrator
+
         expect(isAddress(orchestrator)).toBeTrue
       },
       {

@@ -57,7 +57,7 @@
     "viem": "^2.7.6"
   },
   "dependencies": {
-    "@inverter-network/abis": "0.2.2",
+    "@inverter-network/abis": "0.2.3",
     "type-fest-4": "npm:type-fest@^4"
   },
   "devDependencies": {
