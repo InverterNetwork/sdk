@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.2](https://github.com/InverterNetwork/sdk/compare/v0.2.1...v0.2.2) (2024-08-23)
+
+
+### Features
+
+* immutable pim factory ([c811a17](https://github.com/InverterNetwork/sdk/commit/c811a17e86a8a2327215708ed7abf376a9834bd6))
+
 ### [0.2.1](https://github.com/InverterNetwork/sdk/compare/v0.2.0...v0.2.1) (2024-08-22)
 
 
