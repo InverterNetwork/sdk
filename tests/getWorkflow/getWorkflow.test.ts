@@ -89,5 +89,14 @@ describe('#getWorkflow', async () => {
         'symbol',
       ])
     })
+
+    it('Should confirm the any tag', async () => {
+      const bounty =
+        await workflow.optionalModule.LM_PC_Bounties_v1.read.getBountyInformation.run(
+          '1'
+        )
+
+      expect(bounty.details).toBeObject()
+    })
   })
 })

@@ -16,7 +16,7 @@ export type ProcessInputsParams = Omit<
   'requiredAllowances'
 >
 
-export default async function processInputs(params: ProcessInputsParams) {
+export async function processInputs(params: ProcessInputsParams) {
   const requiredAllowances: RequiredAllowances[] = []
 
   const { extendedInputs, args, extras } = params

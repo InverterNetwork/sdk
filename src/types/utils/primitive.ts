@@ -3,7 +3,7 @@ import type { Simplify, Includes } from 'type-fest-4'
 import type { Tag } from '@inverter-network/abis'
 
 // Tag to Primitive type
-type TagToPrimitiveType<P> = P extends { tags: Tag[] }
+type TagToPrimitiveType<P> = P extends { tags: readonly Tag[] | Tag[] }
   ? Includes<P['tags'], 'any'> extends true
     ? any
     : never
@@ -11,13 +11,18 @@ type TagToPrimitiveType<P> = P extends { tags: Tag[] }
 
 // Non Tuple types Formatter
 type SimplePrimitive<P> = P extends AbiParameter
-  ? TagToPrimitiveType<P> extends never
-    ? AbiParameterToPrimitiveType<P> extends infer Primitive
-      ? Primitive extends bigint
-        ? string
-        : Primitive
+  ? // Check if the parameter has a tag type
+    TagToPrimitiveType<P> extends never
+    ? // If not, transform the parameter to a primitive type
+      AbiParameterToPrimitiveType<P> extends infer Primitive
+      ? // Check if the primitive type is a bigint
+        Primitive extends bigint
+        ? // If it is, transform it to a string
+          string
+        : // If not, return the primitive type
+          Primitive
       : never
-    : never
+    : TagToPrimitiveType<P>
   : never
 
 // Tuple Util deduplication

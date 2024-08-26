@@ -3,20 +3,23 @@ import tagProcessor from '../../utils/tagProcessor'
 import { formatDecimals } from './utils'
 
 import { type PublicClient } from 'viem'
-import { type FormatOutputsBaseParams } from '.'
 import type {
   DecimalsTagReturn,
   ExtendedAbiParameter,
+  Extras,
   TagCallback,
 } from '@/types'
 
 export type GetTagCallbackParams<
   T extends readonly ExtendedAbiParameter[] = readonly ExtendedAbiParameter[],
 > = {
+  extendedOutputs: T
+  res: any
+  extras?: Extras
   publicClient: PublicClient
   contract?: any
   self?: Inverter
-} & FormatOutputsBaseParams<T>
+}
 
 export default function getTagCallback({
   publicClient,

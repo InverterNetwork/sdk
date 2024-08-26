@@ -1,6 +1,6 @@
 import { expect, describe, it } from 'bun:test'
 import { getTestConnectors } from '../testHelpers/getTestConnectors'
-import processInputs from '../../src/utils/processInputs'
+import { processInputs } from '@/utils'
 import { getModuleData } from '@inverter-network/abis'
 import { parseUnits } from 'viem'
 import { iUSD } from '../testHelpers/getTestArgs'

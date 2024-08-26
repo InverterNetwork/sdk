@@ -1,9 +1,8 @@
 import { expect, describe, it } from 'bun:test'
 
-import processInputs from '../../src/utils/processInputs'
+import { processInputs, ERC20_ABI, FM_BASE } from '@/utils'
 import { getTestConnectors } from '../testHelpers/getTestConnectors'
-import { ERC20_ABI, FM_BASE } from '../../src/utils/constants'
-import { Inverter } from '../../src/Inverter'
+import { Inverter } from '@/Inverter'
 import { iUSD } from '../testHelpers/getTestArgs'
 
 import { type ExtendedAbiParameter } from '../../src'
