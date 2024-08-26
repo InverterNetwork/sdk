@@ -1,4 +1,4 @@
-import { Inverter } from '../Inverter'
+import { Inverter } from '@/Inverter'
 
 import type {
   UserFacingModuleType,
@@ -11,7 +11,7 @@ import type {
   OmitNever,
   PopPublicClient,
   PopWalletClient,
-} from '../types'
+} from '@/types'
 import type { Hex } from 'viem'
 
 export type GetWorkflowParams<

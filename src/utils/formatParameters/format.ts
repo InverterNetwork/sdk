@@ -3,8 +3,8 @@ import {
   type FormattedAbiParameter,
   isTupleFormattedAbiParameter,
   isNonTupleFormattedAbiParameter,
-} from '../../types'
-import { getJsType } from '..'
+} from '@/types'
+import { getJsType } from '@/utils'
 
 // Base case for recursion
 export default function format<Parameter extends ExtendedAbiParameter>(

@@ -1,4 +1,4 @@
-import type { DeployReturn } from '../../deploy'
+import type { DeployReturn } from '@/deploy'
 
 export * from './ERC20Issuance'
 

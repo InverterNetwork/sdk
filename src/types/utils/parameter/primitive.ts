@@ -1,5 +1,5 @@
 import type { AbiParameter, AbiParameterToPrimitiveType } from 'abitype'
-import type { JsType } from '../..'
+import type { JsType } from '@/types'
 import type { Simplify } from 'type-fest-4'
 
 // Non Tuple types Formatter

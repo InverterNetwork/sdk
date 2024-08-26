@@ -1,7 +1,7 @@
 import type {
   TupleFormattedAbiParameter,
   NonTupleFormattedAbiParameter,
-} from './parameter'
+} from '@/types'
 
 // Check if the result is a tuple formatted abi parameter
 export const isTupleFormattedAbiParameter = (

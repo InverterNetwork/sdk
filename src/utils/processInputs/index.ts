@@ -5,7 +5,7 @@ import type {
   FormattedAbiParameter,
   MethodKind,
   RequiredAllowances,
-} from '../../types'
+} from '@/types'
 import getTagCallback, { type GetTagCallbackParams } from './getTagCallback'
 
 export type ProcessInputsBaseParams = {

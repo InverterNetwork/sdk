@@ -32,6 +32,12 @@
     "lib": ["ESNext", "DOM"],
 
     // Skip type checking for node modules
-    "skipLibCheck": true
+    "skipLibCheck": true,
+
+    // Type aliasing
+    "paths": {
+      "@": ["./src"],
+      "@/*": ["./src/*"]
+    }
   }
 }
