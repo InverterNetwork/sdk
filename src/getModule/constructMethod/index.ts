@@ -1,4 +1,3 @@
-import formatParameters from '../../utils/formatParameters'
 import getRun from './getRun'
 import { Inverter } from '../../Inverter'
 
@@ -9,15 +8,7 @@ import type {
   PopWalletClient,
 } from '../../types'
 import type { ExtendedAbiFunction } from '@inverter-network/abis'
-
-// The PreservedProps type is used to preserve the properties of the abiFunction
-type PreservedProps<F extends ExtendedAbiFunction> = {
-  name: F['name']
-  description: F['description']
-  inputs: F['inputs']
-  outputs: F['outputs']
-  stateMutability: F['stateMutability']
-}
+import { estimateGasOutputs, writeOutputs } from '@/utils'
 
 // This function is used to construct a method from an abiFunction
 export default function constructMethod<
@@ -41,20 +32,26 @@ export default function constructMethod<
   self?: Inverter
 }) {
   // Construct the data preserving the type properties of the abiFunction
-  const { description, name, inputs, outputs } = abiFunction as PreservedProps<
-    typeof abiFunction
-  >
+  const {
+    description,
+    name,
+    inputs,
+    outputs,
+  }: Pick<TAbiFunction, keyof TAbiFunction> = abiFunction
 
-  // Format the inputs and outputs
-  const formattedInputs = formatParameters({ parameters: inputs }),
-    formattedOutputs = formatParameters({ parameters: outputs, kind })
+  const outputsByKind = {
+    read: outputs,
+    simulate: outputs,
+    write: writeOutputs,
+    estimateGas: estimateGasOutputs,
+  }[kind]
 
   // Construct the run function
   const run = getRun({
     name,
     contract,
-    formattedInputs,
-    formattedOutputs,
+    extendedInputs: inputs,
+    extendedOutputs: outputsByKind,
     extras,
     kind,
     walletClient,
@@ -65,8 +62,8 @@ export default function constructMethod<
   return {
     name,
     description,
-    inputs: formattedInputs,
-    outputs: formattedOutputs,
+    inputs,
+    outputs: outputsByKind,
     run,
   }
 }

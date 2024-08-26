@@ -5,7 +5,7 @@ import getRun from '../../src/getModule/constructMethod/getRun'
 import { getContract } from 'viem'
 import { getModuleData } from '@inverter-network/abis'
 import { ERC20_ABI, ERC20_MINTABLE_ABI } from '../../src/utils/constants'
-import type { Extras, FormattedAbiParameter } from '../../src'
+import type { Extras, ExtendedAbiParameter } from '../../src'
 import { USDC_SEPOLIA } from '../../src/getDeploy/constants'
 import {
   deployedBcModule,
@@ -18,12 +18,12 @@ describe('#getRun', () => {
 
   const minAmountOut = '1'
   const depositAmount = '1000000'
-  const formattedOutputs = [
+  const extendedOutputs = [
     {
       name: 'txHash',
       type: 'bytes32',
     },
-  ] as FormattedAbiParameter[]
+  ] as ExtendedAbiParameter[]
 
   const resetState = async () => {
     console.log('Minting Tokens')
@@ -73,13 +73,12 @@ describe('#getRun', () => {
 
     describe('with approval', () => {
       const name = 'buy'
-      const formattedInputs = [
+      const extendedInputs = [
         {
           name: '_depositAmount',
           type: 'uint256',
           description: 'The amount of collateral token depoisited.',
           tags: ['decimals', 'approval'],
-          jsType: 'numberString',
         },
         {
           name: '_minAmountOut',
@@ -87,9 +86,8 @@ describe('#getRun', () => {
           description:
             'The minimum acceptable amount the user expects to receive from the transaction.',
           tags: ['decimals:external:indirect:getIssuanceToken'],
-          jsType: 'numberString',
         },
-      ] as FormattedAbiParameter[]
+      ] as ExtendedAbiParameter[]
       const extras = {
         decimals: 6,
         walletAddress: walletClient.account.address,
@@ -108,8 +106,8 @@ describe('#getRun', () => {
           walletClient,
           name,
           kind: 'write',
-          formattedInputs,
-          formattedOutputs,
+          extendedInputs,
+          extendedOutputs,
           extras,
           contract,
         })
@@ -129,15 +127,14 @@ describe('#getRun', () => {
 
     describe('with approval', () => {
       const name = 'stake'
-      const formattedInputs = [
+      const extendedInputs = [
         {
           name: 'amount',
           type: 'uint256',
           description: ': how much token should be staked',
           tags: ['decimals:external:indirect:stakingToken', 'approval'],
-          jsType: 'numberString',
         },
-      ] as FormattedAbiParameter[]
+      ] as ExtendedAbiParameter[]
       const extras = {
         decimals: 6,
         walletAddress: walletClient.account.address,
@@ -156,8 +153,8 @@ describe('#getRun', () => {
           walletClient,
           name,
           kind: 'write',
-          formattedInputs,
-          formattedOutputs,
+          extendedInputs,
+          extendedOutputs,
           extras,
           contract,
         })

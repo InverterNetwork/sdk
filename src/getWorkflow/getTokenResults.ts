@@ -1,6 +1,7 @@
 import type { Hex } from 'viem'
-import type { PopPublicClient, PopWalletClient } from '../types'
-import { ERC20_ABI, FM_BASE, getModule, Inverter } from '..'
+import type { PopPublicClient, PopWalletClient } from '@/types'
+import { ERC20_ABI, FM_BASE } from '@/utils'
+import { getModule, Inverter } from '@'
 
 export type GetWorkflowTokenResultsParams<
   W extends PopWalletClient | undefined = undefined,

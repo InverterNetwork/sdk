@@ -1,6 +1,4 @@
 import {
-  getModuleData,
-  type GetModuleData,
   type GetModuleNameByType,
   type ModuleName,
 } from '@inverter-network/abis'
@@ -26,13 +24,6 @@ type DeploymentResponse = {
   immutablePimFactory: Record<string, `0x${string}` | undefined>
 }
 
-export type GetViemMethodsParams<FT extends FactoryType> = {
-  walletClient: WalletClient
-  publicClient: PublicClient
-  factoryType: FT
-  abi: Abi
-}
-
 export type DeploymentVersion = 'v1.0.0'
 
 export const fetchDeployment = async (
@@ -42,61 +33,18 @@ export const fetchDeployment = async (
   return await response.json()
 }
 
-export const getAbi = <FT extends FactoryType>(factoryType: FT) => {
-  const abi = getModuleData(
-    (() => {
-      switch (factoryType) {
-        case 'default':
-          return 'OrchestratorFactory_v1'
-        case 'restricted-pim':
-          return 'Restricted_PIM_Factory_v1'
-        case 'immutable-pim':
-          return 'Immutable_PIM_Factory_v1'
-        default:
-          throw new Error('Unsupported factory type')
-      }
-    })()
-  ).abi as GetModuleData<
-    FT extends 'restricted-pim'
-      ? 'Restricted_PIM_Factory_v1'
-      : FT extends 'immutable-pim'
-        ? 'Immutable_PIM_Factory_v1'
-        : 'OrchestratorFactory_v1'
-  >['abi']
-
-  return abi
-}
-
-export const getMethodName = <FT extends FactoryType>(factoryType: FT) => {
-  const methodName = (() => {
-    switch (factoryType) {
-      case 'default':
-        return 'createOrchestrator'
-      case 'restricted-pim':
-      case 'immutable-pim':
-        return 'createPIMWorkflow'
-      default:
-        throw new Error('Unsupported factory type')
-    }
-  })() as FT extends 'restricted-pim' | 'immutable-pim'
-    ? 'createPIMWorkflow'
-    : 'createOrchestrator'
-
-  return methodName
-}
-
 // retrieves the deployment function via viem
 export const getViemMethods = async ({
   walletClient,
   publicClient,
   factoryType,
-  abi,
   version,
+  abi,
 }: {
+  abi: Abi
   walletClient: WalletClient
   publicClient: PublicClient
   factoryType: FactoryType
-  abi: Abi
   version: DeploymentVersion
 }) => {
   const deployment = await fetchDeployment(version)
@@ -104,30 +52,24 @@ export const getViemMethods = async ({
 
   if (!chainId) throw new Error('Chain ID not found')
 
-  const address =
-    deployment[
-      (() => {
-        switch (factoryType) {
-          case 'default':
-            return 'orchestratorFactory'
-          case 'restricted-pim':
-            return 'restrictedPimFactory'
-          case 'immutable-pim':
-            return 'immutablePimFactory'
-          default:
-            throw new Error('Unsupported factory type')
-        }
-      })()
-    ]?.[chainId]
+  const address = {
+    'restricted-pim': deployment.restrictedPimFactory,
+    'immutable-pim': deployment.immutablePimFactory,
+    default: deployment.orchestratorFactory,
+  }[factoryType]?.[chainId]
 
   if (!address)
     throw new Error('Chain ID is not supported @ deployment factory address')
 
-  const methodName = getMethodName(factoryType)
+  const methodName = {
+    'restricted-pim': 'createPIMWorkflow' as const,
+    'immutable-pim': 'createPIMWorkflow' as const,
+    default: 'createOrchestrator' as const,
+  }[factoryType]
 
   const { write, simulate, estimateGas } = getContract({
     address,
-    abi: abi as Abi,
+    abi,
     client: {
       wallet: walletClient,
       public: publicClient,

@@ -3,7 +3,7 @@ import { expect, describe, it } from 'bun:test'
 import { getTestConnectors } from '../testHelpers/getTestConnectors'
 import formatOutputs from '../../src/getModule/formatOutputs'
 
-import { type FormattedAbiParameter } from '../../src'
+import { type ExtendedAbiParameter } from '../../src'
 
 describe('#formatOutputs', () => {
   const { publicClient } = getTestConnectors()
@@ -30,7 +30,7 @@ describe('#formatOutputs', () => {
   describe('#formatOutputs', () => {
     describe('with decimals tag', () => {
       describe('with the default token (tag = `decimals`)', () => {
-        const formattedOutputs = [
+        const extendedOutputs = [
           {
             internalType: 'uint256',
             name: 'mockInputName',
@@ -38,7 +38,7 @@ describe('#formatOutputs', () => {
             tags: ['decimals'],
             description: 'Blablablala',
           },
-        ] satisfies FormattedAbiParameter[]
+        ] satisfies ExtendedAbiParameter[]
 
         const extras = {
           walletAddress:
@@ -51,7 +51,7 @@ describe('#formatOutputs', () => {
 
         it('applies the decimals from the `extras` param', async () => {
           const result = (await formatOutputs({
-            formattedOutputs,
+            extendedOutputs,
             res,
             extras,
             publicClient,

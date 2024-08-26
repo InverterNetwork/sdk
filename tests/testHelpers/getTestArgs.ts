@@ -6,8 +6,8 @@ import type { RequestedModules, FilterByPrefix } from '../../src'
 
 export const curveShape = {
   Basic: {
-    reserveRatioForBuying: '333_333'.replace(/_/g, ''),
-    reserveRatioForSelling: '333_333'.replace(/_/g, ''),
+    reserveRatioForBuying: 333_333,
+    reserveRatioForSelling: 333_333,
     buyIsOpen: true,
     sellIsOpen: true,
     initialIssuanceSupply: '200002.999999999999998676',

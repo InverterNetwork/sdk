@@ -23,8 +23,8 @@ const userArgs: GetUserArgs<typeof requestedModules> = {
   fundingManager: {
     bondingCurveParams: {
       formula: '0x3ddE767F9DF9530DDeD47e1E012cCBf7B4A04dd7',
-      reserveRatioForBuying: '333333',
-      reserveRatioForSelling: '333333',
+      reserveRatioForBuying: 333_333,
+      reserveRatioForSelling: 333_333,
       buyFee: '0',
       sellFee: '100',
       buyIsOpen: true,

@@ -1,4 +1,4 @@
-import type { FormattedParametersToPrimitiveType } from './parameter'
+import type { ExtendedParametersToPrimitiveType } from './primitive'
 
 export type MethodKind = 'read' | 'write' | 'simulate' | 'estimateGas'
 
@@ -9,7 +9,7 @@ export type EstimateGasReturn = {
 
 // Decides on the arguments orders
 export type GetMethodArgs<I> =
-  FormattedParametersToPrimitiveType<I> extends infer R extends
+  ExtendedParametersToPrimitiveType<I> extends infer R extends
     readonly unknown[]
     ? R['length'] extends 0
       ? void
@@ -20,7 +20,7 @@ export type GetMethodArgs<I> =
 
 // Deduper util for getting the return type
 type InferReturn<O> =
-  FormattedParametersToPrimitiveType<O> extends infer R
+  ExtendedParametersToPrimitiveType<O> extends infer R
     ? R extends readonly unknown[]
       ? R['length'] extends 1
         ? R[0]

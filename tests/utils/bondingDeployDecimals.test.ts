@@ -1,7 +1,6 @@
 import { expect, describe, it } from 'bun:test'
 import { getTestConnectors } from '../testHelpers/getTestConnectors'
 import processInputs from '../../src/utils/processInputs'
-import formatParameters from '../../src/utils/formatParameters'
 import { getModuleData } from '@inverter-network/abis'
 import { parseUnits } from 'viem'
 import { iUSD } from '../testHelpers/getTestArgs'
@@ -13,8 +12,8 @@ const args = {
   issuanceToken: iUSD,
   bondingCurveParams: {
     formula: '0x3ddE767F9DF9530DDeD47e1E012cCBf7B4A04dd7',
-    reserveRatioForBuying: '333333',
-    reserveRatioForSelling: '333333',
+    reserveRatioForBuying: 333_333,
+    reserveRatioForSelling: 333_333,
     buyFee: '0',
     sellFee: '100',
     buyIsOpen: true,
@@ -30,8 +29,8 @@ const expectedProccessed = [
   {
     buyIsOpen: true,
     sellIsOpen: true,
-    reserveRatioForBuying: 333333n,
-    reserveRatioForSelling: 333333n,
+    reserveRatioForBuying: 333_333,
+    reserveRatioForSelling: 333_333,
     buyFee: 0n,
     sellFee: 100n,
     initialIssuanceSupply: parseUnits('1', 18),
@@ -47,14 +46,12 @@ describe('#bondingDeployDecimal', () => {
   const configData = getModuleData(requestedModule).deploymentInputs.configData
 
   it('match: expected proccessedInputs with hard coded', async () => {
-    const formattedInputs = formatParameters({ parameters: configData })
-
     const orderedArgs = args
-      ? formattedInputs.map((input) => args?.[input.name])
+      ? configData.map((input) => args?.[input.name])
       : '0x00'
 
     const { processedInputs } = await processInputs({
-      formattedInputs,
+      extendedInputs: configData,
       args: orderedArgs,
       publicClient,
       walletClient,
