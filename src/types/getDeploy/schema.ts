@@ -5,7 +5,7 @@ import type {
   OmitNever,
   RequestedModules,
   FactoryType,
-  FomrattedDeploymentParameters,
+  GetDeploymentParameters,
 } from '@/types'
 
 export type ModuleSchema<
@@ -13,7 +13,7 @@ export type ModuleSchema<
   ON extends string | undefined = undefined,
 > = {
   name: ON extends string ? ON : N
-  inputs: FomrattedDeploymentParameters<N>
+  inputs: GetDeploymentParameters<N>
 }
 
 export type OptionalModules<T extends RequestedModules['optionalModules']> =

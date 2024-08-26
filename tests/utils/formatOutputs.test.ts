@@ -3,7 +3,7 @@ import { expect, describe, it } from 'bun:test'
 import { getTestConnectors } from '../testHelpers/getTestConnectors'
 import formatOutputs from '../../src/getModule/formatOutputs'
 
-import { type FormattedAbiParameter } from '../../src'
+import { type ExtendedAbiParameter } from '../../src'
 
 describe('#formatOutputs', () => {
   const { publicClient } = getTestConnectors()
@@ -38,7 +38,7 @@ describe('#formatOutputs', () => {
             tags: ['decimals'],
             description: 'Blablablala',
           },
-        ] satisfies FormattedAbiParameter[]
+        ] satisfies ExtendedAbiParameter[]
 
         const extras = {
           walletAddress:

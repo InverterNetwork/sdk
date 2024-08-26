@@ -1,7 +1,6 @@
 import { expect, describe, it } from 'bun:test'
 import { getTestConnectors } from '../testHelpers/getTestConnectors'
 import processInputs from '../../src/utils/processInputs'
-import formatParameters from '../../src/utils/formatParameters'
 import { getModuleData } from '@inverter-network/abis'
 import { parseUnits } from 'viem'
 import { iUSD } from '../testHelpers/getTestArgs'
@@ -47,14 +46,12 @@ describe('#bondingDeployDecimal', () => {
   const configData = getModuleData(requestedModule).deploymentInputs.configData
 
   it('match: expected proccessedInputs with hard coded', async () => {
-    const formattedInputs = formatParameters({ parameters: configData })
-
     const orderedArgs = args
-      ? formattedInputs.map((input) => args?.[input.name])
+      ? configData.map((input) => args?.[input.name])
       : '0x00'
 
     const { processedInputs } = await processInputs({
-      formattedInputs,
+      formattedInputs: configData,
       args: orderedArgs,
       publicClient,
       walletClient,

@@ -6,12 +6,12 @@ import { type PublicClient } from 'viem'
 import { type FormatOutputsBaseParams } from '.'
 import type {
   DecimalsTagReturn,
-  FormattedAbiParameter,
+  ExtendedAbiParameter,
   TagCallback,
-} from '../../types'
+} from '@/types'
 
 export type GetTagCallbackParams<
-  T extends readonly FormattedAbiParameter[] = readonly FormattedAbiParameter[],
+  T extends readonly ExtendedAbiParameter[] = readonly ExtendedAbiParameter[],
 > = {
   publicClient: PublicClient
   contract?: any

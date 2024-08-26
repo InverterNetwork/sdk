@@ -1,5 +1,4 @@
 import { MANDATORY_MODULES } from './constants'
-import formatParameters from '../utils/formatParameters'
 import { getModuleData, type ModuleName } from '@inverter-network/abis'
 
 import type {
@@ -17,12 +16,18 @@ export const getModuleSchema = <
 >(
   name: T,
   overrideName?: ON
-): ModuleSchema<T, ON> => {
-  const { deploymentInputs } = getModuleData(name as RequestedModule)
-  const { configData } = deploymentInputs
-  const inputs = formatParameters({ parameters: configData }) as any
-  const conditionalName = (overrideName ?? name) as any
-  return { name: conditionalName, inputs }
+) => {
+  const moduleData = getModuleData(name)
+
+  if (!('deploymentInputs' in moduleData))
+    throw new Error("Module data doesn't have deploymentsData")
+
+  const result = {
+    inputs: moduleData.deploymentInputs.configData,
+    name: overrideName ?? name,
+  } as ModuleSchema<T, ON>
+
+  return result
 }
 
 export const getOtherFactoryTypeInputs = <FT extends FactoryType>(
@@ -66,7 +71,7 @@ export default function getInputs<
     {
       orchestrator: getModuleSchema('OrchestratorFactory_v1'),
       ...getOtherFactoryTypeInputs(factoryType),
-    } as DeploySchema<Omit<T, 'optionalModules'>, FT>
+    } as unknown as DeploySchema<Omit<T, 'optionalModules'>, FT>
   )
 
   if (!requestedModules.optionalModules?.length) return mandatoryResult

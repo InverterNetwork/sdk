@@ -7,13 +7,13 @@ import type {
   Extras,
   GetMethodArgs,
   PopPublicClient,
-  FormattedAbiParameter,
   PopWalletClient,
   RequiredAllowances,
   MethodKind,
-} from '../../types'
+} from '@/types'
 import { formatEther } from 'viem'
 import { handleError } from '../../utils'
+import type { ExtendedAbiParameter } from '@inverter-network/abis'
 
 const runDependencies = async ({
   requiredAllowances,
@@ -61,8 +61,8 @@ const runWithDependencies = async ({
 
 // Construct the run function
 export default function getRun<
-  FormattedInputs extends readonly FormattedAbiParameter[],
-  FormattedOutputs extends readonly FormattedAbiParameter[],
+  FormattedInputs extends readonly ExtendedAbiParameter[],
+  FormattedOutputs extends readonly ExtendedAbiParameter[],
   Kind extends MethodKind,
 >({
   publicClient,

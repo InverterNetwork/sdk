@@ -9,6 +9,8 @@ export type Extras = {
 export type JsType =
   | 'numberString'
   | 'numberString[]'
+  | 'number'
+  | 'number[]'
   | 'boolean'
   | '0xstring'
   | '0xstring[]'

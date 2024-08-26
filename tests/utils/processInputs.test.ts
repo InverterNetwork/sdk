@@ -6,7 +6,7 @@ import { ERC20_ABI, FM_BASE } from '../../src/utils/constants'
 import { Inverter } from '../../src/Inverter'
 import { iUSD } from '../testHelpers/getTestArgs'
 
-import { type FormattedAbiParameter } from '../../src'
+import { type ExtendedAbiParameter } from '../../src'
 import type { Tag } from '@inverter-network/abis'
 
 describe('#processInputs', () => {
@@ -26,7 +26,7 @@ describe('#processInputs', () => {
             tags: ['decimals'],
             description: 'Blablablala',
           },
-        ] satisfies FormattedAbiParameter[]
+        ] satisfies ExtendedAbiParameter[]
         const extras = {
           walletAddress:
             '0x86fda565A5E96f4232f8136141C92Fd79F2BE950' as `0x${string}`,
@@ -57,7 +57,7 @@ describe('#processInputs', () => {
             async () => {
               const { requiredAllowances } = await processInputs({
                 formattedInputs:
-                  formattedInputsWithApproval as FormattedAbiParameter[],
+                  formattedInputsWithApproval as ExtendedAbiParameter[],
                 args,
                 extras,
                 publicClient,
@@ -101,7 +101,7 @@ describe('#processInputs', () => {
           ] satisfies Tag[] // should resolve to usdc on sepolia w/ decimals
           const formattedInputs = [
             { ...sharedFormattedInput, tags },
-          ] as FormattedAbiParameter[]
+          ] as ExtendedAbiParameter[]
 
           it('retrieves token from module and the decimals from token', async () => {
             const { processedInputs } = await processInputs({
@@ -126,7 +126,7 @@ describe('#processInputs', () => {
           const tags = ['decimals:contract:exact:decimals'] as Tag[]
           const formattedInputs = [
             { ...sharedFormattedInput, tags },
-          ] as FormattedAbiParameter[]
+          ] as ExtendedAbiParameter[]
 
           it('retrieves the decimals from module which is token', async () => {
             const { processedInputs } = await processInputs({
@@ -148,7 +148,7 @@ describe('#processInputs', () => {
             it('stores token info in cache', async () => {
               const formattedInputs = [
                 { ...sharedFormattedInput, tags },
-              ] as FormattedAbiParameter[]
+              ] as ExtendedAbiParameter[]
               await processInputs({
                 formattedInputs,
                 args,
@@ -223,7 +223,7 @@ describe('#processInputs', () => {
             description:
               'The address of the token that will be deposited to the funding manager',
           },
-        ] satisfies FormattedAbiParameter[]
+        ] satisfies ExtendedAbiParameter[]
         const extras = {
           walletAddress:
             '0x86fda565A5E96f4232f8136141C92Fd79F2BE950' as `0x${string}`,

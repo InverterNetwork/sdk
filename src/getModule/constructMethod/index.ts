@@ -1,4 +1,3 @@
-import formatParameters from '../../utils/formatParameters'
 import getRun from './getRun'
 import { Inverter } from '../../Inverter'
 
@@ -45,16 +44,12 @@ export default function constructMethod<
     typeof abiFunction
   >
 
-  // Format the inputs and outputs
-  const formattedInputs = formatParameters({ parameters: inputs }),
-    formattedOutputs = formatParameters({ parameters: outputs, kind })
-
   // Construct the run function
   const run = getRun({
     name,
     contract,
-    formattedInputs,
-    formattedOutputs,
+    formattedInputs: inputs,
+    formattedOutputs: outputs,
     extras,
     kind,
     walletClient,
@@ -65,8 +60,8 @@ export default function constructMethod<
   return {
     name,
     description,
-    inputs: formattedInputs,
-    outputs: formattedOutputs,
+    inputs,
+    outputs,
     run,
   }
 }

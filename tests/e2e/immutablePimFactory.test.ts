@@ -22,7 +22,7 @@ describe('#immutablePIM', async () => {
     issuanceToken: {
       name: 'MG Token',
       symbol: 'MGT',
-      decimals: '18',
+      decimals: 18,
       maxSupply:
         '115792089237316195423570985008687907853269984665640564039457.584007913129639935',
     },

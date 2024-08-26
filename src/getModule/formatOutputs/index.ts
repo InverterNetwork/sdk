@@ -1,15 +1,15 @@
 import format from './format'
 
 import type {
-  FormattedAbiParameter,
+  ExtendedAbiParameter,
   Extras,
   GetMethodResponse,
   MethodKind,
-} from '../../types'
+} from '@/types'
 import getTagCallback, { type GetTagCallbackParams } from './getTagCallback'
 
 export type FormatOutputsBaseParams<
-  T extends readonly FormattedAbiParameter[] = readonly FormattedAbiParameter[],
+  T extends readonly ExtendedAbiParameter[] = readonly ExtendedAbiParameter[],
 > = {
   formattedOutputs: T
   res: any
@@ -18,7 +18,7 @@ export type FormatOutputsBaseParams<
 
 export default async function formatOutputs<
   Kind extends MethodKind,
-  T extends readonly FormattedAbiParameter[],
+  T extends readonly ExtendedAbiParameter[],
 >(props: GetTagCallbackParams<T>): Promise<GetMethodResponse<T, Kind>> {
   const { formattedOutputs, res, extras } = props
 
@@ -56,5 +56,5 @@ export default async function formatOutputs<
 
 // check if the output is not a array type-
 // and the result is an array, with a output name that starts with '_'
-const isDefinedArray = ({ name, type }: FormattedAbiParameter, res: any) =>
+const isDefinedArray = ({ name, type }: ExtendedAbiParameter, res: any) =>
   !!name && !type.endsWith('[]') && Array.isArray(res) && name.startsWith('_')

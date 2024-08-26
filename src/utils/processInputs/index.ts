@@ -1,16 +1,12 @@
 import parse from './parse'
 
-import type {
-  Extras,
-  FormattedAbiParameter,
-  MethodKind,
-  RequiredAllowances,
-} from '@/types'
+import type { Extras, MethodKind, RequiredAllowances } from '@/types'
 import getTagCallback, { type GetTagCallbackParams } from './getTagCallback'
+import type { ExtendedAbiParameter } from '@inverter-network/abis'
 
 export type ProcessInputsBaseParams = {
   extras?: Extras
-  formattedInputs: readonly FormattedAbiParameter[]
+  formattedInputs: readonly ExtendedAbiParameter[]
   args: any
   kind: MethodKind
 }
@@ -25,7 +21,6 @@ export default async function processInputs(params: ProcessInputsParams) {
 
   const { formattedInputs, args, extras } = params
 
-  // const inputs = formattedInputs as FormattedAbiParameter[]
   // parse the inputs
   const processedInputs = await Promise.all(
     formattedInputs.map(async (input, index) => {

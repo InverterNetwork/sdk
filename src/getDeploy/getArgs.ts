@@ -2,7 +2,6 @@ import { getModuleData } from '@inverter-network/abis'
 import { MANDATORY_MODULES } from './constants'
 import { assembleMetadata, getDefaultToken } from './utils'
 import processInputs from '../utils/processInputs'
-import formatParameters from '../utils/formatParameters'
 import { Inverter } from '../Inverter'
 import { ADDRESS_ZERO } from '../utils/constants'
 
@@ -44,15 +43,13 @@ export const getEncodedArgs = async ({
 } & JointParams): Promise<`0x${string}`> => {
   // Get the configuration data for the module
   const { configData } = deploymentInputs
-  // Format the configuration data
-  const formattedInputs = formatParameters({ parameters: configData })
   // Itterate through the formatted inputs and get the user provided arguments
   const args = userModuleArg
-    ? formattedInputs.map((input) => userModuleArg?.[input.name])
+    ? configData.map((input) => userModuleArg?.[input.name])
     : '0x00'
   // Process the inputs
   const { processedInputs } = <any>await processInputs({
-    formattedInputs,
+    formattedInputs: configData,
     args,
     extras,
     ...params,

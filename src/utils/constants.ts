@@ -39,3 +39,29 @@ export const ERC20_MINTABLE_ABI = [
     type: 'function',
   },
 ] as const
+
+export const writeOutputs = [
+  {
+    name: 'txHash',
+    type: 'bytes32',
+    jsType: '0xstring',
+  },
+] as never
+
+export const estimateGasOutputs = [
+  {
+    name: 'gas',
+    type: 'tuple',
+    components: [
+      {
+        name: 'value',
+        type: 'uint256',
+        jsType: 'numberString',
+      },
+      {
+        name: 'formatted',
+        type: 'string',
+      },
+    ],
+  },
+]
