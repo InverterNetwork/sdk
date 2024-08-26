@@ -6,19 +6,23 @@ import getModule from '../../src/getModule'
 describe('Should estimate a write methods gas', async () => {
   const { publicClient, walletClient } = getTestConnectors(),
     moduleObj = getModule({
-      name: 'FM_BC_Bancor_Redeeming_VirtualSupply_v1',
-      address: '0x04276f9d3424e7a55CEE7A38D8BcDe05C43FeF6D',
+      name: 'ERC20Issuance_v1',
+      address: '0xb5e5e7ac214c2c559f60b7905507c967f62e6f88',
       publicClient,
       walletClient,
       extras: {
         decimals: 18,
-        defaultToken: '0xd5018fA63924d1BE2C2C42aBDc24bD754499F97c',
+        defaultToken: '0xb5e5e7ac214c2c559f60b7905507c967f62e6f88',
         walletAddress: walletClient.account.address,
       },
     })
 
   it('Estimate the gas', async () => {
-    const res = await moduleObj.estimateGas.openBuy.run()
+    const res = await moduleObj.estimateGas.mint.run([
+      walletClient.account.address,
+      '10000',
+    ])
+    console.log(res)
     expect(res).toContainKeys(['value', 'formatted'])
   })
 })

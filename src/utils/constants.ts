@@ -44,9 +44,8 @@ export const writeOutputs = [
   {
     name: 'txHash',
     type: 'bytes32',
-    jsType: '0xstring',
   },
-] as never
+] as const
 
 export const estimateGasOutputs = [
   {
@@ -56,12 +55,11 @@ export const estimateGasOutputs = [
       {
         name: 'value',
         type: 'uint256',
-        jsType: 'numberString',
       },
       {
         name: 'formatted',
-        type: 'string',
+        type: 'uint256',
       },
     ],
   },
-]
+] as const

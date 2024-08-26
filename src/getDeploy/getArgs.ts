@@ -184,7 +184,7 @@ export const constructArgs = async ({
  */
 export default async function getArgs<
   T extends RequestedModules,
-  FT extends FactoryType = 'default',
+  FT extends FactoryType,
 >(
   params: {
     requestedModules: T
@@ -211,20 +211,11 @@ export default async function getArgs<
     constructed.initialPurchaseAmount,
   ] as const
 
-  const result = (() => {
-    switch (params.factoryType) {
-      case 'restricted-pim':
-        return withRestrictedPim
-      case 'immutable-pim':
-        return withImmutablePim
-      default:
-        return baseArr
-    }
-  })() as FT extends 'restricted-pim'
-    ? typeof withRestrictedPim
-    : FT extends 'immutable-pim'
-      ? typeof withImmutablePim
-      : typeof baseArr
+  const result = {
+    'restricted-pim': withRestrictedPim,
+    'immutable-pim': withImmutablePim,
+    default: baseArr,
+  }[params.factoryType]
 
   return result
 }

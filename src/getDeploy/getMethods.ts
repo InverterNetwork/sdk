@@ -7,9 +7,10 @@ import {
   type PopWalletClient,
   type RequestedModules,
 } from '..'
-import { getAbi, getViemMethods, handlePimFactoryApprove } from './utils'
+import { getViemMethods, handlePimFactoryApprove } from './utils'
 import getArgs from './getArgs'
 import { handleError } from '../utils'
+import { getModuleData } from '@inverter-network/abis'
 
 /**
  * Provides RPC interactions for the requested modules.
@@ -26,7 +27,11 @@ export default async function getMethods<
 }) {
   const { publicClient, walletClient, requestedModules, factoryType } = params
 
-  const abi = getAbi(factoryType)
+  const abi = {
+    'restricted-pim': () => getModuleData('Restricted_PIM_Factory_v1').abi,
+    'immutable-pim': () => getModuleData('Immutable_PIM_Factory_v1').abi,
+    default: () => getModuleData('OrchestratorFactory_v1').abi,
+  }[factoryType]()
 
   // Get the methods from the Viem handler
   const {
@@ -35,10 +40,10 @@ export default async function getMethods<
     simulateWrite,
     estimateGas: esitmateGasOrg,
   } = await getViemMethods({
+    abi,
     walletClient,
     publicClient,
     factoryType,
-    abi,
     version: 'v1.0.0',
   })
 
@@ -51,7 +56,12 @@ export default async function getMethods<
         account: walletClient.account.address,
       })
 
-      return { result: res.result as `0x${string}`, request: res.request }
+      const result = { result: res.result, request: res.request } as {
+        result: `0x${string}`
+        request: typeof res.request
+      }
+
+      return result
     } catch (e: any) {
       throw handleError({ requestedModules, error: e })
     }
@@ -75,7 +85,6 @@ export default async function getMethods<
       })
 
       const orchestratorAddress = simulationRes.result as `0x${string}`
-
       const transactionHash = await write(arr, {} as any)
 
       return {
@@ -99,7 +108,6 @@ export default async function getMethods<
           account: walletClient.account.address,
         })
       )
-
       const formatted = formatEther(BigInt(value))
 
       return {

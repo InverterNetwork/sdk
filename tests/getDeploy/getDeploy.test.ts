@@ -100,7 +100,6 @@ describe('#getDeploy', () => {
             name: 'epochLength',
             description:
               'The length of an epoch in seconds. This will be the common denominator for all payments, as these are specified in epochs (i.e. if an epoch is 1 week, vestings can be done for 1 week, 2 week, 3 week, etc.). Epoch needs to be greater than 1 week and smaller than 52 weeks',
-            jsType: 'numberString',
             type: 'uint256',
           },
         ],
@@ -156,7 +155,6 @@ describe('#getDeploy', () => {
           {
             name: 'stakingToken',
             description: 'The token users stake to earn rewards.',
-            jsType: '0xstring',
             type: 'address',
           },
         ],
