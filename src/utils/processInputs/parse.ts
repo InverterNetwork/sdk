@@ -1,7 +1,8 @@
 import { tuple, tupleArray } from './utils'
 import { parseUnits, stringToHex } from 'viem'
 
-import type { Extras, FormattedAbiParameter, TagCallback } from '../../types'
+import type { Extras, ExtendedAbiParameter, TagCallback } from '@/types'
+import { getJsType } from '..'
 
 export const parseAny = (arg: any) => {
   try {
@@ -20,7 +21,7 @@ export default async function parse({
   extras,
   tagCallback,
 }: {
-  input: FormattedAbiParameter
+  input: ExtendedAbiParameter
   arg: any
   extras?: Extras
   tagCallback: TagCallback
@@ -34,21 +35,22 @@ export default async function parse({
   // if the input has a tag ( this has to come before the jsType check)
   if ('tags' in input && !!input.tags) {
     const { tags } = input
-    if (tags.includes('any')) return parseAny(arg)
 
     const decimalsTag = tags.find((t) => t.startsWith('decimals'))
     if (!!decimalsTag) return await tagCallback('parseDecimals', tags, arg)
   }
 
-  // if the input has a jsType property
-  if ('jsType' in input) {
-    const { jsType } = input
-
-    // if the input is a string or a number, parse it to a big int
-    if (jsType === 'numberString') return BigInt(arg)
-
-    // if the input is a string[], parse each string to a big int
-    if (jsType === 'numberString[]') return arg.map((i: string) => BigInt(i))
+  switch (getJsType(input)) {
+    case 'any':
+      return parseAny(arg)
+    case 'numberString':
+      return BigInt(arg)
+    case 'numberString[]':
+      return arg.map((i: string) => BigInt(i))
+    case 'number':
+      return Number(arg)
+    case 'number[]':
+      return arg.map((i: number) => Number(i))
   }
 
   // if all else fails, just return the argument

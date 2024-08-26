@@ -1,7 +1,7 @@
 import type { GetModuleData, ModuleName } from '@inverter-network/abis'
 import type { IfNever, IsEmptyObject } from 'type-fest-4'
 
-export * from './parameter'
+export * from './primitive'
 export * from './method'
 export * from './blockchain'
 

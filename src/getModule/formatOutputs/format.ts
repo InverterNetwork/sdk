@@ -1,6 +1,7 @@
+import { getJsType } from '@/utils'
 import { tuple, tupleArray, formatAny } from './utils'
 
-import type { Extras, FormattedAbiParameter, TagCallback } from '../../types'
+import type { Extras, ExtendedAbiParameter, TagCallback } from '@/types'
 
 export default async function format({
   output,
@@ -8,7 +9,7 @@ export default async function format({
   extras,
   tagCallback,
 }: {
-  output: FormattedAbiParameter
+  output: ExtendedAbiParameter
   res: any
   extras?: Extras
   tagCallback: TagCallback
@@ -24,22 +25,22 @@ export default async function format({
   // if the output has a tag ( this has to come before the jsType check)
   if ('tags' in output && !!output.tags) {
     const { tags } = output
-    // if the output has a tag
-    if (tags.includes('any')) return formatAny(res)
 
     const decimalsTag = tags.find((t) => t.startsWith('decimals'))
     if (!!decimalsTag) return await tagCallback('formatDecimals', tags, res)
   }
 
-  // If it also has jsType property
-  if ('jsType' in output) {
-    const { jsType } = output
-
-    // if the output is a numberString, fromat res into string
-    if (jsType === 'numberString') return String(res)
-
-    // if the output is a numberString[], format each res to a string
-    if (jsType === 'numberString[]') return res.map((i: bigint) => String(i))
+  switch (getJsType(output)) {
+    case 'any':
+      return formatAny(res)
+    case 'numberString':
+      return String(res)
+    case 'numberString[]':
+      return res.map((i: bigint) => String(i))
+    case 'number':
+      return Number(res)
+    case 'number[]':
+      return res.map((i: bigint) => Number(i))
   }
 
   // if all else fails, just return the initial res

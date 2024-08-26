@@ -6,7 +6,7 @@ import { ERC20_ABI, FM_BASE } from '../../src/utils/constants'
 import { Inverter } from '../../src/Inverter'
 import { iUSD } from '../testHelpers/getTestArgs'
 
-import { type FormattedAbiParameter } from '../../src'
+import { type ExtendedAbiParameter } from '../../src'
 import type { Tag } from '@inverter-network/abis'
 
 describe('#processInputs', () => {
@@ -18,7 +18,7 @@ describe('#processInputs', () => {
   describe('#processedInputs', () => {
     describe('with decimals tag', () => {
       describe('with the default token (tag = `decimals`)', () => {
-        const formattedInputs = [
+        const extendedInputs = [
           {
             internalType: 'uint256',
             name: 'mockInputName',
@@ -26,7 +26,7 @@ describe('#processInputs', () => {
             tags: ['decimals'],
             description: 'Blablablala',
           },
-        ] satisfies FormattedAbiParameter[]
+        ] satisfies ExtendedAbiParameter[]
         const extras = {
           walletAddress:
             '0x86fda565A5E96f4232f8136141C92Fd79F2BE950' as `0x${string}`,
@@ -37,7 +37,7 @@ describe('#processInputs', () => {
 
         it('applies the decimals from the `extras` param', async () => {
           const { processedInputs } = await processInputs({
-            formattedInputs,
+            extendedInputs,
             args,
             extras,
             publicClient,
@@ -50,14 +50,14 @@ describe('#processInputs', () => {
 
         describe('with approval tag', () => {
           const tags = ['decimals', 'approval']
-          const formattedInputsWithApproval = [{ ...formattedInputs[0], tags }]
+          const formattedInputsWithApproval = [{ ...extendedInputs[0], tags }]
 
           it(
             'returns the required approvals',
             async () => {
               const { requiredAllowances } = await processInputs({
-                formattedInputs:
-                  formattedInputsWithApproval as FormattedAbiParameter[],
+                extendedInputs:
+                  formattedInputsWithApproval as ExtendedAbiParameter[],
                 args,
                 extras,
                 publicClient,
@@ -99,13 +99,13 @@ describe('#processInputs', () => {
           const tags = [
             'decimals:contract:indirect:issuanceToken',
           ] satisfies Tag[] // should resolve to usdc on sepolia w/ decimals
-          const formattedInputs = [
+          const extendedInputs = [
             { ...sharedFormattedInput, tags },
-          ] as FormattedAbiParameter[]
+          ] as ExtendedAbiParameter[]
 
           it('retrieves token from module and the decimals from token', async () => {
             const { processedInputs } = await processInputs({
-              formattedInputs,
+              extendedInputs,
               args,
               extras,
               publicClient,
@@ -124,13 +124,13 @@ describe('#processInputs', () => {
             abi: ERC20_ABI,
           }
           const tags = ['decimals:contract:exact:decimals'] as Tag[]
-          const formattedInputs = [
+          const extendedInputs = [
             { ...sharedFormattedInput, tags },
-          ] as FormattedAbiParameter[]
+          ] as ExtendedAbiParameter[]
 
           it('retrieves the decimals from module which is token', async () => {
             const { processedInputs } = await processInputs({
-              formattedInputs,
+              extendedInputs,
               args,
               extras,
               publicClient,
@@ -146,11 +146,11 @@ describe('#processInputs', () => {
             // this test case is a bit confusing:
             // it passes in the USDC contract
             it('stores token info in cache', async () => {
-              const formattedInputs = [
+              const extendedInputs = [
                 { ...sharedFormattedInput, tags },
-              ] as FormattedAbiParameter[]
+              ] as ExtendedAbiParameter[]
               await processInputs({
-                formattedInputs,
+                extendedInputs,
                 args,
                 extras,
                 publicClient,
@@ -162,7 +162,7 @@ describe('#processInputs', () => {
               expect(
                 sdk.tokenCache.get(
                   // @ts-ignore object is defined
-                  `${mockModuleWithErc20}:${formattedInputs[0].tags[0]}`
+                  `${mockModuleWithErc20}:${extendedInputs[0].tags[0]}`
                 )
               ).toEqual({
                 address: mockModuleWithErc20,
@@ -173,7 +173,7 @@ describe('#processInputs', () => {
             it('reads token info from cache if available', async () => {
               await sdk.tokenCache.set(
                 // @ts-ignore object is defined
-                `${mockAddress}:${formattedInputs[0].tags[0]}`,
+                `${mockAddress}:${extendedInputs[0].tags[0]}`,
                 {
                   address: mockModuleWithErc20,
                   decimals: 6,
@@ -181,7 +181,7 @@ describe('#processInputs', () => {
               )
               const start = performance.now()
               await processInputs({
-                formattedInputs,
+                extendedInputs,
                 args,
                 extras,
                 publicClient,
@@ -199,7 +199,7 @@ describe('#processInputs', () => {
 
       describe('with :internal', () => {
         const args = ['18', '420', '69', USDC_SEPOLIA]
-        const formattedInputs = [
+        const extendedInputs = [
           {
             name: 'decimals',
             type: 'uint8',
@@ -223,7 +223,7 @@ describe('#processInputs', () => {
             description:
               'The address of the token that will be deposited to the funding manager',
           },
-        ] satisfies FormattedAbiParameter[]
+        ] satisfies ExtendedAbiParameter[]
         const extras = {
           walletAddress:
             '0x86fda565A5E96f4232f8136141C92Fd79F2BE950' as `0x${string}`,
@@ -234,7 +234,7 @@ describe('#processInputs', () => {
         describe('with :exact', () => {
           it('applies the decimals from the user inputs', async () => {
             const { processedInputs } = await processInputs({
-              formattedInputs,
+              extendedInputs,
               args,
               extras,
               publicClient,
@@ -250,7 +250,7 @@ describe('#processInputs', () => {
         describe('with :indirect', () => {
           it('retrieves decimals from token specified by user input', async () => {
             const { processedInputs } = await processInputs({
-              formattedInputs,
+              extendedInputs,
               args,
               extras,
               publicClient,
@@ -267,7 +267,7 @@ describe('#processInputs', () => {
 
             it('stores token info in cache', async () => {
               await processInputs({
-                formattedInputs,
+                extendedInputs,
                 args,
                 extras,
                 publicClient,
@@ -279,7 +279,7 @@ describe('#processInputs', () => {
               expect(
                 sdk.tokenCache.get(
                   // @ts-ignore object possibly undefined
-                  `${mockAddress}:${formattedInputs[2].tags[0]}`
+                  `${mockAddress}:${extendedInputs[2].tags[0]}`
                 )
               ).toEqual({
                 address: USDC_SEPOLIA,
@@ -290,7 +290,7 @@ describe('#processInputs', () => {
             it('reads token info from cache if available', async () => {
               sdk.tokenCache.set(
                 // @ts-ignore object possibly undefined
-                `${mockAddress}:${formattedInputs[2].tags[0]}`,
+                `${mockAddress}:${extendedInputs[2].tags[0]}`,
                 {
                   address: USDC_SEPOLIA,
                   decimals: 6,
@@ -298,7 +298,7 @@ describe('#processInputs', () => {
               )
               const start = performance.now()
               await processInputs({
-                formattedInputs,
+                extendedInputs,
                 args,
                 extras,
                 publicClient,

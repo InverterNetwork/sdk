@@ -7,13 +7,13 @@ import type {
   Extras,
   GetMethodArgs,
   PopPublicClient,
-  FormattedAbiParameter,
   PopWalletClient,
   RequiredAllowances,
   MethodKind,
-} from '../../types'
+} from '@/types'
 import { formatEther } from 'viem'
 import { handleError } from '../../utils'
+import type { ExtendedAbiParameter } from '@inverter-network/abis'
 
 const runDependencies = async ({
   requiredAllowances,
@@ -61,16 +61,16 @@ const runWithDependencies = async ({
 
 // Construct the run function
 export default function getRun<
-  FormattedInputs extends readonly FormattedAbiParameter[],
-  FormattedOutputs extends readonly FormattedAbiParameter[],
+  FormattedInputs extends readonly ExtendedAbiParameter[],
+  FormattedOutputs extends readonly ExtendedAbiParameter[],
   Kind extends MethodKind,
 >({
   publicClient,
   walletClient,
   name,
   contract,
-  formattedInputs,
-  formattedOutputs,
+  extendedInputs,
+  extendedOutputs,
   extras,
   kind,
   self,
@@ -78,17 +78,17 @@ export default function getRun<
   publicClient: PopPublicClient
   name: string
   contract: any
-  formattedInputs: FormattedInputs
-  formattedOutputs: FormattedOutputs
+  extendedInputs: FormattedInputs
+  extendedOutputs: FormattedOutputs
   walletClient?: PopWalletClient
   extras?: Extras
   kind: Kind
   self?: Inverter
 }) {
-  const run = async (args: GetMethodArgs<typeof formattedInputs>) => {
+  const run = async (args: GetMethodArgs<typeof extendedInputs>) => {
     // Parse the inputs, from user input to contract input
     const { processedInputs, requiredAllowances } = await processInputs({
-      formattedInputs,
+      extendedInputs,
       args,
       extras,
       publicClient,
@@ -151,7 +151,7 @@ export default function getRun<
     // Format the outputs, from contract output to user output-
     // and pass the return type to type param
     const formattedRes = await formatOutputs<Kind, FormattedOutputs>({
-      formattedOutputs,
+      extendedOutputs,
       res,
       extras,
       publicClient,
