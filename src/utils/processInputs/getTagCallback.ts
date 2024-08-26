@@ -24,7 +24,7 @@ export default function getTagCallback({
   walletClient,
   contract,
   self,
-  formattedInputs,
+  extendedInputs,
   extras,
   args,
   kind,
@@ -36,7 +36,7 @@ export default function getTagCallback({
     if (type === 'parseDecimals') {
       decimalsRes = await tagProcessor.decimals({
         argsOrRes: args,
-        parameters: formattedInputs,
+        parameters: extendedInputs,
         extras,
         tag: tags.find((t) => t.startsWith('decimals')),
         publicClient,

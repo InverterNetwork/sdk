@@ -22,7 +22,7 @@ export default function getTagCallback({
   publicClient,
   contract,
   self,
-  formattedOutputs,
+  extendedOutputs,
   extras,
   res,
 }: GetTagCallbackParams) {
@@ -33,7 +33,7 @@ export default function getTagCallback({
     if (type === 'formatDecimals') {
       decimalsRes = await tagProcessor.decimals({
         argsOrRes: res,
-        parameters: formattedOutputs,
+        parameters: extendedOutputs,
         extras,
         tag: tags.find((t) => t.startsWith('decimals')),
         publicClient,

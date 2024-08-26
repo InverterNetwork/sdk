@@ -30,7 +30,7 @@ describe('#formatOutputs', () => {
   describe('#formatOutputs', () => {
     describe('with decimals tag', () => {
       describe('with the default token (tag = `decimals`)', () => {
-        const formattedOutputs = [
+        const extendedOutputs = [
           {
             internalType: 'uint256',
             name: 'mockInputName',
@@ -51,7 +51,7 @@ describe('#formatOutputs', () => {
 
         it('applies the decimals from the `extras` param', async () => {
           const result = (await formatOutputs({
-            formattedOutputs,
+            extendedOutputs,
             res,
             extras,
             publicClient,

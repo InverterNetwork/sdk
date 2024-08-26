@@ -11,7 +11,7 @@ import getTagCallback, { type GetTagCallbackParams } from './getTagCallback'
 export type FormatOutputsBaseParams<
   T extends readonly ExtendedAbiParameter[] = readonly ExtendedAbiParameter[],
 > = {
-  formattedOutputs: T
+  extendedOutputs: T
   res: any
   extras?: Extras
 }
@@ -20,11 +20,11 @@ export default async function formatOutputs<
   Kind extends MethodKind,
   T extends readonly ExtendedAbiParameter[],
 >(props: GetTagCallbackParams<T>): Promise<GetMethodResponse<T, Kind>> {
-  const { formattedOutputs, res, extras } = props
+  const { extendedOutputs, res, extras } = props
 
   // format the outputs
   const mapped = await Promise.all(
-    formattedOutputs.map(async (output) => {
+    extendedOutputs.map(async (output) => {
       const name = output.name
       // get the argument of the same index
       const selectedRes = (() => {

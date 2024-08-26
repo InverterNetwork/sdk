@@ -48,8 +48,8 @@ export default function constructMethod<
   const run = getRun({
     name,
     contract,
-    formattedInputs: inputs,
-    formattedOutputs: outputs,
+    extendedInputs: inputs,
+    extendedOutputs: outputs,
     extras,
     kind,
     walletClient,

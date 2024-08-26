@@ -18,7 +18,7 @@ describe('#getRun', () => {
 
   const minAmountOut = '1'
   const depositAmount = '1000000'
-  const formattedOutputs = [
+  const extendedOutputs = [
     {
       name: 'txHash',
       type: 'bytes32',
@@ -73,7 +73,7 @@ describe('#getRun', () => {
 
     describe('with approval', () => {
       const name = 'buy'
-      const formattedInputs = [
+      const extendedInputs = [
         {
           name: '_depositAmount',
           type: 'uint256',
@@ -106,8 +106,8 @@ describe('#getRun', () => {
           walletClient,
           name,
           kind: 'write',
-          formattedInputs,
-          formattedOutputs,
+          extendedInputs,
+          extendedOutputs,
           extras,
           contract,
         })
@@ -127,7 +127,7 @@ describe('#getRun', () => {
 
     describe('with approval', () => {
       const name = 'stake'
-      const formattedInputs = [
+      const extendedInputs = [
         {
           name: 'amount',
           type: 'uint256',
@@ -153,8 +153,8 @@ describe('#getRun', () => {
           walletClient,
           name,
           kind: 'write',
-          formattedInputs,
-          formattedOutputs,
+          extendedInputs,
+          extendedOutputs,
           extras,
           contract,
         })

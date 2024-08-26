@@ -51,7 +51,7 @@ describe('#bondingDeployDecimal', () => {
       : '0x00'
 
     const { processedInputs } = await processInputs({
-      formattedInputs: configData,
+      extendedInputs: configData,
       args: orderedArgs,
       publicClient,
       walletClient,

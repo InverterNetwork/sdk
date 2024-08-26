@@ -49,7 +49,7 @@ export const getEncodedArgs = async ({
     : '0x00'
   // Process the inputs
   const { processedInputs } = <any>await processInputs({
-    formattedInputs: configData,
+    extendedInputs: configData,
     args,
     extras,
     ...params,
