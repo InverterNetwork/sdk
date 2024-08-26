@@ -3,7 +3,7 @@ import type { Simplify, Includes } from 'type-fest-4'
 import type { Tag } from '@inverter-network/abis'
 
 // Tag to Primitive type
-type TagToPrimitiveType<P> = P extends { tags: readonly Tag[] | Tag[] }
+type TagToPrimitiveType<P> = P extends { tags: readonly Tag[] }
   ? Includes<P['tags'], 'any'> extends true
     ? any
     : never
@@ -19,8 +19,12 @@ type SimplePrimitive<P> = P extends AbiParameter
         Primitive extends bigint
         ? // If it is, transform it to a string
           string
-        : // If not, return the primitive type
-          Primitive
+        : // Check if the primitive type is a bigint[]
+          Primitive extends readonly bigint[]
+          ? // If it is, transform it to a string[]
+            string[]
+          : // If not, return the primitive type
+            Primitive
       : never
     : TagToPrimitiveType<P>
   : never
