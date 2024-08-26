@@ -19,6 +19,11 @@ export type FilterByPrefix<
   Prefix extends string,
 > = T extends `${Prefix}${string}` ? T : never
 
+export type FindStringByPart<
+  T extends string,
+  Part extends string,
+> = T extends `${infer _Start}${Part}${infer _End}` ? T : never
+
 /**
  * Utility type to remove multiple indexes from an array type.
  * @template T - The array type.

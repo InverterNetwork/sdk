@@ -51,5 +51,6 @@ export type GetUserArgs<
     paymentProcessor: GetUserModuleArg<T['paymentProcessor']>
     optionalModules: GetUserOptionalArgs<T['optionalModules']>
     issuanceToken: FT extends 'restricted-pim' ? IssuanceTokenArgs : never
+    initialPurchaseAmount: FT extends 'immutable-pim' ? string : never
   }>
 >

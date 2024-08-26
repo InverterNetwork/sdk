@@ -4,7 +4,7 @@ import { getTestConnectors } from '../testHelpers/getTestConnectors'
 import getRun from '../../src/getModule/constructMethod/getRun'
 import { getContract } from 'viem'
 import { getModuleData } from '@inverter-network/abis'
-import { ERC20_ABI } from '../../src/utils/constants'
+import { ERC20_ABI, ERC20_MINTABLE_ABI } from '../../src/utils/constants'
 import type { Extras, FormattedAbiParameter } from '../../src'
 import { USDC_SEPOLIA } from '../../src/getDeploy/constants'
 import {
@@ -29,12 +29,14 @@ describe('#getRun', () => {
     console.log('Minting Tokens')
     const mintHash = await walletClient.writeContract({
       address: iUSD,
-      abi: ERC20_ABI,
+      abi: ERC20_MINTABLE_ABI,
       functionName: 'mint',
       account: walletClient.account,
       args: [
         walletClient.account.address,
-        '1157920892373161954235709850086879078532699846656405640394575840079',
+        BigInt(
+          '1157920892373161954235709850086879078532699846656405640394575840079'
+        ),
       ],
     })
     await publicClient.waitForTransactionReceipt({

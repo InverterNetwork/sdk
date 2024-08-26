@@ -3,12 +3,14 @@ import { getTestConnectors } from '../testHelpers/getTestConnectors'
 import processInputs from '../../src/utils/processInputs'
 import formatParameters from '../../src/utils/formatParameters'
 import { getModuleData } from '@inverter-network/abis'
+import { parseUnits } from 'viem'
+import { iUSD } from '../testHelpers/getTestArgs'
 
 const requestedModule =
   'FM_BC_Restricted_Bancor_Redeeming_VirtualSupply_v1' as const
 
 const args = {
-  issuanceToken: '0x381BaFEA95ef0475cA544D38d6a404CEFcE93b9a',
+  issuanceToken: iUSD,
   bondingCurveParams: {
     formula: '0x3ddE767F9DF9530DDeD47e1E012cCBf7B4A04dd7',
     reserveRatioForBuying: '333333',
@@ -20,11 +22,11 @@ const args = {
     initialIssuanceSupply: '1',
     initialCollateralSupply: '3',
   },
-  collateralToken: '0x71bd16Dd7A120a12a27439F5D3767Be795d4A991',
+  collateralToken: iUSD,
 } as const
 
 const expectedProccessed = [
-  '0x381BaFEA95ef0475cA544D38d6a404CEFcE93b9a',
+  iUSD,
   {
     buyIsOpen: true,
     sellIsOpen: true,
@@ -32,11 +34,11 @@ const expectedProccessed = [
     reserveRatioForSelling: 333333n,
     buyFee: 0n,
     sellFee: 100n,
-    initialIssuanceSupply: 1n,
-    initialCollateralSupply: 3n,
+    initialIssuanceSupply: parseUnits('1', 18),
+    initialCollateralSupply: parseUnits('3', 18),
     formula: '0x3ddE767F9DF9530DDeD47e1E012cCBf7B4A04dd7',
   },
-  '0x71bd16Dd7A120a12a27439F5D3767Be795d4A991',
+  iUSD,
 ]
 
 describe('#bondingDeployDecimal', () => {

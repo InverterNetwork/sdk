@@ -53,7 +53,10 @@ export const handleError = (
     return error as Error
   const signature = error.cause.signature as `0x${string}`
 
-  if (signature === '0xfb8f41b2') return new Error('ERC20InsufficientAllowance')
+  switch (signature) {
+    case '0xfb8f41b2':
+      return new Error('ERC20InsufficientAllowance')
+  }
 
   let errorName: string | undefined
 

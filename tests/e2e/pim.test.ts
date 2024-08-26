@@ -8,16 +8,19 @@ import {
   iUSD,
 } from '../testHelpers/getTestArgs'
 import { ERC20_MINTABLE_ABI } from '../../src'
-import { isAddress } from 'viem'
+import { isAddress, parseUnits } from 'viem'
+import { getModuleSchema } from '../../src/getDeploy/getInputs'
 
-describe('deploying regularly, assigning permissions, and depositing collateral', async () => {
+describe('#defaultPIM', async () => {
   const { publicClient, walletClient } = getTestConnectors()
   const deployer = walletClient.account.address
+
   const requestedModules = {
     fundingManager: 'FM_BC_Restricted_Bancor_Redeeming_VirtualSupply_v1',
     authorizer: 'AUT_Roles_v1',
     paymentProcessor: 'PP_Simple_v1',
   } as const
+
   const deployArgs = getDeployArgs(requestedModules, deployer)
 
   const sdk = new Inverter({ publicClient, walletClient })
@@ -26,10 +29,22 @@ describe('deploying regularly, assigning permissions, and depositing collateral'
   let issuanceToken: `0x${string}`
   let workflow: any
 
+  const { estimateGas, run, inputs } = await sdk.getDeploy({ requestedModules })
+
+  it('match expected inputs', () => {
+    expect(inputs).toEqual({
+      orchestrator: getModuleSchema('OrchestratorFactory_v1'),
+      authorizer: getModuleSchema('AUT_Roles_v1'),
+      fundingManager: getModuleSchema(
+        'FM_BC_Restricted_Bancor_Redeeming_VirtualSupply_v1'
+      ),
+      paymentProcessor: getModuleSchema('PP_Simple_v1'),
+    })
+  })
+
   it(
     'estimates gas for deployment',
     async () => {
-      const { estimateGas } = await sdk.getDeploy({ requestedModules })
       const gasEstimate = await estimateGas(deployArgs)
       expect(gasEstimate).toContainKeys(['value', 'formatted'])
     },
@@ -57,18 +72,17 @@ describe('deploying regularly, assigning permissions, and depositing collateral'
     it(
       'returns the orchestrator address',
       async () => {
-        const { run } = await sdk.getDeploy({ requestedModules })
-        const argsWithIssuanceToken = {
+        const { orchestratorAddress, transactionHash } = await run({
           ...deployArgs,
           fundingManager: { ...deployArgs.fundingManager, issuanceToken },
-        }
-        const { orchestratorAddress, transactionHash } = await run(
-          argsWithIssuanceToken
-        )
+        })
+
         await publicClient.waitForTransactionReceipt({
           hash: transactionHash,
         })
-        orchestrator = orchestratorAddress
+
+        orchestrator = orchestratorAddress as typeof orchestrator
+
         expect(isAddress(orchestrator)).toBeTrue
       },
       {
@@ -103,6 +117,7 @@ describe('deploying regularly, assigning permissions, and depositing collateral'
         await publicClient.waitForTransactionReceipt({
           hash: grantModuleTx,
         })
+
         const hasRole = await workflow.authorizer.read.checkForRole.run([
           generatedRole,
           deployer,
@@ -129,7 +144,10 @@ describe('deploying regularly, assigning permissions, and depositing collateral'
         address: iUSD,
         abi: ERC20_MINTABLE_ABI,
         functionName: 'mint',
-        args: [workflow.fundingManager.address, initialCollateralSupply],
+        args: [
+          workflow.fundingManager.address,
+          parseUnits(initialCollateralSupply, 18),
+        ],
       })
       await publicClient.waitForTransactionReceipt({
         hash: mintTx,

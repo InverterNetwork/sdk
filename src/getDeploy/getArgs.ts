@@ -115,6 +115,7 @@ export const constructArgs = async ({
     paymentProcessor: {},
     optionalModules: [],
     issuanceToken: {},
+    initialPurchaseAmount: '',
   } as unknown as ConstructedArgs
 
   // Get the default token if the funding manager is provided
@@ -122,48 +123,60 @@ export const constructArgs = async ({
     extras = await getDefaultToken(rest.publicClient, userArgs.fundingManager)
 
   // Get the arguments for the mandatory modules
-  await Promise.all(
-    MANDATORY_MODULES.map(async (moduleType, idx) => {
-      // Get the arguments for the module
-      const argObj = await assembleModuleArgs({
-        name: requestedModules[moduleType],
-        userModuleArg: userArgs[moduleType],
-        ...rest,
-      })
-      // Assign the mandatory module arguments to the args object
-      args[MANDATORY_MODULES[idx]] = argObj
+  let mendatoryModuleIdx = 0
+  for (const moduleType of MANDATORY_MODULES) {
+    const argObj = await assembleModuleArgs({
+      name: requestedModules[moduleType],
+      userModuleArg: userArgs[moduleType],
+      ...rest,
     })
-  )
+    args[MANDATORY_MODULES[mendatoryModuleIdx]] = argObj
+    mendatoryModuleIdx++
+  }
 
+  // spread to the optional modules
   const { optionalModules } = requestedModules
 
   // If optional modules are provided, get the arguments for them
   if (optionalModules && optionalModules.length > 0) {
-    await Promise.all(
-      optionalModules.map(async (optionalModule) => {
-        // Get the arguments for the optional module
-        const argObj = await assembleModuleArgs({
-          name: optionalModule,
-          userModuleArg: userArgs.optionalModules?.[optionalModule],
-          ...rest,
-        })
-        // Assign the optional module arguments to the args object
-        args.optionalModules.push(argObj)
+    // Get the arguments for the optional
+    for (const optionalModule of optionalModules) {
+      const argObj = await assembleModuleArgs({
+        name: optionalModule,
+        userModuleArg: userArgs.optionalModules?.[optionalModule],
+        ...rest,
       })
-    )
+      // Assign the optional module arguments to the args object
+      args.optionalModules.push(argObj)
+    }
   }
 
-  if (factoryType === 'restricted-pim') {
-    if (!userArgs.issuanceToken) throw new Error('Issuance token is required')
-    args.issuanceToken = {
-      ...userArgs.issuanceToken,
-      maxSupply: String(
-        parseUnits(
-          userArgs.issuanceToken.maxSupply,
-          Number(userArgs.issuanceToken.decimals)
+  switch (factoryType) {
+    case 'restricted-pim':
+    case 'immutable-pim':
+      if (!userArgs.issuanceToken) throw new Error('Issuance token is required')
+
+      // In either case, the issuance token is required
+      args.issuanceToken = {
+        ...userArgs.issuanceToken,
+        maxSupply: String(
+          parseUnits(
+            userArgs.issuanceToken.maxSupply,
+            Number(userArgs.issuanceToken.decimals)
+          )
+        ),
+      }
+
+      // If the factory type is immutable-pim, the initial purchase amount is parsed if provided
+      if (factoryType === 'immutable-pim' && !!userArgs.initialPurchaseAmount) {
+        args.initialPurchaseAmount = String(
+          parseUnits(
+            userArgs.initialPurchaseAmount,
+            Number(userArgs.issuanceToken.decimals)
+          )
         )
-      ),
-    }
+      }
+      break
   }
 
   return args
@@ -193,14 +206,28 @@ export default async function getArgs<
     constructed.optionalModules,
   ] as const
 
-  const restrictedPimArr = [
+  const withRestrictedPim = [...baseArr, constructed.issuanceToken] as const
+
+  const withImmutablePim = [
     ...baseArr,
-    (constructed as ConstructedArgs).issuanceToken,
+    constructed.issuanceToken,
+    constructed.initialPurchaseAmount,
   ] as const
 
-  const result = (
-    params.factoryType === 'restricted-pim' ? restrictedPimArr : baseArr
-  ) as FT extends 'restricted-pim' ? typeof restrictedPimArr : typeof baseArr
+  const result = (() => {
+    switch (params.factoryType) {
+      case 'restricted-pim':
+        return withRestrictedPim
+      case 'immutable-pim':
+        return withImmutablePim
+      default:
+        return baseArr
+    }
+  })() as FT extends 'restricted-pim'
+    ? typeof withRestrictedPim
+    : FT extends 'immutable-pim'
+      ? typeof withImmutablePim
+      : typeof baseArr
 
   return result
 }

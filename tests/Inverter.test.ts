@@ -38,7 +38,8 @@ describe('Inverter', () => {
           'authorizer',
           'fundingManager',
           'paymentProcessor',
-          'erc20Module',
+          'fundingToken',
+          'issuanceToken',
           'orchestrator',
           'optionalModule',
         ])
@@ -54,7 +55,8 @@ describe('Inverter', () => {
           'authorizer',
           'fundingManager',
           'paymentProcessor',
-          'erc20Module',
+          'fundingToken',
+          'issuanceToken',
           'orchestrator',
           'optionalModule',
         ])

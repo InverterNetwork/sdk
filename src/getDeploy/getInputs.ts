@@ -1,35 +1,55 @@
-import {
-  MANDATORY_MODULES,
-  ORCHESTRATOR_CONFIG,
-  PIM_ISSUANCE_TOKEN_CONFIG,
-} from './constants'
+import { MANDATORY_MODULES } from './constants'
 import formatParameters from '../utils/formatParameters'
-import { getModuleData } from '@inverter-network/abis'
+import { getModuleData, type ModuleName } from '@inverter-network/abis'
 
 import type {
   DeploySchema,
   FactoryType,
-  FomrattedDeploymentParameters,
+  FindStringByPart,
+  ModuleSchema,
   RequestedModule,
   RequestedModules,
 } from '../types'
 
 export const getModuleSchema = <
-  T extends RequestedModule,
-  Inputs = FomrattedDeploymentParameters<T>,
+  T extends RequestedModule | FindStringByPart<ModuleName, 'Factory'>,
+  ON extends string | undefined = undefined,
 >(
-  name: T
-): {
-  name: T
-  inputs: Inputs
-} => {
+  name: T,
+  overrideName?: ON
+): ModuleSchema<T, ON> => {
   const { deploymentInputs } = getModuleData(name as RequestedModule)
-
   const { configData } = deploymentInputs
-
   const inputs = formatParameters({ parameters: configData }) as any
+  const conditionalName = (overrideName ?? name) as any
+  return { name: conditionalName, inputs }
+}
 
-  return { name, inputs }
+export const getOtherFactoryTypeInputs = <FT extends FactoryType>(
+  factoryType: FT
+) => {
+  switch (factoryType) {
+    case 'restricted-pim':
+      return {
+        issuanceToken: getModuleSchema(
+          'Restricted_PIM_Factory_v1',
+          'issuanceToken'
+        ),
+      }
+    case 'immutable-pim':
+      return {
+        issuanceToken: getModuleSchema(
+          'Restricted_PIM_Factory_v1',
+          'issuanceToken'
+        ),
+        initialPurchaseAmount: getModuleSchema(
+          'Immutable_PIM_Factory_v1',
+          'initialPurchaseAmount'
+        ),
+      }
+    default:
+      return {}
+  }
 }
 
 export default function getInputs<
@@ -44,7 +64,8 @@ export default function getInputs<
       return result
     },
     {
-      orchestrator: ORCHESTRATOR_CONFIG,
+      orchestrator: getModuleSchema('OrchestratorFactory_v1'),
+      ...getOtherFactoryTypeInputs(factoryType),
     } as DeploySchema<Omit<T, 'optionalModules'>, FT>
   )
 
@@ -57,8 +78,5 @@ export default function getInputs<
   return {
     ...mandatoryResult,
     optionalModules,
-    ...(factoryType === 'restricted-pim' && {
-      issuanceToken: PIM_ISSUANCE_TOKEN_CONFIG,
-    }),
   }
 }

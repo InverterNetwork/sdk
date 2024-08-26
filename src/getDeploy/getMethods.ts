@@ -1,13 +1,13 @@
 import { formatEther, type PublicClient } from 'viem'
-import type {
-  EstimateGasReturn,
-  FactoryType,
-  GetUserArgs,
-  Inverter,
-  PopWalletClient,
-  RequestedModules,
+import {
+  type EstimateGasReturn,
+  type FactoryType,
+  type GetUserArgs,
+  type Inverter,
+  type PopWalletClient,
+  type RequestedModules,
 } from '..'
-import { getAbi, getViemMethods } from './utils'
+import { getAbi, getViemMethods, handlePimFactoryApprove } from './utils'
 import getArgs from './getArgs'
 import { handleError } from '../utils'
 
@@ -30,6 +30,7 @@ export default async function getMethods<
 
   // Get the methods from the Viem handler
   const {
+    factoryAddress,
     write,
     simulateWrite,
     estimateGas: esitmateGasOrg,
@@ -45,9 +46,12 @@ export default async function getMethods<
   const simulate = async (userArgs: GetUserArgs<T, FT>) => {
     try {
       const arr = await getArgs({ userArgs, kind: 'simulate', ...params })
-      return await simulateWrite(arr, {
+
+      const res = await simulateWrite(arr, {
         account: walletClient.account.address,
       })
+
+      return { result: res.result as `0x${string}`, request: res.request }
     } catch (e: any) {
       throw handleError({ requestedModules, error: e })
     }
@@ -56,13 +60,21 @@ export default async function getMethods<
   // Run the deployment = write
   const run = async (userArgs: GetUserArgs<T, FT>) => {
     try {
+      await handlePimFactoryApprove({
+        factoryType,
+        factoryAddress,
+        publicClient,
+        walletClient,
+        userArgs,
+      })
+
       const arr = await getArgs({ userArgs, kind: 'write', ...params })
 
       const simulationRes = await simulateWrite(arr, {
         account: walletClient.account.address,
       })
 
-      const orchestratorAddress = simulationRes.result
+      const orchestratorAddress = simulationRes.result as `0x${string}`
 
       const transactionHash = await write(arr, {} as any)
 

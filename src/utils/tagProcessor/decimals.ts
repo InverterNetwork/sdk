@@ -118,7 +118,7 @@ export default async function decimals({
         decimals = <number>await readContract({
           address: tokenAddress,
           abi: ERC20_ABI,
-          functionName: name,
+          functionName: name as any,
         })
       }
     }

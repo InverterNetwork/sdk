@@ -1,16 +1,15 @@
 import type { ModuleName } from '@inverter-network/abis'
-import type {
-  FactoryType,
-  OrchestratorInputs,
-  PIMIssuanceTokenInputs,
-} from './generic'
+import type { FactoryType } from './generic'
 import type { FomrattedDeploymentParameters } from './parameter'
 import type { RequestedModules } from './requested'
 import type { EmptyObjectToNever, OmitNever } from '../../'
 import type { Simplify } from 'type-fest-4'
 
-export type ModuleSchema<N extends ModuleName = ModuleName> = {
-  name: N
+export type ModuleSchema<
+  N extends ModuleName = ModuleName,
+  ON extends string | undefined = undefined,
+> = {
+  name: ON extends string ? ON : N
   inputs: FomrattedDeploymentParameters<N>
 }
 
@@ -31,11 +30,17 @@ export type DeploySchema<
   FT extends FactoryType = 'default',
 > = Simplify<
   OmitNever<{
-    orchestrator: OrchestratorInputs
+    orchestrator: ModuleSchema<'OrchestratorFactory_v1'>
     paymentProcessor: ModuleSchema<T['paymentProcessor']>
     fundingManager: ModuleSchema<T['fundingManager']>
     authorizer: ModuleSchema<T['authorizer']>
     optionalModules: EmptyObjectToNever<OptionalModules<T['optionalModules']>>
-    issuanceToken: FT extends 'restricted-pim' ? PIMIssuanceTokenInputs : never
+    // OTHER FACTORY TYPE INPUTS
+    issuanceToken: FT extends 'restricted-pim' | 'immutable-pim'
+      ? ModuleSchema<'Restricted_PIM_Factory_v1', 'issuanceToken'>
+      : never
+    initialPurchaseAmount: FT extends 'immutable-pim'
+      ? ModuleSchema<'Immutable_PIM_Factory_v1', 'initialPurchaseAmount'>
+      : never
   }>
 >

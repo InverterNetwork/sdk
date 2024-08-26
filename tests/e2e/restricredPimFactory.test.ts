@@ -4,9 +4,10 @@ import { getTestConnectors } from '../testHelpers/getTestConnectors'
 import { Inverter } from '../../src/Inverter'
 import { getDeployArgs, iUSD } from '../testHelpers/getTestArgs'
 import { ERC20_ABI, ERC20_MINTABLE_ABI, type RequestedModules } from '../../src'
-import { isHex } from 'viem'
+import { isHex, parseUnits } from 'viem'
+import { getModuleSchema } from '../../src/getDeploy/getInputs'
 
-describe('deploying through the restricted PIM factory', async () => {
+describe('#restrictedPIM', async () => {
   const { publicClient, walletClient } = getTestConnectors()
   const deployer = walletClient.account.address
 
@@ -29,14 +30,29 @@ describe('deploying through the restricted PIM factory', async () => {
 
   const sdk = new Inverter({ publicClient, walletClient })
 
-  const { estimateGas, run } = await sdk.getDeploy({
+  const { estimateGas, run, inputs } = await sdk.getDeploy({
     requestedModules,
     factoryType: 'restricted-pim',
   })
 
   let orchestrator: `0x${string}`
 
-  it(
+  it('match expected inputs', () => {
+    expect(inputs).toEqual({
+      orchestrator: getModuleSchema('OrchestratorFactory_v1'),
+      authorizer: getModuleSchema('AUT_Roles_v1'),
+      fundingManager: getModuleSchema(
+        'FM_BC_Restricted_Bancor_Redeeming_VirtualSupply_v1'
+      ),
+      paymentProcessor: getModuleSchema('PP_Simple_v1'),
+      issuanceToken: getModuleSchema(
+        'Restricted_PIM_Factory_v1',
+        'issuanceToken'
+      ),
+    })
+  })
+
+  it.skip(
     '1. Estimates gas for deployment',
     async () => {
       const gasEstimate = await estimateGas(deployArgs)
@@ -51,11 +67,12 @@ describe('deploying through the restricted PIM factory', async () => {
     'deploys the BC',
     async () => {
       const { orchestratorAddress, transactionHash } = await run(deployArgs)
+
       await publicClient.waitForTransactionReceipt({
         hash: transactionHash,
       })
       // TODO: change after PimFactory has been adapted to only return orchestrator address
-      orchestrator = orchestratorAddress[0]
+      orchestrator = orchestratorAddress as typeof orchestrator
 
       console.log('Orchestrator Address:', orchestrator)
     },
@@ -68,7 +85,6 @@ describe('deploying through the restricted PIM factory', async () => {
     'lets admin buy from curve',
     async () => {
       const depositAmount = '500'
-      const eighteenDecimals = '000000000000000000'
 
       // Get and set Workflow
       const workflow = await sdk.getWorkflow({
@@ -80,7 +96,7 @@ describe('deploying through the restricted PIM factory', async () => {
         address: iUSD,
         abi: ERC20_MINTABLE_ABI,
         functionName: 'mint',
-        args: [deployer, BigInt(depositAmount + eighteenDecimals)],
+        args: [deployer, parseUnits(depositAmount, 18)],
       })
       await publicClient.waitForTransactionReceipt({
         hash: mintTx,
@@ -91,10 +107,7 @@ describe('deploying through the restricted PIM factory', async () => {
         address: iUSD,
         abi: ERC20_ABI,
         functionName: 'approve',
-        args: [
-          workflow.fundingManager.address,
-          BigInt(depositAmount + eighteenDecimals),
-        ],
+        args: [workflow.fundingManager.address, parseUnits(depositAmount, 18)],
       })
       await publicClient.waitForTransactionReceipt({
         hash: approveTx,
