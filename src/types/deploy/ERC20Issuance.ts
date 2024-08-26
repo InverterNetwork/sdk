@@ -1,4 +1,4 @@
-import type { PopPublicClient, PopWalletClient } from '..'
+import type { PopPublicClient, PopWalletClient } from '@/types'
 
 export type DeployERC20IssuanceParams = {
   /**

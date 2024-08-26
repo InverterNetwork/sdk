@@ -1,12 +1,8 @@
-import { ERC20_ABI } from '../constants'
-import { Inverter } from '../../Inverter'
+import { ERC20_ABI } from '@/utils/constants'
+import { Inverter } from '@/Inverter'
 
 import type { PublicClient } from 'viem'
-import type {
-  Extras,
-  FormattedAbiParameter,
-  DecimalsTagReturn,
-} from '../../types'
+import type { Extras, FormattedAbiParameter, DecimalsTagReturn } from '@/types'
 import type { Tag } from '@inverter-network/abis'
 import type { Split } from 'type-fest-4'
 

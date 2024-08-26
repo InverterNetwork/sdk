@@ -1,6 +1,6 @@
 import format from './format'
 
-import type { FormatParameters, MethodKind } from '../../types'
+import type { FormatParameters, MethodKind } from '@/types'
 import type { ExtendedAbiParameter } from '@inverter-network/abis'
 
 const simulateReturn = [

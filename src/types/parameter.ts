@@ -1,4 +1,4 @@
-import { type JsType } from './base'
+import { type JsType } from '@/types'
 
 import type {
   ExtendedAbiParameter,

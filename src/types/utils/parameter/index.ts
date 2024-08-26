@@ -5,8 +5,7 @@ import type {
   TupleType,
 } from '@inverter-network/abis'
 import type { SolidityBytes, SolidityInt } from 'abitype'
-import type { FormattedParameterToPrimitiveType } from './primitive'
-import type { OmitNever } from '..'
+import type { OmitNever, FormattedParameterToPrimitiveType } from '@/types'
 import type { IfUnknown, Simplify } from 'type-fest-4'
 
 export * from './primitive'

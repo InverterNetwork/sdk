@@ -2,7 +2,7 @@ import {
   getModuleData,
   type ExtendedAbiParameter,
 } from '@inverter-network/abis'
-import type { JsType, RequestedModules } from '../types'
+import type { JsType, RequestedModules } from '@/types'
 import type { Entries } from 'type-fest-4'
 import { decodeErrorResult, type Abi } from 'viem'
 import { ERC20_ABI } from './constants'

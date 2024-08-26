@@ -1,9 +1,12 @@
 import type { ModuleName } from '@inverter-network/abis'
-import type { FactoryType } from './generic'
-import type { FomrattedDeploymentParameters } from './parameter'
-import type { RequestedModules } from './requested'
-import type { EmptyObjectToNever, OmitNever } from '../../'
 import type { Simplify } from 'type-fest-4'
+import type {
+  EmptyObjectToNever,
+  OmitNever,
+  RequestedModules,
+  FactoryType,
+  FomrattedDeploymentParameters,
+} from '@/types'
 
 export type ModuleSchema<
   N extends ModuleName = ModuleName,
