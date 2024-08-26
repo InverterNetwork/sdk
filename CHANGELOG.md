@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.4](https://github.com/InverterNetwork/sdk/compare/v0.2.3...v0.2.4) (2024-08-26)
+
+
+### Bug Fixes
+
+* bigint array simple primitive ([0491481](https://github.com/InverterNetwork/sdk/commit/0491481043b9cfa978278355f7ec5b7ab6919117))
+* tag primitive type util ([15554f6](https://github.com/InverterNetwork/sdk/commit/15554f659b8c206ff1f3c00b69f75f8c2f3cc485))
+
 ### [0.2.3](https://github.com/InverterNetwork/sdk/compare/v0.2.2...v0.2.3) (2024-08-26)
 
 ### [0.2.2](https://github.com/InverterNetwork/sdk/compare/v0.2.1...v0.2.2) (2024-08-23)
