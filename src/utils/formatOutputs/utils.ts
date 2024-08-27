@@ -1,14 +1,6 @@
 import { formatUnits, hexToString } from 'viem'
 import format from './format'
-
-import type { TupleExtendedAbiParameter, Extras, TagCallback } from '@/types'
-
-type TupleCaseParams = {
-  output: TupleExtendedAbiParameter
-  res: any
-  extras?: Extras
-  tagCallback: TagCallback
-}
+import type { FormatOutputTupleCaseParams } from '@/types'
 
 // The case for tuple outputs
 export const tuple = async ({
@@ -16,7 +8,7 @@ export const tuple = async ({
   res,
   extras,
   tagCallback,
-}: TupleCaseParams) => {
+}: FormatOutputTupleCaseParams) => {
   const formattedTuple: any = {}
 
   await Promise.all(
@@ -34,21 +26,28 @@ export const tuple = async ({
   return formattedTuple
 }
 
-// The case for tuple[] outputs
-export const tupleArray = async ({ res, ...rest }: TupleCaseParams) =>
+/**
+ * The case for tuple[] outputs
+ */
+export const tupleArray = async ({
+  res,
+  ...rest
+}: FormatOutputTupleCaseParams) =>
   await Promise.all(
     res.map(async (resI: any) => await tuple({ res: resI, ...rest }))
   )
-
-// The case for decimal outputs
+/**
+ * The case for decimal outputs
+ */
 export const formatDecimals = (value: bigint, decimals?: number) => {
   if (!decimals) throw new Error('No decimals provided')
   return formatUnits(value, decimals)
 }
 
-// Tag: "any" tries to parse the result as JSON from hex, if it fails-
-// tries to parse the result as a string from hex, if it fails-
-// returns "Data is not a valid JSON string"
+/** Tag: "any" tries to parse the result as JSON from hex, if it fails-
+ * tries to parse the result as a string from hex, if it fails-
+ * returns "Data is not a valid JSON string"
+ */
 export const formatAny = (res: any) => {
   try {
     return JSON.parse(hexToString(res))
@@ -56,7 +55,7 @@ export const formatAny = (res: any) => {
     try {
       return hexToString(res)
     } catch {
-      return 'Data is not a valid JSON string'
+      return res
     }
   }
 }

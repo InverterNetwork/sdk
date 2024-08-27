@@ -1,7 +1,5 @@
-import formatOutputs from '../formatOutputs'
-import processInputs from '../../utils/processInputs'
-import { ERC20_ABI } from '../../utils/constants'
-import { Inverter } from '../../Inverter'
+import { processInputs, formatOutputs, ERC20_ABI } from '@/utils'
+import { Inverter } from '@/Inverter'
 
 import type {
   Extras,
@@ -61,8 +59,8 @@ const runWithDependencies = async ({
 
 // Construct the run function
 export default function getRun<
-  FormattedInputs extends readonly ExtendedAbiParameter[],
-  FormattedOutputs extends readonly ExtendedAbiParameter[],
+  ExtenderInputs extends readonly ExtendedAbiParameter[],
+  ExtendedOutputs extends readonly ExtendedAbiParameter[],
   Kind extends MethodKind,
 >({
   publicClient,
@@ -78,8 +76,8 @@ export default function getRun<
   publicClient: PopPublicClient
   name: string
   contract: any
-  extendedInputs: FormattedInputs
-  extendedOutputs: FormattedOutputs
+  extendedInputs: ExtenderInputs
+  extendedOutputs: ExtendedOutputs
   walletClient?: PopWalletClient
   extras?: Extras
   kind: Kind
@@ -150,7 +148,7 @@ export default function getRun<
 
     // Format the outputs, from contract output to user output-
     // and pass the return type to type param
-    const formattedRes = await formatOutputs<Kind, FormattedOutputs>({
+    const formattedRes = await formatOutputs<ExtendedOutputs, Kind>({
       extendedOutputs,
       res,
       extras,

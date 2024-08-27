@@ -1,22 +1,9 @@
 import parse from './parse'
 
-import type { Extras, MethodKind, RequiredAllowances } from '@/types'
-import getTagCallback, { type GetTagCallbackParams } from './getTagCallback'
-import type { ExtendedAbiParameter } from '@inverter-network/abis'
+import type { ProcessInputsParams, RequiredAllowances } from '@/types'
+import getTagCallback from './getTagCallback'
 
-export type ProcessInputsBaseParams = {
-  extras?: Extras
-  extendedInputs: readonly ExtendedAbiParameter[]
-  args: any
-  kind: MethodKind
-}
-
-export type ProcessInputsParams = Omit<
-  GetTagCallbackParams,
-  'requiredAllowances'
->
-
-export default async function processInputs(params: ProcessInputsParams) {
+export async function processInputs(params: ProcessInputsParams) {
   const requiredAllowances: RequiredAllowances[] = []
 
   const { extendedInputs, args, extras } = params

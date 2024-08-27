@@ -1,7 +1,7 @@
 import { expect, describe, it } from 'bun:test'
 
 import { getTestConnectors } from '../testHelpers/getTestConnectors'
-import formatOutputs from '../../src/getModule/formatOutputs'
+import { formatOutputs } from '@/utils'
 
 import { type ExtendedAbiParameter } from '../../src'
 

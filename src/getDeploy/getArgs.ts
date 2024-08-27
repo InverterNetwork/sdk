@@ -1,9 +1,8 @@
 import { getModuleData } from '@inverter-network/abis'
+import { processInputs, ADDRESS_ZERO } from '@/utils'
 import { MANDATORY_MODULES } from './constants'
 import { assembleMetadata, getDefaultToken } from './utils'
-import processInputs from '../utils/processInputs'
-import { Inverter } from '../Inverter'
-import { ADDRESS_ZERO } from '../utils/constants'
+import { Inverter } from '@/Inverter'
 
 import { type PublicClient, encodeAbiParameters, parseUnits } from 'viem'
 import type {
@@ -19,7 +18,7 @@ import type {
   UserArgs,
   MethodKind,
   FactoryType,
-} from '../types'
+} from '@/types'
 
 let extras: Extras
 

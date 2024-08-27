@@ -1,25 +1,18 @@
 import format from './format'
 
+import { isDefinedExtendedAbiMemberArray } from '@/types'
 import type {
   ExtendedAbiParameter,
-  Extras,
   GetMethodResponse,
+  FormatGetTagCallbackParams,
   MethodKind,
 } from '@/types'
-import getTagCallback, { type GetTagCallbackParams } from './getTagCallback'
+import getTagCallback from './getTagCallback'
 
-export type FormatOutputsBaseParams<
-  T extends readonly ExtendedAbiParameter[] = readonly ExtendedAbiParameter[],
-> = {
-  extendedOutputs: T
-  res: any
-  extras?: Extras
-}
-
-export default async function formatOutputs<
-  Kind extends MethodKind,
+export async function formatOutputs<
   T extends readonly ExtendedAbiParameter[],
->(props: GetTagCallbackParams<T>): Promise<GetMethodResponse<T, Kind>> {
+  Kind extends MethodKind,
+>(props: FormatGetTagCallbackParams<T>): Promise<GetMethodResponse<T, Kind>> {
   const { extendedOutputs, res, extras } = props
 
   // format the outputs
@@ -31,7 +24,7 @@ export default async function formatOutputs<
         // if name is defined and the result is an object
         if (!!name && res[name]) return res[name]
         // if name is defined and the result is an array
-        if (!!name && isDefinedArray(output, res)) {
+        if (!!name && isDefinedExtendedAbiMemberArray(output, res)) {
           return res[Number(name[1])]
         }
         // if name is not defined or the result is not an object or array
@@ -53,8 +46,3 @@ export default async function formatOutputs<
   // return the formatted outputs, selecting the first one if there is only one
   return mapped.length === 1 ? mapped[0] : mapped
 }
-
-// check if the output is not a array type-
-// and the result is an array, with a output name that starts with '_'
-const isDefinedArray = ({ name, type }: ExtendedAbiParameter, res: any) =>
-  !!name && !type.endsWith('[]') && Array.isArray(res) && name.startsWith('_')
