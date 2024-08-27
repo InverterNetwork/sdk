@@ -36,16 +36,16 @@ describe('#getDeploy', () => {
       })
 
       describe('simulate', () => {
-        it('returns the orchestrator address as result', async () => {
+        it('returns the orchestrator address as orchestratorAddress', async () => {
           const { simulate } = await getDeploy({
             publicClient,
             walletClient,
             requestedModules,
           })
-          const simulationResult = await simulate(
+          const { orchestratorAddress } = await simulate(
             getDeployArgs(requestedModules, address)
           )
-          expect(isAddress(simulationResult.result as string)).toBeTrue
+          expect(isAddress(orchestratorAddress)).toBeTrue
         })
       })
     })
@@ -75,7 +75,7 @@ describe('#getDeploy', () => {
       })
 
       describe('simulate', () => {
-        it('returns the orchestrator address as result', async () => {
+        it('returns the orchestrator address as orchestratorAddress', async () => {
           const { simulate } = await getDeploy({
             publicClient,
             walletClient,
@@ -84,10 +84,10 @@ describe('#getDeploy', () => {
               optionalModules: ['LM_PC_Bounties_v1'],
             },
           })
-          const simulationResult = await simulate(
+          const { orchestratorAddress } = await simulate(
             getDeployArgs(requestedModules, address)
           )
-          expect(isAddress(simulationResult.result as string)).toBeTrue
+          expect(isAddress(orchestratorAddress)).toBeTrue
         })
       })
     })
@@ -124,7 +124,7 @@ describe('#getDeploy', () => {
       })
 
       describe('simulate', () => {
-        it('returns the orchestrator address as result', async () => {
+        it('returns the orchestrator address as orchestratorAddress', async () => {
           const { simulate } = await getDeploy({
             publicClient,
             walletClient,
@@ -134,7 +134,7 @@ describe('#getDeploy', () => {
             },
           })
 
-          const simulationResult = await simulate({
+          const { orchestratorAddress } = await simulate({
             ...getDeployArgs(requestedModules, address),
             optionalModules: {
               LM_PC_RecurringPayments_v1: {
@@ -142,7 +142,7 @@ describe('#getDeploy', () => {
               },
             },
           })
-          expect(isAddress(simulationResult.result as string)).toBeTrue
+          expect(isAddress(orchestratorAddress)).toBeTrue
         })
       })
     })
@@ -179,7 +179,7 @@ describe('#getDeploy', () => {
       })
 
       describe('simulate', () => {
-        it('returns the orchestrator address as result', async () => {
+        it('returns the orchestrator address as orchestratorAddress', async () => {
           const { simulate } = await getDeploy({
             publicClient,
             walletClient,
@@ -189,7 +189,7 @@ describe('#getDeploy', () => {
             },
           })
 
-          const simulationResult = await simulate({
+          const { orchestratorAddress } = await simulate({
             ...getDeployArgs(requestedModules, address),
             optionalModules: {
               LM_PC_Staking_v1: {
@@ -197,7 +197,7 @@ describe('#getDeploy', () => {
               },
             },
           })
-          expect(isAddress(simulationResult.result as string)).toBeTrue
+          expect(isAddress(orchestratorAddress)).toBeTrue
         })
       })
     })
@@ -222,7 +222,7 @@ describe('#getDeploy', () => {
       })
 
       describe('simulate', () => {
-        it('returns the orchestrator address as result', async () => {
+        it('returns the orchestrator address as orchestratorAddress', async () => {
           const { simulate } = await getDeploy({
             publicClient,
             walletClient,
@@ -232,13 +232,13 @@ describe('#getDeploy', () => {
             },
           })
 
-          const simulationResult = await simulate({
+          const { orchestratorAddress } = await simulate({
             ...getDeployArgs(requestedModules, address),
             optionalModules: {
               LM_PC_KPIRewarder_v1: getKpiArgs(address),
             },
           })
-          expect(isAddress(simulationResult.result as string)).toBeTrue
+          expect(isAddress(orchestratorAddress)).toBeTrue
         })
       })
     })
@@ -272,16 +272,16 @@ describe('#getDeploy', () => {
       })
 
       describe('simulate', () => {
-        it('returns the orchestrator address as result', async () => {
+        it('returns the orchestrator address as orchestratorAddress', async () => {
           const { simulate } = await getDeploy({
             publicClient,
             walletClient,
             requestedModules,
           })
-          const simulationResult = await simulate(
+          const { orchestratorAddress } = await simulate(
             getDeployArgs(requestedModules, address)
           )
-          expect(isAddress(simulationResult.result as string)).toBeTrue
+          expect(isAddress(orchestratorAddress)).toBeTrue
         })
       })
     })
@@ -309,18 +309,18 @@ describe('#getDeploy', () => {
     })
 
     describe('simulate', () => {
-      it('returns the orchestrator address as result', async () => {
+      it('returns the orchestrator address as orchestratorAddress', async () => {
         const { simulate } = await getDeploy({
           publicClient,
           walletClient,
           requestedModules,
         })
 
-        const simulationResult = await simulate(
+        const { orchestratorAddress } = await simulate(
           getDeployArgs(requestedModules, address)
         )
 
-        expect(isAddress(simulationResult.result as string)).toBeTrue
+        expect(isAddress(orchestratorAddress)).toBeTrue
       })
     })
   })

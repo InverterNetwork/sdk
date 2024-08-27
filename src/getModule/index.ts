@@ -1,9 +1,9 @@
 import type { ModuleName } from '@inverter-network/abis'
 import { getModuleData } from '@inverter-network/abis'
-import { getContract } from 'viem'
+import { getContract, type Abi } from 'viem'
 import prepareFunction from './prepareFunction'
 
-import type { GetModuleParams, PopWalletClient } from '../types'
+import type { GetModuleParams, PopWalletClient } from '@/types'
 
 export default function getModule<
   N extends ModuleName,
@@ -32,16 +32,14 @@ export default function getModule<
     description = mv.description as MV['description'],
     abi = mv.abi as MV['abi']
 
-  // Construct the clients object and the contract object
-  const client = {
+  const contract = getContract({
+    abi: abi as Abi,
+    address,
+    client: {
       public: publicClient,
-      wallet: walletClient,
+      wallet: walletClient!,
     },
-    contract = getContract({
-      abi,
-      address,
-      client,
-    })
+  })
 
   // Prepare the read functions
   const read = prepareFunction({

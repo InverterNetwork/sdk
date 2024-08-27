@@ -11,6 +11,7 @@ import type { ExtendedAbi, ExtendedAbiFunction } from '@inverter-network/abis'
 import type {
   Extras,
   MethodKind,
+  PopContractReturnType,
   PopPublicClient,
   PopWalletClient,
 } from '../types'
@@ -30,14 +31,14 @@ export default function prepareFunction<
   self,
   walletClient,
 }: {
-  publicClient: PopPublicClient
   abi: A
   type: T
-  contract: any
+  contract: PopContractReturnType
   kind: Kind
+  publicClient: PopPublicClient
+  walletClient?: PopWalletClient
   extras?: Extras
   self?: Inverter<any>
-  walletClient?: PopWalletClient
 }): // The result object type, maps the function names to their return types
 Simplify<{
   [N in ExtractAbiFunctionNames<A, TupleToUnion<T>>]: ReturnType<

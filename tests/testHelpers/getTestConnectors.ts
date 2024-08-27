@@ -1,4 +1,10 @@
-import { createPublicClient, http, createWalletClient, type Chain } from 'viem'
+import {
+  createPublicClient,
+  http,
+  createWalletClient,
+  type Chain,
+  type Transport,
+} from 'viem'
 import { privateKeyToAccount } from 'viem/accounts'
 import * as chains from 'viem/chains'
 
@@ -28,14 +34,14 @@ export const getTestConnectors = (chainKey?: ChainKey) => {
   // Public Client: This is used to read from the blockchain.
   const publicClient = createPublicClient({
     chain,
-    transport: http(),
+    transport: http() as Transport,
   })
 
   // Wallet Client used to write data to the blockchain
   const walletClient = createWalletClient({
     account: privateKeyToAccount(privKey),
     chain,
-    transport: http(),
+    transport: http() as Transport,
   })
 
   return {

@@ -28,9 +28,9 @@ describe('#getDeploy', () => {
         async () => {
           const { simulate } = await sdk.getDeploy({ requestedModules })
 
-          const { result } = await simulate(userArgs)
+          const { orchestratorAddress } = await simulate(userArgs)
 
-          expect(isAddress(result)).toBeTrue
+          expect(isAddress(orchestratorAddress)).toBeTrue
         },
         {
           timeout: 20000,
