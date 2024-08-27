@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.5](https://github.com/InverterNetwork/sdk/compare/v0.2.4...v0.2.5) (2024-08-27)
+
+
+### Bug Fixes
+
+* missing args type for custom factories ([ed24365](https://github.com/InverterNetwork/sdk/commit/ed24365150c61fdbea220bf1200382207d98ad54))
+
 ### [0.2.4](https://github.com/InverterNetwork/sdk/compare/v0.2.3...v0.2.4) (2024-08-26)
 
 
