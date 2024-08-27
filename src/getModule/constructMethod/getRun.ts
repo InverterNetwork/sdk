@@ -116,17 +116,14 @@ export default function getRun<
         switch (kind) {
           case 'simulate':
             // if no dependencies, run the simulate function
-            if (!hasDependencies) {
-              const simRes = await contract['simulate'][name](processedInputs, {
-                // If extras has a wallet address, use it
-                ...(extras?.walletAddress && {
-                  account: extras.walletAddress,
-                }),
-              })
+            const simRes = await contract['simulate'][name](processedInputs, {
+              // If extras has a wallet address, use it
+              ...(extras?.walletAddress && {
+                account: extras.walletAddress,
+              }),
+            })
 
-              return simRes.result
-            }
-            break
+            return simRes.result
           case 'write':
           case 'read':
             if (hasDependencies)
