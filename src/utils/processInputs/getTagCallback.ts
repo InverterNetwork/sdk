@@ -1,22 +1,11 @@
-import { Inverter } from '@/Inverter'
 import tagProcessor from '@/utils/tagProcessor'
 import { parseDecimals } from './parse'
 
-import type { PublicClient, WalletClient } from 'viem'
-import { type ProcessInputsBaseParams } from '.'
 import type {
   DecimalsTagReturn,
-  RequiredAllowances,
+  ParseGetTagCallbackParams,
   TagCallback,
 } from '@/types'
-
-export type GetTagCallbackParams = {
-  requiredAllowances: RequiredAllowances[]
-  publicClient: PublicClient
-  walletClient?: WalletClient
-  contract?: any
-  self?: Inverter<any>
-} & ProcessInputsBaseParams
 
 export default function getTagCallback({
   requiredAllowances,
@@ -28,7 +17,7 @@ export default function getTagCallback({
   extras,
   args,
   kind,
-}: GetTagCallbackParams) {
+}: ParseGetTagCallbackParams) {
   const tagCallback: TagCallback = async (type, tags, arg) => {
     let decimalsRes: DecimalsTagReturn
     let parsedAmount: bigint

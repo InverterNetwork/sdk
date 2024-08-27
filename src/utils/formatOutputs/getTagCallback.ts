@@ -1,25 +1,11 @@
-import { Inverter } from '../../Inverter'
 import tagProcessor from '../../utils/tagProcessor'
 import { formatDecimals } from './utils'
 
-import { type PublicClient } from 'viem'
 import type {
   DecimalsTagReturn,
-  ExtendedAbiParameter,
-  Extras,
+  FormatGetTagCallbackParams,
   TagCallback,
 } from '@/types'
-
-export type GetTagCallbackParams<
-  T extends readonly ExtendedAbiParameter[] = readonly ExtendedAbiParameter[],
-> = {
-  extendedOutputs: T
-  res: any
-  extras?: Extras
-  publicClient: PublicClient
-  contract?: any
-  self?: Inverter
-}
 
 export default function getTagCallback({
   publicClient,
@@ -28,7 +14,7 @@ export default function getTagCallback({
   extendedOutputs,
   extras,
   res,
-}: GetTagCallbackParams) {
+}: FormatGetTagCallbackParams) {
   const tagCallback: TagCallback = async (type, tags, arg) => {
     let decimalsRes: DecimalsTagReturn
     let formattedAmount: string

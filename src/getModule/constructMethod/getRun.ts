@@ -1,6 +1,5 @@
-import formatOutputs from '../formatOutputs'
-import { processInputs, ERC20_ABI } from '@/utils'
-import { Inverter } from '../../Inverter'
+import { processInputs, formatOutputs, ERC20_ABI } from '@/utils'
+import { Inverter } from '@/Inverter'
 
 import type {
   Extras,

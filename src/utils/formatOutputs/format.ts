@@ -1,19 +1,14 @@
 import { getJsType } from '@/utils'
 import { tuple, tupleArray, formatAny } from './utils'
 
-import type { Extras, ExtendedAbiParameter, TagCallback } from '@/types'
+import type { FormatOutputsParams } from '@/types'
 
 export default async function format({
   output,
   res,
   extras,
   tagCallback,
-}: {
-  output: ExtendedAbiParameter
-  res: any
-  extras?: Extras
-  tagCallback: TagCallback
-}) {
+}: FormatOutputsParams) {
   const { type } = output
   // These first two cases are for the recursive tuple types
   if (type === 'tuple') return await tuple({ output, res, extras, tagCallback })

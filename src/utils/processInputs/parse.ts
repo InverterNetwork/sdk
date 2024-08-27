@@ -1,16 +1,8 @@
-import { tuple, tupleArray } from './utils'
-import { parseUnits, stringToHex } from 'viem'
+import { parseAny, tuple, tupleArray } from './utils'
+import { parseUnits } from 'viem'
 
-import type { Extras, ExtendedAbiParameter, TagCallback } from '@/types'
+import type { ParseInputsParams } from '@/types'
 import { getJsType } from '..'
-
-export const parseAny = (arg: any) => {
-  try {
-    return stringToHex(JSON.stringify(arg))
-  } catch {
-    return '0x0'
-  }
-}
 
 export const parseDecimals = (arg: any, decimals: number) =>
   parseUnits(arg, decimals)
@@ -20,12 +12,7 @@ export default async function parse({
   arg,
   extras,
   tagCallback,
-}: {
-  input: ExtendedAbiParameter
-  arg: any
-  extras?: Extras
-  tagCallback: TagCallback
-}) {
+}: ParseInputsParams) {
   const { type } = input
   // These first two cases are for the recursive tuple types
   if (type === 'tuple') return await tuple({ input, arg, extras, tagCallback })

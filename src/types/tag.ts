@@ -38,9 +38,3 @@ export type TagCallback<T extends TagCallbackType = TagCallbackType> = (
   tags: readonly Tag[],
   argOrRes: any
 ) => Promise<TagCallbackReturn<T>>
-
-// (
-//   decimalsTag: Tag,
-//   approvalTag: Tag | undefined,
-//   arg: any
-// ) => Promise<bigint>
