@@ -100,8 +100,8 @@ describe('Inverter', () => {
     describe('#simulate', () => {
       it('simulates the deployment tx', async () => {
         const { simulate } = await sdk.getDeploy({ requestedModules })
-        const { orchestratorAddress } = await simulate(args)
-        expect(isAddress(orchestratorAddress)).toBeTrue
+        const { result } = await simulate(args)
+        expect(isAddress(result)).toBeTrue
       })
     })
   })

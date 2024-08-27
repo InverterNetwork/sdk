@@ -22,7 +22,7 @@ describe('Should estimate a write methods gas', async () => {
       walletClient.account.address,
       '10000',
     ])
-    console.log(res)
+
     expect(res).toContainKeys(['value', 'formatted'])
   })
 })

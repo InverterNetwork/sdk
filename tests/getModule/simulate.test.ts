@@ -24,8 +24,6 @@ describe('#getModule_simulate', async () => {
 
       const res = await workflow.fundingManager.simulate.deposit.run('10000')
 
-      console.log(res)
-
       expect(res).toBeTruthy()
     },
     { timeout: 50_000 }

@@ -59,7 +59,7 @@ export default async function getMethods<
       const orchestratorAddress = res.result as `0x${string}`
 
       return {
-        orchestratorAddress,
+        result: orchestratorAddress,
         request: res.request,
       }
     } catch (e: any) {
