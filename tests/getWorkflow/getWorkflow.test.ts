@@ -62,7 +62,7 @@ describe('#getWorkflow', async () => {
     const workflow = await getWorkflow({
       publicClient,
       walletClient,
-      orchestratorAddress: '0x59c5A9Dea8200C2CE8Ca46832530e667E4c5eD22',
+      orchestratorAddress: '0xAb70B77d3F9c16074fD536Aa21A3d0F568300bEd',
       requestedModules: {
         authorizer: 'AUT_Roles_v1',
         fundingManager: 'FM_DepositVault_v1',

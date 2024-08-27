@@ -42,10 +42,10 @@ describe('#getDeploy', () => {
             walletClient,
             requestedModules,
           })
-          const simulationResult = await simulate(
+          const { result } = await simulate(
             getDeployArgs(requestedModules, address)
           )
-          expect(isAddress(simulationResult.result as string)).toBeTrue
+          expect(isAddress(result)).toBeTrue
         })
       })
     })
@@ -84,10 +84,10 @@ describe('#getDeploy', () => {
               optionalModules: ['LM_PC_Bounties_v1'],
             },
           })
-          const simulationResult = await simulate(
+          const { result } = await simulate(
             getDeployArgs(requestedModules, address)
           )
-          expect(isAddress(simulationResult.result as string)).toBeTrue
+          expect(isAddress(result)).toBeTrue
         })
       })
     })
@@ -134,7 +134,7 @@ describe('#getDeploy', () => {
             },
           })
 
-          const simulationResult = await simulate({
+          const { result } = await simulate({
             ...getDeployArgs(requestedModules, address),
             optionalModules: {
               LM_PC_RecurringPayments_v1: {
@@ -142,7 +142,7 @@ describe('#getDeploy', () => {
               },
             },
           })
-          expect(isAddress(simulationResult.result as string)).toBeTrue
+          expect(isAddress(result)).toBeTrue
         })
       })
     })
@@ -189,7 +189,7 @@ describe('#getDeploy', () => {
             },
           })
 
-          const simulationResult = await simulate({
+          const { result } = await simulate({
             ...getDeployArgs(requestedModules, address),
             optionalModules: {
               LM_PC_Staking_v1: {
@@ -197,7 +197,7 @@ describe('#getDeploy', () => {
               },
             },
           })
-          expect(isAddress(simulationResult.result as string)).toBeTrue
+          expect(isAddress(result)).toBeTrue
         })
       })
     })
@@ -232,13 +232,13 @@ describe('#getDeploy', () => {
             },
           })
 
-          const simulationResult = await simulate({
+          const { result } = await simulate({
             ...getDeployArgs(requestedModules, address),
             optionalModules: {
               LM_PC_KPIRewarder_v1: getKpiArgs(address),
             },
           })
-          expect(isAddress(simulationResult.result as string)).toBeTrue
+          expect(isAddress(result)).toBeTrue
         })
       })
     })
@@ -278,10 +278,10 @@ describe('#getDeploy', () => {
             walletClient,
             requestedModules,
           })
-          const simulationResult = await simulate(
+          const { result } = await simulate(
             getDeployArgs(requestedModules, address)
           )
-          expect(isAddress(simulationResult.result as string)).toBeTrue
+          expect(isAddress(result)).toBeTrue
         })
       })
     })
@@ -316,11 +316,11 @@ describe('#getDeploy', () => {
           requestedModules,
         })
 
-        const simulationResult = await simulate(
+        const { result } = await simulate(
           getDeployArgs(requestedModules, address)
         )
 
-        expect(isAddress(simulationResult.result as string)).toBeTrue
+        expect(isAddress(result)).toBeTrue
       })
     })
   })

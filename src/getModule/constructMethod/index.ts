@@ -1,12 +1,13 @@
 import getRun from './getRun'
-import { Inverter } from '../../Inverter'
+import { Inverter } from '@/Inverter'
 
 import type {
   Extras,
   MethodKind,
+  PopContractReturnType,
   PopPublicClient,
   PopWalletClient,
-} from '../../types'
+} from '@/types'
 import type { ExtendedAbiFunction } from '@inverter-network/abis'
 import { estimateGasOutputs, writeOutputs } from '@/utils'
 
@@ -26,7 +27,7 @@ export default function constructMethod<
   walletClient?: PopWalletClient
   publicClient: PopPublicClient
   abiFunction: TAbiFunction
-  contract: any
+  contract: PopContractReturnType
   extras?: Extras
   kind: Kind
   self?: Inverter

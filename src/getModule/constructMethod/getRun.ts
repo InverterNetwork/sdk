@@ -8,6 +8,8 @@ import type {
   PopWalletClient,
   RequiredAllowances,
   MethodKind,
+  GetMethodResponse,
+  PopContractReturnType,
 } from '@/types'
 import { formatEther } from 'viem'
 import { handleError } from '../../utils'
@@ -75,7 +77,7 @@ export default function getRun<
 }: {
   publicClient: PopPublicClient
   name: string
-  contract: any
+  contract: PopContractReturnType
   extendedInputs: ExtenderInputs
   extendedOutputs: ExtendedOutputs
   walletClient?: PopWalletClient
@@ -83,7 +85,9 @@ export default function getRun<
   kind: Kind
   self?: Inverter
 }) {
-  const run = async (args: GetMethodArgs<typeof extendedInputs>) => {
+  const run = async (
+    args: GetMethodArgs<typeof extendedInputs>
+  ): Promise<GetMethodResponse<ExtendedOutputs, Kind>> => {
     // Parse the inputs, from user input to contract input
     const { processedInputs, requiredAllowances } = await processInputs({
       extendedInputs,
@@ -100,47 +104,51 @@ export default function getRun<
       (requiredAllowance) => requiredAllowance.amount > 0n
     )
 
-    const estimateGas = async () => {
-      const value = await contract['estimateGas'][name](processedInputs)
-      const formatted = formatEther(value)
-      const result = {
-        value,
-        formatted,
-      }
-      return result
-    }
-
-    // Get the result from the contract, based on the kind and simulate params
-    const res = await (async () => {
+    /**
+     * Resposne data based on the kind of method
+     * catch and try decode the error
+     */
+    const res = await (() => {
       try {
-        switch (kind) {
-          case 'simulate':
+        const selectedRes = {
+          simulate: async () => {
             // if no dependencies, run the simulate function
-            if (!hasDependencies) {
-              const simRes = await contract['simulate'][name](processedInputs, {
-                // If extras has a wallet address, use it
-                ...(extras?.walletAddress && {
-                  account: extras.walletAddress,
-                }),
-              })
+            const simRes = await contract.simulate[name](processedInputs, {
+              // If extras has a wallet address, use it
+              ...(extras?.walletAddress && {
+                account: extras.walletAddress,
+              }),
+            })
 
-              return simRes.result
-            }
-            break
-          case 'write':
-          case 'read':
+            return simRes
+          },
+          write: async () => {
             if (hasDependencies)
               return await runWithDependencies({
-                mainFunction: contract[kind][name],
+                mainFunction: contract.write[name],
                 mainArgs: processedInputs,
                 requiredAllowances,
                 publicClient,
                 walletClient,
               })
-            else return await contract[kind][name](processedInputs)
-          case 'estimateGas':
-            return await estimateGas()
-        }
+
+            return await contract.write[name](processedInputs)
+          },
+          read: async () => {
+            return await contract.read[name](processedInputs)
+          },
+          estimateGas: async () => {
+            const value = await contract.estimateGas[name](processedInputs)
+            const formatted = formatEther(value)
+            const result = {
+              value,
+              formatted,
+            }
+            return result
+          },
+        }[kind]()
+
+        return selectedRes
       } catch (e: any) {
         throw handleError({ abi: contract.abi, error: e })
       }
@@ -148,7 +156,7 @@ export default function getRun<
 
     // Format the outputs, from contract output to user output-
     // and pass the return type to type param
-    const formattedRes = await formatOutputs<ExtendedOutputs, Kind>({
+    const formattedRes = await formatOutputs({
       extendedOutputs,
       res,
       extras,
@@ -157,7 +165,17 @@ export default function getRun<
       self,
     })
 
-    return formattedRes
+    const result = {
+      read: formattedRes,
+      write: formattedRes,
+      simulate: {
+        result: formattedRes,
+        request: res.request,
+      },
+      estimateGas: formattedRes,
+    }[kind]
+
+    return result
   }
 
   return run

@@ -9,8 +9,8 @@ export * from './schema'
 export * from './args'
 
 export type GetDeployParams<
-  T extends RequestedModules<FT>,
-  FT extends FactoryType = 'default',
+  T extends RequestedModules<FT extends undefined ? 'default' : FT>,
+  FT extends FactoryType | undefined = undefined,
 > = {
   publicClient: PublicClient
   walletClient: PopWalletClient

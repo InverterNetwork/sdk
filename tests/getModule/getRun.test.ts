@@ -1,20 +1,27 @@
 import { describe, it, beforeEach, expect } from 'bun:test'
 
-import { getTestConnectors } from '../testHelpers/getTestConnectors'
-import getRun from '../../src/getModule/constructMethod/getRun'
-import { getContract } from 'viem'
+import { getContract, type Abi } from 'viem'
 import { getModuleData } from '@inverter-network/abis'
-import { ERC20_ABI, ERC20_MINTABLE_ABI } from '../../src/utils/constants'
-import type { Extras, ExtendedAbiParameter } from '../../src'
-import { USDC_SEPOLIA } from '../../src/getDeploy/constants'
+import { ERC20_ABI, ERC20_MINTABLE_ABI } from '@'
+import { USDC_SEPOLIA } from '@/getDeploy/constants'
+
+import type { Extras, ExtendedAbiParameter } from '@/types'
+
+import { getTestConnectors } from '../testHelpers/getTestConnectors'
 import {
   deployedBcModule,
   deployedKpiModule,
   iUSD,
 } from '../testHelpers/getTestArgs'
+import getRun from '@/getModule/constructMethod/getRun'
 
 describe('#getRun', () => {
   const { publicClient, walletClient } = getTestConnectors()
+
+  const client = {
+    wallet: walletClient,
+    public: publicClient,
+  }
 
   const minAmountOut = '1'
   const depositAmount = '1000000'
@@ -94,10 +101,11 @@ describe('#getRun', () => {
         defaultToken: iUSD,
       } as Extras
       const { abi } = getModuleData('FM_BC_Bancor_Redeeming_VirtualSupply_v1')
+
       const contract = getContract({
-        abi,
+        abi: abi as Abi,
         address: deployedBcModule,
-        client: walletClient,
+        client,
       })
 
       it('returns the run function', async () => {
@@ -141,10 +149,11 @@ describe('#getRun', () => {
         defaultToken: USDC_SEPOLIA,
       } as Extras
       const { abi } = getModuleData('LM_PC_KPIRewarder_v1')
+
       const contract = getContract({
-        abi,
+        abi: abi as Abi,
         address: deployedKpiModule,
-        client: walletClient,
+        client,
       })
 
       it('returns a functional run method', async () => {

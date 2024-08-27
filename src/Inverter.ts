@@ -63,8 +63,8 @@ export class Inverter<W extends PopWalletClient | undefined = undefined> {
   getDeployOptions = getDeployOptions
 
   getDeploy<
-    T extends RequestedModules<FT>,
-    FT extends FactoryType = 'default',
+    T extends RequestedModules<FT extends undefined ? 'default' : FT>,
+    FT extends FactoryType | undefined = undefined,
   >({
     requestedModules,
     factoryType,
@@ -101,7 +101,12 @@ export class Inverter<W extends PopWalletClient | undefined = undefined> {
     })
   }
 
-  getModule<N extends ModuleName>(params: GetModuleParams<N, W>) {
+  getModule<N extends ModuleName>(
+    params: Omit<
+      GetModuleParams<N, W>,
+      'walletClient' | 'publicClient' | 'self'
+    >
+  ) {
     return getModule({
       ...params,
       publicClient: this.publicClient,

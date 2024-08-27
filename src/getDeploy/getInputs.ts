@@ -59,7 +59,7 @@ export const getOtherFactoryTypeInputs = <FT extends FactoryType>(
 
 export default function getInputs<
   T extends RequestedModules,
-  FT extends FactoryType = 'default',
+  FT extends FactoryType,
 >(requestedModules: T, factoryType: FT): DeploySchema<T, FT> {
   const mandatoryResult = MANDATORY_MODULES.reduce(
     (result, moduleType) => {

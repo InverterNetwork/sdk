@@ -1,3 +1,4 @@
+import type { SimulateContractReturnType } from 'viem'
 import type { ExtendedParametersToPrimitiveType } from './primitive'
 
 export type MethodKind = 'read' | 'write' | 'simulate' | 'estimateGas'
@@ -32,7 +33,7 @@ type InferReturn<O> =
 export type GetMethodResponse<O, T extends MethodKind> = T extends 'estimateGas'
   ? EstimateGasReturn
   : T extends 'simulate'
-    ? InferReturn<O>
+    ? { result: InferReturn<O>; request: SimulateContractReturnType['request'] }
     : T extends 'write'
       ? `0x${string}`
       : InferReturn<O>

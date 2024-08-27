@@ -1,5 +1,9 @@
 import type { ModuleName } from '@inverter-network/abis'
-import type { IssuanceTokenArgs, OrchestratorArgs } from './static'
+import type {
+  InitialPurchaseAmountArgs,
+  IssuanceTokenArgs,
+  OrchestratorArgs,
+} from './static'
 import type {
   OmitNever,
   GetDeploymentInputs,
@@ -49,7 +53,11 @@ export type GetUserArgs<
     authorizer: GetUserModuleArg<T['authorizer']>
     paymentProcessor: GetUserModuleArg<T['paymentProcessor']>
     optionalModules: GetUserOptionalArgs<T['optionalModules']>
-    issuanceToken: FT extends 'restricted-pim' ? IssuanceTokenArgs : never
-    initialPurchaseAmount: FT extends 'immutable-pim' ? string : never
+    issuanceToken: FT extends 'restricted-pim' | 'immutable-pim'
+      ? IssuanceTokenArgs
+      : never
+    initialPurchaseAmount: FT extends 'immutable-pim'
+      ? InitialPurchaseAmountArgs
+      : never
   }>
 >

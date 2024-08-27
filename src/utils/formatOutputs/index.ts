@@ -1,18 +1,10 @@
 import format from './format'
 
 import { isDefinedExtendedAbiMemberArray } from '@/types'
-import type {
-  ExtendedAbiParameter,
-  GetMethodResponse,
-  FormatGetTagCallbackParams,
-  MethodKind,
-} from '@/types'
+import type { FormatGetTagCallbackParams } from '@/types'
 import getTagCallback from './getTagCallback'
 
-export async function formatOutputs<
-  T extends readonly ExtendedAbiParameter[],
-  Kind extends MethodKind,
->(props: FormatGetTagCallbackParams<T>): Promise<GetMethodResponse<T, Kind>> {
+export async function formatOutputs(props: FormatGetTagCallbackParams) {
   const { extendedOutputs, res, extras } = props
 
   // format the outputs

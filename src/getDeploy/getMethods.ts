@@ -56,12 +56,12 @@ export default async function getMethods<
         account: walletClient.account.address,
       })
 
-      const result = { result: res.result, request: res.request } as {
-        result: `0x${string}`
-        request: typeof res.request
-      }
+      const orchestratorAddress = res.result as `0x${string}`
 
-      return result
+      return {
+        result: orchestratorAddress,
+        request: res.request,
+      }
     } catch (e: any) {
       throw handleError({ requestedModules, error: e })
     }

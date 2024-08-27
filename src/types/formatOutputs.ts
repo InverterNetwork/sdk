@@ -21,10 +21,8 @@ export type FormatOutputTupleCaseParams = {
   tagCallback: TagCallback
 }
 
-export type FormatGetTagCallbackParams<
-  T extends readonly ExtendedAbiParameter[] = readonly ExtendedAbiParameter[],
-> = {
-  extendedOutputs: T
+export type FormatGetTagCallbackParams = {
+  extendedOutputs: readonly ExtendedAbiParameter[]
   res: any
   extras?: Extras
   publicClient: PublicClient
