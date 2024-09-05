@@ -4,6 +4,7 @@ import type { IfNever, IsEmptyObject } from 'type-fest-4'
 export * from './primitive'
 export * from './method'
 export * from './blockchain'
+export * from './cache'
 
 export type OmitNever<T> = {
   [K in keyof T as IfNever<T[K], never, K>]: T[K]
