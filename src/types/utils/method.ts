@@ -3,6 +3,8 @@ import type { ExtendedParametersToPrimitiveType } from './primitive'
 
 export type MethodKind = 'read' | 'write' | 'simulate' | 'estimateGas'
 
+export type DeployMethodKind = 'write' | 'simulate' | 'estimateGas'
+
 export type EstimateGasReturn = {
   value: string
   formatted: string

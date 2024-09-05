@@ -1,7 +1,7 @@
 {
   "name": "@inverter-network/sdk",
   "description": "INVERTER typescript SDK",
-  "version": "0.2.4",
+  "version": "0.2.7",
   "exports": {
     ".": {
       "types": "./dist/types/index.d.ts",
@@ -52,28 +52,28 @@
     ]
   },
   "peerDependencies": {
-    "abitype": "^1",
-    "eslint": "^8",
+    "abitype": "^1.0.6",
+    "eslint": "^8.57.0",
     "typescript": "^5.5.4",
-    "viem": "^2.7.6"
+    "viem": "^2.19.4"
   },
   "dependencies": {
-    "@inverter-network/abis": "0.2.3",
-    "type-fest-4": "npm:type-fest@^4"
+    "@inverter-network/abis": "0.2.4",
+    "type-fest-4": "npm:type-fest@^4.26.0"
   },
   "devDependencies": {
-    "@commitlint/cli": "^18",
-    "@commitlint/config-conventional": "^18",
-    "@types/bun": "^1",
-    "@typescript-eslint/eslint-plugin": "^6",
-    "@typescript-eslint/parser": "^6",
-    "eslint-config-prettier": "^9",
-    "eslint-plugin-prettier": "^5",
-    "husky": "^9",
-    "lint-staged": "^15",
-    "pinst": "^3",
-    "prettier": "^3",
-    "standard-version": "^9",
+    "@commitlint/cli": "^18.6.1",
+    "@commitlint/config-conventional": "^18.6.3",
+    "@types/bun": "^1.1.8",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "husky": "^9.1.5",
+    "lint-staged": "^15.2.10",
+    "pinst": "^3.0.0",
+    "prettier": "^3.3.3",
+    "standard-version": "^9.5.0",
     "ts-add-js-extension": "^1.6.4",
     "tsc-alias": "^1.8.10"
   },

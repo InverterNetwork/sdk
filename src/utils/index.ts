@@ -5,6 +5,7 @@ export * from './handleError'
 export * from './constants'
 export * from './processInputs'
 export * from './formatOutputs'
+export * from './processAllowances'
 
 export const getEntries = <T extends object>(obj: T): Entries<T> =>
   Object.entries(obj) as any

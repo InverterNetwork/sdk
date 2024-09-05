@@ -16,7 +16,7 @@ import type {
   GetUserArgs,
   UserModuleArg,
   UserArgs,
-  MethodKind,
+  DeployMethodKind,
   FactoryType,
 } from '@/types'
 
@@ -25,7 +25,7 @@ let extras: Extras
 export type JointParams = {
   publicClient: PublicClient
   walletClient: PopWalletClient
-  kind: MethodKind
+  kind: DeployMethodKind
   self?: Inverter
 }
 
