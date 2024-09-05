@@ -2,17 +2,14 @@ import { ERC20_ABI } from '@/utils/constants'
 import { Inverter } from '@/Inverter'
 
 import type { PublicClient } from 'viem'
-import type { Extras, ExtendedAbiParameter, DecimalsTagReturn } from '@/types'
+import type {
+  Extras,
+  ExtendedAbiParameter,
+  DecimalsTagReturn,
+  CacheTokenProps,
+} from '@/types'
 import type { Tag } from '@inverter-network/abis'
 import type { Split } from 'type-fest-4'
-
-type CacheTokenProps = {
-  self: Inverter
-  tag: Tag
-  tokenAddress?: `0x${string}`
-  moduleAddress: `0x${string}`
-  decimals: number
-}
 
 const cacheToken = (props: CacheTokenProps) => {
   const key = `${props.moduleAddress}:${props.tag}`
