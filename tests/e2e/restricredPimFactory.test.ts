@@ -1,11 +1,16 @@
-import { expect, describe, it } from 'bun:test'
+import { expect, describe, it, beforeAll } from 'bun:test'
 
 import { getTestConnectors } from '../testHelpers/getTestConnectors'
 import { Inverter } from '../../src/Inverter'
-import { getDeployArgs, iUSD } from '../testHelpers/getTestArgs'
+import {
+  getDeployArgs,
+  iUSD,
+  restrictedPimFactory,
+} from '../testHelpers/getTestArgs'
 import { ERC20_ABI, ERC20_MINTABLE_ABI, type RequestedModules } from '../../src'
-import { isHex, parseUnits } from 'viem'
+import { isHex, parseUnits, getContract } from 'viem'
 import { getModuleSchema } from '../../src/getDeploy/getInputs'
+import { getModuleData } from '@inverter-network/abis'
 
 describe('#restrictedPIM', async () => {
   const { publicClient, walletClient } = getTestConnectors()
@@ -37,6 +42,49 @@ describe('#restrictedPIM', async () => {
 
   let orchestrator: `0x${string}`
 
+  beforeAll(async () => {
+    const amount = parseUnits(
+      deployArgs.fundingManager.bondingCurveParams.initialCollateralSupply,
+      18
+    )
+    const tokenInstance = getContract({
+      address: iUSD,
+      client: walletClient,
+      abi: ERC20_MINTABLE_ABI,
+    })
+
+    // mint test tokens to deployer
+    console.info(`Minting ${amount} tokens (${iUSD}) to ${deployer}...`)
+    const hash1 = await tokenInstance.write.mint([deployer, amount])
+    await publicClient.waitForTransactionReceipt({ hash: hash1 })
+    console.info('✅ Tokens minted')
+
+    // approving test tokens to factory
+    console.info(`Approving test tokens to factory...`)
+    const hash2 = await tokenInstance.write.approve([
+      restrictedPimFactory,
+      amount,
+    ])
+    await publicClient.waitForTransactionReceipt({ hash: hash2 })
+    console.info('✅ Tokens minted')
+
+    const factoryInstance = getContract({
+      address: restrictedPimFactory,
+      client: walletClient,
+      abi: getModuleData('Restricted_PIM_Factory_v1').abi,
+    })
+
+    // add funding to factory
+    console.log('Adding funding to factory...')
+    const hash3 = await factoryInstance.write.addFunding([
+      deployer,
+      iUSD,
+      amount,
+    ])
+    await publicClient.waitForTransactionReceipt({ hash: hash3 })
+    console.log('✅ Funding added')
+  })
+
   it('match expected inputs', () => {
     expect(inputs).toEqual({
       orchestrator: getModuleSchema('OrchestratorFactory_v1'),
@@ -67,7 +115,6 @@ describe('#restrictedPIM', async () => {
     'deploys the BC',
     async () => {
       const { orchestratorAddress, transactionHash } = await run(deployArgs)
-
       await publicClient.waitForTransactionReceipt({
         hash: transactionHash,
       })
