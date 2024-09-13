@@ -198,11 +198,6 @@ export const handlePimFactoryApprove = async ({
   if (!isPimArgs(userArgs, factoryType)) return
   // handle the PIM factory approve
   switch (factoryType) {
-    case 'restricted-pim':
-      await handle(
-        userArgs.fundingManager.bondingCurveParams.initialCollateralSupply
-      )
-      break
     case 'immutable-pim':
       await handle(userArgs.initialPurchaseAmount)
       break
