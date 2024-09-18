@@ -101,7 +101,7 @@ deploy_protocol() {
         printf "Failed to source dev.env ❌\n" >&2
         return 1
     }
-    DEPLOYER_PRIVATE_KEY="$DEPLOYER_PRIVATE_KEY" forge script "$DEPLOY_SCRIPT" --rpc-url "$RPC_URL" --broadcast --silent ||
+    DEPLOYER_PRIVATE_KEY="$DEPLOYER_PRIVATE_KEY" forge script "$DEPLOY_SCRIPT" --rpc-url "$RPC_URL" --broadcast -v ||
         {
             printf "Deployment failed ❌\n" >&2
             return 1
