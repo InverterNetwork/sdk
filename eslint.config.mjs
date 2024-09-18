@@ -5,7 +5,7 @@ import prettier from 'eslint-plugin-prettier'
 
 export default tseslint.config({
   files: ['**/*.{mjs,cjs,js,ts}'],
-  ignores: ['**/*.{config,test}.{mjs,cjs,js,ts}'],
+  ignores: ['**/*.{config,test}.{mjs,cjs,js,ts}', '.*.mjs'],
   plugins: {
     '@typescript-eslint': tseslint.plugin,
     prettier,
