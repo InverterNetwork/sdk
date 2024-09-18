@@ -9,6 +9,8 @@ DEPLOYER_PRIVATE_KEY="0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7b
 TEST_PRIVATE_KEY="TEST_PRIVATE_KEY=$DEPLOYER_PRIVATE_KEY"
 RPC_URL="http://127.0.0.1:8545"
 WAIT=false # Default to false
+ORCHESTRATOR_FACTORY_ADDRESS=""
+ERC20_MOCK_ADDRESS=""
 
 # Function to detect OS
 detect_os() {
@@ -63,9 +65,8 @@ install_dependency() {
             printf "Failed to install Foundry ❌\n" >&2
             return 1
         fi
-        # Source the shell config before running foundryup to ensure paths are set
         source "$HOME/.bashrc" || source "$HOME/.zshrc"
-        foundryup # ensure the latest version of Foundry is installed
+        foundryup
         ;;
     *)
         printf "Unknown dependency $dep ❓\n" >&2
@@ -101,12 +102,27 @@ deploy_protocol() {
         printf "Failed to source dev.env ❌\n" >&2
         return 1
     }
-    DEPLOYER_PRIVATE_KEY="$DEPLOYER_PRIVATE_KEY" forge script "$DEPLOY_SCRIPT" --rpc-url "$RPC_URL" --broadcast -v ||
-        {
-            printf "Deployment failed ❌\n" >&2
-            return 1
-        }
+
+    # Capture deployment output for processing
+    local deploy_output
+    if ! deploy_output=$(DEPLOYER_PRIVATE_KEY="$DEPLOYER_PRIVATE_KEY" forge script "$DEPLOY_SCRIPT" --rpc-url "$RPC_URL" --broadcast -v 2>&1); then
+        printf "Deployment failed ❌\n" >&2
+        return 1
+    fi
+
     printf "Deployment successful 🚀\n"
+
+    # Extract OrchestratorFactory and ERC20Mock addresses from deployment output
+    ORCHESTRATOR_FACTORY_ADDRESS=$(echo "$deploy_output" | grep -oE 'OrchestratorFactory_v1 InverterBeaconProxy_v1: 0x[0-9a-fA-F]+' | awk '{print $3}')
+    ERC20_MOCK_ADDRESS=$(echo "$deploy_output" | grep -oE 'ERC20Mock iUSD: 0x[0-9a-fA-F]+' | awk '{print $3}')
+
+    if [[ -z "$ORCHESTRATOR_FACTORY_ADDRESS" || -z "$ERC20_MOCK_ADDRESS" ]]; then
+        printf "Failed to extract contract addresses ❌\n" >&2
+        return 1
+    fi
+
+    printf "OrchestratorFactory Address: $ORCHESTRATOR_FACTORY_ADDRESS ✅\n"
+    printf "ERC20Mock Address: $ERC20_MOCK_ADDRESS ✅\n"
 }
 
 # Function to update .env file
@@ -114,8 +130,12 @@ update_env() {
     printf "Checking and updating .env file 🔑\n"
     if [[ ! -f "$ENV_FILE" ]]; then
         printf ".env file does not exist, creating it 🛠️\n"
-        echo "$TEST_PRIVATE_KEY" >"$ENV_FILE"
-        printf "Added TEST_PRIVATE_KEY to new .env file 📄\n"
+        {
+            echo "$TEST_PRIVATE_KEY"
+            echo "TEST_ORCHESTRATOR_FACTORY_ADDRESS=$ORCHESTRATOR_FACTORY_ADDRESS"
+            echo "TEST_ERC20_MOCK_ADDRESS=$ERC20_MOCK_ADDRESS"
+        } >"$ENV_FILE"
+        printf "Added variables to new .env file 📄\n"
     else
         if grep -q "TEST_PRIVATE_KEY" "$ENV_FILE"; then
             printf "Updating existing TEST_PRIVATE_KEY value in .env 🔄\n"
@@ -125,6 +145,26 @@ update_env() {
             printf "Adding TEST_PRIVATE_KEY to .env 🆕\n"
             echo "$TEST_PRIVATE_KEY" >>"$ENV_FILE"
             printf "TEST_PRIVATE_KEY added to .env file ✅\n"
+        fi
+
+        if grep -q "TEST_ORCHESTRATOR_FACTORY_ADDRESS" "$ENV_FILE"; then
+            printf "Updating existing TEST_ORCHESTRATOR_FACTORY_ADDRESS value in .env 🔄\n"
+            sed -i'' -e "s/^TEST_ORCHESTRATOR_FACTORY_ADDRESS=.*/TEST_ORCHESTRATOR_FACTORY_ADDRESS=$ORCHESTRATOR_FACTORY_ADDRESS/" "$ENV_FILE"
+            printf "TEST_ORCHESTRATOR_FACTORY_ADDRESS updated in .env ✅\n"
+        else
+            printf "Adding TEST_ORCHESTRATOR_FACTORY_ADDRESS to .env 🆕\n"
+            echo "TEST_ORCHESTRATOR_FACTORY_ADDRESS=$ORCHESTRATOR_FACTORY_ADDRESS" >>"$ENV_FILE"
+            printf "TEST_ORCHESTRATOR_FACTORY_ADDRESS added to .env file ✅\n"
+        fi
+
+        if grep -q "TEST_ERC20_MOCK_ADDRESS" "$ENV_FILE"; then
+            printf "Updating existing TEST_ERC20_MOCK_ADDRESS value in .env 🔄\n"
+            sed -i'' -e "s/^TEST_ERC20_MOCK_ADDRESS=.*/TEST_ERC20_MOCK_ADDRESS=$ERC20_MOCK_ADDRESS/" "$ENV_FILE"
+            printf "TEST_ERC20_MOCK_ADDRESS updated in .env ✅\n"
+        else
+            printf "Adding TEST_ERC20_MOCK_ADDRESS to .env 🆕\n"
+            echo "TEST_ERC20_MOCK_ADDRESS=$ERC20_MOCK_ADDRESS" >>"$ENV_FILE"
+            printf "TEST_ERC20_MOCK_ADDRESS added to .env file ✅\n"
         fi
     fi
 }
@@ -147,7 +187,6 @@ parse_args() {
 
 # Main function
 main() {
-    # Parse arguments
     parse_args "$@"
 
     detect_os || {
@@ -199,5 +238,4 @@ main() {
     fi
 }
 
-# Execute the main function with argument parsing
 main "$@"
