@@ -58,11 +58,14 @@ install_dependency() {
         ;;
     forge | anvil)
         printf "Installing Foundry 🛠️\n"
+        local INSTALL_URL="https://foundry.paradigm.xyz"
         if ! curl -L $INSTALL_URL | bash; then
             printf "Failed to install Foundry ❌\n" >&2
             return 1
         fi
+        # Source the shell config before running foundryup to ensure paths are set
         source "$HOME/.bashrc" || source "$HOME/.zshrc"
+        foundryup # ensure the latest version of Foundry is installed
         ;;
     *)
         printf "Unknown dependency $dep ❓\n" >&2
