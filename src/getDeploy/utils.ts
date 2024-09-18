@@ -52,11 +52,24 @@ export const getViemMethods = async ({
 
   if (!chainId) throw new Error('Chain ID not found')
 
-  const address = {
-    'restricted-pim': deployment.restrictedPimFactory,
-    'immutable-pim': deployment.immutablePimFactory,
-    default: deployment.orchestratorFactory,
-  }[factoryType]?.[chainId]
+  const address = (() => {
+    switch (factoryType) {
+      case 'restricted-pim':
+        return deployment.restrictedPimFactory?.[chainId]
+      case 'immutable-pim':
+        return deployment.immutablePimFactory?.[chainId]
+      case 'default':
+        return (
+          (process.env.TEST_ORCHESTRATOR_FACTORY_ADDRESS as
+            | `0x${string}`
+            | undefined) || deployment.orchestratorFactory?.[chainId]
+        )
+      default:
+        throw new Error('Invalid factory type')
+    }
+  })()
+
+  console.log('ORCHESTRATOR:', address)
 
   if (!address)
     throw new Error('Chain ID is not supported @ deployment factory address')

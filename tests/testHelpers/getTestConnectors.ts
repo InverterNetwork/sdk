@@ -1,33 +1,19 @@
-import {
-  createPublicClient,
-  http,
-  createWalletClient,
-  // type Chain,
-  // type Transport,
-} from 'viem'
+import type { PopPublicClient, PopWalletClient } from '@'
+import { http, createPublicClient, createWalletClient } from 'viem'
 import { privateKeyToAccount } from 'viem/accounts'
-import * as chains from 'viem/chains'
 
-import { sepolia } from 'viem/chains'
-
-export const local = {
-  ...sepolia,
-  rpcUrls: {
-    default: {
-      http: [`http://127.0.0.1:8545`],
-    },
-  },
-} as unknown as typeof sepolia
-
-export type ChainKey = keyof typeof chains
+import { anvil } from 'viem/chains'
 
 const privKey = process.env['TEST_PRIVATE_KEY'] as `0x${string}` | undefined
 
-if (!privKey) throw new Error('Error: please add priv key to .env')
+if (!privKey) throw new Error('TEST_PRIVATE_KEY not found')
 
-export const getTestConnectors = () => {
+export const getTestConnectors = (): {
+  publicClient: PopPublicClient
+  walletClient: PopWalletClient
+} => {
   // const chain = <Chain>(chainKey ? chains[chainKey] : optimismSepolia)
-  const chain = local
+  const chain = anvil
   // Public Client: This is used to read from the blockchain.
   const publicClient = createPublicClient({
     chain,

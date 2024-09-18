@@ -5,12 +5,14 @@ INSTALL_URL="https://foundry.paradigm.xyz"
 DEPS=("curl" "make" "forge" "anvil")
 DEPLOY_SCRIPT="script/deploymentScript/TestnetDeploymentScript.s.sol"
 ENV_FILE=".env"
+# ANVIL_PID_FILE=".anvil.pid"
 DEPLOYER_PRIVATE_KEY="0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
 TEST_PRIVATE_KEY="TEST_PRIVATE_KEY=$DEPLOYER_PRIVATE_KEY"
 RPC_URL="http://127.0.0.1:8545"
 WAIT=false # Default to false
 ORCHESTRATOR_FACTORY_ADDRESS=""
 ERC20_MOCK_ADDRESS=""
+BANCOR_FORMULA_ADDRESS=""
 
 # Function to detect OS
 detect_os() {
@@ -60,8 +62,7 @@ install_dependency() {
         ;;
     forge | anvil)
         printf "Installing Foundry 🛠️\n"
-        local INSTALL_URL="https://foundry.paradigm.xyz"
-        if ! curl -L $INSTALL_URL | bash; then
+        if ! curl -L "$INSTALL_URL" | bash; then
             printf "Failed to install Foundry ❌\n" >&2
             return 1
         fi
@@ -82,7 +83,7 @@ start_anvil() {
     pkill anvil
     anvil &
     ANVIL_PID=$!
-    export ANVIL_PID
+    # echo "$ANVIL_PID" >"$ANVIL_PID_FILE"
 }
 
 # Function to handle contract installation
@@ -103,9 +104,9 @@ deploy_protocol() {
         return 1
     }
 
-    # Capture deployment output for processing
+    # Capture deployment output and log to console
     local deploy_output
-    if ! deploy_output=$(DEPLOYER_PRIVATE_KEY="$DEPLOYER_PRIVATE_KEY" forge script "$DEPLOY_SCRIPT" --rpc-url "$RPC_URL" --broadcast -v 2>&1); then
+    if ! deploy_output=$(DEPLOYER_PRIVATE_KEY="$DEPLOYER_PRIVATE_KEY" forge script "$DEPLOY_SCRIPT" --rpc-url "$RPC_URL" --broadcast -v 2>&1 | tee /dev/tty); then
         printf "Deployment failed ❌\n" >&2
         return 1
     fi
@@ -115,8 +116,9 @@ deploy_protocol() {
     # Extract OrchestratorFactory and ERC20Mock addresses from deployment output
     ORCHESTRATOR_FACTORY_ADDRESS=$(echo "$deploy_output" | grep -oE 'OrchestratorFactory_v1 InverterBeaconProxy_v1: 0x[0-9a-fA-F]+' | awk '{print $3}')
     ERC20_MOCK_ADDRESS=$(echo "$deploy_output" | grep -oE 'ERC20Mock iUSD: 0x[0-9a-fA-F]+' | awk '{print $3}')
+    BANCOR_FORMULA_ADDRESS=$(echo "$deploy_output" | grep -oE 'BancorFormula Implementation: 0x[0-9a-fA-F]+' | awk '{print $3}')
 
-    if [[ -z "$ORCHESTRATOR_FACTORY_ADDRESS" || -z "$ERC20_MOCK_ADDRESS" ]]; then
+    if [[ -z "$ORCHESTRATOR_FACTORY_ADDRESS" || -z "$ERC20_MOCK_ADDRESS" || -z "$BANCOR_FORMULA_ADDRESS" ]]; then
         printf "Failed to extract contract addresses ❌\n" >&2
         return 1
     fi
@@ -125,48 +127,39 @@ deploy_protocol() {
     printf "ERC20Mock Address: $ERC20_MOCK_ADDRESS ✅\n"
 }
 
+# Function to update or add a variable in the .env file
+update_env_var() {
+    local var_name="$1"
+    local var_value="$2"
+    local file="$3"
+
+    if grep -q "^$var_name=" "$file"; then
+        printf "Updating existing %s value in .env 🔄\n" "$var_name"
+        sed -i.bak -e "s/^$var_name=.*/$var_name=$var_value/" "$file"
+        printf "%s updated in .env ✅\n" "$var_name"
+    else
+        printf "Adding %s to .env 🆕\n" "$var_name"
+        echo "$var_name=$var_value" >>"$file"
+        printf "%s added to .env ✅\n" "$var_name"
+    fi
+}
+
 # Function to update .env file
 update_env() {
     printf "Checking and updating .env file 🔑\n"
+
     if [[ ! -f "$ENV_FILE" ]]; then
         printf ".env file does not exist, creating it 🛠️\n"
-        {
-            echo "$TEST_PRIVATE_KEY"
-            echo "TEST_ORCHESTRATOR_FACTORY_ADDRESS=$ORCHESTRATOR_FACTORY_ADDRESS"
-            echo "TEST_ERC20_MOCK_ADDRESS=$ERC20_MOCK_ADDRESS"
-        } >"$ENV_FILE"
-        printf "Added variables to new .env file 📄\n"
-    else
-        if grep -q "TEST_PRIVATE_KEY" "$ENV_FILE"; then
-            printf "Updating existing TEST_PRIVATE_KEY value in .env 🔄\n"
-            sed -i'' -e "s/^TEST_PRIVATE_KEY=.*/$TEST_PRIVATE_KEY/" "$ENV_FILE"
-            printf "TEST_PRIVATE_KEY updated in .env ✅\n"
-        else
-            printf "Adding TEST_PRIVATE_KEY to .env 🆕\n"
-            echo "$TEST_PRIVATE_KEY" >>"$ENV_FILE"
-            printf "TEST_PRIVATE_KEY added to .env file ✅\n"
-        fi
-
-        if grep -q "TEST_ORCHESTRATOR_FACTORY_ADDRESS" "$ENV_FILE"; then
-            printf "Updating existing TEST_ORCHESTRATOR_FACTORY_ADDRESS value in .env 🔄\n"
-            sed -i'' -e "s/^TEST_ORCHESTRATOR_FACTORY_ADDRESS=.*/TEST_ORCHESTRATOR_FACTORY_ADDRESS=$ORCHESTRATOR_FACTORY_ADDRESS/" "$ENV_FILE"
-            printf "TEST_ORCHESTRATOR_FACTORY_ADDRESS updated in .env ✅\n"
-        else
-            printf "Adding TEST_ORCHESTRATOR_FACTORY_ADDRESS to .env 🆕\n"
-            echo "TEST_ORCHESTRATOR_FACTORY_ADDRESS=$ORCHESTRATOR_FACTORY_ADDRESS" >>"$ENV_FILE"
-            printf "TEST_ORCHESTRATOR_FACTORY_ADDRESS added to .env file ✅\n"
-        fi
-
-        if grep -q "TEST_ERC20_MOCK_ADDRESS" "$ENV_FILE"; then
-            printf "Updating existing TEST_ERC20_MOCK_ADDRESS value in .env 🔄\n"
-            sed -i'' -e "s/^TEST_ERC20_MOCK_ADDRESS=.*/TEST_ERC20_MOCK_ADDRESS=$ERC20_MOCK_ADDRESS/" "$ENV_FILE"
-            printf "TEST_ERC20_MOCK_ADDRESS updated in .env ✅\n"
-        else
-            printf "Adding TEST_ERC20_MOCK_ADDRESS to .env 🆕\n"
-            echo "TEST_ERC20_MOCK_ADDRESS=$ERC20_MOCK_ADDRESS" >>"$ENV_FILE"
-            printf "TEST_ERC20_MOCK_ADDRESS added to .env file ✅\n"
-        fi
+        touch "$ENV_FILE"
+        printf ".env file created 📄\n"
     fi
+
+    update_env_var "TEST_PRIVATE_KEY" "$DEPLOYER_PRIVATE_KEY" "$ENV_FILE"
+    update_env_var "TEST_ORCHESTRATOR_FACTORY_ADDRESS" "$ORCHESTRATOR_FACTORY_ADDRESS" "$ENV_FILE"
+    update_env_var "TEST_ERC20_MOCK_ADDRESS" "$ERC20_MOCK_ADDRESS" "$ENV_FILE"
+    update_env_var "TEST_BANCOR_FORMULA_ADDRESS" "$BANCOR_FORMULA_ADDRESS" "$ENV_FILE"
+
+    rm -f .env.bak
 }
 
 # Function to parse command line arguments

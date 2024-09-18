@@ -15,9 +15,9 @@ export const curveShape = {
   },
 } as const
 
-export const iUSD = '0xd5018fA63924d1BE2C2C42aBDc24bD754499F97c' as const // token with unpermissioned mint function
-export const bancorFormula =
-  '0xe9dD0B0345c0ed96a8a7f9fC0090d63156417E2B' as const
+export const iUSD = process.env.TEST_ERC20_MOCK_ADDRESS as `0x${string}` // token with unpermissioned mint function
+export const bancorFormula = process.env
+  .TEST_BANCOR_FORMULA_ADDRESS as `0x${string}`
 export const deployedBcModule =
   '0x815f393008b8C6aD2C3AB9E7D79bb836B8c87941' as const
 export const deployedKpiModule =
