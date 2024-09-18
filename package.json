@@ -38,8 +38,6 @@
     "postpack": "pinst --enable",
     "pre-commit": "lint-staged",
     "pre-push": "bun run build",
-    "lint:fix": "eslint --ext .tsx --ext .ts ./src --fix",
-    "prettier:fix": "prettier --write ./src/.",
     "release": "standard-version -a",
     "release:alpha": "standard-version -a --prerelease alpha --skip.changelog",
     "release:beta": "standard-version -a --prerelease beta --skip.changelog",
@@ -47,14 +45,13 @@
   },
   "lint-staged": {
     "src/**/*.{ts,tsx}": [
-      "bun lint:fix",
-      "bun prettier:fix"
+      "eslint --fix",
+      "prettier --write"
     ]
   },
   "peerDependencies": {
     "abitype": "^1.0.6",
-    "eslint": "^8.57.0",
-    "typescript": "^5.5.4",
+    "typescript": "^5.6.2",
     "viem": "^2.19.4"
   },
   "dependencies": {
@@ -65,9 +62,6 @@
     "@commitlint/cli": "^18.6.1",
     "@commitlint/config-conventional": "^18.6.3",
     "@types/bun": "^1.1.8",
-    "@typescript-eslint/eslint-plugin": "^6.21.0",
-    "@typescript-eslint/parser": "^6.21.0",
-    "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
     "husky": "^9.1.5",
     "lint-staged": "^15.2.10",
@@ -75,7 +69,8 @@
     "prettier": "^3.3.3",
     "standard-version": "^9.5.0",
     "ts-add-js-extension": "^1.6.4",
-    "tsc-alias": "^1.8.10"
+    "tsc-alias": "^1.8.10",
+    "typescript-eslint": "^8.6.0"
   },
   "license": "LGPL-3.0",
   "homepage": "https://inverter.network",
