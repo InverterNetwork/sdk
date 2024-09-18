@@ -8,6 +8,7 @@ ENV_FILE=".env"
 DEPLOYER_PRIVATE_KEY="0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
 TEST_PRIVATE_KEY="TEST_PRIVATE_KEY=$DEPLOYER_PRIVATE_KEY"
 RPC_URL="http://127.0.0.1:8545"
+WAIT=false # Default to false
 
 # Function to detect OS
 detect_os() {
@@ -97,7 +98,7 @@ deploy_protocol() {
         printf "Failed to source dev.env ❌\n" >&2
         return 1
     }
-    DEPLOYER_PRIVATE_KEY="$DEPLOYER_PRIVATE_KEY" forge script "$DEPLOY_SCRIPT" --rpc-url "$RPC_URL" --broadcast --silent >/dev/null 2>&1 ||
+    DEPLOYER_PRIVATE_KEY="$DEPLOYER_PRIVATE_KEY" forge script "$DEPLOY_SCRIPT" --rpc-url "$RPC_URL" --broadcast --silent ||
         {
             printf "Deployment failed ❌\n" >&2
             return 1
@@ -125,8 +126,27 @@ update_env() {
     fi
 }
 
+# Function to parse command line arguments
+parse_args() {
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+        --wait)
+            WAIT=true
+            ;;
+        *)
+            printf "Unknown argument: $1 ❓\n" >&2
+            exit 1
+            ;;
+        esac
+        shift
+    done
+}
+
 # Main function
 main() {
+    # Parse arguments
+    parse_args "$@"
+
     detect_os || {
         printf "OS detection failed ❌\n"
         exit 1
@@ -168,11 +188,13 @@ main() {
         exit 1
     }
 
-    printf "Testnet protocol deployment is done 🚀. Press CTRL+C to end the session! 🖱️\n"
-
-    # Keep Anvil process running and display its logs ( disabled for pre post test )
-    # wait $ANVIL_PID
+    if [[ "$WAIT" == true ]]; then
+        printf "Testnet protocol deployment is done 🚀. Press CTRL+C to end the session! 🖱️\n"
+        wait $ANVIL_PID
+    else
+        printf "Testnet protocol deployment is done 🚀\n"
+    fi
 }
 
-# Execute the main function
-main
+# Execute the main function with argument parsing
+main "$@"
