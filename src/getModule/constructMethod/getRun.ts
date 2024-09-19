@@ -103,11 +103,14 @@ export default function getRun<
       }
     })()
 
+    // If the kind is simulate, get the result from the result property
+    const resByKind = kind === 'simulate' ? res.result : res
+
     // Format the outputs, from contract output to user output-
     // and pass the return type to type param
     const formattedRes = await formatOutputs({
       extendedOutputs,
-      res,
+      res: resByKind,
       extras,
       publicClient,
       contract,
