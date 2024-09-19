@@ -6,6 +6,11 @@
     "composite": true,
     "module": "ESNext",
     "moduleResolution": "Node",
-    "noEmit": true
+    "noEmit": true,
+    "paths": {
+      "@": ["./src"],
+      "@/*": ["./src/*"],
+      "tests/*": ["./tests/*"]
+    }
   }
 }

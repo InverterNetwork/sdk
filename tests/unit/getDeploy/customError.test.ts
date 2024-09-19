@@ -1,8 +1,8 @@
 import { expect, describe, it } from 'bun:test'
 
-import { getTestConnectors } from '../testHelpers/getTestConnectors'
-import { Inverter } from '../../src/Inverter'
-import type { GetUserArgs, RequestedModules } from '../../src'
+import { getTestConnectors } from '../../helpers/getTestConnectors'
+import { Inverter } from '../../../src/Inverter'
+import type { GetUserArgs, RequestedModules } from '../../../src'
 
 const requestedModules = {
   fundingManager: 'FM_BC_Restricted_Bancor_Redeeming_VirtualSupply_v1',

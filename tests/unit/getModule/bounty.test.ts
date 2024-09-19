@@ -1,13 +1,8 @@
 import { expect, describe, it } from 'bun:test'
 
-import { getTestConnectors } from '../testHelpers/getTestConnectors'
-import { Inverter } from '@'
+import { sdk } from 'tests/helpers'
 
 describe('Get A Module', async () => {
-  const { publicClient, walletClient } = getTestConnectors()
-
-  const sdk = new Inverter({ publicClient, walletClient })
-
   const module = sdk.getModule({
     name: 'LM_PC_Bounties_v1',
     address: '0xa1d66817BB0eCA86A56662887f455D2409a30884',

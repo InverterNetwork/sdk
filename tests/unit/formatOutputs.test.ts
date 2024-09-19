@@ -1,6 +1,6 @@
 import { expect, describe, it } from 'bun:test'
 
-import { getTestConnectors } from '../testHelpers/getTestConnectors'
+import { getTestConnectors } from '../helpers/getTestConnectors'
 import { formatOutputs } from '@/utils'
 
 import { type ExtendedAbiParameter } from '../../src'

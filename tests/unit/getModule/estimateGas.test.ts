@@ -1,7 +1,7 @@
 import { expect, describe, it } from 'bun:test'
 
-import { getTestConnectors } from '../testHelpers/getTestConnectors'
-import getModule from '../../src/getModule'
+import { getTestConnectors } from 'tests/helpers'
+import { getModule } from '@'
 
 describe('Should estimate a write methods gas', async () => {
   const { publicClient, walletClient } = getTestConnectors(),

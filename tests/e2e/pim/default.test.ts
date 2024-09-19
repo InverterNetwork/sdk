@@ -1,31 +1,34 @@
 import { expect, describe, it, beforeEach } from 'bun:test'
 
-import { getTestConnectors } from '../testHelpers/getTestConnectors'
-import { Inverter } from '../../src/Inverter'
-import {
-  deployedBcOrchestrator,
-  getDeployArgs,
-  iUSD,
-} from '../testHelpers/getTestArgs'
-import { ERC20_MINTABLE_ABI } from '../../src'
+import { ERC20_MINTABLE_ABI, type GetUserArgs, type RequestedModules } from '@'
+import { getModuleSchema } from '@/getDeploy/getInputs'
 import { isAddress, parseUnits } from 'viem'
-import { getModuleSchema } from '../../src/getDeploy/getInputs'
+import {
+  FM_BC_Bancor_VirtualSupply_v1_ARGS,
+  GET_ORCHESTRATOR_ARGS,
+  TEST_ERC20_MOCK_ADDRESS,
+  sdk,
+} from 'tests/helpers'
 
-describe('#defaultPIM', async () => {
-  const { publicClient, walletClient } = getTestConnectors()
+describe('#PIM_DEFAULT', async () => {
+  const { publicClient, walletClient } = sdk
   const deployer = walletClient.account.address
 
   const requestedModules = {
     fundingManager: 'FM_BC_Restricted_Bancor_Redeeming_VirtualSupply_v1',
     authorizer: 'AUT_Roles_v1',
     paymentProcessor: 'PP_Simple_v1',
-  } as const
+  } as const satisfies RequestedModules
 
-  const deployArgs = getDeployArgs(requestedModules, deployer)
+  const args = {
+    authorizer: {
+      initialAdmin: deployer,
+    },
+    fundingManager: FM_BC_Bancor_VirtualSupply_v1_ARGS,
+    orchestrator: GET_ORCHESTRATOR_ARGS(deployer),
+  } as const satisfies GetUserArgs<typeof requestedModules>
 
-  const sdk = new Inverter({ publicClient, walletClient })
-
-  let orchestrator = deployedBcOrchestrator
+  let orchestrator: `0x${string}`
   let issuanceToken: `0x${string}`
   let workflow: any
 
@@ -45,7 +48,7 @@ describe('#defaultPIM', async () => {
   it(
     'estimates gas for deployment',
     async () => {
-      const gasEstimate = await estimateGas(deployArgs)
+      const gasEstimate = await estimateGas(args)
       expect(gasEstimate).toContainKeys(['value', 'formatted'])
     },
     {
@@ -73,8 +76,8 @@ describe('#defaultPIM', async () => {
       'returns the orchestrator address',
       async () => {
         const { orchestratorAddress, transactionHash } = await run({
-          ...deployArgs,
-          fundingManager: { ...deployArgs.fundingManager, issuanceToken },
+          ...args,
+          fundingManager: { ...args.fundingManager, issuanceToken },
         })
 
         await publicClient.waitForTransactionReceipt({
@@ -135,13 +138,12 @@ describe('#defaultPIM', async () => {
   describe('buying from the curve', () => {
     const depositAmount = '500'
     const eighteenDecimals = '000000000000000000'
-    const { initialCollateralSupply } =
-      deployArgs.fundingManager.bondingCurveParams
+    const { initialCollateralSupply } = args.fundingManager.bondingCurveParams
 
     beforeEach(async () => {
       // mint initial collateral supply to BC
       const mintTx = <`0x${string}`>await walletClient.writeContract({
-        address: iUSD,
+        address: TEST_ERC20_MOCK_ADDRESS,
         abi: ERC20_MINTABLE_ABI,
         functionName: 'mint',
         args: [
@@ -155,7 +157,7 @@ describe('#defaultPIM', async () => {
 
       // mint buy amount to deployer
       const mintTx2 = <`0x${string}`>await walletClient.writeContract({
-        address: iUSD,
+        address: TEST_ERC20_MOCK_ADDRESS,
         abi: ERC20_MINTABLE_ABI,
         functionName: 'mint',
         args: [deployer, BigInt(depositAmount + eighteenDecimals)],
@@ -166,7 +168,7 @@ describe('#defaultPIM', async () => {
 
       // approve buy amount to BC
       const approveTx = <`0x${string}`>await walletClient.writeContract({
-        address: iUSD,
+        address: TEST_ERC20_MOCK_ADDRESS,
         abi: ERC20_MINTABLE_ABI,
         functionName: 'approve',
         args: [

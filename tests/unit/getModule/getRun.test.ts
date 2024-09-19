@@ -7,16 +7,15 @@ import { USDC_SEPOLIA } from '@/getDeploy/constants'
 
 import type { Extras, ExtendedAbiParameter } from '@/types'
 
-import { getTestConnectors } from '../testHelpers/getTestConnectors'
-import {
-  deployedBcModule,
-  deployedKpiModule,
-  iUSD,
-} from '../testHelpers/getTestArgs'
+import { getTestConnectors, TEST_ERC20_MOCK_ADDRESS } from 'tests/helpers'
 import getRun from '@/getModule/constructMethod/getRun'
 
 describe('#getRun', () => {
   const { publicClient, walletClient } = getTestConnectors()
+
+  // TODO: Actually deploy these modules
+  const deployedBcModule = '0x80f8493761a18d29fd77c131865f9cf62b15e62a'
+  const deployedKpiModule = '0x80f8493761a18d29fd77c131865f9cf62b15e62a'
 
   const client = {
     wallet: walletClient,
@@ -35,7 +34,7 @@ describe('#getRun', () => {
   const resetState = async () => {
     console.log('Minting Tokens')
     const mintHash = await walletClient.writeContract({
-      address: iUSD,
+      address: TEST_ERC20_MOCK_ADDRESS,
       abi: ERC20_MINTABLE_ABI,
       functionName: 'mint',
       account: walletClient.account,
@@ -51,7 +50,7 @@ describe('#getRun', () => {
     })
     console.log('Done')
     const hash = await walletClient.writeContract({
-      address: iUSD,
+      address: TEST_ERC20_MOCK_ADDRESS,
       abi: ERC20_ABI,
       functionName: 'approve',
       account: walletClient.account,
@@ -63,7 +62,7 @@ describe('#getRun', () => {
     })
     console.log('DONE')
     const allowance = await publicClient.readContract({
-      address: iUSD,
+      address: TEST_ERC20_MOCK_ADDRESS,
       abi: ERC20_ABI,
       functionName: 'allowance',
       args: [walletClient.account.address, deployedBcModule],
@@ -98,7 +97,7 @@ describe('#getRun', () => {
       const extras = {
         decimals: 6,
         walletAddress: walletClient.account.address,
-        defaultToken: iUSD,
+        defaultToken: TEST_ERC20_MOCK_ADDRESS,
       } as Extras
       const { abi } = getModuleData('FM_BC_Bancor_Redeeming_VirtualSupply_v1')
 

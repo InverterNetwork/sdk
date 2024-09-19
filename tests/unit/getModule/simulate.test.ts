@@ -1,7 +1,7 @@
 import { expect, describe, it } from 'bun:test'
 
-import { getTestConnectors } from '../testHelpers/getTestConnectors'
-import { Inverter } from '../../src'
+import { getTestConnectors } from 'tests/helpers'
+import { Inverter } from '@'
 
 describe('#getModule_simulate', async () => {
   const { publicClient, walletClient } = getTestConnectors()

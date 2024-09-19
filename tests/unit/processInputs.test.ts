@@ -1,16 +1,16 @@
 import { expect, describe, it } from 'bun:test'
 
 import { processInputs, ERC20_ABI, FM_BASE } from '@/utils'
-import { getTestConnectors } from '../testHelpers/getTestConnectors'
-import { Inverter } from '@/Inverter'
-import { iUSD } from '../testHelpers/getTestArgs'
 
 import { type ExtendedAbiParameter } from '../../src'
 import type { Tag } from '@inverter-network/abis'
+import { TEST_ERC20_MOCK_ADDRESS, sdk } from 'tests/helpers'
 
 describe('#processInputs', () => {
-  const { publicClient, walletClient } = getTestConnectors()
-  const USDC_SEPOLIA = '0x5fd84259d66Cd46123540766Be93DFE6D43130D7' // USDC has 6 decimals
+  const { publicClient, walletClient } = sdk
+  // TODO: Use The TEST_ERC20_MOCK_ADDRESS
+  const USDC_SEPOLIA = '0x5fd84259d66Cd46123540766Be93DFE6D43130D7'
+  // TODO: Actually deploy something
   const mockAddress = '0xa2c6191878a2ad73047F6a37442141FF2B3cAbBA'
   const mockContract = { address: mockAddress, abi: FM_BASE }
 
@@ -94,7 +94,9 @@ describe('#processInputs', () => {
         }
 
         describe('with :indirect', () => {
-          const mockContract = { read: { issuanceToken: () => iUSD } }
+          const mockContract = {
+            read: { issuanceToken: () => TEST_ERC20_MOCK_ADDRESS },
+          }
           const tags = [
             'decimals:contract:indirect:issuanceToken',
           ] satisfies Tag[] // should resolve to usdc on sepolia w/ decimals
@@ -140,8 +142,6 @@ describe('#processInputs', () => {
           })
 
           describe('with sdk instance', () => {
-            const sdk = new Inverter({ publicClient, walletClient })
-
             // this test case is a bit confusing:
             // it passes in the USDC contract
             it('stores token info in cache', async () => {
@@ -262,8 +262,6 @@ describe('#processInputs', () => {
           })
 
           describe('with sdk instance', () => {
-            const sdk = new Inverter({ publicClient, walletClient })
-
             it('stores token info in cache', async () => {
               await processInputs({
                 extendedInputs,

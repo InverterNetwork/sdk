@@ -1,17 +1,20 @@
 import { expect, describe, it } from 'bun:test'
-import { getTestConnectors } from '../testHelpers/getTestConnectors'
+import {
+  TEST_BANCOR_FORMULA_ADDRESS,
+  TEST_ERC20_MOCK_ADDRESS,
+  sdk,
+} from 'tests/helpers'
 import { processInputs } from '@/utils'
 import { getModuleData } from '@inverter-network/abis'
 import { parseUnits } from 'viem'
-import { iUSD } from '../testHelpers/getTestArgs'
 
 const requestedModule =
   'FM_BC_Restricted_Bancor_Redeeming_VirtualSupply_v1' as const
 
 const args = {
-  issuanceToken: iUSD,
+  issuanceToken: TEST_ERC20_MOCK_ADDRESS,
   bondingCurveParams: {
-    formula: '0x3ddE767F9DF9530DDeD47e1E012cCBf7B4A04dd7',
+    formula: TEST_BANCOR_FORMULA_ADDRESS,
     reserveRatioForBuying: 333_333,
     reserveRatioForSelling: 333_333,
     buyFee: '0',
@@ -21,11 +24,11 @@ const args = {
     initialIssuanceSupply: '1',
     initialCollateralSupply: '3',
   },
-  collateralToken: iUSD,
+  collateralToken: TEST_ERC20_MOCK_ADDRESS,
 } as const
 
 const expectedProccessed = [
-  iUSD,
+  TEST_ERC20_MOCK_ADDRESS,
   {
     buyIsOpen: true,
     sellIsOpen: true,
@@ -35,17 +38,17 @@ const expectedProccessed = [
     sellFee: 100n,
     initialIssuanceSupply: parseUnits('1', 18),
     initialCollateralSupply: parseUnits('3', 18),
-    formula: '0x3ddE767F9DF9530DDeD47e1E012cCBf7B4A04dd7',
+    formula: TEST_BANCOR_FORMULA_ADDRESS,
   },
-  iUSD,
+  TEST_ERC20_MOCK_ADDRESS,
 ]
 
-describe('#bondingDeployDecimal', () => {
-  const { publicClient, walletClient } = getTestConnectors()
+describe('#UNIT_DECIMALS_MATCH', () => {
+  const { publicClient, walletClient } = sdk
 
   const configData = getModuleData(requestedModule).deploymentInputs.configData
 
-  it('match: expected proccessedInputs with hard coded', async () => {
+  it('1: Match Expected ProccessedInputs With The Hard Coded', async () => {
     const orderedArgs = args
       ? configData.map((input) => args?.[input.name])
       : '0x00'

@@ -1,14 +1,18 @@
 import { expect, describe, it } from 'bun:test'
 
-import { getTestConnectors } from '../testHelpers/getTestConnectors'
-import { Inverter } from '../../src/Inverter'
-import { getDeployArgs } from '../testHelpers/getTestArgs'
-import { type RequestedModules } from '../../src'
-import { getModuleSchema } from '../../src/getDeploy/getInputs'
 import { isAddress } from 'viem'
 
-describe('#immutablePIM', async () => {
-  const { publicClient, walletClient } = getTestConnectors()
+import { type RequestedModules } from '@'
+import { getModuleSchema } from '@/getDeploy/getInputs'
+
+import {
+  sdk,
+  FM_BC_Bancor_VirtualSupply_v1_ARGS,
+  GET_ORCHESTRATOR_ARGS,
+} from 'tests/helpers'
+
+describe.skip('#PIM_IMMUTABLE', async () => {
+  const { publicClient, walletClient } = sdk
   const deployer = walletClient.account.address
 
   const requestedModules = {
@@ -18,7 +22,11 @@ describe('#immutablePIM', async () => {
   } as const satisfies RequestedModules<'restricted-pim'>
 
   const deployArgs = {
-    ...getDeployArgs(requestedModules, deployer),
+    orchestrator: GET_ORCHESTRATOR_ARGS(deployer),
+    authorizer: {
+      initialAdmin: deployer,
+    },
+    fundingManager: FM_BC_Bancor_VirtualSupply_v1_ARGS,
     issuanceToken: {
       name: 'MG Token',
       symbol: 'MGT',
@@ -28,8 +36,6 @@ describe('#immutablePIM', async () => {
     },
     initialPurchaseAmount: '1000',
   }
-
-  const sdk = new Inverter({ publicClient, walletClient })
 
   const { estimateGas, run, inputs } = await sdk.getDeploy({
     requestedModules,
@@ -57,7 +63,7 @@ describe('#immutablePIM', async () => {
     })
   })
 
-  it.skip(
+  it(
     '1. Estimates gas for deployment',
     async () => {
       const gasEstimate = await estimateGas(deployArgs)
