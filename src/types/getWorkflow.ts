@@ -72,9 +72,12 @@ export type MendatoryAndOptionalWorkflow<
   O extends WorkflowRequestedModules | undefined,
 > = MandatoryResult<W, O> & OptionalResult<W, O>
 
-export type TokenModuleData<W extends PopWalletClient | undefined> = {
+export type TokenModuleData<
+  W extends PopWalletClient | undefined,
+  A extends 'ERC20' | 'ERC20Issuance_v1',
+> = {
   address: Hex
-  module: GetModuleReturn<'ERC20', W>
+  module: GetModuleReturn<A, W>
   decimals: number
   symbol: string
 }
@@ -82,12 +85,13 @@ export type TokenModuleData<W extends PopWalletClient | undefined> = {
 export type ConditionalIssuanceToken<
   W extends PopWalletClient | undefined,
   O extends WorkflowRequestedModules | undefined,
+  A extends 'ERC20' | 'ERC20Issuance_v1',
 > =
   O extends NonNullable<O>
     ? FilterByPrefix<O['fundingManager'], 'FM_BC'> extends never
-      ? TokenModuleData<W> | undefined
-      : TokenModuleData<W>
-    : TokenModuleData<W> | undefined
+      ? TokenModuleData<W, A> | undefined
+      : TokenModuleData<W, A>
+    : TokenModuleData<W, A> | undefined
 
 export type Workflow<
   W extends PopWalletClient | undefined,
@@ -96,7 +100,7 @@ export type Workflow<
   MendatoryAndOptionalWorkflow<W, O>,
   {
     orchestrator: GetModuleReturn<'Orchestrator_v1', W>
-    fundingToken: TokenModuleData<W>
-    issuanceToken: ConditionalIssuanceToken<W, O>
+    fundingToken: TokenModuleData<W, 'ERC20'>
+    issuanceToken: ConditionalIssuanceToken<W, O, 'ERC20Issuance_v1'>
   }
 >

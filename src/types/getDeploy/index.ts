@@ -18,3 +18,8 @@ export type GetDeployParams<
   factoryType?: FT
   self?: Inverter
 }
+
+export type GetDeployReturn<
+  T extends RequestedModules<FT extends undefined ? 'default' : FT>,
+  FT extends FactoryType | undefined = undefined,
+> = Awaited<ReturnType<typeof import('@/getDeploy').default<T, FT>>>

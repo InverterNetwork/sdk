@@ -69,8 +69,6 @@ export const getViemMethods = async ({
     }
   })()
 
-  console.log('ORCHESTRATOR:', address)
-
   if (!address)
     throw new Error('Chain ID is not supported @ deployment factory address')
 

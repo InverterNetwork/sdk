@@ -2,17 +2,18 @@ import { expect, describe, it } from 'bun:test'
 
 import { isAddress } from 'viem'
 
-import { type RequestedModules } from '@'
+import { type GetDeployReturn, type RequestedModules } from '@'
 import { getModuleSchema } from '@/getDeploy/getInputs'
 
 import {
   sdk,
   FM_BC_Bancor_VirtualSupply_v1_ARGS,
   GET_ORCHESTRATOR_ARGS,
+  GET_HUMAN_READABLE_UINT_MAX_SUPPLY,
 } from 'tests/helpers'
 
 describe.skip('#PIM_IMMUTABLE', async () => {
-  const { publicClient, walletClient } = sdk
+  const { walletClient } = sdk
   const deployer = walletClient.account.address
 
   const requestedModules = {
@@ -31,21 +32,23 @@ describe.skip('#PIM_IMMUTABLE', async () => {
       name: 'MG Token',
       symbol: 'MGT',
       decimals: 18,
-      maxSupply:
-        '115792089237316195423570985008687907853269984665640564039457.584007913129639935',
+      maxSupply: GET_HUMAN_READABLE_UINT_MAX_SUPPLY(18),
     },
     initialPurchaseAmount: '1000',
   }
 
-  const { estimateGas, run, inputs } = await sdk.getDeploy({
-    requestedModules,
-    factoryType: 'immutable-pim',
+  let orchestratorAddress: `0x${string}`
+  let getDeployReturn: GetDeployReturn<typeof requestedModules, 'immutable-pim'>
+
+  it('1. Set getDeployReturn', async () => {
+    getDeployReturn = await sdk.getDeploy({
+      requestedModules,
+      factoryType: 'immutable-pim',
+    })
   })
 
-  let orchestrator: `0x${string}`
-
-  it('match expected inputs', () => {
-    expect(inputs).toEqual({
+  it('2. Match expected inputs', () => {
+    expect(getDeployReturn.inputs).toEqual({
       orchestrator: getModuleSchema('OrchestratorFactory_v1'),
       authorizer: getModuleSchema('AUT_Roles_v1'),
       fundingManager: getModuleSchema(
@@ -63,34 +66,14 @@ describe.skip('#PIM_IMMUTABLE', async () => {
     })
   })
 
-  it(
-    '1. Estimates gas for deployment',
-    async () => {
-      const gasEstimate = await estimateGas(deployArgs)
-      expect(gasEstimate).toContainKeys(['value', 'formatted'])
-    },
-    {
-      timeout: 50_000,
-    }
-  )
+  it('3. Estimates gas for deployment', async () => {
+    const gasEstimate = await getDeployReturn.estimateGas(deployArgs)
+    expect(gasEstimate).toContainKeys(['value', 'formatted'])
+  })
 
-  it(
-    'deploys the BC',
-    async () => {
-      const { orchestratorAddress, transactionHash } = await run(deployArgs)
-
-      await publicClient.waitForTransactionReceipt({
-        hash: transactionHash,
-      })
-      // TODO: change after PimFactory has been adapted to only return orchestrator address
-      orchestrator = orchestratorAddress
-
-      console.log('Orchestrator Address:', orchestrator)
-
-      expect(isAddress(orchestrator)).toBeTrue()
-    },
-    {
-      timeout: 50_000,
-    }
-  )
+  it('4. Deploy the workflow', async () => {
+    orchestratorAddress = (await getDeployReturn.run(deployArgs))
+      .orchestratorAddress
+    expect(isAddress(orchestratorAddress)).toBeTrue()
+  })
 })
