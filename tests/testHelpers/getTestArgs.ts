@@ -27,6 +27,8 @@ export const deployedBcOrchestrator =
   '0xa2bc1f4764419118700A1a62213bC559bDDd067D' as const
 export const deployedBCFundingManager =
   '0xCdF64Fc3846D5aEb3158fc24418Df5401C1aAa5B' as const
+export const restrictedPimFactory =
+  '0x2d0DFb766C4096F3E6e560520fA2100afF16b90c' as const
 
 export const simpleFMArgs = {
   orchestratorTokenAddress: iUSD,
