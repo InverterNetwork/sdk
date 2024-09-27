@@ -15,3 +15,8 @@ export const FM_BC_Bancor_VirtualSupply_v1_ARGS = {
   },
   collateralToken: TEST_ERC20_MOCK_ADDRESS,
 } as const
+
+const { issuanceToken, ...CUSTOM_PIM_FM_BC_Bancor_VirtualSupply_v1_ARGS } =
+  FM_BC_Bancor_VirtualSupply_v1_ARGS
+
+export { CUSTOM_PIM_FM_BC_Bancor_VirtualSupply_v1_ARGS }

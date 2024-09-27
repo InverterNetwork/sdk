@@ -5,16 +5,17 @@ import { getContract, isAddress, isHash, parseUnits } from 'viem'
 import {
   ERC20_MINTABLE_ABI,
   type GetDeployReturn,
+  type GetUserArgs,
   type RequestedModules,
 } from '@'
 import { getModuleSchema } from '@/getDeploy/getInputs'
 
 import {
   sdk,
-  FM_BC_Bancor_VirtualSupply_v1_ARGS,
   GET_ORCHESTRATOR_ARGS,
   GET_HUMAN_READABLE_UINT_MAX_SUPPLY,
   TEST_ERC20_MOCK_ADDRESS,
+  CUSTOM_PIM_FM_BC_Bancor_VirtualSupply_v1_ARGS,
 } from 'tests/helpers'
 
 describe('#PIM_IMMUTABLE', async () => {
@@ -32,7 +33,7 @@ describe('#PIM_IMMUTABLE', async () => {
     authorizer: {
       initialAdmin: deployer,
     },
-    fundingManager: FM_BC_Bancor_VirtualSupply_v1_ARGS,
+    fundingManager: CUSTOM_PIM_FM_BC_Bancor_VirtualSupply_v1_ARGS,
     issuanceToken: {
       name: 'MG Token',
       symbol: 'MGT',
@@ -40,7 +41,7 @@ describe('#PIM_IMMUTABLE', async () => {
       maxSupply: GET_HUMAN_READABLE_UINT_MAX_SUPPLY(18),
     },
     initialPurchaseAmount: '1000',
-  }
+  } as const satisfies GetUserArgs<typeof requestedModules, 'immutable-pim'>
 
   let orchestratorAddress: `0x${string}`
   let getDeployReturn: GetDeployReturn<typeof requestedModules, 'immutable-pim'>

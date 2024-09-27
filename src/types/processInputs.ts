@@ -1,13 +1,19 @@
 import type { PublicClient, WalletClient } from 'viem'
 import type { Extras, ExtendedAbiParameter } from '.'
 import type { MethodKind, RequiredAllowances } from '@/types'
-import type { Inverter, TagCallback, TupleExtendedAbiParameter } from '@'
+import type {
+  Inverter,
+  TagCallback,
+  TagOverwrites,
+  TupleExtendedAbiParameter,
+} from '@'
 
 export type ProcessInputsBaseParams = {
   extras?: Extras
   extendedInputs: readonly ExtendedAbiParameter[]
   args: any
   kind: MethodKind
+  tagOverwrites?: TagOverwrites
 }
 
 export type ProcessInputsParams = Omit<
@@ -30,9 +36,6 @@ export type ParseInputsParams = {
   tagCallback: TagCallback
 }
 
-export type ParseInputTupleCaseParams = {
+export type ParseInputTupleCaseParams = ParseInputsParams & {
   input: TupleExtendedAbiParameter
-  arg: any
-  extras?: Extras
-  tagCallback: TagCallback
 }
