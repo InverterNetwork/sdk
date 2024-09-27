@@ -11,6 +11,7 @@ import type {
   RequestedModules,
   FactoryType,
   ExtendedParameterToPrimitiveType,
+  FilterByPrefix,
 } from '@/types'
 import type { IsEmptyObject, Simplify } from 'type-fest-4'
 
@@ -43,13 +44,24 @@ export type GetUserOptionalArgs<
   }>
 >
 
+export type GetFundingManagerArg<
+  T extends ModuleName,
+  FT extends FactoryType = 'default',
+> = Simplify<
+  FilterByPrefix<T, 'FM_BC'> extends never
+    ? GetUserModuleArg<T>
+    : FT extends 'default'
+      ? GetUserModuleArg<T>
+      : Omit<GetUserModuleArg<T>, 'issuanceToken'>
+>
+
 export type GetUserArgs<
   T extends RequestedModules = RequestedModules,
   FT extends FactoryType = 'default',
 > = Simplify<
   OmitNever<{
     orchestrator?: OrchestratorArgs
-    fundingManager: GetUserModuleArg<T['fundingManager']>
+    fundingManager: GetFundingManagerArg<T['fundingManager'], FT>
     authorizer: GetUserModuleArg<T['authorizer']>
     paymentProcessor: GetUserModuleArg<T['paymentProcessor']>
     optionalModules: GetUserOptionalArgs<T['optionalModules']>

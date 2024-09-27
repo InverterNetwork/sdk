@@ -1,7 +1,7 @@
 import { expect, describe, it } from 'bun:test'
 
 import {
-  FM_BC_Bancor_VirtualSupply_v1_ARGS,
+  CUSTOM_PIM_FM_BC_Bancor_VirtualSupply_v1_ARGS,
   GET_HUMAN_READABLE_UINT_MAX_SUPPLY,
   GET_ORCHESTRATOR_ARGS,
   TEST_ERC20_MOCK_ADDRESS,
@@ -40,7 +40,7 @@ describe('#PIM_RESTRICTED', async () => {
     authorizer: {
       initialAdmin: deployer,
     },
-    fundingManager: FM_BC_Bancor_VirtualSupply_v1_ARGS,
+    fundingManager: CUSTOM_PIM_FM_BC_Bancor_VirtualSupply_v1_ARGS,
     issuanceToken: {
       name: 'MG Token',
       symbol: 'MGT',

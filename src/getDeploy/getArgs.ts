@@ -18,6 +18,7 @@ import type {
   UserArgs,
   DeployMethodKind,
   FactoryType,
+  TagOverwrites,
 } from '@/types'
 
 let extras: Extras
@@ -27,6 +28,7 @@ export type JointParams = {
   walletClient: PopWalletClient
   kind: DeployMethodKind
   self?: Inverter
+  tagOverwrites?: TagOverwrites
 }
 
 /**
@@ -47,6 +49,7 @@ export const getEncodedArgs = async ({
     ? configData.map((input) => userModuleArg?.[input.name])
     : '0x00'
   // Process the inputs
+
   const { processedInputs } = <any>await processInputs({
     extendedInputs: configData,
     args,
@@ -118,12 +121,24 @@ export const constructArgs = async ({
   if (userArgs.fundingManager)
     extras = await getDefaultToken(rest.publicClient, userArgs.fundingManager)
 
+  // if the factory type is restricted-pim or immutable-pim, define the issuance token decimals
+  const issuanceTokenDecimals = userArgs?.issuanceToken?.decimals
+
   // Get the arguments for the mandatory modules
   let mendatoryModuleIdx = 0
   for (const moduleType of MANDATORY_MODULES) {
+    if (
+      moduleType === 'fundingManager' &&
+      requestedModules.fundingManager.startsWith('FM_BC') &&
+      factoryType !== 'default'
+    ) {
+      userArgs.fundingManager!.issuanceToken = ADDRESS_ZERO
+    }
+
     const argObj = await assembleModuleArgs({
       name: requestedModules[moduleType],
       userModuleArg: userArgs[moduleType],
+      tagOverwrites: { issuanceTokenDecimals },
       ...rest,
     })
     args[MANDATORY_MODULES[mendatoryModuleIdx]] = argObj
@@ -158,7 +173,7 @@ export const constructArgs = async ({
         maxSupply: String(
           parseUnits(
             userArgs.issuanceToken.maxSupply,
-            Number(userArgs.issuanceToken.decimals)
+            Number(issuanceTokenDecimals)
           )
         ),
       }
@@ -168,7 +183,7 @@ export const constructArgs = async ({
         args.initialPurchaseAmount = String(
           parseUnits(
             userArgs.initialPurchaseAmount,
-            Number(userArgs.issuanceToken.decimals)
+            Number(issuanceTokenDecimals)
           )
         )
       }
