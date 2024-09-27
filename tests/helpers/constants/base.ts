@@ -1,5 +1,14 @@
 import { formatUnits } from 'viem'
 
+// default factory address
+export const TEST_ORCHESTRATOR_FACTORY_ADDRESS = process.env
+  .TEST_ORCHESTRATOR_FACTORY_ADDRESS as `0x${string}`
+// restricted pim factory address
+export const TEST_RESTRICTED_PIM_FACTORY_ADDRESS = process.env
+  .TEST_RESTRICTED_PIM_FACTORY_ADDRESS as `0x${string}`
+// immutable pim factory address
+export const TEST_IMMUTABLE_PIM_FACTORY_ADDRESS = process.env
+  .TEST_IMMUTABLE_PIM_FACTORY_ADDRESS as `0x${string}`
 // token with unpermissioned mint function
 export const TEST_ERC20_MOCK_ADDRESS = process.env
   .TEST_ERC20_MOCK_ADDRESS as `0x${string}`

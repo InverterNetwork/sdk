@@ -15,7 +15,6 @@ import type {
   UserModuleArg,
 } from '..'
 import type { Abi } from 'abitype'
-import { version } from 'bun'
 
 type DeploymentResponse = {
   bancorFormula: Record<string, `0x${string}` | undefined>

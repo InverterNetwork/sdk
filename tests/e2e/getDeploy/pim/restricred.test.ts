@@ -5,6 +5,7 @@ import {
   GET_HUMAN_READABLE_UINT_MAX_SUPPLY,
   GET_ORCHESTRATOR_ARGS,
   TEST_ERC20_MOCK_ADDRESS,
+  TEST_RESTRICTED_PIM_FACTORY_ADDRESS,
   sdk,
 } from 'tests/helpers'
 import {
@@ -83,6 +84,7 @@ describe('#PIM_RESTRICTED', async () => {
       args.fundingManager.bondingCurveParams.initialCollateralSupply,
       args.issuanceToken.decimals
     )
+
     // 2. Create a token contract instance
     tokenInstance = getContract({
       address: TEST_ERC20_MOCK_ADDRESS,
@@ -92,12 +94,13 @@ describe('#PIM_RESTRICTED', async () => {
 
     // 3. Mint test tokens to deployer
     const hash = await tokenInstance.write.mint([deployer, amount])
+
     expect(isHash(hash)).toBeTrue()
   })
 
   it('3. Approving test tokens to factory', async () => {
     const hash = await tokenInstance.write.approve([
-      '' as `0x${string}`, // TODO: https://linear.app/inverter/issue/SC-802/task-add-custom-factories-to-testnetdeploymentscript
+      TEST_RESTRICTED_PIM_FACTORY_ADDRESS,
       amount,
     ])
     expect(isHash(hash)).toBeTrue()
@@ -105,7 +108,7 @@ describe('#PIM_RESTRICTED', async () => {
 
   it('4. Add Funding To Facory', async () => {
     factoryInstance = getContract({
-      address: '' as `0x${string}`, // TODO: https://linear.app/inverter/issue/SC-802/task-add-custom-factories-to-testnetdeploymentscript
+      address: TEST_RESTRICTED_PIM_FACTORY_ADDRESS,
       client: walletClient,
       abi: getModuleData('Restricted_PIM_Factory_v1').abi,
     })
