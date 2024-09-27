@@ -18,8 +18,8 @@ import deploy from './deploy'
 import { getModule } from '.'
 
 export class Inverter<W extends PopWalletClient | undefined = undefined> {
-  readonly publicClient: PopPublicClient
-  readonly walletClient: W
+  publicClient: PopPublicClient
+  walletClient: W
   readonly workflows: Map<`0x${string}`, any>
   tokenCache: Map<string, any>
 
@@ -34,6 +34,20 @@ export class Inverter<W extends PopWalletClient | undefined = undefined> {
     this.walletClient = walletClient as W
     this.workflows = new Map()
     this.tokenCache = new Map()
+  }
+
+  /**
+   * Updates the publicClient safely
+   */
+  updatePublicClient(publicClient: PopPublicClient) {
+    this.publicClient = publicClient
+  }
+
+  /**
+   * Updates the walletClient safely
+   */
+  updateWalletClient(walletClient: W) {
+    this.walletClient = walletClient
   }
 
   async getWorkflow<

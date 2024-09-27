@@ -1,38 +1,47 @@
-import { data } from '@inverter-network/abis'
+import type { FactoryType, FilterByPrefix } from '@'
+import { data, type GetModuleNameByType } from '@inverter-network/abis'
 
-export default function getDeployOptions() {
-  const modules = data
-    .map(({ moduleType, name }) => {
+export default function getDeployOptions<
+  FT extends FactoryType | undefined = undefined,
+>(factoryType?: FT) {
+  // Default factory type handling
+  const definedFactoryType = factoryType ?? 'default'
+
+  // Initialize empty arrays for each module type
+  const modulesObj = data.reduce(
+    (acc, item) => {
+      const { moduleType, name } = item
+
       switch (moduleType) {
         case 'authorizer':
-          return { moduleType, name }
-        case 'fundingManager':
-          return { moduleType, name }
+          acc.authorizer.push(name)
+          break
         case 'paymentProcessor':
-          return { moduleType, name }
+          acc.paymentProcessor.push(name)
+          break
         case 'optionalModule':
-          return { moduleType: 'optionalModules' as const, name }
-        default:
-          return false
+          acc.optionalModules.push(name)
+          break
+        case 'fundingManager':
+          // Apply prefix filtering if required by the factory type
+          if (definedFactoryType === 'default')
+            acc.fundingManager.push(name as any)
+          else if (name.startsWith('FM_BC'))
+            acc.fundingManager.push(name as any)
+          break
       }
-    })
-    .filter((x): x is Exclude<typeof x, false> => x !== false)
 
-  type MM = (typeof modules)[number]
-
-  const modulesObj = modules.reduce(
-    (result, { moduleType, name }) => {
-      ;(result[moduleType] as any).push(name)
-      return result
+      return acc
     },
     {
-      fundingManager: [],
-      paymentProcessor: [],
-      authorizer: [],
-      optionalModules: [],
-    } as {
-      [K in MM['moduleType']]: Extract<MM, { moduleType: K }>['name'][]
+      fundingManager: [] as unknown as FT extends undefined | 'default'
+        ? GetModuleNameByType<'fundingManager'>[]
+        : FilterByPrefix<GetModuleNameByType<'fundingManager'>, 'FM_BC'>[],
+      paymentProcessor: [] as GetModuleNameByType<'paymentProcessor'>[],
+      authorizer: [] as GetModuleNameByType<'authorizer'>[],
+      optionalModules: [] as GetModuleNameByType<'optionalModule'>[],
     }
   )
+
   return modulesObj
 }
