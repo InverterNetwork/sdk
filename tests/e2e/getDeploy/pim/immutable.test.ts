@@ -7,6 +7,7 @@ import {
   type GetDeployReturn,
   type GetUserArgs,
   type RequestedModules,
+  type Workflow,
 } from '@'
 import { getModuleSchema } from '@/getDeploy/getInputs'
 
@@ -45,6 +46,7 @@ describe('#PIM_IMMUTABLE', async () => {
 
   let orchestratorAddress: `0x${string}`
   let getDeployReturn: GetDeployReturn<typeof requestedModules, 'immutable-pim'>
+  let workflow: Workflow<typeof walletClient, typeof requestedModules>
 
   it('1. Set getDeployReturn', async () => {
     getDeployReturn = await sdk.getDeploy({
@@ -72,11 +74,11 @@ describe('#PIM_IMMUTABLE', async () => {
     })
   })
 
-  it('3. Mint Collateral For Initial Purchase', async () => {
+  it('3. Mint Collateral For Initial Purchase / Buy From The Curve', async () => {
     // 1. Define the amount to be minted
     const amount = parseUnits(
-      args.initialPurchaseAmount,
-      args.issuanceToken.decimals
+      '2000', // 2x the initial purchase amount ( The Extra Will Be Used to Buy from the Curve )
+      18
     )
 
     // 2. Create a token contract instance
@@ -100,5 +102,46 @@ describe('#PIM_IMMUTABLE', async () => {
   it('5. Deploy the workflow', async () => {
     orchestratorAddress = (await getDeployReturn.run(args)).orchestratorAddress
     expect(isAddress(orchestratorAddress)).toBeTrue()
+  })
+
+  it('6. Set The Workflow', async () => {
+    workflow = await sdk.getWorkflow({
+      orchestratorAddress,
+      requestedModules,
+    })
+
+    expect(workflow).toContainKeys([
+      'orchestrator',
+      'authorizer',
+      'fundingManager',
+      'paymentProcessor',
+      'fundingToken',
+      'issuanceToken',
+    ])
+  })
+
+  let initiallyPurchased: string
+
+  it('7. Should Confirm The Initial Purchase Happened', async () => {
+    initiallyPurchased =
+      await workflow.issuanceToken.module.read.balanceOf.run(deployer)
+
+    expect(Number(initiallyPurchased)).toBeGreaterThan(0)
+  })
+
+  it('8. Buy From The PIM And Match Purchase Return With Balance', async () => {
+    const purchaseReturn =
+      await workflow.fundingManager.read.calculatePurchaseReturn.run(
+        args.initialPurchaseAmount
+      )
+
+    await workflow.fundingManager.write.buy.run(['1000', purchaseReturn])
+
+    const balance =
+      await workflow.issuanceToken.module.read.balanceOf.run(deployer)
+
+    const subtracted = Number(balance) - Number(initiallyPurchased)
+
+    expect(subtracted).toBeGreaterThanOrEqual(Number(purchaseReturn))
   })
 })
