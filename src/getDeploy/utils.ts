@@ -15,6 +15,7 @@ import type {
   UserModuleArg,
 } from '..'
 import type { Abi } from 'abitype'
+import { version } from 'bun'
 
 type DeploymentResponse = {
   bancorFormula: Record<string, `0x${string}` | undefined>
@@ -33,6 +34,43 @@ export const fetchDeployment = async (
   return await response.json()
 }
 
+export const getFactoryAddress = async ({
+  version,
+  factoryType,
+  chainId,
+}: {
+  version: DeploymentVersion
+  factoryType: FactoryType
+  chainId?: number
+}) => {
+  if (!chainId) throw new Error('Chain ID not found')
+
+  const deployment = await fetchDeployment(version)
+
+  switch (factoryType) {
+    case 'restricted-pim':
+      return (
+        (process.env.TEST_RESTRICTED_PIM_FACTORY_ADDRESS as
+          | `0x${string}`
+          | undefined) || deployment.restrictedPimFactory?.[chainId]
+      )
+    case 'immutable-pim':
+      return (
+        (process.env.TEST_IMMUTABLE_PIM_FACTORY_ADDRESS as
+          | `0x${string}`
+          | undefined) || deployment.immutablePimFactory?.[chainId]
+      )
+    case 'default':
+      return (
+        (process.env.TEST_ORCHESTRATOR_FACTORY_ADDRESS as
+          | `0x${string}`
+          | undefined) || deployment.orchestratorFactory?.[chainId]
+      )
+    default:
+      throw new Error('Invalid factory type')
+  }
+}
+
 // retrieves the deployment function via viem
 export const getViemMethods = async ({
   walletClient,
@@ -47,27 +85,13 @@ export const getViemMethods = async ({
   factoryType: FactoryType
   version: DeploymentVersion
 }) => {
-  const deployment = await fetchDeployment(version)
   const chainId = publicClient.chain?.id
 
-  if (!chainId) throw new Error('Chain ID not found')
-
-  const address = (() => {
-    switch (factoryType) {
-      case 'restricted-pim':
-        return deployment.restrictedPimFactory?.[chainId]
-      case 'immutable-pim':
-        return deployment.immutablePimFactory?.[chainId]
-      case 'default':
-        return (
-          (process.env.TEST_ORCHESTRATOR_FACTORY_ADDRESS as
-            | `0x${string}`
-            | undefined) || deployment.orchestratorFactory?.[chainId]
-        )
-      default:
-        throw new Error('Invalid factory type')
-    }
-  })()
+  const address = await getFactoryAddress({
+    version,
+    factoryType,
+    chainId,
+  })
 
   if (!address)
     throw new Error('Chain ID is not supported @ deployment factory address')

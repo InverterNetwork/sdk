@@ -12,7 +12,7 @@ import {
   GET_HUMAN_READABLE_UINT_MAX_SUPPLY,
 } from 'tests/helpers'
 
-describe.skip('#PIM_IMMUTABLE', async () => {
+describe('#PIM_IMMUTABLE', async () => {
   const { walletClient } = sdk
   const deployer = walletClient.account.address
 
