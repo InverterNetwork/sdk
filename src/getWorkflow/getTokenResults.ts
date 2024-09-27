@@ -85,7 +85,7 @@ export const getIssuanceTokenResults = async <
       publicClient,
       walletClient,
       address,
-      name: 'ERC20',
+      name: 'ERC20Issuance_v1',
       extras: {
         decimals,
       },
