@@ -11,6 +11,8 @@ TEST_PRIVATE_KEY="TEST_PRIVATE_KEY=$DEPLOYER_PRIVATE_KEY"
 RPC_URL="http://127.0.0.1:8545"
 WAIT=false # Default to false
 ORCHESTRATOR_FACTORY_ADDRESS=""
+RESTRICTED_PIM_FACTORY_ADDRESS=""
+IMMUTABLE_PIM_FACTORY_ADDRESS=""
 ERC20_MOCK_ADDRESS=""
 BANCOR_FORMULA_ADDRESS=""
 
@@ -117,8 +119,10 @@ deploy_protocol() {
     ORCHESTRATOR_FACTORY_ADDRESS=$(echo "$deploy_output" | grep -oE 'OrchestratorFactory_v1 InverterBeaconProxy_v1: 0x[0-9a-fA-F]+' | awk '{print $3}')
     ERC20_MOCK_ADDRESS=$(echo "$deploy_output" | grep -oE 'ERC20Mock iUSD: 0x[0-9a-fA-F]+' | awk '{print $3}')
     BANCOR_FORMULA_ADDRESS=$(echo "$deploy_output" | grep -oE 'BancorFormula Implementation: 0x[0-9a-fA-F]+' | awk '{print $3}')
+    RESTRICTED_PIM_FACTORY_ADDRESS=$(echo "$deploy_output" | grep -oE 'Deploying Restricted_PIM_Factory_v1 at address:\s*0x[0-9a-fA-F]+' | awk '{print $5}')
+    IMMUTABLE_PIM_FACTORY_ADDRESS=$(echo "$deploy_output" | grep -oE 'Deploying Immutable_PIM_Factory_v1 at address:\s*0x[0-9a-fA-F]+' | awk '{print $5}')
 
-    if [[ -z "$ORCHESTRATOR_FACTORY_ADDRESS" || -z "$ERC20_MOCK_ADDRESS" || -z "$BANCOR_FORMULA_ADDRESS" ]]; then
+    if [[ -z "$ORCHESTRATOR_FACTORY_ADDRESS" || -z "$ERC20_MOCK_ADDRESS" || -z "$BANCOR_FORMULA_ADDRESS" || -z "RESTRICTED_PIM_FACTORY_ADDRESS" || -z "IMMUTABLE_PIM_FACTORY_ADDRESS" ]]; then
         printf "Failed to extract contract addresses ❌\n" >&2
         return 1
     fi
@@ -158,6 +162,8 @@ update_env() {
     update_env_var "TEST_ORCHESTRATOR_FACTORY_ADDRESS" "$ORCHESTRATOR_FACTORY_ADDRESS" "$ENV_FILE"
     update_env_var "TEST_ERC20_MOCK_ADDRESS" "$ERC20_MOCK_ADDRESS" "$ENV_FILE"
     update_env_var "TEST_BANCOR_FORMULA_ADDRESS" "$BANCOR_FORMULA_ADDRESS" "$ENV_FILE"
+    update_env_var "TEST_IMMUTABLE_PIM_FACTORY_ADDRESS" "$IMMUTABLE_PIM_FACTORY_ADDRESS" "$ENV_FILE"
+    update_env_var "TEST_RESTRICTED_PIM_FACTORY_ADDRESS" "$RESTRICTED_PIM_FACTORY_ADDRESS" "$ENV_FILE"
 
     rm -f .env.bak
 }
