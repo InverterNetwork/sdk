@@ -36,14 +36,17 @@ export default async function decimals({
   const [, source, location, name] = tag?.split(':') as Split<Tag, ':'>
   const cachedToken = self?.tokenCache.get(`${contract?.address}:${tag}`)
 
-  // OVERWRITE CASES
-  if (tagOverwrites?.issuanceTokenDecimals) {
-    decimals = tagOverwrites.issuanceTokenDecimals
-  }
   // INTERNAL CASE (NO SOURCE)
-  else if (!source) {
+  if (!source) {
     decimals = extras?.decimals
     tokenAddress = extras?.defaultToken
+  }
+  // OVERWRITE CASES
+  else if (
+    tagOverwrites?.issuanceTokenDecimals &&
+    tag.includes('issuanceToken')
+  ) {
+    decimals = tagOverwrites.issuanceTokenDecimals
   } else if (!!cachedToken) {
     decimals = cachedToken.decimals
     tokenAddress = cachedToken.address
