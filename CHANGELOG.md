@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.10](https://github.com/InverterNetwork/sdk/compare/v0.2.9...v0.2.10) (2024-09-30)
+
+
+### Features
+
+* method options for module and getDeploy ([8e707f4](https://github.com/InverterNetwork/sdk/commit/8e707f42763edf32f4f35c164a1de91f460839a8))
+
+
+### Bug Fixes
+
+* overwrite applies to its tag ([ebf63e5](https://github.com/InverterNetwork/sdk/commit/ebf63e57d80608ea63081894f4633fca4dcc2cf8))
+* redundant issuance token address on custom pim ([d72bd47](https://github.com/InverterNetwork/sdk/commit/d72bd47850082ee25fd6f9f2bf1e974d34869004))
+* sim output wrong key ([6747cba](https://github.com/InverterNetwork/sdk/commit/6747cba7876f9afe5521ced61058cf6f846e4027))
+
 ### [0.2.9](https://github.com/InverterNetwork/sdk/compare/v0.2.8...v0.2.9) (2024-09-13)
 
 ### [0.2.8](https://github.com/InverterNetwork/sdk/compare/v0.2.7...v0.2.8) (2024-09-05)
