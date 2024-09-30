@@ -1,19 +1,11 @@
-import type {
-  PopPublicClient,
-  PopWalletClient,
-  RequiredAllowances,
-} from '@/types'
-import { ERC20_ABI } from './constants'
+import type { TagProcessorApproveParams } from '@/types'
+import { ERC20_ABI } from '../constants'
 
-export const processAllowances = async ({
+export default async function approve({
   requiredAllowances,
   publicClient,
   walletClient,
-}: {
-  requiredAllowances: RequiredAllowances[]
-  publicClient: PopPublicClient
-  walletClient?: PopWalletClient
-}) => {
+}: TagProcessorApproveParams) {
   if (!walletClient) return
 
   const hasDependencies = requiredAllowances.find(
@@ -34,9 +26,11 @@ export const processAllowances = async ({
     })
   )
 
-  return await Promise.all(
+  const receipts = await Promise.all(
     dependencyTxHashes.map((hash) => {
       return publicClient.waitForTransactionReceipt({ hash })
     })
   )
+
+  return receipts
 }

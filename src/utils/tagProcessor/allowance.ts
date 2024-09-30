@@ -1,22 +1,13 @@
-import { ERC20_ABI } from './constants'
+import type { TagProcessorAllowancesParams } from '@'
+import { ERC20_ABI } from '../constants'
 
-import type { PublicClient } from 'viem'
-
-export type GetRequiredAllowanceProps = {
-  transferAmount: bigint
-  spenderAddress: `0x${string}`
-  publicClient: PublicClient
-  tokenAddress?: `0x${string}`
-  userAddress?: `0x${string}`
-}
-
-export default async function getRequiredAllowance({
+export default async function allowance({
   transferAmount,
   tokenAddress,
   spenderAddress,
   publicClient,
   userAddress,
-}: GetRequiredAllowanceProps) {
+}: TagProcessorAllowancesParams) {
   if (!tokenAddress || !userAddress)
     throw new Error(
       'Token or user address is undefined, while trying to get required allowance.'

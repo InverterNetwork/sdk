@@ -1,5 +1,4 @@
 import constructMethod from './constructMethod'
-import { Inverter } from '../Inverter'
 
 import type {
   AbiStateMutability,
@@ -8,16 +7,10 @@ import type {
 } from 'abitype'
 import type { Simplify, TupleToUnion } from 'type-fest-4'
 import type { ExtendedAbi, ExtendedAbiFunction } from '@inverter-network/abis'
-import type {
-  Extras,
-  MethodKind,
-  PopContractReturnType,
-  PopPublicClient,
-  PopWalletClient,
-} from '../types'
+import type { GetModuleItterateMethodsParams, MethodKind } from '../types'
 
 // The prepareFunction function is used to prepare the functions from the abi
-export default function prepareFunction<
+export default function iterateMethods<
   A extends ExtendedAbi,
   T extends AbiStateMutability[],
   Kind extends MethodKind,
@@ -30,16 +23,11 @@ export default function prepareFunction<
   extras,
   self,
   walletClient,
-}: {
-  abi: A
-  type: T
-  contract: PopContractReturnType
-  kind: Kind
-  publicClient: PopPublicClient
-  walletClient?: PopWalletClient
-  extras?: Extras
-  self?: Inverter<any>
-}): // The result object type, maps the function names to their return types
+}: GetModuleItterateMethodsParams<
+  A,
+  T,
+  Kind
+>): // The result object type, maps the function names to their return types
 Simplify<{
   [N in ExtractAbiFunctionNames<A, TupleToUnion<T>>]: ReturnType<
     // Gets the return type of the constructMethod function
