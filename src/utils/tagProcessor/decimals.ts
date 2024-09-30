@@ -1,12 +1,9 @@
 import { ERC20_ABI } from '@/utils/constants'
-import { Inverter } from '@/Inverter'
 
-import type { PublicClient } from 'viem'
 import type {
-  Extras,
-  ExtendedAbiParameter,
   DecimalsTagReturn,
   CacheTokenProps,
+  TagProcessorDecimalsParams,
 } from '@/types'
 import type { Tag } from '@inverter-network/abis'
 import type { Split } from 'type-fest-4'
@@ -28,15 +25,8 @@ export default async function decimals({
   publicClient,
   contract,
   self,
-}: {
-  argsOrRes: any[]
-  parameters: readonly ExtendedAbiParameter[]
-  extras?: Extras
-  tag?: Tag
-  publicClient: PublicClient
-  contract?: any
-  self?: Inverter
-}): Promise<DecimalsTagReturn> {
+  tagOverwrites,
+}: TagProcessorDecimalsParams): Promise<DecimalsTagReturn> {
   let tokenAddress: `0x${string}` | undefined
   let decimals: number | undefined
   const { readContract } = publicClient
@@ -50,6 +40,13 @@ export default async function decimals({
   if (!source) {
     decimals = extras?.decimals
     tokenAddress = extras?.defaultToken
+  }
+  // OVERWRITE CASES
+  else if (
+    tagOverwrites?.issuanceTokenDecimals &&
+    tag.includes('issuanceToken')
+  ) {
+    decimals = tagOverwrites.issuanceTokenDecimals
   } else if (!!cachedToken) {
     decimals = cachedToken.decimals
     tokenAddress = cachedToken.address

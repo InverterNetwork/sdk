@@ -4,12 +4,13 @@ import type {
   FactoryType,
   GetUserArgs,
   Inverter,
+  MethodOptions,
   PopWalletClient,
   RequestedModules,
 } from '..'
 import { getViemMethods, handlePimFactoryApprove } from './utils'
 import getArgs from './getArgs'
-import { handleError } from '../utils'
+import { handleError, handleOptions } from '../utils'
 import { getModuleData } from '@inverter-network/abis'
 
 /**
@@ -49,17 +50,20 @@ export default async function getMethods<
   type Args = GetUserArgs<T, FT>
 
   async function handleDeployment<K extends DeployMethodKind>(
+    kind: K,
     userArgs: Args,
-    kind: K
+    options?: MethodOptions
   ) {
     try {
-      await handlePimFactoryApprove({
+      const receipts = await handlePimFactoryApprove({
         factoryType,
         factoryAddress,
         publicClient,
         walletClient,
         userArgs,
       })
+
+      if (receipts) options?.onApprove?.(receipts)
 
       const arr = await getArgs({ userArgs, kind, ...params })
 
@@ -92,6 +96,14 @@ export default async function getMethods<
           })
           const orchestratorAddress = simulationRes.result as `0x${string}`
           const transactionHash = await write(arr, {} as any)
+
+          // handle options receipt
+          await handleOptions.receipt({
+            hash: transactionHash,
+            options,
+            publicClient,
+          })
+
           return {
             orchestratorAddress,
             transactionHash,
@@ -110,8 +122,9 @@ export default async function getMethods<
   }
 
   return {
-    run: (userArgs: Args) => handleDeployment(userArgs, 'write'),
-    simulate: (userArgs: Args) => handleDeployment(userArgs, 'simulate'),
-    estimateGas: (userArgs: Args) => handleDeployment(userArgs, 'estimateGas'),
+    run: (userArgs: Args, options?: MethodOptions) =>
+      handleDeployment('write', userArgs, options),
+    simulate: (userArgs: Args) => handleDeployment('simulate', userArgs),
+    estimateGas: (userArgs: Args) => handleDeployment('estimateGas', userArgs),
   }
 }

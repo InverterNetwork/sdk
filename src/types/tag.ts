@@ -38,3 +38,7 @@ export type TagCallback<T extends TagCallbackType = TagCallbackType> = (
   tags: readonly Tag[],
   argOrRes: any
 ) => Promise<TagCallbackReturn<T>>
+
+export type TagOverwrites = {
+  issuanceTokenDecimals?: number
+}

@@ -1,7 +1,7 @@
 import type { ModuleName } from '@inverter-network/abis'
 import { getModuleData } from '@inverter-network/abis'
 import { getContract, type Abi } from 'viem'
-import prepareFunction from './prepareFunction'
+import iterateMethods from './iterateMethods'
 
 import type { GetModuleParams, PopWalletClient } from '@/types'
 
@@ -42,7 +42,7 @@ export default function getModule<
   })
 
   // Prepare the read functions
-  const read = prepareFunction({
+  const read = iterateMethods({
       publicClient,
       abi,
       type: ['pure', 'view'],
@@ -54,7 +54,7 @@ export default function getModule<
       walletClient,
     }),
     // Prepare the simulate functions
-    simulate = prepareFunction({
+    simulate = iterateMethods({
       publicClient,
       abi,
       type: ['nonpayable', 'payable'],
@@ -65,7 +65,7 @@ export default function getModule<
       walletClient,
     }),
     // Prepare estimateGas functions
-    estimateGas = prepareFunction({
+    estimateGas = iterateMethods({
       publicClient,
       abi,
       type: ['nonpayable', 'payable'],
@@ -77,7 +77,7 @@ export default function getModule<
     }),
     // Prepare the write functions if the walletClient is valid
     write = !!walletClient
-      ? prepareFunction({
+      ? iterateMethods({
           publicClient,
           abi,
           type: ['nonpayable', 'payable'],

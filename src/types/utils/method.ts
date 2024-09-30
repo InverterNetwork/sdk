@@ -1,5 +1,6 @@
-import type { SimulateContractReturnType } from 'viem'
+import type { SimulateContractReturnType, TransactionReceipt } from 'viem'
 import type { ExtendedParametersToPrimitiveType } from './primitive'
+import type { OmitNever } from '@'
 
 export type MethodKind = 'read' | 'write' | 'simulate' | 'estimateGas'
 
@@ -20,6 +21,20 @@ export type GetMethodArgs<I> =
         ? R[0]
         : R
     : never
+
+/**
+ * The options for the method
+ * @param {Object} MethodOptions
+ * @param {number} [params.confirmations] - The number of confirmations
+ * @param {Function} params.onHash - The callback for the hash ( if confirmations is specified to receive the hash pre await )
+ * @param {Function} params.onApprove - The callback for the approval
+ */
+export type MethodOptions = OmitNever<{
+  confirmations?: number
+  onHash?: (hash: `0x${string}`) => void
+  onConfirmation?: (receipt: TransactionReceipt) => void
+  onApprove?: (receipts: TransactionReceipt[]) => void
+}>
 
 // Deduper util for getting the return type
 type InferReturn<O> =
