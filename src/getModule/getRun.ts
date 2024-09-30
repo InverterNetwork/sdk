@@ -1,4 +1,4 @@
-import { processInputs, formatOutputs, processAllowances } from '@/utils'
+import { processInputs, formatOutputs, tagProcessor } from '@/utils'
 import { Inverter } from '@/Inverter'
 
 import type {
@@ -11,7 +11,7 @@ import type {
   PopContractReturnType,
 } from '@/types'
 import { formatEther } from 'viem'
-import { handleError } from '../../utils'
+import { handleError } from '../utils'
 import type { ExtendedAbiParameter } from '@inverter-network/abis'
 
 // Construct the run function
@@ -62,7 +62,7 @@ export default function getRun<
     const res = await (async () => {
       try {
         if (kind !== 'read')
-          await processAllowances({
+          await tagProcessor.approve({
             requiredAllowances,
             publicClient,
             walletClient,

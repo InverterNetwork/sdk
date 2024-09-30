@@ -17,7 +17,7 @@ import type {
 } from '../types'
 
 // The prepareFunction function is used to prepare the functions from the abi
-export default function prepareFunction<
+export default function iterateMethods<
   A extends ExtendedAbi,
   T extends AbiStateMutability[],
   Kind extends MethodKind,

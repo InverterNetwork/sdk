@@ -38,7 +38,7 @@ export default function getTagCallback({
       parsedAmount = parseDecimals(arg, decimalsRes.decimals)
 
       if (kind === 'write' && tags.includes('approval' as any)) {
-        const requiredAllowance = await tagProcessor.getRequiredAllowance({
+        const requiredAllowance = await tagProcessor.allowance({
           transferAmount: parsedAmount,
           publicClient,
           spenderAddress: contract?.address,
