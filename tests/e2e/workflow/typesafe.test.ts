@@ -107,6 +107,7 @@ describe('#WORKFLOW', () => {
 
       expect(orchestratorAddress).toContain('0x')
     })
+
     it('2. Should Get The Workflow', async () => {
       workflow = await sdk.getWorkflow({
         orchestratorAddress: orchestratorAddress,
@@ -114,6 +115,7 @@ describe('#WORKFLOW', () => {
       })
       expect(workflow).toBeObject()
     })
+
     it('3. Should Have: ( fundingToken: address, module, decimals, symbol )', async () => {
       expect(workflow.fundingToken).toContainKeys([
         'address',
@@ -122,6 +124,7 @@ describe('#WORKFLOW', () => {
         'symbol',
       ])
     })
+
     it('4. Should Grant Permission To Add Bounty', async () => {
       const issuerRole =
         await workflow.optionalModule.LM_PC_Bounties_v1.read.BOUNTY_ISSUER_ROLE.run()
@@ -133,6 +136,7 @@ describe('#WORKFLOW', () => {
 
       expect(txHash).toBeString()
     })
+
     it('5. Should Add A Bounty', async () => {
       bountyId = (
         await workflow.optionalModule.LM_PC_Bounties_v1.simulate.addBounty.run(
@@ -148,6 +152,7 @@ describe('#WORKFLOW', () => {
       expect(bountyId).toBeString()
       expect(hash).toBeString()
     })
+
     it('6. Should Read And Match The Bounty', async () => {
       const bounty =
         await workflow.optionalModule.LM_PC_Bounties_v1.read.getBountyInformation.run(

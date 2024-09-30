@@ -225,7 +225,11 @@ export const handlePimFactoryApprove = async ({
       parsedRequiredAllowance,
     ])
     // wait for the transaction to be mined
-    await publicClient.waitForTransactionReceipt({ hash })
+    const transactionReceipt = await publicClient.waitForTransactionReceipt({
+      hash,
+    })
+
+    return [transactionReceipt]
   }
 
   // check if the userArgs are for a PIM factory
@@ -233,8 +237,7 @@ export const handlePimFactoryApprove = async ({
   // handle the PIM factory approve
   switch (factoryType) {
     case 'immutable-pim':
-      await handle(userArgs.initialPurchaseAmount)
-      break
+      return await handle(userArgs.initialPurchaseAmount)
   }
 
   return

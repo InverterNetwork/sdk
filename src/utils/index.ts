@@ -7,6 +7,7 @@ export * from './processInputs'
 export * from './formatOutputs'
 
 export { default as tagProcessor } from './tagProcessor'
+export { default as handleOptions } from './handleOptions'
 
 export const getEntries = <T extends object>(obj: T): Entries<T> =>
   Object.entries(obj) as any
