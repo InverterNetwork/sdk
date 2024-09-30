@@ -21,3 +21,5 @@ export type GetModuleReturn<
   N extends ModuleName,
   W extends PopWalletClient | undefined = undefined,
 > = ReturnType<typeof getModule<N, W>>
+
+export * from './utils'

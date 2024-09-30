@@ -1,14 +1,10 @@
 import { processInputs, formatOutputs, tagProcessor } from '@/utils'
-import { Inverter } from '@/Inverter'
 
 import type {
-  Extras,
   GetMethodArgs,
-  PopPublicClient,
-  PopWalletClient,
   MethodKind,
   GetMethodResponse,
-  PopContractReturnType,
+  GetModuleGetRunParams,
 } from '@/types'
 import { formatEther } from 'viem'
 import { handleError } from '../utils'
@@ -16,7 +12,7 @@ import type { ExtendedAbiParameter } from '@inverter-network/abis'
 
 // Construct the run function
 export default function getRun<
-  ExtenderInputs extends readonly ExtendedAbiParameter[],
+  ExtendedInputs extends readonly ExtendedAbiParameter[],
   ExtendedOutputs extends readonly ExtendedAbiParameter[],
   Kind extends MethodKind,
 >({
@@ -29,17 +25,7 @@ export default function getRun<
   extras,
   kind,
   self,
-}: {
-  publicClient: PopPublicClient
-  name: string
-  contract: PopContractReturnType
-  extendedInputs: ExtenderInputs
-  extendedOutputs: ExtendedOutputs
-  walletClient?: PopWalletClient
-  extras?: Extras
-  kind: Kind
-  self?: Inverter
-}) {
+}: GetModuleGetRunParams<ExtendedInputs, ExtendedOutputs, Kind>) {
   const run = async (
     args: GetMethodArgs<typeof extendedInputs>
   ): Promise<GetMethodResponse<ExtendedOutputs, Kind>> => {
@@ -61,12 +47,13 @@ export default function getRun<
      */
     const res = await (async () => {
       try {
-        if (kind !== 'read')
+        if (kind !== 'read') {
           await tagProcessor.approve({
             requiredAllowances,
             publicClient,
             walletClient,
           })
+        }
 
         const actions = {
           simulate: async () => {
