@@ -43,7 +43,7 @@
     "release:beta": "standard-version -a --prerelease beta --skip.changelog",
     "release:pub": "git push --follow-tags origin main",
     "protocol-rpc": "tools/protocol-rpc.sh --wait",
-    "gen:graphql": "graphql-codegen --config src/lib/graphql/tools/codegen.yml && bun src/lib/graphql/tools/generateQueries.ts && prettier --write src/lib/graphql/build/**/*.ts"
+    "gen:graphql": "graphql-codegen --config src/lib/graphql/tools/codegen.yml && bun src/lib/graphql/tools/generate.ts && prettier --write src/lib/graphql/build/**/*.ts"
   },
   "lint-staged": {
     "src/**/*.{ts,tsx}": [

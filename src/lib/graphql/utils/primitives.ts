@@ -1,6 +1,7 @@
 import { gql } from '@urql/core'
-import type { FormattedGraphQLParams } from './types'
-import client from './client'
+import type { FormattedGraphQLParams } from '../types'
+import client from '../client'
+import SubscriptionManager from './SubscriptionManager'
 
 /**
  * Formats the `order_by` object into a GraphQL-compatible string.
@@ -114,6 +115,18 @@ export const getSubscriptionDocument = <
   `
 }
 
+/**
+ * Wrapper function for executing GraphQL queries using URQL client.
+ * It allows dynamically constructing the query document and selecting specific fields to be returned.
+ *
+ * @template T - The type representing the structure of the GraphQL entity's fields.
+ * @template N - The name of the GraphQL query (e.g., 'Swap', 'BondingCurve').
+ *
+ * @param {Object} params - An object containing the query details.
+ * @param {N} params.name - The name of the GraphQL query.
+ * @param {FormattedGraphQLParams<T>} [params.params] - Optional query parameters like filtering (`where`), ordering (`order_by`), and limits (`limit`).
+ * @param {Array<keyof T>} params.project - An array of keys that specify which fields to select from the query result.
+ */
 export const queryWrapper = async <T extends object, N extends string>({
   name,
   params,
@@ -123,8 +136,43 @@ export const queryWrapper = async <T extends object, N extends string>({
   params?: FormattedGraphQLParams<T>
   project: Array<keyof T>
 }) => {
+  // Dynamically construct the query document with selected fields and parameters
   const document = getDocument({ name, params, project })
+
+  // Execute the query using the URQL client and wait for the result
   const response = await client.query(document, {}).toPromise()
+
+  // Return the data from the response, or null if no data is available
   const data = response.data
+
   return data
+}
+
+/**
+ * Wrapper for subscribing to GraphQL subscriptions.
+ * Allows dynamic subscription management by adding or removing callbacks for a specific subscription.
+ *
+ * @template T - The type representing the structure of the GraphQL entity's fields.
+ * @param params - An object containing the following properties:
+ *  - `name`: The name of the GraphQL subscription (e.g., 'Swap', 'BondingCurve').
+ *  - `params`: Optional parameters like filtering (`where`), ordering (`order_by`), and limits (`limit`) for the subscription.
+ *  - `project`: An array of keys that specify which fields to select from the subscription result.
+ * @returns {SubscriptionManager<T>} A new instance of the `SubscriptionManager` that allows adding/removing callbacks for handling the subscription events.
+ */
+export const subscriptionWrapper = <
+  T extends object,
+  N extends string,
+>(params: {
+  name: N
+  params?: FormattedGraphQLParams<T>
+  project: Array<keyof T>
+}): SubscriptionManager<T> => {
+  // Create the subscription document using urql's gql and utilities
+  const document = getSubscriptionDocument(params)
+
+  // Get an instance of the SubscriptionManager
+  const subscriptionManager = new SubscriptionManager<T>(document)
+
+  // Return the subscription manager to allow adding/removing callbacks
+  return subscriptionManager
 }

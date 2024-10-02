@@ -1,7 +1,7 @@
 import { query } from '@/lib/graphql'
 import { expect, describe, it } from 'bun:test'
 
-describe('#INDEXER_GET', () => {
+describe('#INDEXER_QUERY', () => {
   it('1. Should Query The Swap Endpoint And Confirm The Result', async () => {
     const response = await query.Swap({
       params: {
@@ -15,5 +15,6 @@ describe('#INDEXER_GET', () => {
     })
 
     expect(response?.Swap).toBeArray()
+    expect(response?.Swap[0].id).toBeString()
   })
 })
