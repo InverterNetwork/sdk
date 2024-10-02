@@ -15,6 +15,7 @@ import type {
   UserModuleArg,
 } from '..'
 import type { Abi } from 'abitype'
+import { anvil } from 'viem/chains'
 
 type DeploymentResponse = {
   bancorFormula: Record<string, `0x${string}` | undefined>
@@ -48,23 +49,21 @@ export const getFactoryAddress = async ({
 
   switch (factoryType) {
     case 'restricted-pim':
-      return (
-        (process.env.TEST_RESTRICTED_PIM_FACTORY_ADDRESS as
-          | `0x${string}`
-          | undefined) || deployment.restrictedPimFactory?.[chainId]
-      )
+      if (chainId === anvil.id)
+        return process.env.TEST_RESTRICTED_PIM_FACTORY_ADDRESS as `0x${string}`
+
+      return deployment.restrictedPimFactory?.[chainId]
+
     case 'immutable-pim':
-      return (
-        (process.env.TEST_IMMUTABLE_PIM_FACTORY_ADDRESS as
-          | `0x${string}`
-          | undefined) || deployment.immutablePimFactory?.[chainId]
-      )
+      if (chainId === anvil.id)
+        return process.env.TEST_IMMUTABLE_PIM_FACTORY_ADDRESS as `0x${string}`
+
+      return deployment.immutablePimFactory?.[chainId]
     case 'default':
-      return (
-        (process.env.TEST_ORCHESTRATOR_FACTORY_ADDRESS as
-          | `0x${string}`
-          | undefined) || deployment.orchestratorFactory?.[chainId]
-      )
+      if (chainId === anvil.id)
+        return process.env.TEST_ORCHESTRATOR_FACTORY_ADDRESS as `0x${string}`
+
+      return deployment.orchestratorFactory?.[chainId]
     default:
       throw new Error('Invalid factory type')
   }

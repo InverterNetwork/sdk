@@ -42,7 +42,8 @@
     "release:alpha": "standard-version -a --prerelease alpha --skip.changelog",
     "release:beta": "standard-version -a --prerelease beta --skip.changelog",
     "release:pub": "git push --follow-tags origin main",
-    "protocol-rpc": "tools/protocol-rpc.sh --wait"
+    "protocol-rpc": "tools/protocol-rpc.sh --wait",
+    "gen:graphql": "graphql-codegen --config src/lib/graphql/tools/codegen.yml && bun src/lib/graphql/tools/generate.ts && prettier --write src/lib/graphql/build/**/*.ts"
   },
   "lint-staged": {
     "src/**/*.{ts,tsx}": [
@@ -57,11 +58,15 @@
   },
   "dependencies": {
     "@inverter-network/abis": "0.2.6",
+    "@urql/core": "^5.0.6",
+    "subscriptions-transport-ws": "^0.11.0",
     "type-fest-4": "npm:type-fest@^4.26.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^18.6.1",
     "@commitlint/config-conventional": "^18.6.3",
+    "@graphql-codegen/cli": "^5.0.2",
+    "@graphql-codegen/typescript": "^4.0.9",
     "@types/bun": "^1.1.8",
     "eslint-plugin-prettier": "^5.2.1",
     "husky": "^9.1.5",

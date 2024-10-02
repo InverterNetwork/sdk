@@ -1,6 +1,8 @@
 import getWorkflow from './getWorkflow'
 import getDeploy from './getDeploy'
 import getDeployOptions from './getDeployOptions'
+import deploy from './deploy'
+import { getModule, graphql } from '.'
 
 import type { ModuleName } from '@inverter-network/abis'
 import type {
@@ -14,13 +16,11 @@ import type {
   DeployKeys,
   GetModuleParams,
 } from './types'
-import deploy from './deploy'
-import { getModule } from '.'
 
 export class Inverter<W extends PopWalletClient | undefined = undefined> {
   publicClient: PopPublicClient
   walletClient: W
-  readonly workflows: Map<`0x${string}`, any>
+  readonly workflows: Map<`${number}:0x${string}`, any>
   tokenCache: Map<string, any>
 
   constructor({
@@ -59,7 +59,10 @@ export class Inverter<W extends PopWalletClient | undefined = undefined> {
     orchestratorAddress: `0x${string}`
     requestedModules?: T
   }): Promise<Workflow<W, T>> {
-    const cachedWorkflow = this.workflows.get(orchestratorAddress)
+    const chainId = this.publicClient.chain.id
+    const chainOrchestratorAddress =
+      `${chainId}:${orchestratorAddress}` as const
+    const cachedWorkflow = this.workflows.get(chainOrchestratorAddress)
     if (cachedWorkflow) return cachedWorkflow
     else {
       const workflow = await getWorkflow({
@@ -69,7 +72,7 @@ export class Inverter<W extends PopWalletClient | undefined = undefined> {
         requestedModules,
         self: this,
       })
-      this.workflows.set(orchestratorAddress, workflow)
+      this.workflows.set(chainOrchestratorAddress, workflow)
       return workflow
     }
   }
@@ -128,4 +131,6 @@ export class Inverter<W extends PopWalletClient | undefined = undefined> {
       self: this,
     })
   }
+
+  graphql = graphql
 }

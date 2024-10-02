@@ -9,7 +9,8 @@ import type { Tag } from '@inverter-network/abis'
 import type { Split } from 'type-fest-4'
 
 const cacheToken = (props: CacheTokenProps) => {
-  const key = `${props.moduleAddress}:${props.tag}`
+  const chainId = props.self.publicClient.chain.id
+  const key = `${chainId}:${props.moduleAddress}:${props.tag}`
   const value = {
     address: props?.tokenAddress,
     decimals: props.decimals,
@@ -27,14 +28,18 @@ export default async function decimals({
   self,
   tagOverwrites,
 }: TagProcessorDecimalsParams): Promise<DecimalsTagReturn> {
+  const chainId = self?.publicClient.chain.id
+  const { readContract } = publicClient
+
   let tokenAddress: `0x${string}` | undefined
   let decimals: number | undefined
-  const { readContract } = publicClient
 
   if (!tag) throw new Error('No decimals tag provided')
 
   const [, source, location, name] = tag?.split(':') as Split<Tag, ':'>
-  const cachedToken = self?.tokenCache.get(`${contract?.address}:${tag}`)
+  const cachedToken = self?.tokenCache.get(
+    `${chainId}:${contract?.address}:${tag}`
+  )
 
   // INTERNAL CASE (NO SOURCE)
   if (!source) {
