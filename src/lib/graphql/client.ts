@@ -3,31 +3,11 @@ import {
   cacheExchange,
   fetchExchange,
   subscriptionExchange,
-  type ExecutionResult,
-  type SubscriptionForwarder,
 } from '@urql/core'
 import { DEFAULT_GRAPHQL_URL } from './constants'
-import type { ObservableLike } from 'type-fest-4'
+import { SubscriptionClient } from 'subscriptions-transport-ws'
 
-// Define forwardSubscription function
-const forwardSubscription: SubscriptionForwarder =
-  (): ObservableLike<ExecutionResult> => {
-    return {
-      subscribe: (observer) => {
-        // Simulate an observable with no data
-        const intervalId = setInterval(() => {
-          observer?.next?.({ data: null })
-        }, 1000)
-
-        return {
-          unsubscribe: () => clearInterval(intervalId),
-        }
-      },
-      [Symbol.observable]() {
-        return this
-      },
-    }
-  }
+const subscriptionClient = new SubscriptionClient(DEFAULT_GRAPHQL_URL, {})
 
 const client = new Client({
   url: DEFAULT_GRAPHQL_URL,
@@ -35,7 +15,7 @@ const client = new Client({
     cacheExchange,
     fetchExchange,
     subscriptionExchange({
-      forwardSubscription,
+      forwardSubscription: (operation) => subscriptionClient.request(operation),
     }),
   ],
 })

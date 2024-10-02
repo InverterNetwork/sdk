@@ -1,9 +1,9 @@
-import { query } from '@/lib/graphql'
+import graphql from '@/lib/graphql'
 import { expect, describe, it } from 'bun:test'
 
 describe('#INDEXER_QUERY', () => {
   it('1. Should Query The Swap Endpoint And Confirm The Result', async () => {
-    const response = await query.Swap({
+    const response = await graphql.query.Swap({
       params: {
         where: {
           id: {

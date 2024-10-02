@@ -1,5 +1,4 @@
-import { Inverter, type PopPublicClient } from '@'
-import { subscription } from '@/lib/graphql'
+import { graphql, Inverter, type PopPublicClient } from '@'
 import { expect, describe, it, beforeAll } from 'bun:test'
 import { createPublicClient, createWalletClient, http } from 'viem'
 import { privateKeyToAccount } from 'viem/accounts'
@@ -7,13 +6,13 @@ import { optimismSepolia } from 'viem/chains'
 
 describe('#INDEXER_SUBSCRIPTION', () => {
   let subscriptionInstance: ReturnType<
-    typeof subscription.WorkflowSubscription
+    typeof graphql.subscription.WorkflowSubscription
   > | null = null
 
   let id: string | null = null
 
   beforeAll(async () => {
-    subscriptionInstance = subscription.WorkflowSubscription({
+    subscriptionInstance = graphql.subscription.WorkflowSubscription({
       project: ['id'],
     })
 
@@ -49,20 +48,15 @@ describe('#INDEXER_SUBSCRIPTION', () => {
         },
       })
 
-      const { orchestratorAddress } = await run(
-        {
-          authorizer: {
-            initialAdmin: sdk.walletClient.account.address,
-          },
-          fundingManager: {
-            orchestratorTokenAddress:
-              '0x065775C7aB4E60ad1776A30DCfB15325d231Ce4F' as const,
-          },
+      const { orchestratorAddress } = await run({
+        authorizer: {
+          initialAdmin: sdk.walletClient.account.address,
         },
-        {
-          confirmations: 1,
-        }
-      )
+        fundingManager: {
+          orchestratorTokenAddress:
+            '0x065775C7aB4E60ad1776A30DCfB15325d231Ce4F' as const,
+        },
+      })
 
       expect(orchestratorAddress).toContain('0x')
     },
@@ -74,20 +68,14 @@ describe('#INDEXER_SUBSCRIPTION', () => {
   it(
     '2. Should Listen For The Workflow Deployment',
     async () => {
-      let count = 0
-
       while (!id) {
-        if (count > 10) {
-          throw new Error('Timeout')
-        }
-
-        await new Promise((resolve) => setTimeout(resolve, 500))
+        await new Promise((resolve) => setTimeout(resolve, 100))
       }
 
       expect(id).toContain('0x')
     },
     {
-      timeout: 10_000, // 20 seconds
+      timeout: 7_000, // 7 seconds
     }
   )
 })

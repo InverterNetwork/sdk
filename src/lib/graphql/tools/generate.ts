@@ -32,7 +32,7 @@ function generateImports(fields: string[]) {
     .join(',\n  ')
 
   const fileContent = `
-import { utils } from '..'
+import * as utils from '../utils'
 import type { FormattedGraphQLParams } from '..'
 import type {
   ${typeImports}

@@ -1,8 +1,12 @@
-export { default as client } from './client'
+import { subscription } from './build'
+import { query } from './build'
 
 export * from './types'
 export * from './constants'
-export * as utils from './utils/primitives'
 
-export { query } from './build'
-export { subscription } from './build'
+const graphql = {
+  query,
+  subscription,
+}
+
+export default graphql

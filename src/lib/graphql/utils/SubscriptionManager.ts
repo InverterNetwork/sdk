@@ -1,5 +1,5 @@
 import { pipe, subscribe } from 'wonka'
-import { client } from '..' // Your urql client configuration
+import client from '../client' // Your urql client configuration
 import type { TypedDocumentNode } from '@urql/core'
 
 type CallbackId = string
@@ -17,7 +17,7 @@ type SubscriptionCallback<T> = (data: { [key: string]: T[] }) => void
  * @template T - The shape of the data returned by the subscription.
  */
 class SubscriptionManager<T> {
-  private callbacks: Map<CallbackId, SubscriptionCallback<T>> = new Map()
+  public callbacks: Map<CallbackId, SubscriptionCallback<T>> = new Map()
   private subscriptionDocument: TypedDocumentNode<{ [key: string]: T[] }, any>
   private subscriptionOperation: (() => void) | null = null
   private isSubscribed = false

@@ -1,4 +1,4 @@
-import { utils } from '..'
+import * as utils from '../utils'
 import type { FormattedGraphQLParams } from '..'
 import type {
   BondingCurve as TBondingCurve,
