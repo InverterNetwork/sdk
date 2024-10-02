@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.3.0-alpha.0](https://github.com/InverterNetwork/sdk/compare/v0.2.10...v0.3.0-alpha.0) (2024-10-02)
+
+
+### Features
+
+* graphql ([3bf05a9](https://github.com/InverterNetwork/sdk/commit/3bf05a989f6d60f9a09f7f8a89b1f8dacdac3091))
+* **wip:** graphql qr ([12a7d80](https://github.com/InverterNetwork/sdk/commit/12a7d80ccf34c78f1ce07af7d1ddb8e763fc78ee))
+* **wip:** graphql subscriptions ([624101f](https://github.com/InverterNetwork/sdk/commit/624101f3b27aa0cb3a5e20f0a0f4742f43ed0eb5))
+
+
+### Bug Fixes
+
+* part of fr-231-feat-add-update-wallet-clients-to-class, add chainId keys to cache ([0b514e4](https://github.com/InverterNetwork/sdk/commit/0b514e48324194a5a546965e44bb0b6f4e129429))
+
 ### [0.2.10](https://github.com/InverterNetwork/sdk/compare/v0.2.9...v0.2.10) (2024-09-30)
 
 
