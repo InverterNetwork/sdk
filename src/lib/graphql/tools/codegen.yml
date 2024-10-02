@@ -1,0 +1,8 @@
+overwrite: true
+schema: 'https://indexer.bigdevenergy.link/a414bf3/v1/graphql'
+generates:
+  ./src/lib/graphql/build/types.ts:
+    plugins:
+      - 'typescript'
+    config:
+      skipTypename: true # Optional: Skip __typename in generated types

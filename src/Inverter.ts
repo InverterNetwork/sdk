@@ -1,6 +1,8 @@
 import getWorkflow from './getWorkflow'
 import getDeploy from './getDeploy'
 import getDeployOptions from './getDeployOptions'
+import deploy from './deploy'
+import { getModule, graphql } from '.'
 
 import type { ModuleName } from '@inverter-network/abis'
 import type {
@@ -14,8 +16,6 @@ import type {
   DeployKeys,
   GetModuleParams,
 } from './types'
-import deploy from './deploy'
-import { getModule } from '.'
 
 export class Inverter<W extends PopWalletClient | undefined = undefined> {
   publicClient: PopPublicClient
@@ -131,4 +131,6 @@ export class Inverter<W extends PopWalletClient | undefined = undefined> {
       self: this,
     })
   }
+
+  graphql = graphql
 }
