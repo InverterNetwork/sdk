@@ -3,6 +3,7 @@ import getDeploy from './getDeploy'
 import getDeployOptions from './getDeployOptions'
 import deploy from './deploy'
 import { getModule, graphql } from '.'
+import { isEqual } from 'lodash'
 
 import type { ModuleName } from '@inverter-network/abis'
 import type {
@@ -23,6 +24,10 @@ export class Inverter<W extends PopWalletClient | undefined = undefined> {
   readonly workflows: Map<`${number}:0x${string}`, any>
   tokenCache: Map<string, any>
 
+  // Static instance of the Inverter
+  private static instance: Inverter<any> | null = null
+
+  // Private constructor to prevent external instantiation
   constructor({
     publicClient,
     walletClient,
@@ -37,16 +42,40 @@ export class Inverter<W extends PopWalletClient | undefined = undefined> {
   }
 
   /**
+   * Static method to get the singleton instance
+   * Uses the correct `new` to instantiate the Inverter internally
+   */
+  static getInstance<W extends PopWalletClient | undefined = undefined>({
+    publicClient,
+    walletClient,
+  }: {
+    publicClient: PopPublicClient
+    walletClient?: W
+  }): Inverter<W> {
+    if (!Inverter.instance) {
+      Inverter.instance = new Inverter<W>({ publicClient, walletClient })
+    }
+
+    if (!isEqual(Inverter.instance.publicClient, publicClient))
+      Inverter.instance.updatePublicClient(publicClient)
+
+    if (!isEqual(Inverter.instance.walletClient, walletClient))
+      Inverter.instance.updateWalletClient(walletClient)
+
+    return Inverter.instance as Inverter<W>
+  }
+
+  /**
    * Updates the publicClient safely
    */
-  updatePublicClient(publicClient: PopPublicClient) {
+  private updatePublicClient(publicClient: PopPublicClient) {
     this.publicClient = publicClient
   }
 
   /**
    * Updates the walletClient safely
    */
-  updateWalletClient(walletClient: W) {
+  private updateWalletClient(walletClient: W) {
     this.walletClient = walletClient
   }
 
