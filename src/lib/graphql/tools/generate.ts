@@ -37,6 +37,18 @@ import type {
   return fileContent.trim()
 }
 
+function generateInnerDataTypes(fields: string[]) {
+  const typeImports = fields.map((field) => `GQL${field}`).join(',\n  ')
+
+  const fileContent = `
+export type {
+  ${typeImports}
+} from './types'
+  `
+
+  return fileContent.trim()
+}
+
 // Generate query function
 function generateQueryFunctions(fieldName: string) {
   const typeName = `GQL${fieldName}`
@@ -59,11 +71,8 @@ export const ${fieldName}Subscription = (args: {
   `.trim()
 }
 
-// Generate the content of the TypeScript file for queries or subscription
-function generateTypeScriptFile(
-  schema: GraphQLSchema,
-  isSubscription: boolean = false
-) {
+// Get filtered fields from the schema
+function getFilteredFields(schema: GraphQLSchema) {
   const queryType = schema.getQueryType()
 
   if (!queryType) {
@@ -77,6 +86,14 @@ function generateTypeScriptFile(
     (field) => !/^[a-z]/.test(field) && !field.includes('by_pk')
   )
 
+  return filteredFields
+}
+
+// Generate the content of the TypeScript file for queries or subscription
+function generateTypeScriptFile(
+  filteredFields: string[],
+  isSubscription: boolean = false
+) {
   // Generate import statements
   let fileContent = generateImports(filteredFields)
 
@@ -102,11 +119,23 @@ function writeToFile(content: string, outputPath: string) {
 async function main() {
   const endpoint = DEFAULT_GRAPHQL_URL
   const schema = await fetchSchema(endpoint)
+  const filteredFields = getFilteredFields(schema)
 
   // Generate query.ts file
   const queryFilePath = path.join(__dirname, '..', 'build', 'query.ts')
-  const queryFileContent = generateTypeScriptFile(schema)
+  const queryFileContent = generateTypeScriptFile(filteredFields)
   writeToFile(queryFileContent, queryFilePath)
+
+  // Generate inner-data-types.ts file
+  const innerDataTypesPath = path.join(
+    __dirname,
+    '..',
+    'build',
+    'inner-data-types.ts'
+  )
+
+  const innerDataTypesContent = generateInnerDataTypes(filteredFields)
+  writeToFile(innerDataTypesContent, innerDataTypesPath)
 
   // Generate subscription.ts file
   const subscriptionFilePath = path.join(
@@ -115,7 +144,7 @@ async function main() {
     'build',
     'subscription.ts'
   )
-  const subscriptionFileContent = generateTypeScriptFile(schema, true)
+  const subscriptionFileContent = generateTypeScriptFile(filteredFields, true)
   writeToFile(subscriptionFileContent, subscriptionFilePath)
 }
 
