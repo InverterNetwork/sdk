@@ -1,46 +1,46 @@
 import * as utils from '../utils'
 import type { FormattedGraphQLParams } from '..'
 import type {
-  BondingCurve as TBondingCurve,
-  LinearVesting as TLinearVesting,
-  StreamingPaymentProcessor as TStreamingPaymentProcessor,
-  Swap as TSwap,
-  Workflow as TWorkflow,
-  WorkflowModule as TWorkflowModule,
-  WorkflowModuleType as TWorkflowModuleType,
+  GQLBondingCurve,
+  GQLLinearVesting,
+  GQLStreamingPaymentProcessor,
+  GQLSwap,
+  GQLWorkflow,
+  GQLWorkflowModule,
+  GQLWorkflowModuleType,
 } from './types'
 
 export const BondingCurveSubscription = (args: {
-  params?: FormattedGraphQLParams<TBondingCurve>
-  project: Array<keyof TBondingCurve>
+  params?: FormattedGraphQLParams<GQLBondingCurve>
+  project: Array<keyof GQLBondingCurve>
 }) => utils.subscriptionWrapper({ name: 'BondingCurve', ...args })
 
 export const LinearVestingSubscription = (args: {
-  params?: FormattedGraphQLParams<TLinearVesting>
-  project: Array<keyof TLinearVesting>
+  params?: FormattedGraphQLParams<GQLLinearVesting>
+  project: Array<keyof GQLLinearVesting>
 }) => utils.subscriptionWrapper({ name: 'LinearVesting', ...args })
 
 export const StreamingPaymentProcessorSubscription = (args: {
-  params?: FormattedGraphQLParams<TStreamingPaymentProcessor>
-  project: Array<keyof TStreamingPaymentProcessor>
+  params?: FormattedGraphQLParams<GQLStreamingPaymentProcessor>
+  project: Array<keyof GQLStreamingPaymentProcessor>
 }) => utils.subscriptionWrapper({ name: 'StreamingPaymentProcessor', ...args })
 
 export const SwapSubscription = (args: {
-  params?: FormattedGraphQLParams<TSwap>
-  project: Array<keyof TSwap>
+  params?: FormattedGraphQLParams<GQLSwap>
+  project: Array<keyof GQLSwap>
 }) => utils.subscriptionWrapper({ name: 'Swap', ...args })
 
 export const WorkflowSubscription = (args: {
-  params?: FormattedGraphQLParams<TWorkflow>
-  project: Array<keyof TWorkflow>
+  params?: FormattedGraphQLParams<GQLWorkflow>
+  project: Array<keyof GQLWorkflow>
 }) => utils.subscriptionWrapper({ name: 'Workflow', ...args })
 
 export const WorkflowModuleSubscription = (args: {
-  params?: FormattedGraphQLParams<TWorkflowModule>
-  project: Array<keyof TWorkflowModule>
+  params?: FormattedGraphQLParams<GQLWorkflowModule>
+  project: Array<keyof GQLWorkflowModule>
 }) => utils.subscriptionWrapper({ name: 'WorkflowModule', ...args })
 
 export const WorkflowModuleTypeSubscription = (args: {
-  params?: FormattedGraphQLParams<TWorkflowModuleType>
-  project: Array<keyof TWorkflowModuleType>
+  params?: FormattedGraphQLParams<GQLWorkflowModuleType>
+  project: Array<keyof GQLWorkflowModuleType>
 }) => utils.subscriptionWrapper({ name: 'WorkflowModuleType', ...args })

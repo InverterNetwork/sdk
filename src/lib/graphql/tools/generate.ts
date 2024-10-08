@@ -24,12 +24,7 @@ async function fetchSchema(endpoint: string): Promise<GraphQLSchema> {
 
 // Helper function to generate import statements
 function generateImports(fields: string[]) {
-  const typeImports = fields
-    .map(
-      (field) =>
-        `${field} as T${field.charAt(0).toUpperCase() + field.slice(1)}`
-    )
-    .join(',\n  ')
+  const typeImports = fields.map((field) => `GQL${field}`).join(',\n  ')
 
   const fileContent = `
 import * as utils from '../utils'
@@ -44,7 +39,7 @@ import type {
 
 // Generate query function
 function generateQueryFunctions(fieldName: string) {
-  const typeName = `T${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)}`
+  const typeName = `GQL${fieldName}`
   return `
 export const ${fieldName} = (args: {
   params?: FormattedGraphQLParams<${typeName}>
@@ -55,7 +50,7 @@ export const ${fieldName} = (args: {
 
 // Generate subscription function
 function generateSubscriptionFunctions(fieldName: string) {
-  const typeName = `T${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)}`
+  const typeName = `GQL${fieldName}`
   return `
 export const ${fieldName}Subscription = (args: {
   params?: FormattedGraphQLParams<${typeName}>

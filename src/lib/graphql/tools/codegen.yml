@@ -6,3 +6,4 @@ generates:
       - 'typescript'
     config:
       skipTypename: true # Optional: Skip __typename in generated types
+      typesPrefix: GQL

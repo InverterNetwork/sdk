@@ -37,7 +37,7 @@ export type Scalars = {
 }
 
 /** columns and relationships of "BondingCurve" */
-export type BondingCurve = {
+export type GQLBondingCurve = {
   bcType?: Maybe<Scalars['String']['output']>
   buyFee?: Maybe<Scalars['numeric']['output']>
   buyReserveRatio?: Maybe<Scalars['numeric']['output']>
@@ -51,73 +51,73 @@ export type BondingCurve = {
   sellFee?: Maybe<Scalars['numeric']['output']>
   sellReserveRatio?: Maybe<Scalars['numeric']['output']>
   /** An array relationship */
-  swaps: Array<Swap>
+  swaps: Array<GQLSwap>
   virtualCollateral?: Maybe<Scalars['numeric']['output']>
   virtualCollateralRaw?: Maybe<Scalars['numeric']['output']>
   virtualIssuance?: Maybe<Scalars['numeric']['output']>
   /** An object relationship */
-  workflow?: Maybe<Workflow>
+  workflow?: Maybe<GQLWorkflow>
   workflow_id: Scalars['String']['output']
 }
 
 /** columns and relationships of "BondingCurve" */
-export type BondingCurveSwapsArgs = {
-  distinct_on?: InputMaybe<Array<Swap_Select_Column>>
+export type GQLBondingCurveSwapsArgs = {
+  distinct_on?: InputMaybe<Array<GQLSwap_Select_Column>>
   limit?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Swap_Order_By>>
-  where?: InputMaybe<Swap_Bool_Exp>
+  order_by?: InputMaybe<Array<GQLSwap_Order_By>>
+  where?: InputMaybe<GQLSwap_Bool_Exp>
 }
 
 /** Boolean expression to filter rows from the table "BondingCurve". All fields are combined with a logical 'AND'. */
-export type BondingCurve_Bool_Exp = {
-  _and?: InputMaybe<Array<BondingCurve_Bool_Exp>>
-  _not?: InputMaybe<BondingCurve_Bool_Exp>
-  _or?: InputMaybe<Array<BondingCurve_Bool_Exp>>
-  bcType?: InputMaybe<String_Comparison_Exp>
-  buyFee?: InputMaybe<Numeric_Comparison_Exp>
-  buyReserveRatio?: InputMaybe<Numeric_Comparison_Exp>
-  chainId?: InputMaybe<Int_Comparison_Exp>
-  collateralToken?: InputMaybe<String_Comparison_Exp>
-  collateralTokenDecimals?: InputMaybe<Int_Comparison_Exp>
-  db_write_timestamp?: InputMaybe<Timestamp_Comparison_Exp>
-  id?: InputMaybe<String_Comparison_Exp>
-  issuanceToken?: InputMaybe<String_Comparison_Exp>
-  issuanceTokenDecimals?: InputMaybe<Int_Comparison_Exp>
-  sellFee?: InputMaybe<Numeric_Comparison_Exp>
-  sellReserveRatio?: InputMaybe<Numeric_Comparison_Exp>
-  swaps?: InputMaybe<Swap_Bool_Exp>
-  virtualCollateral?: InputMaybe<Numeric_Comparison_Exp>
-  virtualCollateralRaw?: InputMaybe<Numeric_Comparison_Exp>
-  virtualIssuance?: InputMaybe<Numeric_Comparison_Exp>
-  workflow?: InputMaybe<Workflow_Bool_Exp>
-  workflow_id?: InputMaybe<String_Comparison_Exp>
+export type GQLBondingCurve_Bool_Exp = {
+  _and?: InputMaybe<Array<GQLBondingCurve_Bool_Exp>>
+  _not?: InputMaybe<GQLBondingCurve_Bool_Exp>
+  _or?: InputMaybe<Array<GQLBondingCurve_Bool_Exp>>
+  bcType?: InputMaybe<GQLString_Comparison_Exp>
+  buyFee?: InputMaybe<GQLNumeric_Comparison_Exp>
+  buyReserveRatio?: InputMaybe<GQLNumeric_Comparison_Exp>
+  chainId?: InputMaybe<GQLInt_Comparison_Exp>
+  collateralToken?: InputMaybe<GQLString_Comparison_Exp>
+  collateralTokenDecimals?: InputMaybe<GQLInt_Comparison_Exp>
+  db_write_timestamp?: InputMaybe<GQLTimestamp_Comparison_Exp>
+  id?: InputMaybe<GQLString_Comparison_Exp>
+  issuanceToken?: InputMaybe<GQLString_Comparison_Exp>
+  issuanceTokenDecimals?: InputMaybe<GQLInt_Comparison_Exp>
+  sellFee?: InputMaybe<GQLNumeric_Comparison_Exp>
+  sellReserveRatio?: InputMaybe<GQLNumeric_Comparison_Exp>
+  swaps?: InputMaybe<GQLSwap_Bool_Exp>
+  virtualCollateral?: InputMaybe<GQLNumeric_Comparison_Exp>
+  virtualCollateralRaw?: InputMaybe<GQLNumeric_Comparison_Exp>
+  virtualIssuance?: InputMaybe<GQLNumeric_Comparison_Exp>
+  workflow?: InputMaybe<GQLWorkflow_Bool_Exp>
+  workflow_id?: InputMaybe<GQLString_Comparison_Exp>
 }
 
 /** Ordering options when selecting data from "BondingCurve". */
-export type BondingCurve_Order_By = {
-  bcType?: InputMaybe<Order_By>
-  buyFee?: InputMaybe<Order_By>
-  buyReserveRatio?: InputMaybe<Order_By>
-  chainId?: InputMaybe<Order_By>
-  collateralToken?: InputMaybe<Order_By>
-  collateralTokenDecimals?: InputMaybe<Order_By>
-  db_write_timestamp?: InputMaybe<Order_By>
-  id?: InputMaybe<Order_By>
-  issuanceToken?: InputMaybe<Order_By>
-  issuanceTokenDecimals?: InputMaybe<Order_By>
-  sellFee?: InputMaybe<Order_By>
-  sellReserveRatio?: InputMaybe<Order_By>
-  swaps_aggregate?: InputMaybe<Swap_Aggregate_Order_By>
-  virtualCollateral?: InputMaybe<Order_By>
-  virtualCollateralRaw?: InputMaybe<Order_By>
-  virtualIssuance?: InputMaybe<Order_By>
-  workflow?: InputMaybe<Workflow_Order_By>
-  workflow_id?: InputMaybe<Order_By>
+export type GQLBondingCurve_Order_By = {
+  bcType?: InputMaybe<GQLOrder_By>
+  buyFee?: InputMaybe<GQLOrder_By>
+  buyReserveRatio?: InputMaybe<GQLOrder_By>
+  chainId?: InputMaybe<GQLOrder_By>
+  collateralToken?: InputMaybe<GQLOrder_By>
+  collateralTokenDecimals?: InputMaybe<GQLOrder_By>
+  db_write_timestamp?: InputMaybe<GQLOrder_By>
+  id?: InputMaybe<GQLOrder_By>
+  issuanceToken?: InputMaybe<GQLOrder_By>
+  issuanceTokenDecimals?: InputMaybe<GQLOrder_By>
+  sellFee?: InputMaybe<GQLOrder_By>
+  sellReserveRatio?: InputMaybe<GQLOrder_By>
+  swaps_aggregate?: InputMaybe<GQLSwap_Aggregate_Order_By>
+  virtualCollateral?: InputMaybe<GQLOrder_By>
+  virtualCollateralRaw?: InputMaybe<GQLOrder_By>
+  virtualIssuance?: InputMaybe<GQLOrder_By>
+  workflow?: InputMaybe<GQLWorkflow_Order_By>
+  workflow_id?: InputMaybe<GQLOrder_By>
 }
 
 /** select columns of table "BondingCurve" */
-export enum BondingCurve_Select_Column {
+export enum GQLBondingCurve_Select_Column {
   /** column name */
   BcType = 'bcType',
   /** column name */
@@ -153,15 +153,15 @@ export enum BondingCurve_Select_Column {
 }
 
 /** Streaming cursor of the table "BondingCurve" */
-export type BondingCurve_Stream_Cursor_Input = {
+export type GQLBondingCurve_Stream_Cursor_Input = {
   /** Stream column input with initial value */
-  initial_value: BondingCurve_Stream_Cursor_Value_Input
+  initial_value: GQLBondingCurve_Stream_Cursor_Value_Input
   /** cursor ordering */
-  ordering?: InputMaybe<Cursor_Ordering>
+  ordering?: InputMaybe<GQLCursor_Ordering>
 }
 
 /** Initial value of the column from where the streaming should start */
-export type BondingCurve_Stream_Cursor_Value_Input = {
+export type GQLBondingCurve_Stream_Cursor_Value_Input = {
   bcType?: InputMaybe<Scalars['String']['input']>
   buyFee?: InputMaybe<Scalars['numeric']['input']>
   buyReserveRatio?: InputMaybe<Scalars['numeric']['input']>
@@ -181,7 +181,7 @@ export type BondingCurve_Stream_Cursor_Value_Input = {
 }
 
 /** Boolean expression to compare columns of type "Boolean". All fields are combined with logical 'AND'. */
-export type Boolean_Comparison_Exp = {
+export type GQLBoolean_Comparison_Exp = {
   _eq?: InputMaybe<Scalars['Boolean']['input']>
   _gt?: InputMaybe<Scalars['Boolean']['input']>
   _gte?: InputMaybe<Scalars['Boolean']['input']>
@@ -194,7 +194,7 @@ export type Boolean_Comparison_Exp = {
 }
 
 /** Boolean expression to compare columns of type "Int". All fields are combined with logical 'AND'. */
-export type Int_Comparison_Exp = {
+export type GQLInt_Comparison_Exp = {
   _eq?: InputMaybe<Scalars['Int']['input']>
   _gt?: InputMaybe<Scalars['Int']['input']>
   _gte?: InputMaybe<Scalars['Int']['input']>
@@ -207,7 +207,7 @@ export type Int_Comparison_Exp = {
 }
 
 /** columns and relationships of "LinearVesting" */
-export type LinearVesting = {
+export type GQLLinearVesting = {
   amountRaw: Scalars['numeric']['output']
   blockTimestamp: Scalars['Int']['output']
   chainId: Scalars['Int']['output']
@@ -219,107 +219,107 @@ export type LinearVesting = {
   start: Scalars['numeric']['output']
   status: Scalars['vestingstatus']['output']
   /** An object relationship */
-  streamingPaymentProcessor?: Maybe<StreamingPaymentProcessor>
+  streamingPaymentProcessor?: Maybe<GQLStreamingPaymentProcessor>
   streamingPaymentProcessor_id: Scalars['String']['output']
   token: Scalars['String']['output']
 }
 
 /** order by aggregate values of table "LinearVesting" */
-export type LinearVesting_Aggregate_Order_By = {
-  avg?: InputMaybe<LinearVesting_Avg_Order_By>
-  count?: InputMaybe<Order_By>
-  max?: InputMaybe<LinearVesting_Max_Order_By>
-  min?: InputMaybe<LinearVesting_Min_Order_By>
-  stddev?: InputMaybe<LinearVesting_Stddev_Order_By>
-  stddev_pop?: InputMaybe<LinearVesting_Stddev_Pop_Order_By>
-  stddev_samp?: InputMaybe<LinearVesting_Stddev_Samp_Order_By>
-  sum?: InputMaybe<LinearVesting_Sum_Order_By>
-  var_pop?: InputMaybe<LinearVesting_Var_Pop_Order_By>
-  var_samp?: InputMaybe<LinearVesting_Var_Samp_Order_By>
-  variance?: InputMaybe<LinearVesting_Variance_Order_By>
+export type GQLLinearVesting_Aggregate_Order_By = {
+  avg?: InputMaybe<GQLLinearVesting_Avg_Order_By>
+  count?: InputMaybe<GQLOrder_By>
+  max?: InputMaybe<GQLLinearVesting_Max_Order_By>
+  min?: InputMaybe<GQLLinearVesting_Min_Order_By>
+  stddev?: InputMaybe<GQLLinearVesting_Stddev_Order_By>
+  stddev_pop?: InputMaybe<GQLLinearVesting_Stddev_Pop_Order_By>
+  stddev_samp?: InputMaybe<GQLLinearVesting_Stddev_Samp_Order_By>
+  sum?: InputMaybe<GQLLinearVesting_Sum_Order_By>
+  var_pop?: InputMaybe<GQLLinearVesting_Var_Pop_Order_By>
+  var_samp?: InputMaybe<GQLLinearVesting_Var_Samp_Order_By>
+  variance?: InputMaybe<GQLLinearVesting_Variance_Order_By>
 }
 
 /** order by avg() on columns of table "LinearVesting" */
-export type LinearVesting_Avg_Order_By = {
-  amountRaw?: InputMaybe<Order_By>
-  blockTimestamp?: InputMaybe<Order_By>
-  chainId?: InputMaybe<Order_By>
-  cliff?: InputMaybe<Order_By>
-  end?: InputMaybe<Order_By>
-  start?: InputMaybe<Order_By>
+export type GQLLinearVesting_Avg_Order_By = {
+  amountRaw?: InputMaybe<GQLOrder_By>
+  blockTimestamp?: InputMaybe<GQLOrder_By>
+  chainId?: InputMaybe<GQLOrder_By>
+  cliff?: InputMaybe<GQLOrder_By>
+  end?: InputMaybe<GQLOrder_By>
+  start?: InputMaybe<GQLOrder_By>
 }
 
 /** Boolean expression to filter rows from the table "LinearVesting". All fields are combined with a logical 'AND'. */
-export type LinearVesting_Bool_Exp = {
-  _and?: InputMaybe<Array<LinearVesting_Bool_Exp>>
-  _not?: InputMaybe<LinearVesting_Bool_Exp>
-  _or?: InputMaybe<Array<LinearVesting_Bool_Exp>>
-  amountRaw?: InputMaybe<Numeric_Comparison_Exp>
-  blockTimestamp?: InputMaybe<Int_Comparison_Exp>
-  chainId?: InputMaybe<Int_Comparison_Exp>
-  cliff?: InputMaybe<Numeric_Comparison_Exp>
-  db_write_timestamp?: InputMaybe<Timestamp_Comparison_Exp>
-  end?: InputMaybe<Numeric_Comparison_Exp>
-  id?: InputMaybe<String_Comparison_Exp>
-  recipient?: InputMaybe<String_Comparison_Exp>
-  start?: InputMaybe<Numeric_Comparison_Exp>
-  status?: InputMaybe<Vestingstatus_Comparison_Exp>
-  streamingPaymentProcessor?: InputMaybe<StreamingPaymentProcessor_Bool_Exp>
-  streamingPaymentProcessor_id?: InputMaybe<String_Comparison_Exp>
-  token?: InputMaybe<String_Comparison_Exp>
+export type GQLLinearVesting_Bool_Exp = {
+  _and?: InputMaybe<Array<GQLLinearVesting_Bool_Exp>>
+  _not?: InputMaybe<GQLLinearVesting_Bool_Exp>
+  _or?: InputMaybe<Array<GQLLinearVesting_Bool_Exp>>
+  amountRaw?: InputMaybe<GQLNumeric_Comparison_Exp>
+  blockTimestamp?: InputMaybe<GQLInt_Comparison_Exp>
+  chainId?: InputMaybe<GQLInt_Comparison_Exp>
+  cliff?: InputMaybe<GQLNumeric_Comparison_Exp>
+  db_write_timestamp?: InputMaybe<GQLTimestamp_Comparison_Exp>
+  end?: InputMaybe<GQLNumeric_Comparison_Exp>
+  id?: InputMaybe<GQLString_Comparison_Exp>
+  recipient?: InputMaybe<GQLString_Comparison_Exp>
+  start?: InputMaybe<GQLNumeric_Comparison_Exp>
+  status?: InputMaybe<GQLVestingstatus_Comparison_Exp>
+  streamingPaymentProcessor?: InputMaybe<GQLStreamingPaymentProcessor_Bool_Exp>
+  streamingPaymentProcessor_id?: InputMaybe<GQLString_Comparison_Exp>
+  token?: InputMaybe<GQLString_Comparison_Exp>
 }
 
 /** order by max() on columns of table "LinearVesting" */
-export type LinearVesting_Max_Order_By = {
-  amountRaw?: InputMaybe<Order_By>
-  blockTimestamp?: InputMaybe<Order_By>
-  chainId?: InputMaybe<Order_By>
-  cliff?: InputMaybe<Order_By>
-  db_write_timestamp?: InputMaybe<Order_By>
-  end?: InputMaybe<Order_By>
-  id?: InputMaybe<Order_By>
-  recipient?: InputMaybe<Order_By>
-  start?: InputMaybe<Order_By>
-  status?: InputMaybe<Order_By>
-  streamingPaymentProcessor_id?: InputMaybe<Order_By>
-  token?: InputMaybe<Order_By>
+export type GQLLinearVesting_Max_Order_By = {
+  amountRaw?: InputMaybe<GQLOrder_By>
+  blockTimestamp?: InputMaybe<GQLOrder_By>
+  chainId?: InputMaybe<GQLOrder_By>
+  cliff?: InputMaybe<GQLOrder_By>
+  db_write_timestamp?: InputMaybe<GQLOrder_By>
+  end?: InputMaybe<GQLOrder_By>
+  id?: InputMaybe<GQLOrder_By>
+  recipient?: InputMaybe<GQLOrder_By>
+  start?: InputMaybe<GQLOrder_By>
+  status?: InputMaybe<GQLOrder_By>
+  streamingPaymentProcessor_id?: InputMaybe<GQLOrder_By>
+  token?: InputMaybe<GQLOrder_By>
 }
 
 /** order by min() on columns of table "LinearVesting" */
-export type LinearVesting_Min_Order_By = {
-  amountRaw?: InputMaybe<Order_By>
-  blockTimestamp?: InputMaybe<Order_By>
-  chainId?: InputMaybe<Order_By>
-  cliff?: InputMaybe<Order_By>
-  db_write_timestamp?: InputMaybe<Order_By>
-  end?: InputMaybe<Order_By>
-  id?: InputMaybe<Order_By>
-  recipient?: InputMaybe<Order_By>
-  start?: InputMaybe<Order_By>
-  status?: InputMaybe<Order_By>
-  streamingPaymentProcessor_id?: InputMaybe<Order_By>
-  token?: InputMaybe<Order_By>
+export type GQLLinearVesting_Min_Order_By = {
+  amountRaw?: InputMaybe<GQLOrder_By>
+  blockTimestamp?: InputMaybe<GQLOrder_By>
+  chainId?: InputMaybe<GQLOrder_By>
+  cliff?: InputMaybe<GQLOrder_By>
+  db_write_timestamp?: InputMaybe<GQLOrder_By>
+  end?: InputMaybe<GQLOrder_By>
+  id?: InputMaybe<GQLOrder_By>
+  recipient?: InputMaybe<GQLOrder_By>
+  start?: InputMaybe<GQLOrder_By>
+  status?: InputMaybe<GQLOrder_By>
+  streamingPaymentProcessor_id?: InputMaybe<GQLOrder_By>
+  token?: InputMaybe<GQLOrder_By>
 }
 
 /** Ordering options when selecting data from "LinearVesting". */
-export type LinearVesting_Order_By = {
-  amountRaw?: InputMaybe<Order_By>
-  blockTimestamp?: InputMaybe<Order_By>
-  chainId?: InputMaybe<Order_By>
-  cliff?: InputMaybe<Order_By>
-  db_write_timestamp?: InputMaybe<Order_By>
-  end?: InputMaybe<Order_By>
-  id?: InputMaybe<Order_By>
-  recipient?: InputMaybe<Order_By>
-  start?: InputMaybe<Order_By>
-  status?: InputMaybe<Order_By>
-  streamingPaymentProcessor?: InputMaybe<StreamingPaymentProcessor_Order_By>
-  streamingPaymentProcessor_id?: InputMaybe<Order_By>
-  token?: InputMaybe<Order_By>
+export type GQLLinearVesting_Order_By = {
+  amountRaw?: InputMaybe<GQLOrder_By>
+  blockTimestamp?: InputMaybe<GQLOrder_By>
+  chainId?: InputMaybe<GQLOrder_By>
+  cliff?: InputMaybe<GQLOrder_By>
+  db_write_timestamp?: InputMaybe<GQLOrder_By>
+  end?: InputMaybe<GQLOrder_By>
+  id?: InputMaybe<GQLOrder_By>
+  recipient?: InputMaybe<GQLOrder_By>
+  start?: InputMaybe<GQLOrder_By>
+  status?: InputMaybe<GQLOrder_By>
+  streamingPaymentProcessor?: InputMaybe<GQLStreamingPaymentProcessor_Order_By>
+  streamingPaymentProcessor_id?: InputMaybe<GQLOrder_By>
+  token?: InputMaybe<GQLOrder_By>
 }
 
 /** select columns of table "LinearVesting" */
-export enum LinearVesting_Select_Column {
+export enum GQLLinearVesting_Select_Column {
   /** column name */
   AmountRaw = 'amountRaw',
   /** column name */
@@ -347,45 +347,45 @@ export enum LinearVesting_Select_Column {
 }
 
 /** order by stddev() on columns of table "LinearVesting" */
-export type LinearVesting_Stddev_Order_By = {
-  amountRaw?: InputMaybe<Order_By>
-  blockTimestamp?: InputMaybe<Order_By>
-  chainId?: InputMaybe<Order_By>
-  cliff?: InputMaybe<Order_By>
-  end?: InputMaybe<Order_By>
-  start?: InputMaybe<Order_By>
+export type GQLLinearVesting_Stddev_Order_By = {
+  amountRaw?: InputMaybe<GQLOrder_By>
+  blockTimestamp?: InputMaybe<GQLOrder_By>
+  chainId?: InputMaybe<GQLOrder_By>
+  cliff?: InputMaybe<GQLOrder_By>
+  end?: InputMaybe<GQLOrder_By>
+  start?: InputMaybe<GQLOrder_By>
 }
 
 /** order by stddev_pop() on columns of table "LinearVesting" */
-export type LinearVesting_Stddev_Pop_Order_By = {
-  amountRaw?: InputMaybe<Order_By>
-  blockTimestamp?: InputMaybe<Order_By>
-  chainId?: InputMaybe<Order_By>
-  cliff?: InputMaybe<Order_By>
-  end?: InputMaybe<Order_By>
-  start?: InputMaybe<Order_By>
+export type GQLLinearVesting_Stddev_Pop_Order_By = {
+  amountRaw?: InputMaybe<GQLOrder_By>
+  blockTimestamp?: InputMaybe<GQLOrder_By>
+  chainId?: InputMaybe<GQLOrder_By>
+  cliff?: InputMaybe<GQLOrder_By>
+  end?: InputMaybe<GQLOrder_By>
+  start?: InputMaybe<GQLOrder_By>
 }
 
 /** order by stddev_samp() on columns of table "LinearVesting" */
-export type LinearVesting_Stddev_Samp_Order_By = {
-  amountRaw?: InputMaybe<Order_By>
-  blockTimestamp?: InputMaybe<Order_By>
-  chainId?: InputMaybe<Order_By>
-  cliff?: InputMaybe<Order_By>
-  end?: InputMaybe<Order_By>
-  start?: InputMaybe<Order_By>
+export type GQLLinearVesting_Stddev_Samp_Order_By = {
+  amountRaw?: InputMaybe<GQLOrder_By>
+  blockTimestamp?: InputMaybe<GQLOrder_By>
+  chainId?: InputMaybe<GQLOrder_By>
+  cliff?: InputMaybe<GQLOrder_By>
+  end?: InputMaybe<GQLOrder_By>
+  start?: InputMaybe<GQLOrder_By>
 }
 
 /** Streaming cursor of the table "LinearVesting" */
-export type LinearVesting_Stream_Cursor_Input = {
+export type GQLLinearVesting_Stream_Cursor_Input = {
   /** Stream column input with initial value */
-  initial_value: LinearVesting_Stream_Cursor_Value_Input
+  initial_value: GQLLinearVesting_Stream_Cursor_Value_Input
   /** cursor ordering */
-  ordering?: InputMaybe<Cursor_Ordering>
+  ordering?: InputMaybe<GQLCursor_Ordering>
 }
 
 /** Initial value of the column from where the streaming should start */
-export type LinearVesting_Stream_Cursor_Value_Input = {
+export type GQLLinearVesting_Stream_Cursor_Value_Input = {
   amountRaw?: InputMaybe<Scalars['numeric']['input']>
   blockTimestamp?: InputMaybe<Scalars['Int']['input']>
   chainId?: InputMaybe<Scalars['Int']['input']>
@@ -401,91 +401,91 @@ export type LinearVesting_Stream_Cursor_Value_Input = {
 }
 
 /** order by sum() on columns of table "LinearVesting" */
-export type LinearVesting_Sum_Order_By = {
-  amountRaw?: InputMaybe<Order_By>
-  blockTimestamp?: InputMaybe<Order_By>
-  chainId?: InputMaybe<Order_By>
-  cliff?: InputMaybe<Order_By>
-  end?: InputMaybe<Order_By>
-  start?: InputMaybe<Order_By>
+export type GQLLinearVesting_Sum_Order_By = {
+  amountRaw?: InputMaybe<GQLOrder_By>
+  blockTimestamp?: InputMaybe<GQLOrder_By>
+  chainId?: InputMaybe<GQLOrder_By>
+  cliff?: InputMaybe<GQLOrder_By>
+  end?: InputMaybe<GQLOrder_By>
+  start?: InputMaybe<GQLOrder_By>
 }
 
 /** order by var_pop() on columns of table "LinearVesting" */
-export type LinearVesting_Var_Pop_Order_By = {
-  amountRaw?: InputMaybe<Order_By>
-  blockTimestamp?: InputMaybe<Order_By>
-  chainId?: InputMaybe<Order_By>
-  cliff?: InputMaybe<Order_By>
-  end?: InputMaybe<Order_By>
-  start?: InputMaybe<Order_By>
+export type GQLLinearVesting_Var_Pop_Order_By = {
+  amountRaw?: InputMaybe<GQLOrder_By>
+  blockTimestamp?: InputMaybe<GQLOrder_By>
+  chainId?: InputMaybe<GQLOrder_By>
+  cliff?: InputMaybe<GQLOrder_By>
+  end?: InputMaybe<GQLOrder_By>
+  start?: InputMaybe<GQLOrder_By>
 }
 
 /** order by var_samp() on columns of table "LinearVesting" */
-export type LinearVesting_Var_Samp_Order_By = {
-  amountRaw?: InputMaybe<Order_By>
-  blockTimestamp?: InputMaybe<Order_By>
-  chainId?: InputMaybe<Order_By>
-  cliff?: InputMaybe<Order_By>
-  end?: InputMaybe<Order_By>
-  start?: InputMaybe<Order_By>
+export type GQLLinearVesting_Var_Samp_Order_By = {
+  amountRaw?: InputMaybe<GQLOrder_By>
+  blockTimestamp?: InputMaybe<GQLOrder_By>
+  chainId?: InputMaybe<GQLOrder_By>
+  cliff?: InputMaybe<GQLOrder_By>
+  end?: InputMaybe<GQLOrder_By>
+  start?: InputMaybe<GQLOrder_By>
 }
 
 /** order by variance() on columns of table "LinearVesting" */
-export type LinearVesting_Variance_Order_By = {
-  amountRaw?: InputMaybe<Order_By>
-  blockTimestamp?: InputMaybe<Order_By>
-  chainId?: InputMaybe<Order_By>
-  cliff?: InputMaybe<Order_By>
-  end?: InputMaybe<Order_By>
-  start?: InputMaybe<Order_By>
+export type GQLLinearVesting_Variance_Order_By = {
+  amountRaw?: InputMaybe<GQLOrder_By>
+  blockTimestamp?: InputMaybe<GQLOrder_By>
+  chainId?: InputMaybe<GQLOrder_By>
+  cliff?: InputMaybe<GQLOrder_By>
+  end?: InputMaybe<GQLOrder_By>
+  start?: InputMaybe<GQLOrder_By>
 }
 
 /** columns and relationships of "StreamingPaymentProcessor" */
-export type StreamingPaymentProcessor = {
+export type GQLStreamingPaymentProcessor = {
   chainId: Scalars['Int']['output']
   db_write_timestamp?: Maybe<Scalars['timestamp']['output']>
   id: Scalars['String']['output']
   /** An array relationship */
-  vestings: Array<LinearVesting>
+  vestings: Array<GQLLinearVesting>
   /** An object relationship */
-  workflow?: Maybe<Workflow>
+  workflow?: Maybe<GQLWorkflow>
   workflow_id: Scalars['String']['output']
 }
 
 /** columns and relationships of "StreamingPaymentProcessor" */
-export type StreamingPaymentProcessorVestingsArgs = {
-  distinct_on?: InputMaybe<Array<LinearVesting_Select_Column>>
+export type GQLStreamingPaymentProcessorVestingsArgs = {
+  distinct_on?: InputMaybe<Array<GQLLinearVesting_Select_Column>>
   limit?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<LinearVesting_Order_By>>
-  where?: InputMaybe<LinearVesting_Bool_Exp>
+  order_by?: InputMaybe<Array<GQLLinearVesting_Order_By>>
+  where?: InputMaybe<GQLLinearVesting_Bool_Exp>
 }
 
 /** Boolean expression to filter rows from the table "StreamingPaymentProcessor". All fields are combined with a logical 'AND'. */
-export type StreamingPaymentProcessor_Bool_Exp = {
-  _and?: InputMaybe<Array<StreamingPaymentProcessor_Bool_Exp>>
-  _not?: InputMaybe<StreamingPaymentProcessor_Bool_Exp>
-  _or?: InputMaybe<Array<StreamingPaymentProcessor_Bool_Exp>>
-  chainId?: InputMaybe<Int_Comparison_Exp>
-  db_write_timestamp?: InputMaybe<Timestamp_Comparison_Exp>
-  id?: InputMaybe<String_Comparison_Exp>
-  vestings?: InputMaybe<LinearVesting_Bool_Exp>
-  workflow?: InputMaybe<Workflow_Bool_Exp>
-  workflow_id?: InputMaybe<String_Comparison_Exp>
+export type GQLStreamingPaymentProcessor_Bool_Exp = {
+  _and?: InputMaybe<Array<GQLStreamingPaymentProcessor_Bool_Exp>>
+  _not?: InputMaybe<GQLStreamingPaymentProcessor_Bool_Exp>
+  _or?: InputMaybe<Array<GQLStreamingPaymentProcessor_Bool_Exp>>
+  chainId?: InputMaybe<GQLInt_Comparison_Exp>
+  db_write_timestamp?: InputMaybe<GQLTimestamp_Comparison_Exp>
+  id?: InputMaybe<GQLString_Comparison_Exp>
+  vestings?: InputMaybe<GQLLinearVesting_Bool_Exp>
+  workflow?: InputMaybe<GQLWorkflow_Bool_Exp>
+  workflow_id?: InputMaybe<GQLString_Comparison_Exp>
 }
 
 /** Ordering options when selecting data from "StreamingPaymentProcessor". */
-export type StreamingPaymentProcessor_Order_By = {
-  chainId?: InputMaybe<Order_By>
-  db_write_timestamp?: InputMaybe<Order_By>
-  id?: InputMaybe<Order_By>
-  vestings_aggregate?: InputMaybe<LinearVesting_Aggregate_Order_By>
-  workflow?: InputMaybe<Workflow_Order_By>
-  workflow_id?: InputMaybe<Order_By>
+export type GQLStreamingPaymentProcessor_Order_By = {
+  chainId?: InputMaybe<GQLOrder_By>
+  db_write_timestamp?: InputMaybe<GQLOrder_By>
+  id?: InputMaybe<GQLOrder_By>
+  vestings_aggregate?: InputMaybe<GQLLinearVesting_Aggregate_Order_By>
+  workflow?: InputMaybe<GQLWorkflow_Order_By>
+  workflow_id?: InputMaybe<GQLOrder_By>
 }
 
 /** select columns of table "StreamingPaymentProcessor" */
-export enum StreamingPaymentProcessor_Select_Column {
+export enum GQLStreamingPaymentProcessor_Select_Column {
   /** column name */
   ChainId = 'chainId',
   /** column name */
@@ -497,15 +497,15 @@ export enum StreamingPaymentProcessor_Select_Column {
 }
 
 /** Streaming cursor of the table "StreamingPaymentProcessor" */
-export type StreamingPaymentProcessor_Stream_Cursor_Input = {
+export type GQLStreamingPaymentProcessor_Stream_Cursor_Input = {
   /** Stream column input with initial value */
-  initial_value: StreamingPaymentProcessor_Stream_Cursor_Value_Input
+  initial_value: GQLStreamingPaymentProcessor_Stream_Cursor_Value_Input
   /** cursor ordering */
-  ordering?: InputMaybe<Cursor_Ordering>
+  ordering?: InputMaybe<GQLCursor_Ordering>
 }
 
 /** Initial value of the column from where the streaming should start */
-export type StreamingPaymentProcessor_Stream_Cursor_Value_Input = {
+export type GQLStreamingPaymentProcessor_Stream_Cursor_Value_Input = {
   chainId?: InputMaybe<Scalars['Int']['input']>
   db_write_timestamp?: InputMaybe<Scalars['timestamp']['input']>
   id?: InputMaybe<Scalars['String']['input']>
@@ -513,7 +513,7 @@ export type StreamingPaymentProcessor_Stream_Cursor_Value_Input = {
 }
 
 /** Boolean expression to compare columns of type "String". All fields are combined with logical 'AND'. */
-export type String_Array_Comparison_Exp = {
+export type GQLString_Array_Comparison_Exp = {
   /** is the array contained in the given array value */
   _contained_in?: InputMaybe<Array<Scalars['String']['input']>>
   /** does the array contain the given value */
@@ -530,7 +530,7 @@ export type String_Array_Comparison_Exp = {
 }
 
 /** Boolean expression to compare columns of type "String". All fields are combined with logical 'AND'. */
-export type String_Comparison_Exp = {
+export type GQLString_Comparison_Exp = {
   _eq?: InputMaybe<Scalars['String']['input']>
   _gt?: InputMaybe<Scalars['String']['input']>
   _gte?: InputMaybe<Scalars['String']['input']>
@@ -563,10 +563,10 @@ export type String_Comparison_Exp = {
 }
 
 /** columns and relationships of "Swap" */
-export type Swap = {
+export type GQLSwap = {
   blockTimestamp: Scalars['Int']['output']
   /** An object relationship */
-  bondingCurve?: Maybe<BondingCurve>
+  bondingCurve?: Maybe<GQLBondingCurve>
   bondingCurve_id: Scalars['String']['output']
   chainId: Scalars['Int']['output']
   collateralAmount: Scalars['numeric']['output']
@@ -582,104 +582,104 @@ export type Swap = {
 }
 
 /** order by aggregate values of table "Swap" */
-export type Swap_Aggregate_Order_By = {
-  avg?: InputMaybe<Swap_Avg_Order_By>
-  count?: InputMaybe<Order_By>
-  max?: InputMaybe<Swap_Max_Order_By>
-  min?: InputMaybe<Swap_Min_Order_By>
-  stddev?: InputMaybe<Swap_Stddev_Order_By>
-  stddev_pop?: InputMaybe<Swap_Stddev_Pop_Order_By>
-  stddev_samp?: InputMaybe<Swap_Stddev_Samp_Order_By>
-  sum?: InputMaybe<Swap_Sum_Order_By>
-  var_pop?: InputMaybe<Swap_Var_Pop_Order_By>
-  var_samp?: InputMaybe<Swap_Var_Samp_Order_By>
-  variance?: InputMaybe<Swap_Variance_Order_By>
+export type GQLSwap_Aggregate_Order_By = {
+  avg?: InputMaybe<GQLSwap_Avg_Order_By>
+  count?: InputMaybe<GQLOrder_By>
+  max?: InputMaybe<GQLSwap_Max_Order_By>
+  min?: InputMaybe<GQLSwap_Min_Order_By>
+  stddev?: InputMaybe<GQLSwap_Stddev_Order_By>
+  stddev_pop?: InputMaybe<GQLSwap_Stddev_Pop_Order_By>
+  stddev_samp?: InputMaybe<GQLSwap_Stddev_Samp_Order_By>
+  sum?: InputMaybe<GQLSwap_Sum_Order_By>
+  var_pop?: InputMaybe<GQLSwap_Var_Pop_Order_By>
+  var_samp?: InputMaybe<GQLSwap_Var_Samp_Order_By>
+  variance?: InputMaybe<GQLSwap_Variance_Order_By>
 }
 
 /** order by avg() on columns of table "Swap" */
-export type Swap_Avg_Order_By = {
-  blockTimestamp?: InputMaybe<Order_By>
-  chainId?: InputMaybe<Order_By>
-  collateralAmount?: InputMaybe<Order_By>
-  issuanceAmount?: InputMaybe<Order_By>
-  priceInCol?: InputMaybe<Order_By>
+export type GQLSwap_Avg_Order_By = {
+  blockTimestamp?: InputMaybe<GQLOrder_By>
+  chainId?: InputMaybe<GQLOrder_By>
+  collateralAmount?: InputMaybe<GQLOrder_By>
+  issuanceAmount?: InputMaybe<GQLOrder_By>
+  priceInCol?: InputMaybe<GQLOrder_By>
 }
 
 /** Boolean expression to filter rows from the table "Swap". All fields are combined with a logical 'AND'. */
-export type Swap_Bool_Exp = {
-  _and?: InputMaybe<Array<Swap_Bool_Exp>>
-  _not?: InputMaybe<Swap_Bool_Exp>
-  _or?: InputMaybe<Array<Swap_Bool_Exp>>
-  blockTimestamp?: InputMaybe<Int_Comparison_Exp>
-  bondingCurve?: InputMaybe<BondingCurve_Bool_Exp>
-  bondingCurve_id?: InputMaybe<String_Comparison_Exp>
-  chainId?: InputMaybe<Int_Comparison_Exp>
-  collateralAmount?: InputMaybe<Numeric_Comparison_Exp>
-  collateralToken?: InputMaybe<String_Comparison_Exp>
-  db_write_timestamp?: InputMaybe<Timestamp_Comparison_Exp>
-  id?: InputMaybe<String_Comparison_Exp>
-  initiator?: InputMaybe<String_Comparison_Exp>
-  issuanceAmount?: InputMaybe<Numeric_Comparison_Exp>
-  issuanceToken?: InputMaybe<String_Comparison_Exp>
-  priceInCol?: InputMaybe<Numeric_Comparison_Exp>
-  recipient?: InputMaybe<String_Comparison_Exp>
-  swapType?: InputMaybe<Swaptype_Comparison_Exp>
+export type GQLSwap_Bool_Exp = {
+  _and?: InputMaybe<Array<GQLSwap_Bool_Exp>>
+  _not?: InputMaybe<GQLSwap_Bool_Exp>
+  _or?: InputMaybe<Array<GQLSwap_Bool_Exp>>
+  blockTimestamp?: InputMaybe<GQLInt_Comparison_Exp>
+  bondingCurve?: InputMaybe<GQLBondingCurve_Bool_Exp>
+  bondingCurve_id?: InputMaybe<GQLString_Comparison_Exp>
+  chainId?: InputMaybe<GQLInt_Comparison_Exp>
+  collateralAmount?: InputMaybe<GQLNumeric_Comparison_Exp>
+  collateralToken?: InputMaybe<GQLString_Comparison_Exp>
+  db_write_timestamp?: InputMaybe<GQLTimestamp_Comparison_Exp>
+  id?: InputMaybe<GQLString_Comparison_Exp>
+  initiator?: InputMaybe<GQLString_Comparison_Exp>
+  issuanceAmount?: InputMaybe<GQLNumeric_Comparison_Exp>
+  issuanceToken?: InputMaybe<GQLString_Comparison_Exp>
+  priceInCol?: InputMaybe<GQLNumeric_Comparison_Exp>
+  recipient?: InputMaybe<GQLString_Comparison_Exp>
+  swapType?: InputMaybe<GQLSwaptype_Comparison_Exp>
 }
 
 /** order by max() on columns of table "Swap" */
-export type Swap_Max_Order_By = {
-  blockTimestamp?: InputMaybe<Order_By>
-  bondingCurve_id?: InputMaybe<Order_By>
-  chainId?: InputMaybe<Order_By>
-  collateralAmount?: InputMaybe<Order_By>
-  collateralToken?: InputMaybe<Order_By>
-  db_write_timestamp?: InputMaybe<Order_By>
-  id?: InputMaybe<Order_By>
-  initiator?: InputMaybe<Order_By>
-  issuanceAmount?: InputMaybe<Order_By>
-  issuanceToken?: InputMaybe<Order_By>
-  priceInCol?: InputMaybe<Order_By>
-  recipient?: InputMaybe<Order_By>
-  swapType?: InputMaybe<Order_By>
+export type GQLSwap_Max_Order_By = {
+  blockTimestamp?: InputMaybe<GQLOrder_By>
+  bondingCurve_id?: InputMaybe<GQLOrder_By>
+  chainId?: InputMaybe<GQLOrder_By>
+  collateralAmount?: InputMaybe<GQLOrder_By>
+  collateralToken?: InputMaybe<GQLOrder_By>
+  db_write_timestamp?: InputMaybe<GQLOrder_By>
+  id?: InputMaybe<GQLOrder_By>
+  initiator?: InputMaybe<GQLOrder_By>
+  issuanceAmount?: InputMaybe<GQLOrder_By>
+  issuanceToken?: InputMaybe<GQLOrder_By>
+  priceInCol?: InputMaybe<GQLOrder_By>
+  recipient?: InputMaybe<GQLOrder_By>
+  swapType?: InputMaybe<GQLOrder_By>
 }
 
 /** order by min() on columns of table "Swap" */
-export type Swap_Min_Order_By = {
-  blockTimestamp?: InputMaybe<Order_By>
-  bondingCurve_id?: InputMaybe<Order_By>
-  chainId?: InputMaybe<Order_By>
-  collateralAmount?: InputMaybe<Order_By>
-  collateralToken?: InputMaybe<Order_By>
-  db_write_timestamp?: InputMaybe<Order_By>
-  id?: InputMaybe<Order_By>
-  initiator?: InputMaybe<Order_By>
-  issuanceAmount?: InputMaybe<Order_By>
-  issuanceToken?: InputMaybe<Order_By>
-  priceInCol?: InputMaybe<Order_By>
-  recipient?: InputMaybe<Order_By>
-  swapType?: InputMaybe<Order_By>
+export type GQLSwap_Min_Order_By = {
+  blockTimestamp?: InputMaybe<GQLOrder_By>
+  bondingCurve_id?: InputMaybe<GQLOrder_By>
+  chainId?: InputMaybe<GQLOrder_By>
+  collateralAmount?: InputMaybe<GQLOrder_By>
+  collateralToken?: InputMaybe<GQLOrder_By>
+  db_write_timestamp?: InputMaybe<GQLOrder_By>
+  id?: InputMaybe<GQLOrder_By>
+  initiator?: InputMaybe<GQLOrder_By>
+  issuanceAmount?: InputMaybe<GQLOrder_By>
+  issuanceToken?: InputMaybe<GQLOrder_By>
+  priceInCol?: InputMaybe<GQLOrder_By>
+  recipient?: InputMaybe<GQLOrder_By>
+  swapType?: InputMaybe<GQLOrder_By>
 }
 
 /** Ordering options when selecting data from "Swap". */
-export type Swap_Order_By = {
-  blockTimestamp?: InputMaybe<Order_By>
-  bondingCurve?: InputMaybe<BondingCurve_Order_By>
-  bondingCurve_id?: InputMaybe<Order_By>
-  chainId?: InputMaybe<Order_By>
-  collateralAmount?: InputMaybe<Order_By>
-  collateralToken?: InputMaybe<Order_By>
-  db_write_timestamp?: InputMaybe<Order_By>
-  id?: InputMaybe<Order_By>
-  initiator?: InputMaybe<Order_By>
-  issuanceAmount?: InputMaybe<Order_By>
-  issuanceToken?: InputMaybe<Order_By>
-  priceInCol?: InputMaybe<Order_By>
-  recipient?: InputMaybe<Order_By>
-  swapType?: InputMaybe<Order_By>
+export type GQLSwap_Order_By = {
+  blockTimestamp?: InputMaybe<GQLOrder_By>
+  bondingCurve?: InputMaybe<GQLBondingCurve_Order_By>
+  bondingCurve_id?: InputMaybe<GQLOrder_By>
+  chainId?: InputMaybe<GQLOrder_By>
+  collateralAmount?: InputMaybe<GQLOrder_By>
+  collateralToken?: InputMaybe<GQLOrder_By>
+  db_write_timestamp?: InputMaybe<GQLOrder_By>
+  id?: InputMaybe<GQLOrder_By>
+  initiator?: InputMaybe<GQLOrder_By>
+  issuanceAmount?: InputMaybe<GQLOrder_By>
+  issuanceToken?: InputMaybe<GQLOrder_By>
+  priceInCol?: InputMaybe<GQLOrder_By>
+  recipient?: InputMaybe<GQLOrder_By>
+  swapType?: InputMaybe<GQLOrder_By>
 }
 
 /** select columns of table "Swap" */
-export enum Swap_Select_Column {
+export enum GQLSwap_Select_Column {
   /** column name */
   BlockTimestamp = 'blockTimestamp',
   /** column name */
@@ -709,42 +709,42 @@ export enum Swap_Select_Column {
 }
 
 /** order by stddev() on columns of table "Swap" */
-export type Swap_Stddev_Order_By = {
-  blockTimestamp?: InputMaybe<Order_By>
-  chainId?: InputMaybe<Order_By>
-  collateralAmount?: InputMaybe<Order_By>
-  issuanceAmount?: InputMaybe<Order_By>
-  priceInCol?: InputMaybe<Order_By>
+export type GQLSwap_Stddev_Order_By = {
+  blockTimestamp?: InputMaybe<GQLOrder_By>
+  chainId?: InputMaybe<GQLOrder_By>
+  collateralAmount?: InputMaybe<GQLOrder_By>
+  issuanceAmount?: InputMaybe<GQLOrder_By>
+  priceInCol?: InputMaybe<GQLOrder_By>
 }
 
 /** order by stddev_pop() on columns of table "Swap" */
-export type Swap_Stddev_Pop_Order_By = {
-  blockTimestamp?: InputMaybe<Order_By>
-  chainId?: InputMaybe<Order_By>
-  collateralAmount?: InputMaybe<Order_By>
-  issuanceAmount?: InputMaybe<Order_By>
-  priceInCol?: InputMaybe<Order_By>
+export type GQLSwap_Stddev_Pop_Order_By = {
+  blockTimestamp?: InputMaybe<GQLOrder_By>
+  chainId?: InputMaybe<GQLOrder_By>
+  collateralAmount?: InputMaybe<GQLOrder_By>
+  issuanceAmount?: InputMaybe<GQLOrder_By>
+  priceInCol?: InputMaybe<GQLOrder_By>
 }
 
 /** order by stddev_samp() on columns of table "Swap" */
-export type Swap_Stddev_Samp_Order_By = {
-  blockTimestamp?: InputMaybe<Order_By>
-  chainId?: InputMaybe<Order_By>
-  collateralAmount?: InputMaybe<Order_By>
-  issuanceAmount?: InputMaybe<Order_By>
-  priceInCol?: InputMaybe<Order_By>
+export type GQLSwap_Stddev_Samp_Order_By = {
+  blockTimestamp?: InputMaybe<GQLOrder_By>
+  chainId?: InputMaybe<GQLOrder_By>
+  collateralAmount?: InputMaybe<GQLOrder_By>
+  issuanceAmount?: InputMaybe<GQLOrder_By>
+  priceInCol?: InputMaybe<GQLOrder_By>
 }
 
 /** Streaming cursor of the table "Swap" */
-export type Swap_Stream_Cursor_Input = {
+export type GQLSwap_Stream_Cursor_Input = {
   /** Stream column input with initial value */
-  initial_value: Swap_Stream_Cursor_Value_Input
+  initial_value: GQLSwap_Stream_Cursor_Value_Input
   /** cursor ordering */
-  ordering?: InputMaybe<Cursor_Ordering>
+  ordering?: InputMaybe<GQLCursor_Ordering>
 }
 
 /** Initial value of the column from where the streaming should start */
-export type Swap_Stream_Cursor_Value_Input = {
+export type GQLSwap_Stream_Cursor_Value_Input = {
   blockTimestamp?: InputMaybe<Scalars['Int']['input']>
   bondingCurve_id?: InputMaybe<Scalars['String']['input']>
   chainId?: InputMaybe<Scalars['Int']['input']>
@@ -761,72 +761,72 @@ export type Swap_Stream_Cursor_Value_Input = {
 }
 
 /** order by sum() on columns of table "Swap" */
-export type Swap_Sum_Order_By = {
-  blockTimestamp?: InputMaybe<Order_By>
-  chainId?: InputMaybe<Order_By>
-  collateralAmount?: InputMaybe<Order_By>
-  issuanceAmount?: InputMaybe<Order_By>
-  priceInCol?: InputMaybe<Order_By>
+export type GQLSwap_Sum_Order_By = {
+  blockTimestamp?: InputMaybe<GQLOrder_By>
+  chainId?: InputMaybe<GQLOrder_By>
+  collateralAmount?: InputMaybe<GQLOrder_By>
+  issuanceAmount?: InputMaybe<GQLOrder_By>
+  priceInCol?: InputMaybe<GQLOrder_By>
 }
 
 /** order by var_pop() on columns of table "Swap" */
-export type Swap_Var_Pop_Order_By = {
-  blockTimestamp?: InputMaybe<Order_By>
-  chainId?: InputMaybe<Order_By>
-  collateralAmount?: InputMaybe<Order_By>
-  issuanceAmount?: InputMaybe<Order_By>
-  priceInCol?: InputMaybe<Order_By>
+export type GQLSwap_Var_Pop_Order_By = {
+  blockTimestamp?: InputMaybe<GQLOrder_By>
+  chainId?: InputMaybe<GQLOrder_By>
+  collateralAmount?: InputMaybe<GQLOrder_By>
+  issuanceAmount?: InputMaybe<GQLOrder_By>
+  priceInCol?: InputMaybe<GQLOrder_By>
 }
 
 /** order by var_samp() on columns of table "Swap" */
-export type Swap_Var_Samp_Order_By = {
-  blockTimestamp?: InputMaybe<Order_By>
-  chainId?: InputMaybe<Order_By>
-  collateralAmount?: InputMaybe<Order_By>
-  issuanceAmount?: InputMaybe<Order_By>
-  priceInCol?: InputMaybe<Order_By>
+export type GQLSwap_Var_Samp_Order_By = {
+  blockTimestamp?: InputMaybe<GQLOrder_By>
+  chainId?: InputMaybe<GQLOrder_By>
+  collateralAmount?: InputMaybe<GQLOrder_By>
+  issuanceAmount?: InputMaybe<GQLOrder_By>
+  priceInCol?: InputMaybe<GQLOrder_By>
 }
 
 /** order by variance() on columns of table "Swap" */
-export type Swap_Variance_Order_By = {
-  blockTimestamp?: InputMaybe<Order_By>
-  chainId?: InputMaybe<Order_By>
-  collateralAmount?: InputMaybe<Order_By>
-  issuanceAmount?: InputMaybe<Order_By>
-  priceInCol?: InputMaybe<Order_By>
+export type GQLSwap_Variance_Order_By = {
+  blockTimestamp?: InputMaybe<GQLOrder_By>
+  chainId?: InputMaybe<GQLOrder_By>
+  collateralAmount?: InputMaybe<GQLOrder_By>
+  issuanceAmount?: InputMaybe<GQLOrder_By>
+  priceInCol?: InputMaybe<GQLOrder_By>
 }
 
 /** columns and relationships of "Workflow" */
-export type Workflow = {
+export type GQLWorkflow = {
   /** An object relationship */
-  authorizer?: Maybe<WorkflowModule>
+  authorizer?: Maybe<GQLWorkflowModule>
   authorizer_id: Scalars['String']['output']
   chainId: Scalars['Int']['output']
   db_write_timestamp?: Maybe<Scalars['timestamp']['output']>
   /** An object relationship */
-  fundingManager?: Maybe<WorkflowModule>
+  fundingManager?: Maybe<GQLWorkflowModule>
   fundingManager_id: Scalars['String']['output']
   id: Scalars['String']['output']
   optionalModules?: Maybe<Array<Scalars['String']['output']>>
   orchestratorId: Scalars['numeric']['output']
   /** An object relationship */
-  paymentProcessor?: Maybe<WorkflowModule>
+  paymentProcessor?: Maybe<GQLWorkflowModule>
   paymentProcessor_id: Scalars['String']['output']
 }
 
 /** columns and relationships of "WorkflowModule" */
-export type WorkflowModule = {
+export type GQLWorkflowModule = {
   chainId: Scalars['Int']['output']
   db_write_timestamp?: Maybe<Scalars['timestamp']['output']>
   id: Scalars['String']['output']
   /** An object relationship */
-  moduleType?: Maybe<WorkflowModuleType>
+  moduleType?: Maybe<GQLWorkflowModuleType>
   moduleType_id: Scalars['String']['output']
   orchestrator: Scalars['String']['output']
 }
 
 /** columns and relationships of "WorkflowModuleType" */
-export type WorkflowModuleType = {
+export type GQLWorkflowModuleType = {
   beacon: Scalars['String']['output']
   chainId: Scalars['Int']['output']
   db_write_timestamp?: Maybe<Scalars['timestamp']['output']>
@@ -839,36 +839,36 @@ export type WorkflowModuleType = {
 }
 
 /** Boolean expression to filter rows from the table "WorkflowModuleType". All fields are combined with a logical 'AND'. */
-export type WorkflowModuleType_Bool_Exp = {
-  _and?: InputMaybe<Array<WorkflowModuleType_Bool_Exp>>
-  _not?: InputMaybe<WorkflowModuleType_Bool_Exp>
-  _or?: InputMaybe<Array<WorkflowModuleType_Bool_Exp>>
-  beacon?: InputMaybe<String_Comparison_Exp>
-  chainId?: InputMaybe<Int_Comparison_Exp>
-  db_write_timestamp?: InputMaybe<Timestamp_Comparison_Exp>
-  id?: InputMaybe<String_Comparison_Exp>
-  majorVersion?: InputMaybe<Numeric_Comparison_Exp>
-  minorVersion?: InputMaybe<Numeric_Comparison_Exp>
-  name?: InputMaybe<String_Comparison_Exp>
-  patchVersion?: InputMaybe<Numeric_Comparison_Exp>
-  url?: InputMaybe<String_Comparison_Exp>
+export type GQLWorkflowModuleType_Bool_Exp = {
+  _and?: InputMaybe<Array<GQLWorkflowModuleType_Bool_Exp>>
+  _not?: InputMaybe<GQLWorkflowModuleType_Bool_Exp>
+  _or?: InputMaybe<Array<GQLWorkflowModuleType_Bool_Exp>>
+  beacon?: InputMaybe<GQLString_Comparison_Exp>
+  chainId?: InputMaybe<GQLInt_Comparison_Exp>
+  db_write_timestamp?: InputMaybe<GQLTimestamp_Comparison_Exp>
+  id?: InputMaybe<GQLString_Comparison_Exp>
+  majorVersion?: InputMaybe<GQLNumeric_Comparison_Exp>
+  minorVersion?: InputMaybe<GQLNumeric_Comparison_Exp>
+  name?: InputMaybe<GQLString_Comparison_Exp>
+  patchVersion?: InputMaybe<GQLNumeric_Comparison_Exp>
+  url?: InputMaybe<GQLString_Comparison_Exp>
 }
 
 /** Ordering options when selecting data from "WorkflowModuleType". */
-export type WorkflowModuleType_Order_By = {
-  beacon?: InputMaybe<Order_By>
-  chainId?: InputMaybe<Order_By>
-  db_write_timestamp?: InputMaybe<Order_By>
-  id?: InputMaybe<Order_By>
-  majorVersion?: InputMaybe<Order_By>
-  minorVersion?: InputMaybe<Order_By>
-  name?: InputMaybe<Order_By>
-  patchVersion?: InputMaybe<Order_By>
-  url?: InputMaybe<Order_By>
+export type GQLWorkflowModuleType_Order_By = {
+  beacon?: InputMaybe<GQLOrder_By>
+  chainId?: InputMaybe<GQLOrder_By>
+  db_write_timestamp?: InputMaybe<GQLOrder_By>
+  id?: InputMaybe<GQLOrder_By>
+  majorVersion?: InputMaybe<GQLOrder_By>
+  minorVersion?: InputMaybe<GQLOrder_By>
+  name?: InputMaybe<GQLOrder_By>
+  patchVersion?: InputMaybe<GQLOrder_By>
+  url?: InputMaybe<GQLOrder_By>
 }
 
 /** select columns of table "WorkflowModuleType" */
-export enum WorkflowModuleType_Select_Column {
+export enum GQLWorkflowModuleType_Select_Column {
   /** column name */
   Beacon = 'beacon',
   /** column name */
@@ -890,15 +890,15 @@ export enum WorkflowModuleType_Select_Column {
 }
 
 /** Streaming cursor of the table "WorkflowModuleType" */
-export type WorkflowModuleType_Stream_Cursor_Input = {
+export type GQLWorkflowModuleType_Stream_Cursor_Input = {
   /** Stream column input with initial value */
-  initial_value: WorkflowModuleType_Stream_Cursor_Value_Input
+  initial_value: GQLWorkflowModuleType_Stream_Cursor_Value_Input
   /** cursor ordering */
-  ordering?: InputMaybe<Cursor_Ordering>
+  ordering?: InputMaybe<GQLCursor_Ordering>
 }
 
 /** Initial value of the column from where the streaming should start */
-export type WorkflowModuleType_Stream_Cursor_Value_Input = {
+export type GQLWorkflowModuleType_Stream_Cursor_Value_Input = {
   beacon?: InputMaybe<Scalars['String']['input']>
   chainId?: InputMaybe<Scalars['Int']['input']>
   db_write_timestamp?: InputMaybe<Scalars['timestamp']['input']>
@@ -911,30 +911,30 @@ export type WorkflowModuleType_Stream_Cursor_Value_Input = {
 }
 
 /** Boolean expression to filter rows from the table "WorkflowModule". All fields are combined with a logical 'AND'. */
-export type WorkflowModule_Bool_Exp = {
-  _and?: InputMaybe<Array<WorkflowModule_Bool_Exp>>
-  _not?: InputMaybe<WorkflowModule_Bool_Exp>
-  _or?: InputMaybe<Array<WorkflowModule_Bool_Exp>>
-  chainId?: InputMaybe<Int_Comparison_Exp>
-  db_write_timestamp?: InputMaybe<Timestamp_Comparison_Exp>
-  id?: InputMaybe<String_Comparison_Exp>
-  moduleType?: InputMaybe<WorkflowModuleType_Bool_Exp>
-  moduleType_id?: InputMaybe<String_Comparison_Exp>
-  orchestrator?: InputMaybe<String_Comparison_Exp>
+export type GQLWorkflowModule_Bool_Exp = {
+  _and?: InputMaybe<Array<GQLWorkflowModule_Bool_Exp>>
+  _not?: InputMaybe<GQLWorkflowModule_Bool_Exp>
+  _or?: InputMaybe<Array<GQLWorkflowModule_Bool_Exp>>
+  chainId?: InputMaybe<GQLInt_Comparison_Exp>
+  db_write_timestamp?: InputMaybe<GQLTimestamp_Comparison_Exp>
+  id?: InputMaybe<GQLString_Comparison_Exp>
+  moduleType?: InputMaybe<GQLWorkflowModuleType_Bool_Exp>
+  moduleType_id?: InputMaybe<GQLString_Comparison_Exp>
+  orchestrator?: InputMaybe<GQLString_Comparison_Exp>
 }
 
 /** Ordering options when selecting data from "WorkflowModule". */
-export type WorkflowModule_Order_By = {
-  chainId?: InputMaybe<Order_By>
-  db_write_timestamp?: InputMaybe<Order_By>
-  id?: InputMaybe<Order_By>
-  moduleType?: InputMaybe<WorkflowModuleType_Order_By>
-  moduleType_id?: InputMaybe<Order_By>
-  orchestrator?: InputMaybe<Order_By>
+export type GQLWorkflowModule_Order_By = {
+  chainId?: InputMaybe<GQLOrder_By>
+  db_write_timestamp?: InputMaybe<GQLOrder_By>
+  id?: InputMaybe<GQLOrder_By>
+  moduleType?: InputMaybe<GQLWorkflowModuleType_Order_By>
+  moduleType_id?: InputMaybe<GQLOrder_By>
+  orchestrator?: InputMaybe<GQLOrder_By>
 }
 
 /** select columns of table "WorkflowModule" */
-export enum WorkflowModule_Select_Column {
+export enum GQLWorkflowModule_Select_Column {
   /** column name */
   ChainId = 'chainId',
   /** column name */
@@ -948,15 +948,15 @@ export enum WorkflowModule_Select_Column {
 }
 
 /** Streaming cursor of the table "WorkflowModule" */
-export type WorkflowModule_Stream_Cursor_Input = {
+export type GQLWorkflowModule_Stream_Cursor_Input = {
   /** Stream column input with initial value */
-  initial_value: WorkflowModule_Stream_Cursor_Value_Input
+  initial_value: GQLWorkflowModule_Stream_Cursor_Value_Input
   /** cursor ordering */
-  ordering?: InputMaybe<Cursor_Ordering>
+  ordering?: InputMaybe<GQLCursor_Ordering>
 }
 
 /** Initial value of the column from where the streaming should start */
-export type WorkflowModule_Stream_Cursor_Value_Input = {
+export type GQLWorkflowModule_Stream_Cursor_Value_Input = {
   chainId?: InputMaybe<Scalars['Int']['input']>
   db_write_timestamp?: InputMaybe<Scalars['timestamp']['input']>
   id?: InputMaybe<Scalars['String']['input']>
@@ -965,40 +965,40 @@ export type WorkflowModule_Stream_Cursor_Value_Input = {
 }
 
 /** Boolean expression to filter rows from the table "Workflow". All fields are combined with a logical 'AND'. */
-export type Workflow_Bool_Exp = {
-  _and?: InputMaybe<Array<Workflow_Bool_Exp>>
-  _not?: InputMaybe<Workflow_Bool_Exp>
-  _or?: InputMaybe<Array<Workflow_Bool_Exp>>
-  authorizer?: InputMaybe<WorkflowModule_Bool_Exp>
-  authorizer_id?: InputMaybe<String_Comparison_Exp>
-  chainId?: InputMaybe<Int_Comparison_Exp>
-  db_write_timestamp?: InputMaybe<Timestamp_Comparison_Exp>
-  fundingManager?: InputMaybe<WorkflowModule_Bool_Exp>
-  fundingManager_id?: InputMaybe<String_Comparison_Exp>
-  id?: InputMaybe<String_Comparison_Exp>
-  optionalModules?: InputMaybe<String_Array_Comparison_Exp>
-  orchestratorId?: InputMaybe<Numeric_Comparison_Exp>
-  paymentProcessor?: InputMaybe<WorkflowModule_Bool_Exp>
-  paymentProcessor_id?: InputMaybe<String_Comparison_Exp>
+export type GQLWorkflow_Bool_Exp = {
+  _and?: InputMaybe<Array<GQLWorkflow_Bool_Exp>>
+  _not?: InputMaybe<GQLWorkflow_Bool_Exp>
+  _or?: InputMaybe<Array<GQLWorkflow_Bool_Exp>>
+  authorizer?: InputMaybe<GQLWorkflowModule_Bool_Exp>
+  authorizer_id?: InputMaybe<GQLString_Comparison_Exp>
+  chainId?: InputMaybe<GQLInt_Comparison_Exp>
+  db_write_timestamp?: InputMaybe<GQLTimestamp_Comparison_Exp>
+  fundingManager?: InputMaybe<GQLWorkflowModule_Bool_Exp>
+  fundingManager_id?: InputMaybe<GQLString_Comparison_Exp>
+  id?: InputMaybe<GQLString_Comparison_Exp>
+  optionalModules?: InputMaybe<GQLString_Array_Comparison_Exp>
+  orchestratorId?: InputMaybe<GQLNumeric_Comparison_Exp>
+  paymentProcessor?: InputMaybe<GQLWorkflowModule_Bool_Exp>
+  paymentProcessor_id?: InputMaybe<GQLString_Comparison_Exp>
 }
 
 /** Ordering options when selecting data from "Workflow". */
-export type Workflow_Order_By = {
-  authorizer?: InputMaybe<WorkflowModule_Order_By>
-  authorizer_id?: InputMaybe<Order_By>
-  chainId?: InputMaybe<Order_By>
-  db_write_timestamp?: InputMaybe<Order_By>
-  fundingManager?: InputMaybe<WorkflowModule_Order_By>
-  fundingManager_id?: InputMaybe<Order_By>
-  id?: InputMaybe<Order_By>
-  optionalModules?: InputMaybe<Order_By>
-  orchestratorId?: InputMaybe<Order_By>
-  paymentProcessor?: InputMaybe<WorkflowModule_Order_By>
-  paymentProcessor_id?: InputMaybe<Order_By>
+export type GQLWorkflow_Order_By = {
+  authorizer?: InputMaybe<GQLWorkflowModule_Order_By>
+  authorizer_id?: InputMaybe<GQLOrder_By>
+  chainId?: InputMaybe<GQLOrder_By>
+  db_write_timestamp?: InputMaybe<GQLOrder_By>
+  fundingManager?: InputMaybe<GQLWorkflowModule_Order_By>
+  fundingManager_id?: InputMaybe<GQLOrder_By>
+  id?: InputMaybe<GQLOrder_By>
+  optionalModules?: InputMaybe<GQLOrder_By>
+  orchestratorId?: InputMaybe<GQLOrder_By>
+  paymentProcessor?: InputMaybe<GQLWorkflowModule_Order_By>
+  paymentProcessor_id?: InputMaybe<GQLOrder_By>
 }
 
 /** select columns of table "Workflow" */
-export enum Workflow_Select_Column {
+export enum GQLWorkflow_Select_Column {
   /** column name */
   AuthorizerId = 'authorizer_id',
   /** column name */
@@ -1018,15 +1018,15 @@ export enum Workflow_Select_Column {
 }
 
 /** Streaming cursor of the table "Workflow" */
-export type Workflow_Stream_Cursor_Input = {
+export type GQLWorkflow_Stream_Cursor_Input = {
   /** Stream column input with initial value */
-  initial_value: Workflow_Stream_Cursor_Value_Input
+  initial_value: GQLWorkflow_Stream_Cursor_Value_Input
   /** cursor ordering */
-  ordering?: InputMaybe<Cursor_Ordering>
+  ordering?: InputMaybe<GQLCursor_Ordering>
 }
 
 /** Initial value of the column from where the streaming should start */
-export type Workflow_Stream_Cursor_Value_Input = {
+export type GQLWorkflow_Stream_Cursor_Value_Input = {
   authorizer_id?: InputMaybe<Scalars['String']['input']>
   chainId?: InputMaybe<Scalars['Int']['input']>
   db_write_timestamp?: InputMaybe<Scalars['timestamp']['input']>
@@ -1038,7 +1038,7 @@ export type Workflow_Stream_Cursor_Value_Input = {
 }
 
 /** columns and relationships of "chain_metadata" */
-export type Chain_Metadata = {
+export type GQLChain_Metadata = {
   block_height: Scalars['Int']['output']
   chain_id: Scalars['Int']['output']
   end_block?: Maybe<Scalars['Int']['output']>
@@ -1055,40 +1055,40 @@ export type Chain_Metadata = {
 }
 
 /** Boolean expression to filter rows from the table "chain_metadata". All fields are combined with a logical 'AND'. */
-export type Chain_Metadata_Bool_Exp = {
-  _and?: InputMaybe<Array<Chain_Metadata_Bool_Exp>>
-  _not?: InputMaybe<Chain_Metadata_Bool_Exp>
-  _or?: InputMaybe<Array<Chain_Metadata_Bool_Exp>>
-  block_height?: InputMaybe<Int_Comparison_Exp>
-  chain_id?: InputMaybe<Int_Comparison_Exp>
-  end_block?: InputMaybe<Int_Comparison_Exp>
-  first_event_block_number?: InputMaybe<Int_Comparison_Exp>
-  is_hyper_sync?: InputMaybe<Boolean_Comparison_Exp>
-  latest_fetched_block_number?: InputMaybe<Int_Comparison_Exp>
-  latest_processed_block?: InputMaybe<Int_Comparison_Exp>
-  num_batches_fetched?: InputMaybe<Int_Comparison_Exp>
-  num_events_processed?: InputMaybe<Int_Comparison_Exp>
-  start_block?: InputMaybe<Int_Comparison_Exp>
-  timestamp_caught_up_to_head_or_endblock?: InputMaybe<Timestamptz_Comparison_Exp>
+export type GQLChain_Metadata_Bool_Exp = {
+  _and?: InputMaybe<Array<GQLChain_Metadata_Bool_Exp>>
+  _not?: InputMaybe<GQLChain_Metadata_Bool_Exp>
+  _or?: InputMaybe<Array<GQLChain_Metadata_Bool_Exp>>
+  block_height?: InputMaybe<GQLInt_Comparison_Exp>
+  chain_id?: InputMaybe<GQLInt_Comparison_Exp>
+  end_block?: InputMaybe<GQLInt_Comparison_Exp>
+  first_event_block_number?: InputMaybe<GQLInt_Comparison_Exp>
+  is_hyper_sync?: InputMaybe<GQLBoolean_Comparison_Exp>
+  latest_fetched_block_number?: InputMaybe<GQLInt_Comparison_Exp>
+  latest_processed_block?: InputMaybe<GQLInt_Comparison_Exp>
+  num_batches_fetched?: InputMaybe<GQLInt_Comparison_Exp>
+  num_events_processed?: InputMaybe<GQLInt_Comparison_Exp>
+  start_block?: InputMaybe<GQLInt_Comparison_Exp>
+  timestamp_caught_up_to_head_or_endblock?: InputMaybe<GQLTimestamptz_Comparison_Exp>
 }
 
 /** Ordering options when selecting data from "chain_metadata". */
-export type Chain_Metadata_Order_By = {
-  block_height?: InputMaybe<Order_By>
-  chain_id?: InputMaybe<Order_By>
-  end_block?: InputMaybe<Order_By>
-  first_event_block_number?: InputMaybe<Order_By>
-  is_hyper_sync?: InputMaybe<Order_By>
-  latest_fetched_block_number?: InputMaybe<Order_By>
-  latest_processed_block?: InputMaybe<Order_By>
-  num_batches_fetched?: InputMaybe<Order_By>
-  num_events_processed?: InputMaybe<Order_By>
-  start_block?: InputMaybe<Order_By>
-  timestamp_caught_up_to_head_or_endblock?: InputMaybe<Order_By>
+export type GQLChain_Metadata_Order_By = {
+  block_height?: InputMaybe<GQLOrder_By>
+  chain_id?: InputMaybe<GQLOrder_By>
+  end_block?: InputMaybe<GQLOrder_By>
+  first_event_block_number?: InputMaybe<GQLOrder_By>
+  is_hyper_sync?: InputMaybe<GQLOrder_By>
+  latest_fetched_block_number?: InputMaybe<GQLOrder_By>
+  latest_processed_block?: InputMaybe<GQLOrder_By>
+  num_batches_fetched?: InputMaybe<GQLOrder_By>
+  num_events_processed?: InputMaybe<GQLOrder_By>
+  start_block?: InputMaybe<GQLOrder_By>
+  timestamp_caught_up_to_head_or_endblock?: InputMaybe<GQLOrder_By>
 }
 
 /** select columns of table "chain_metadata" */
-export enum Chain_Metadata_Select_Column {
+export enum GQLChain_Metadata_Select_Column {
   /** column name */
   BlockHeight = 'block_height',
   /** column name */
@@ -1114,15 +1114,15 @@ export enum Chain_Metadata_Select_Column {
 }
 
 /** Streaming cursor of the table "chain_metadata" */
-export type Chain_Metadata_Stream_Cursor_Input = {
+export type GQLChain_Metadata_Stream_Cursor_Input = {
   /** Stream column input with initial value */
-  initial_value: Chain_Metadata_Stream_Cursor_Value_Input
+  initial_value: GQLChain_Metadata_Stream_Cursor_Value_Input
   /** cursor ordering */
-  ordering?: InputMaybe<Cursor_Ordering>
+  ordering?: InputMaybe<GQLCursor_Ordering>
 }
 
 /** Initial value of the column from where the streaming should start */
-export type Chain_Metadata_Stream_Cursor_Value_Input = {
+export type GQLChain_Metadata_Stream_Cursor_Value_Input = {
   block_height?: InputMaybe<Scalars['Int']['input']>
   chain_id?: InputMaybe<Scalars['Int']['input']>
   end_block?: InputMaybe<Scalars['Int']['input']>
@@ -1139,7 +1139,7 @@ export type Chain_Metadata_Stream_Cursor_Value_Input = {
 }
 
 /** Boolean expression to compare columns of type "contract_type". All fields are combined with logical 'AND'. */
-export type Contract_Type_Comparison_Exp = {
+export type GQLContract_Type_Comparison_Exp = {
   _eq?: InputMaybe<Scalars['contract_type']['input']>
   _gt?: InputMaybe<Scalars['contract_type']['input']>
   _gte?: InputMaybe<Scalars['contract_type']['input']>
@@ -1152,7 +1152,7 @@ export type Contract_Type_Comparison_Exp = {
 }
 
 /** ordering argument of a cursor */
-export enum Cursor_Ordering {
+export enum GQLCursor_Ordering {
   /** ascending ordering of the cursor */
   Asc = 'ASC',
   /** descending ordering of the cursor */
@@ -1160,7 +1160,7 @@ export enum Cursor_Ordering {
 }
 
 /** columns and relationships of "dynamic_contract_registry" */
-export type Dynamic_Contract_Registry = {
+export type GQLDynamic_Contract_Registry = {
   block_timestamp: Scalars['Int']['output']
   chain_id: Scalars['Int']['output']
   contract_address: Scalars['String']['output']
@@ -1169,28 +1169,28 @@ export type Dynamic_Contract_Registry = {
 }
 
 /** Boolean expression to filter rows from the table "dynamic_contract_registry". All fields are combined with a logical 'AND'. */
-export type Dynamic_Contract_Registry_Bool_Exp = {
-  _and?: InputMaybe<Array<Dynamic_Contract_Registry_Bool_Exp>>
-  _not?: InputMaybe<Dynamic_Contract_Registry_Bool_Exp>
-  _or?: InputMaybe<Array<Dynamic_Contract_Registry_Bool_Exp>>
-  block_timestamp?: InputMaybe<Int_Comparison_Exp>
-  chain_id?: InputMaybe<Int_Comparison_Exp>
-  contract_address?: InputMaybe<String_Comparison_Exp>
-  contract_type?: InputMaybe<Contract_Type_Comparison_Exp>
-  event_id?: InputMaybe<Numeric_Comparison_Exp>
+export type GQLDynamic_Contract_Registry_Bool_Exp = {
+  _and?: InputMaybe<Array<GQLDynamic_Contract_Registry_Bool_Exp>>
+  _not?: InputMaybe<GQLDynamic_Contract_Registry_Bool_Exp>
+  _or?: InputMaybe<Array<GQLDynamic_Contract_Registry_Bool_Exp>>
+  block_timestamp?: InputMaybe<GQLInt_Comparison_Exp>
+  chain_id?: InputMaybe<GQLInt_Comparison_Exp>
+  contract_address?: InputMaybe<GQLString_Comparison_Exp>
+  contract_type?: InputMaybe<GQLContract_Type_Comparison_Exp>
+  event_id?: InputMaybe<GQLNumeric_Comparison_Exp>
 }
 
 /** Ordering options when selecting data from "dynamic_contract_registry". */
-export type Dynamic_Contract_Registry_Order_By = {
-  block_timestamp?: InputMaybe<Order_By>
-  chain_id?: InputMaybe<Order_By>
-  contract_address?: InputMaybe<Order_By>
-  contract_type?: InputMaybe<Order_By>
-  event_id?: InputMaybe<Order_By>
+export type GQLDynamic_Contract_Registry_Order_By = {
+  block_timestamp?: InputMaybe<GQLOrder_By>
+  chain_id?: InputMaybe<GQLOrder_By>
+  contract_address?: InputMaybe<GQLOrder_By>
+  contract_type?: InputMaybe<GQLOrder_By>
+  event_id?: InputMaybe<GQLOrder_By>
 }
 
 /** select columns of table "dynamic_contract_registry" */
-export enum Dynamic_Contract_Registry_Select_Column {
+export enum GQLDynamic_Contract_Registry_Select_Column {
   /** column name */
   BlockTimestamp = 'block_timestamp',
   /** column name */
@@ -1204,15 +1204,15 @@ export enum Dynamic_Contract_Registry_Select_Column {
 }
 
 /** Streaming cursor of the table "dynamic_contract_registry" */
-export type Dynamic_Contract_Registry_Stream_Cursor_Input = {
+export type GQLDynamic_Contract_Registry_Stream_Cursor_Input = {
   /** Stream column input with initial value */
-  initial_value: Dynamic_Contract_Registry_Stream_Cursor_Value_Input
+  initial_value: GQLDynamic_Contract_Registry_Stream_Cursor_Value_Input
   /** cursor ordering */
-  ordering?: InputMaybe<Cursor_Ordering>
+  ordering?: InputMaybe<GQLCursor_Ordering>
 }
 
 /** Initial value of the column from where the streaming should start */
-export type Dynamic_Contract_Registry_Stream_Cursor_Value_Input = {
+export type GQLDynamic_Contract_Registry_Stream_Cursor_Value_Input = {
   block_timestamp?: InputMaybe<Scalars['Int']['input']>
   chain_id?: InputMaybe<Scalars['Int']['input']>
   contract_address?: InputMaybe<Scalars['String']['input']>
@@ -1221,7 +1221,7 @@ export type Dynamic_Contract_Registry_Stream_Cursor_Value_Input = {
 }
 
 /** columns and relationships of "end_of_block_range_scanned_data" */
-export type End_Of_Block_Range_Scanned_Data = {
+export type GQLEnd_Of_Block_Range_Scanned_Data = {
   block_hash: Scalars['String']['output']
   block_number: Scalars['Int']['output']
   block_timestamp: Scalars['Int']['output']
@@ -1229,26 +1229,26 @@ export type End_Of_Block_Range_Scanned_Data = {
 }
 
 /** Boolean expression to filter rows from the table "end_of_block_range_scanned_data". All fields are combined with a logical 'AND'. */
-export type End_Of_Block_Range_Scanned_Data_Bool_Exp = {
-  _and?: InputMaybe<Array<End_Of_Block_Range_Scanned_Data_Bool_Exp>>
-  _not?: InputMaybe<End_Of_Block_Range_Scanned_Data_Bool_Exp>
-  _or?: InputMaybe<Array<End_Of_Block_Range_Scanned_Data_Bool_Exp>>
-  block_hash?: InputMaybe<String_Comparison_Exp>
-  block_number?: InputMaybe<Int_Comparison_Exp>
-  block_timestamp?: InputMaybe<Int_Comparison_Exp>
-  chain_id?: InputMaybe<Int_Comparison_Exp>
+export type GQLEnd_Of_Block_Range_Scanned_Data_Bool_Exp = {
+  _and?: InputMaybe<Array<GQLEnd_Of_Block_Range_Scanned_Data_Bool_Exp>>
+  _not?: InputMaybe<GQLEnd_Of_Block_Range_Scanned_Data_Bool_Exp>
+  _or?: InputMaybe<Array<GQLEnd_Of_Block_Range_Scanned_Data_Bool_Exp>>
+  block_hash?: InputMaybe<GQLString_Comparison_Exp>
+  block_number?: InputMaybe<GQLInt_Comparison_Exp>
+  block_timestamp?: InputMaybe<GQLInt_Comparison_Exp>
+  chain_id?: InputMaybe<GQLInt_Comparison_Exp>
 }
 
 /** Ordering options when selecting data from "end_of_block_range_scanned_data". */
-export type End_Of_Block_Range_Scanned_Data_Order_By = {
-  block_hash?: InputMaybe<Order_By>
-  block_number?: InputMaybe<Order_By>
-  block_timestamp?: InputMaybe<Order_By>
-  chain_id?: InputMaybe<Order_By>
+export type GQLEnd_Of_Block_Range_Scanned_Data_Order_By = {
+  block_hash?: InputMaybe<GQLOrder_By>
+  block_number?: InputMaybe<GQLOrder_By>
+  block_timestamp?: InputMaybe<GQLOrder_By>
+  chain_id?: InputMaybe<GQLOrder_By>
 }
 
 /** select columns of table "end_of_block_range_scanned_data" */
-export enum End_Of_Block_Range_Scanned_Data_Select_Column {
+export enum GQLEnd_Of_Block_Range_Scanned_Data_Select_Column {
   /** column name */
   BlockHash = 'block_hash',
   /** column name */
@@ -1260,15 +1260,15 @@ export enum End_Of_Block_Range_Scanned_Data_Select_Column {
 }
 
 /** Streaming cursor of the table "end_of_block_range_scanned_data" */
-export type End_Of_Block_Range_Scanned_Data_Stream_Cursor_Input = {
+export type GQLEnd_Of_Block_Range_Scanned_Data_Stream_Cursor_Input = {
   /** Stream column input with initial value */
-  initial_value: End_Of_Block_Range_Scanned_Data_Stream_Cursor_Value_Input
+  initial_value: GQLEnd_Of_Block_Range_Scanned_Data_Stream_Cursor_Value_Input
   /** cursor ordering */
-  ordering?: InputMaybe<Cursor_Ordering>
+  ordering?: InputMaybe<GQLCursor_Ordering>
 }
 
 /** Initial value of the column from where the streaming should start */
-export type End_Of_Block_Range_Scanned_Data_Stream_Cursor_Value_Input = {
+export type GQLEnd_Of_Block_Range_Scanned_Data_Stream_Cursor_Value_Input = {
   block_hash?: InputMaybe<Scalars['String']['input']>
   block_number?: InputMaybe<Scalars['Int']['input']>
   block_timestamp?: InputMaybe<Scalars['Int']['input']>
@@ -1276,14 +1276,14 @@ export type End_Of_Block_Range_Scanned_Data_Stream_Cursor_Value_Input = {
 }
 
 /** columns and relationships of "entity_history" */
-export type Entity_History = {
+export type GQLEntity_History = {
   block_number: Scalars['Int']['output']
   block_timestamp: Scalars['Int']['output']
   chain_id: Scalars['Int']['output']
   entity_id: Scalars['String']['output']
   entity_type: Scalars['entity_type']['output']
   /** An object relationship */
-  event?: Maybe<Raw_Events>
+  event?: Maybe<GQLRaw_Events>
   log_index: Scalars['Int']['output']
   params?: Maybe<Scalars['json']['output']>
   previous_block_number?: Maybe<Scalars['Int']['output']>
@@ -1293,65 +1293,65 @@ export type Entity_History = {
 }
 
 /** columns and relationships of "entity_history" */
-export type Entity_HistoryParamsArgs = {
+export type GQLEntity_HistoryParamsArgs = {
   path?: InputMaybe<Scalars['String']['input']>
 }
 
 /** order by aggregate values of table "entity_history" */
-export type Entity_History_Aggregate_Order_By = {
-  avg?: InputMaybe<Entity_History_Avg_Order_By>
-  count?: InputMaybe<Order_By>
-  max?: InputMaybe<Entity_History_Max_Order_By>
-  min?: InputMaybe<Entity_History_Min_Order_By>
-  stddev?: InputMaybe<Entity_History_Stddev_Order_By>
-  stddev_pop?: InputMaybe<Entity_History_Stddev_Pop_Order_By>
-  stddev_samp?: InputMaybe<Entity_History_Stddev_Samp_Order_By>
-  sum?: InputMaybe<Entity_History_Sum_Order_By>
-  var_pop?: InputMaybe<Entity_History_Var_Pop_Order_By>
-  var_samp?: InputMaybe<Entity_History_Var_Samp_Order_By>
-  variance?: InputMaybe<Entity_History_Variance_Order_By>
+export type GQLEntity_History_Aggregate_Order_By = {
+  avg?: InputMaybe<GQLEntity_History_Avg_Order_By>
+  count?: InputMaybe<GQLOrder_By>
+  max?: InputMaybe<GQLEntity_History_Max_Order_By>
+  min?: InputMaybe<GQLEntity_History_Min_Order_By>
+  stddev?: InputMaybe<GQLEntity_History_Stddev_Order_By>
+  stddev_pop?: InputMaybe<GQLEntity_History_Stddev_Pop_Order_By>
+  stddev_samp?: InputMaybe<GQLEntity_History_Stddev_Samp_Order_By>
+  sum?: InputMaybe<GQLEntity_History_Sum_Order_By>
+  var_pop?: InputMaybe<GQLEntity_History_Var_Pop_Order_By>
+  var_samp?: InputMaybe<GQLEntity_History_Var_Samp_Order_By>
+  variance?: InputMaybe<GQLEntity_History_Variance_Order_By>
 }
 
 /** order by avg() on columns of table "entity_history" */
-export type Entity_History_Avg_Order_By = {
-  block_number?: InputMaybe<Order_By>
-  block_timestamp?: InputMaybe<Order_By>
-  chain_id?: InputMaybe<Order_By>
-  log_index?: InputMaybe<Order_By>
-  previous_block_number?: InputMaybe<Order_By>
-  previous_block_timestamp?: InputMaybe<Order_By>
-  previous_chain_id?: InputMaybe<Order_By>
-  previous_log_index?: InputMaybe<Order_By>
+export type GQLEntity_History_Avg_Order_By = {
+  block_number?: InputMaybe<GQLOrder_By>
+  block_timestamp?: InputMaybe<GQLOrder_By>
+  chain_id?: InputMaybe<GQLOrder_By>
+  log_index?: InputMaybe<GQLOrder_By>
+  previous_block_number?: InputMaybe<GQLOrder_By>
+  previous_block_timestamp?: InputMaybe<GQLOrder_By>
+  previous_chain_id?: InputMaybe<GQLOrder_By>
+  previous_log_index?: InputMaybe<GQLOrder_By>
 }
 
 /** Boolean expression to filter rows from the table "entity_history". All fields are combined with a logical 'AND'. */
-export type Entity_History_Bool_Exp = {
-  _and?: InputMaybe<Array<Entity_History_Bool_Exp>>
-  _not?: InputMaybe<Entity_History_Bool_Exp>
-  _or?: InputMaybe<Array<Entity_History_Bool_Exp>>
-  block_number?: InputMaybe<Int_Comparison_Exp>
-  block_timestamp?: InputMaybe<Int_Comparison_Exp>
-  chain_id?: InputMaybe<Int_Comparison_Exp>
-  entity_id?: InputMaybe<String_Comparison_Exp>
-  entity_type?: InputMaybe<Entity_Type_Comparison_Exp>
-  event?: InputMaybe<Raw_Events_Bool_Exp>
-  log_index?: InputMaybe<Int_Comparison_Exp>
-  params?: InputMaybe<Json_Comparison_Exp>
-  previous_block_number?: InputMaybe<Int_Comparison_Exp>
-  previous_block_timestamp?: InputMaybe<Int_Comparison_Exp>
-  previous_chain_id?: InputMaybe<Int_Comparison_Exp>
-  previous_log_index?: InputMaybe<Int_Comparison_Exp>
+export type GQLEntity_History_Bool_Exp = {
+  _and?: InputMaybe<Array<GQLEntity_History_Bool_Exp>>
+  _not?: InputMaybe<GQLEntity_History_Bool_Exp>
+  _or?: InputMaybe<Array<GQLEntity_History_Bool_Exp>>
+  block_number?: InputMaybe<GQLInt_Comparison_Exp>
+  block_timestamp?: InputMaybe<GQLInt_Comparison_Exp>
+  chain_id?: InputMaybe<GQLInt_Comparison_Exp>
+  entity_id?: InputMaybe<GQLString_Comparison_Exp>
+  entity_type?: InputMaybe<GQLEntity_Type_Comparison_Exp>
+  event?: InputMaybe<GQLRaw_Events_Bool_Exp>
+  log_index?: InputMaybe<GQLInt_Comparison_Exp>
+  params?: InputMaybe<GQLJson_Comparison_Exp>
+  previous_block_number?: InputMaybe<GQLInt_Comparison_Exp>
+  previous_block_timestamp?: InputMaybe<GQLInt_Comparison_Exp>
+  previous_chain_id?: InputMaybe<GQLInt_Comparison_Exp>
+  previous_log_index?: InputMaybe<GQLInt_Comparison_Exp>
 }
 
 /** columns and relationships of "entity_history_filter" */
-export type Entity_History_Filter = {
+export type GQLEntity_History_Filter = {
   block_number: Scalars['Int']['output']
   block_timestamp: Scalars['Int']['output']
   chain_id: Scalars['Int']['output']
   entity_id: Scalars['String']['output']
   entity_type: Scalars['entity_type']['output']
   /** An object relationship */
-  event?: Maybe<Raw_Events>
+  event?: Maybe<GQLRaw_Events>
   log_index: Scalars['Int']['output']
   new_val?: Maybe<Scalars['json']['output']>
   old_val?: Maybe<Scalars['json']['output']>
@@ -1360,50 +1360,50 @@ export type Entity_History_Filter = {
 }
 
 /** columns and relationships of "entity_history_filter" */
-export type Entity_History_FilterNew_ValArgs = {
+export type GQLEntity_History_FilterNew_ValArgs = {
   path?: InputMaybe<Scalars['String']['input']>
 }
 
 /** columns and relationships of "entity_history_filter" */
-export type Entity_History_FilterOld_ValArgs = {
+export type GQLEntity_History_FilterOld_ValArgs = {
   path?: InputMaybe<Scalars['String']['input']>
 }
 
 /** Boolean expression to filter rows from the table "entity_history_filter". All fields are combined with a logical 'AND'. */
-export type Entity_History_Filter_Bool_Exp = {
-  _and?: InputMaybe<Array<Entity_History_Filter_Bool_Exp>>
-  _not?: InputMaybe<Entity_History_Filter_Bool_Exp>
-  _or?: InputMaybe<Array<Entity_History_Filter_Bool_Exp>>
-  block_number?: InputMaybe<Int_Comparison_Exp>
-  block_timestamp?: InputMaybe<Int_Comparison_Exp>
-  chain_id?: InputMaybe<Int_Comparison_Exp>
-  entity_id?: InputMaybe<String_Comparison_Exp>
-  entity_type?: InputMaybe<Entity_Type_Comparison_Exp>
-  event?: InputMaybe<Raw_Events_Bool_Exp>
-  log_index?: InputMaybe<Int_Comparison_Exp>
-  new_val?: InputMaybe<Json_Comparison_Exp>
-  old_val?: InputMaybe<Json_Comparison_Exp>
-  previous_block_number?: InputMaybe<Int_Comparison_Exp>
-  previous_log_index?: InputMaybe<Int_Comparison_Exp>
+export type GQLEntity_History_Filter_Bool_Exp = {
+  _and?: InputMaybe<Array<GQLEntity_History_Filter_Bool_Exp>>
+  _not?: InputMaybe<GQLEntity_History_Filter_Bool_Exp>
+  _or?: InputMaybe<Array<GQLEntity_History_Filter_Bool_Exp>>
+  block_number?: InputMaybe<GQLInt_Comparison_Exp>
+  block_timestamp?: InputMaybe<GQLInt_Comparison_Exp>
+  chain_id?: InputMaybe<GQLInt_Comparison_Exp>
+  entity_id?: InputMaybe<GQLString_Comparison_Exp>
+  entity_type?: InputMaybe<GQLEntity_Type_Comparison_Exp>
+  event?: InputMaybe<GQLRaw_Events_Bool_Exp>
+  log_index?: InputMaybe<GQLInt_Comparison_Exp>
+  new_val?: InputMaybe<GQLJson_Comparison_Exp>
+  old_val?: InputMaybe<GQLJson_Comparison_Exp>
+  previous_block_number?: InputMaybe<GQLInt_Comparison_Exp>
+  previous_log_index?: InputMaybe<GQLInt_Comparison_Exp>
 }
 
 /** Ordering options when selecting data from "entity_history_filter". */
-export type Entity_History_Filter_Order_By = {
-  block_number?: InputMaybe<Order_By>
-  block_timestamp?: InputMaybe<Order_By>
-  chain_id?: InputMaybe<Order_By>
-  entity_id?: InputMaybe<Order_By>
-  entity_type?: InputMaybe<Order_By>
-  event?: InputMaybe<Raw_Events_Order_By>
-  log_index?: InputMaybe<Order_By>
-  new_val?: InputMaybe<Order_By>
-  old_val?: InputMaybe<Order_By>
-  previous_block_number?: InputMaybe<Order_By>
-  previous_log_index?: InputMaybe<Order_By>
+export type GQLEntity_History_Filter_Order_By = {
+  block_number?: InputMaybe<GQLOrder_By>
+  block_timestamp?: InputMaybe<GQLOrder_By>
+  chain_id?: InputMaybe<GQLOrder_By>
+  entity_id?: InputMaybe<GQLOrder_By>
+  entity_type?: InputMaybe<GQLOrder_By>
+  event?: InputMaybe<GQLRaw_Events_Order_By>
+  log_index?: InputMaybe<GQLOrder_By>
+  new_val?: InputMaybe<GQLOrder_By>
+  old_val?: InputMaybe<GQLOrder_By>
+  previous_block_number?: InputMaybe<GQLOrder_By>
+  previous_log_index?: InputMaybe<GQLOrder_By>
 }
 
 /** select columns of table "entity_history_filter" */
-export enum Entity_History_Filter_Select_Column {
+export enum GQLEntity_History_Filter_Select_Column {
   /** column name */
   BlockNumber = 'block_number',
   /** column name */
@@ -1427,15 +1427,15 @@ export enum Entity_History_Filter_Select_Column {
 }
 
 /** Streaming cursor of the table "entity_history_filter" */
-export type Entity_History_Filter_Stream_Cursor_Input = {
+export type GQLEntity_History_Filter_Stream_Cursor_Input = {
   /** Stream column input with initial value */
-  initial_value: Entity_History_Filter_Stream_Cursor_Value_Input
+  initial_value: GQLEntity_History_Filter_Stream_Cursor_Value_Input
   /** cursor ordering */
-  ordering?: InputMaybe<Cursor_Ordering>
+  ordering?: InputMaybe<GQLCursor_Ordering>
 }
 
 /** Initial value of the column from where the streaming should start */
-export type Entity_History_Filter_Stream_Cursor_Value_Input = {
+export type GQLEntity_History_Filter_Stream_Cursor_Value_Input = {
   block_number?: InputMaybe<Scalars['Int']['input']>
   block_timestamp?: InputMaybe<Scalars['Int']['input']>
   chain_id?: InputMaybe<Scalars['Int']['input']>
@@ -1449,51 +1449,51 @@ export type Entity_History_Filter_Stream_Cursor_Value_Input = {
 }
 
 /** order by max() on columns of table "entity_history" */
-export type Entity_History_Max_Order_By = {
-  block_number?: InputMaybe<Order_By>
-  block_timestamp?: InputMaybe<Order_By>
-  chain_id?: InputMaybe<Order_By>
-  entity_id?: InputMaybe<Order_By>
-  entity_type?: InputMaybe<Order_By>
-  log_index?: InputMaybe<Order_By>
-  previous_block_number?: InputMaybe<Order_By>
-  previous_block_timestamp?: InputMaybe<Order_By>
-  previous_chain_id?: InputMaybe<Order_By>
-  previous_log_index?: InputMaybe<Order_By>
+export type GQLEntity_History_Max_Order_By = {
+  block_number?: InputMaybe<GQLOrder_By>
+  block_timestamp?: InputMaybe<GQLOrder_By>
+  chain_id?: InputMaybe<GQLOrder_By>
+  entity_id?: InputMaybe<GQLOrder_By>
+  entity_type?: InputMaybe<GQLOrder_By>
+  log_index?: InputMaybe<GQLOrder_By>
+  previous_block_number?: InputMaybe<GQLOrder_By>
+  previous_block_timestamp?: InputMaybe<GQLOrder_By>
+  previous_chain_id?: InputMaybe<GQLOrder_By>
+  previous_log_index?: InputMaybe<GQLOrder_By>
 }
 
 /** order by min() on columns of table "entity_history" */
-export type Entity_History_Min_Order_By = {
-  block_number?: InputMaybe<Order_By>
-  block_timestamp?: InputMaybe<Order_By>
-  chain_id?: InputMaybe<Order_By>
-  entity_id?: InputMaybe<Order_By>
-  entity_type?: InputMaybe<Order_By>
-  log_index?: InputMaybe<Order_By>
-  previous_block_number?: InputMaybe<Order_By>
-  previous_block_timestamp?: InputMaybe<Order_By>
-  previous_chain_id?: InputMaybe<Order_By>
-  previous_log_index?: InputMaybe<Order_By>
+export type GQLEntity_History_Min_Order_By = {
+  block_number?: InputMaybe<GQLOrder_By>
+  block_timestamp?: InputMaybe<GQLOrder_By>
+  chain_id?: InputMaybe<GQLOrder_By>
+  entity_id?: InputMaybe<GQLOrder_By>
+  entity_type?: InputMaybe<GQLOrder_By>
+  log_index?: InputMaybe<GQLOrder_By>
+  previous_block_number?: InputMaybe<GQLOrder_By>
+  previous_block_timestamp?: InputMaybe<GQLOrder_By>
+  previous_chain_id?: InputMaybe<GQLOrder_By>
+  previous_log_index?: InputMaybe<GQLOrder_By>
 }
 
 /** Ordering options when selecting data from "entity_history". */
-export type Entity_History_Order_By = {
-  block_number?: InputMaybe<Order_By>
-  block_timestamp?: InputMaybe<Order_By>
-  chain_id?: InputMaybe<Order_By>
-  entity_id?: InputMaybe<Order_By>
-  entity_type?: InputMaybe<Order_By>
-  event?: InputMaybe<Raw_Events_Order_By>
-  log_index?: InputMaybe<Order_By>
-  params?: InputMaybe<Order_By>
-  previous_block_number?: InputMaybe<Order_By>
-  previous_block_timestamp?: InputMaybe<Order_By>
-  previous_chain_id?: InputMaybe<Order_By>
-  previous_log_index?: InputMaybe<Order_By>
+export type GQLEntity_History_Order_By = {
+  block_number?: InputMaybe<GQLOrder_By>
+  block_timestamp?: InputMaybe<GQLOrder_By>
+  chain_id?: InputMaybe<GQLOrder_By>
+  entity_id?: InputMaybe<GQLOrder_By>
+  entity_type?: InputMaybe<GQLOrder_By>
+  event?: InputMaybe<GQLRaw_Events_Order_By>
+  log_index?: InputMaybe<GQLOrder_By>
+  params?: InputMaybe<GQLOrder_By>
+  previous_block_number?: InputMaybe<GQLOrder_By>
+  previous_block_timestamp?: InputMaybe<GQLOrder_By>
+  previous_chain_id?: InputMaybe<GQLOrder_By>
+  previous_log_index?: InputMaybe<GQLOrder_By>
 }
 
 /** select columns of table "entity_history" */
-export enum Entity_History_Select_Column {
+export enum GQLEntity_History_Select_Column {
   /** column name */
   BlockNumber = 'block_number',
   /** column name */
@@ -1519,51 +1519,51 @@ export enum Entity_History_Select_Column {
 }
 
 /** order by stddev() on columns of table "entity_history" */
-export type Entity_History_Stddev_Order_By = {
-  block_number?: InputMaybe<Order_By>
-  block_timestamp?: InputMaybe<Order_By>
-  chain_id?: InputMaybe<Order_By>
-  log_index?: InputMaybe<Order_By>
-  previous_block_number?: InputMaybe<Order_By>
-  previous_block_timestamp?: InputMaybe<Order_By>
-  previous_chain_id?: InputMaybe<Order_By>
-  previous_log_index?: InputMaybe<Order_By>
+export type GQLEntity_History_Stddev_Order_By = {
+  block_number?: InputMaybe<GQLOrder_By>
+  block_timestamp?: InputMaybe<GQLOrder_By>
+  chain_id?: InputMaybe<GQLOrder_By>
+  log_index?: InputMaybe<GQLOrder_By>
+  previous_block_number?: InputMaybe<GQLOrder_By>
+  previous_block_timestamp?: InputMaybe<GQLOrder_By>
+  previous_chain_id?: InputMaybe<GQLOrder_By>
+  previous_log_index?: InputMaybe<GQLOrder_By>
 }
 
 /** order by stddev_pop() on columns of table "entity_history" */
-export type Entity_History_Stddev_Pop_Order_By = {
-  block_number?: InputMaybe<Order_By>
-  block_timestamp?: InputMaybe<Order_By>
-  chain_id?: InputMaybe<Order_By>
-  log_index?: InputMaybe<Order_By>
-  previous_block_number?: InputMaybe<Order_By>
-  previous_block_timestamp?: InputMaybe<Order_By>
-  previous_chain_id?: InputMaybe<Order_By>
-  previous_log_index?: InputMaybe<Order_By>
+export type GQLEntity_History_Stddev_Pop_Order_By = {
+  block_number?: InputMaybe<GQLOrder_By>
+  block_timestamp?: InputMaybe<GQLOrder_By>
+  chain_id?: InputMaybe<GQLOrder_By>
+  log_index?: InputMaybe<GQLOrder_By>
+  previous_block_number?: InputMaybe<GQLOrder_By>
+  previous_block_timestamp?: InputMaybe<GQLOrder_By>
+  previous_chain_id?: InputMaybe<GQLOrder_By>
+  previous_log_index?: InputMaybe<GQLOrder_By>
 }
 
 /** order by stddev_samp() on columns of table "entity_history" */
-export type Entity_History_Stddev_Samp_Order_By = {
-  block_number?: InputMaybe<Order_By>
-  block_timestamp?: InputMaybe<Order_By>
-  chain_id?: InputMaybe<Order_By>
-  log_index?: InputMaybe<Order_By>
-  previous_block_number?: InputMaybe<Order_By>
-  previous_block_timestamp?: InputMaybe<Order_By>
-  previous_chain_id?: InputMaybe<Order_By>
-  previous_log_index?: InputMaybe<Order_By>
+export type GQLEntity_History_Stddev_Samp_Order_By = {
+  block_number?: InputMaybe<GQLOrder_By>
+  block_timestamp?: InputMaybe<GQLOrder_By>
+  chain_id?: InputMaybe<GQLOrder_By>
+  log_index?: InputMaybe<GQLOrder_By>
+  previous_block_number?: InputMaybe<GQLOrder_By>
+  previous_block_timestamp?: InputMaybe<GQLOrder_By>
+  previous_chain_id?: InputMaybe<GQLOrder_By>
+  previous_log_index?: InputMaybe<GQLOrder_By>
 }
 
 /** Streaming cursor of the table "entity_history" */
-export type Entity_History_Stream_Cursor_Input = {
+export type GQLEntity_History_Stream_Cursor_Input = {
   /** Stream column input with initial value */
-  initial_value: Entity_History_Stream_Cursor_Value_Input
+  initial_value: GQLEntity_History_Stream_Cursor_Value_Input
   /** cursor ordering */
-  ordering?: InputMaybe<Cursor_Ordering>
+  ordering?: InputMaybe<GQLCursor_Ordering>
 }
 
 /** Initial value of the column from where the streaming should start */
-export type Entity_History_Stream_Cursor_Value_Input = {
+export type GQLEntity_History_Stream_Cursor_Value_Input = {
   block_number?: InputMaybe<Scalars['Int']['input']>
   block_timestamp?: InputMaybe<Scalars['Int']['input']>
   chain_id?: InputMaybe<Scalars['Int']['input']>
@@ -1578,55 +1578,55 @@ export type Entity_History_Stream_Cursor_Value_Input = {
 }
 
 /** order by sum() on columns of table "entity_history" */
-export type Entity_History_Sum_Order_By = {
-  block_number?: InputMaybe<Order_By>
-  block_timestamp?: InputMaybe<Order_By>
-  chain_id?: InputMaybe<Order_By>
-  log_index?: InputMaybe<Order_By>
-  previous_block_number?: InputMaybe<Order_By>
-  previous_block_timestamp?: InputMaybe<Order_By>
-  previous_chain_id?: InputMaybe<Order_By>
-  previous_log_index?: InputMaybe<Order_By>
+export type GQLEntity_History_Sum_Order_By = {
+  block_number?: InputMaybe<GQLOrder_By>
+  block_timestamp?: InputMaybe<GQLOrder_By>
+  chain_id?: InputMaybe<GQLOrder_By>
+  log_index?: InputMaybe<GQLOrder_By>
+  previous_block_number?: InputMaybe<GQLOrder_By>
+  previous_block_timestamp?: InputMaybe<GQLOrder_By>
+  previous_chain_id?: InputMaybe<GQLOrder_By>
+  previous_log_index?: InputMaybe<GQLOrder_By>
 }
 
 /** order by var_pop() on columns of table "entity_history" */
-export type Entity_History_Var_Pop_Order_By = {
-  block_number?: InputMaybe<Order_By>
-  block_timestamp?: InputMaybe<Order_By>
-  chain_id?: InputMaybe<Order_By>
-  log_index?: InputMaybe<Order_By>
-  previous_block_number?: InputMaybe<Order_By>
-  previous_block_timestamp?: InputMaybe<Order_By>
-  previous_chain_id?: InputMaybe<Order_By>
-  previous_log_index?: InputMaybe<Order_By>
+export type GQLEntity_History_Var_Pop_Order_By = {
+  block_number?: InputMaybe<GQLOrder_By>
+  block_timestamp?: InputMaybe<GQLOrder_By>
+  chain_id?: InputMaybe<GQLOrder_By>
+  log_index?: InputMaybe<GQLOrder_By>
+  previous_block_number?: InputMaybe<GQLOrder_By>
+  previous_block_timestamp?: InputMaybe<GQLOrder_By>
+  previous_chain_id?: InputMaybe<GQLOrder_By>
+  previous_log_index?: InputMaybe<GQLOrder_By>
 }
 
 /** order by var_samp() on columns of table "entity_history" */
-export type Entity_History_Var_Samp_Order_By = {
-  block_number?: InputMaybe<Order_By>
-  block_timestamp?: InputMaybe<Order_By>
-  chain_id?: InputMaybe<Order_By>
-  log_index?: InputMaybe<Order_By>
-  previous_block_number?: InputMaybe<Order_By>
-  previous_block_timestamp?: InputMaybe<Order_By>
-  previous_chain_id?: InputMaybe<Order_By>
-  previous_log_index?: InputMaybe<Order_By>
+export type GQLEntity_History_Var_Samp_Order_By = {
+  block_number?: InputMaybe<GQLOrder_By>
+  block_timestamp?: InputMaybe<GQLOrder_By>
+  chain_id?: InputMaybe<GQLOrder_By>
+  log_index?: InputMaybe<GQLOrder_By>
+  previous_block_number?: InputMaybe<GQLOrder_By>
+  previous_block_timestamp?: InputMaybe<GQLOrder_By>
+  previous_chain_id?: InputMaybe<GQLOrder_By>
+  previous_log_index?: InputMaybe<GQLOrder_By>
 }
 
 /** order by variance() on columns of table "entity_history" */
-export type Entity_History_Variance_Order_By = {
-  block_number?: InputMaybe<Order_By>
-  block_timestamp?: InputMaybe<Order_By>
-  chain_id?: InputMaybe<Order_By>
-  log_index?: InputMaybe<Order_By>
-  previous_block_number?: InputMaybe<Order_By>
-  previous_block_timestamp?: InputMaybe<Order_By>
-  previous_chain_id?: InputMaybe<Order_By>
-  previous_log_index?: InputMaybe<Order_By>
+export type GQLEntity_History_Variance_Order_By = {
+  block_number?: InputMaybe<GQLOrder_By>
+  block_timestamp?: InputMaybe<GQLOrder_By>
+  chain_id?: InputMaybe<GQLOrder_By>
+  log_index?: InputMaybe<GQLOrder_By>
+  previous_block_number?: InputMaybe<GQLOrder_By>
+  previous_block_timestamp?: InputMaybe<GQLOrder_By>
+  previous_chain_id?: InputMaybe<GQLOrder_By>
+  previous_log_index?: InputMaybe<GQLOrder_By>
 }
 
 /** Boolean expression to compare columns of type "entity_type". All fields are combined with logical 'AND'. */
-export type Entity_Type_Comparison_Exp = {
+export type GQLEntity_Type_Comparison_Exp = {
   _eq?: InputMaybe<Scalars['entity_type']['input']>
   _gt?: InputMaybe<Scalars['entity_type']['input']>
   _gte?: InputMaybe<Scalars['entity_type']['input']>
@@ -1639,7 +1639,7 @@ export type Entity_Type_Comparison_Exp = {
 }
 
 /** columns and relationships of "event_sync_state" */
-export type Event_Sync_State = {
+export type GQLEvent_Sync_State = {
   block_number: Scalars['Int']['output']
   block_timestamp: Scalars['Int']['output']
   chain_id: Scalars['Int']['output']
@@ -1648,28 +1648,28 @@ export type Event_Sync_State = {
 }
 
 /** Boolean expression to filter rows from the table "event_sync_state". All fields are combined with a logical 'AND'. */
-export type Event_Sync_State_Bool_Exp = {
-  _and?: InputMaybe<Array<Event_Sync_State_Bool_Exp>>
-  _not?: InputMaybe<Event_Sync_State_Bool_Exp>
-  _or?: InputMaybe<Array<Event_Sync_State_Bool_Exp>>
-  block_number?: InputMaybe<Int_Comparison_Exp>
-  block_timestamp?: InputMaybe<Int_Comparison_Exp>
-  chain_id?: InputMaybe<Int_Comparison_Exp>
-  log_index?: InputMaybe<Int_Comparison_Exp>
-  transaction_index?: InputMaybe<Int_Comparison_Exp>
+export type GQLEvent_Sync_State_Bool_Exp = {
+  _and?: InputMaybe<Array<GQLEvent_Sync_State_Bool_Exp>>
+  _not?: InputMaybe<GQLEvent_Sync_State_Bool_Exp>
+  _or?: InputMaybe<Array<GQLEvent_Sync_State_Bool_Exp>>
+  block_number?: InputMaybe<GQLInt_Comparison_Exp>
+  block_timestamp?: InputMaybe<GQLInt_Comparison_Exp>
+  chain_id?: InputMaybe<GQLInt_Comparison_Exp>
+  log_index?: InputMaybe<GQLInt_Comparison_Exp>
+  transaction_index?: InputMaybe<GQLInt_Comparison_Exp>
 }
 
 /** Ordering options when selecting data from "event_sync_state". */
-export type Event_Sync_State_Order_By = {
-  block_number?: InputMaybe<Order_By>
-  block_timestamp?: InputMaybe<Order_By>
-  chain_id?: InputMaybe<Order_By>
-  log_index?: InputMaybe<Order_By>
-  transaction_index?: InputMaybe<Order_By>
+export type GQLEvent_Sync_State_Order_By = {
+  block_number?: InputMaybe<GQLOrder_By>
+  block_timestamp?: InputMaybe<GQLOrder_By>
+  chain_id?: InputMaybe<GQLOrder_By>
+  log_index?: InputMaybe<GQLOrder_By>
+  transaction_index?: InputMaybe<GQLOrder_By>
 }
 
 /** select columns of table "event_sync_state" */
-export enum Event_Sync_State_Select_Column {
+export enum GQLEvent_Sync_State_Select_Column {
   /** column name */
   BlockNumber = 'block_number',
   /** column name */
@@ -1683,15 +1683,15 @@ export enum Event_Sync_State_Select_Column {
 }
 
 /** Streaming cursor of the table "event_sync_state" */
-export type Event_Sync_State_Stream_Cursor_Input = {
+export type GQLEvent_Sync_State_Stream_Cursor_Input = {
   /** Stream column input with initial value */
-  initial_value: Event_Sync_State_Stream_Cursor_Value_Input
+  initial_value: GQLEvent_Sync_State_Stream_Cursor_Value_Input
   /** cursor ordering */
-  ordering?: InputMaybe<Cursor_Ordering>
+  ordering?: InputMaybe<GQLCursor_Ordering>
 }
 
 /** Initial value of the column from where the streaming should start */
-export type Event_Sync_State_Stream_Cursor_Value_Input = {
+export type GQLEvent_Sync_State_Stream_Cursor_Value_Input = {
   block_number?: InputMaybe<Scalars['Int']['input']>
   block_timestamp?: InputMaybe<Scalars['Int']['input']>
   chain_id?: InputMaybe<Scalars['Int']['input']>
@@ -1700,7 +1700,7 @@ export type Event_Sync_State_Stream_Cursor_Value_Input = {
 }
 
 /** Boolean expression to compare columns of type "event_type". All fields are combined with logical 'AND'. */
-export type Event_Type_Comparison_Exp = {
+export type GQLEvent_Type_Comparison_Exp = {
   _eq?: InputMaybe<Scalars['event_type']['input']>
   _gt?: InputMaybe<Scalars['event_type']['input']>
   _gte?: InputMaybe<Scalars['event_type']['input']>
@@ -1712,7 +1712,7 @@ export type Event_Type_Comparison_Exp = {
   _nin?: InputMaybe<Array<Scalars['event_type']['input']>>
 }
 
-export type Get_Entity_History_Filter_Args = {
+export type GQLGet_Entity_History_Filter_Args = {
   end_block?: InputMaybe<Scalars['Int']['input']>
   end_chain_id?: InputMaybe<Scalars['Int']['input']>
   end_log_index?: InputMaybe<Scalars['Int']['input']>
@@ -1724,7 +1724,7 @@ export type Get_Entity_History_Filter_Args = {
 }
 
 /** Boolean expression to compare columns of type "json". All fields are combined with logical 'AND'. */
-export type Json_Comparison_Exp = {
+export type GQLJson_Comparison_Exp = {
   _eq?: InputMaybe<Scalars['json']['input']>
   _gt?: InputMaybe<Scalars['json']['input']>
   _gte?: InputMaybe<Scalars['json']['input']>
@@ -1737,7 +1737,7 @@ export type Json_Comparison_Exp = {
 }
 
 /** Boolean expression to compare columns of type "numeric". All fields are combined with logical 'AND'. */
-export type Numeric_Comparison_Exp = {
+export type GQLNumeric_Comparison_Exp = {
   _eq?: InputMaybe<Scalars['numeric']['input']>
   _gt?: InputMaybe<Scalars['numeric']['input']>
   _gte?: InputMaybe<Scalars['numeric']['input']>
@@ -1750,7 +1750,7 @@ export type Numeric_Comparison_Exp = {
 }
 
 /** column ordering options */
-export enum Order_By {
+export enum GQLOrder_By {
   /** in ascending order, nulls last */
   Asc = 'asc',
   /** in ascending order, nulls first */
@@ -1766,7 +1766,7 @@ export enum Order_By {
 }
 
 /** columns and relationships of "persisted_state" */
-export type Persisted_State = {
+export type GQLPersisted_State = {
   abi_files_hash: Scalars['String']['output']
   config_hash: Scalars['String']['output']
   envio_version: Scalars['String']['output']
@@ -1776,30 +1776,30 @@ export type Persisted_State = {
 }
 
 /** Boolean expression to filter rows from the table "persisted_state". All fields are combined with a logical 'AND'. */
-export type Persisted_State_Bool_Exp = {
-  _and?: InputMaybe<Array<Persisted_State_Bool_Exp>>
-  _not?: InputMaybe<Persisted_State_Bool_Exp>
-  _or?: InputMaybe<Array<Persisted_State_Bool_Exp>>
-  abi_files_hash?: InputMaybe<String_Comparison_Exp>
-  config_hash?: InputMaybe<String_Comparison_Exp>
-  envio_version?: InputMaybe<String_Comparison_Exp>
-  handler_files_hash?: InputMaybe<String_Comparison_Exp>
-  id?: InputMaybe<Int_Comparison_Exp>
-  schema_hash?: InputMaybe<String_Comparison_Exp>
+export type GQLPersisted_State_Bool_Exp = {
+  _and?: InputMaybe<Array<GQLPersisted_State_Bool_Exp>>
+  _not?: InputMaybe<GQLPersisted_State_Bool_Exp>
+  _or?: InputMaybe<Array<GQLPersisted_State_Bool_Exp>>
+  abi_files_hash?: InputMaybe<GQLString_Comparison_Exp>
+  config_hash?: InputMaybe<GQLString_Comparison_Exp>
+  envio_version?: InputMaybe<GQLString_Comparison_Exp>
+  handler_files_hash?: InputMaybe<GQLString_Comparison_Exp>
+  id?: InputMaybe<GQLInt_Comparison_Exp>
+  schema_hash?: InputMaybe<GQLString_Comparison_Exp>
 }
 
 /** Ordering options when selecting data from "persisted_state". */
-export type Persisted_State_Order_By = {
-  abi_files_hash?: InputMaybe<Order_By>
-  config_hash?: InputMaybe<Order_By>
-  envio_version?: InputMaybe<Order_By>
-  handler_files_hash?: InputMaybe<Order_By>
-  id?: InputMaybe<Order_By>
-  schema_hash?: InputMaybe<Order_By>
+export type GQLPersisted_State_Order_By = {
+  abi_files_hash?: InputMaybe<GQLOrder_By>
+  config_hash?: InputMaybe<GQLOrder_By>
+  envio_version?: InputMaybe<GQLOrder_By>
+  handler_files_hash?: InputMaybe<GQLOrder_By>
+  id?: InputMaybe<GQLOrder_By>
+  schema_hash?: InputMaybe<GQLOrder_By>
 }
 
 /** select columns of table "persisted_state" */
-export enum Persisted_State_Select_Column {
+export enum GQLPersisted_State_Select_Column {
   /** column name */
   AbiFilesHash = 'abi_files_hash',
   /** column name */
@@ -1815,15 +1815,15 @@ export enum Persisted_State_Select_Column {
 }
 
 /** Streaming cursor of the table "persisted_state" */
-export type Persisted_State_Stream_Cursor_Input = {
+export type GQLPersisted_State_Stream_Cursor_Input = {
   /** Stream column input with initial value */
-  initial_value: Persisted_State_Stream_Cursor_Value_Input
+  initial_value: GQLPersisted_State_Stream_Cursor_Value_Input
   /** cursor ordering */
-  ordering?: InputMaybe<Cursor_Ordering>
+  ordering?: InputMaybe<GQLCursor_Ordering>
 }
 
 /** Initial value of the column from where the streaming should start */
-export type Persisted_State_Stream_Cursor_Value_Input = {
+export type GQLPersisted_State_Stream_Cursor_Value_Input = {
   abi_files_hash?: InputMaybe<Scalars['String']['input']>
   config_hash?: InputMaybe<Scalars['String']['input']>
   envio_version?: InputMaybe<Scalars['String']['input']>
@@ -1832,202 +1832,204 @@ export type Persisted_State_Stream_Cursor_Value_Input = {
   schema_hash?: InputMaybe<Scalars['String']['input']>
 }
 
-export type Query_Root = {
+export type GQLQuery_Root = {
   /** fetch data from the table: "BondingCurve" */
-  BondingCurve: Array<BondingCurve>
+  BondingCurve: Array<GQLBondingCurve>
   /** fetch data from the table: "BondingCurve" using primary key columns */
-  BondingCurve_by_pk?: Maybe<BondingCurve>
+  BondingCurve_by_pk?: Maybe<GQLBondingCurve>
   /** fetch data from the table: "LinearVesting" */
-  LinearVesting: Array<LinearVesting>
+  LinearVesting: Array<GQLLinearVesting>
   /** fetch data from the table: "LinearVesting" using primary key columns */
-  LinearVesting_by_pk?: Maybe<LinearVesting>
+  LinearVesting_by_pk?: Maybe<GQLLinearVesting>
   /** fetch data from the table: "StreamingPaymentProcessor" */
-  StreamingPaymentProcessor: Array<StreamingPaymentProcessor>
+  StreamingPaymentProcessor: Array<GQLStreamingPaymentProcessor>
   /** fetch data from the table: "StreamingPaymentProcessor" using primary key columns */
-  StreamingPaymentProcessor_by_pk?: Maybe<StreamingPaymentProcessor>
+  StreamingPaymentProcessor_by_pk?: Maybe<GQLStreamingPaymentProcessor>
   /** fetch data from the table: "Swap" */
-  Swap: Array<Swap>
+  Swap: Array<GQLSwap>
   /** fetch data from the table: "Swap" using primary key columns */
-  Swap_by_pk?: Maybe<Swap>
+  Swap_by_pk?: Maybe<GQLSwap>
   /** fetch data from the table: "Workflow" */
-  Workflow: Array<Workflow>
+  Workflow: Array<GQLWorkflow>
   /** fetch data from the table: "WorkflowModule" */
-  WorkflowModule: Array<WorkflowModule>
+  WorkflowModule: Array<GQLWorkflowModule>
   /** fetch data from the table: "WorkflowModuleType" */
-  WorkflowModuleType: Array<WorkflowModuleType>
+  WorkflowModuleType: Array<GQLWorkflowModuleType>
   /** fetch data from the table: "WorkflowModuleType" using primary key columns */
-  WorkflowModuleType_by_pk?: Maybe<WorkflowModuleType>
+  WorkflowModuleType_by_pk?: Maybe<GQLWorkflowModuleType>
   /** fetch data from the table: "WorkflowModule" using primary key columns */
-  WorkflowModule_by_pk?: Maybe<WorkflowModule>
+  WorkflowModule_by_pk?: Maybe<GQLWorkflowModule>
   /** fetch data from the table: "Workflow" using primary key columns */
-  Workflow_by_pk?: Maybe<Workflow>
+  Workflow_by_pk?: Maybe<GQLWorkflow>
   /** fetch data from the table: "chain_metadata" */
-  chain_metadata: Array<Chain_Metadata>
+  chain_metadata: Array<GQLChain_Metadata>
   /** fetch data from the table: "chain_metadata" using primary key columns */
-  chain_metadata_by_pk?: Maybe<Chain_Metadata>
+  chain_metadata_by_pk?: Maybe<GQLChain_Metadata>
   /** fetch data from the table: "dynamic_contract_registry" */
-  dynamic_contract_registry: Array<Dynamic_Contract_Registry>
+  dynamic_contract_registry: Array<GQLDynamic_Contract_Registry>
   /** fetch data from the table: "dynamic_contract_registry" using primary key columns */
-  dynamic_contract_registry_by_pk?: Maybe<Dynamic_Contract_Registry>
+  dynamic_contract_registry_by_pk?: Maybe<GQLDynamic_Contract_Registry>
   /** fetch data from the table: "end_of_block_range_scanned_data" */
-  end_of_block_range_scanned_data: Array<End_Of_Block_Range_Scanned_Data>
+  end_of_block_range_scanned_data: Array<GQLEnd_Of_Block_Range_Scanned_Data>
   /** fetch data from the table: "end_of_block_range_scanned_data" using primary key columns */
-  end_of_block_range_scanned_data_by_pk?: Maybe<End_Of_Block_Range_Scanned_Data>
+  end_of_block_range_scanned_data_by_pk?: Maybe<GQLEnd_Of_Block_Range_Scanned_Data>
   /** fetch data from the table: "entity_history" */
-  entity_history: Array<Entity_History>
+  entity_history: Array<GQLEntity_History>
   /** fetch data from the table: "entity_history" using primary key columns */
-  entity_history_by_pk?: Maybe<Entity_History>
+  entity_history_by_pk?: Maybe<GQLEntity_History>
   /** fetch data from the table: "entity_history_filter" */
-  entity_history_filter: Array<Entity_History_Filter>
+  entity_history_filter: Array<GQLEntity_History_Filter>
   /** fetch data from the table: "entity_history_filter" using primary key columns */
-  entity_history_filter_by_pk?: Maybe<Entity_History_Filter>
+  entity_history_filter_by_pk?: Maybe<GQLEntity_History_Filter>
   /** fetch data from the table: "event_sync_state" */
-  event_sync_state: Array<Event_Sync_State>
+  event_sync_state: Array<GQLEvent_Sync_State>
   /** fetch data from the table: "event_sync_state" using primary key columns */
-  event_sync_state_by_pk?: Maybe<Event_Sync_State>
+  event_sync_state_by_pk?: Maybe<GQLEvent_Sync_State>
   /** This function helps search for articles */
-  get_entity_history_filter: Array<Entity_History_Filter>
+  get_entity_history_filter: Array<GQLEntity_History_Filter>
   /** fetch data from the table: "persisted_state" */
-  persisted_state: Array<Persisted_State>
+  persisted_state: Array<GQLPersisted_State>
   /** fetch data from the table: "persisted_state" using primary key columns */
-  persisted_state_by_pk?: Maybe<Persisted_State>
+  persisted_state_by_pk?: Maybe<GQLPersisted_State>
   /** fetch data from the table: "raw_events" */
-  raw_events: Array<Raw_Events>
+  raw_events: Array<GQLRaw_Events>
   /** fetch data from the table: "raw_events" using primary key columns */
-  raw_events_by_pk?: Maybe<Raw_Events>
+  raw_events_by_pk?: Maybe<GQLRaw_Events>
 }
 
-export type Query_RootBondingCurveArgs = {
-  distinct_on?: InputMaybe<Array<BondingCurve_Select_Column>>
+export type GQLQuery_RootBondingCurveArgs = {
+  distinct_on?: InputMaybe<Array<GQLBondingCurve_Select_Column>>
   limit?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<BondingCurve_Order_By>>
-  where?: InputMaybe<BondingCurve_Bool_Exp>
+  order_by?: InputMaybe<Array<GQLBondingCurve_Order_By>>
+  where?: InputMaybe<GQLBondingCurve_Bool_Exp>
 }
 
-export type Query_RootBondingCurve_By_PkArgs = {
+export type GQLQuery_RootBondingCurve_By_PkArgs = {
   id: Scalars['String']['input']
 }
 
-export type Query_RootLinearVestingArgs = {
-  distinct_on?: InputMaybe<Array<LinearVesting_Select_Column>>
+export type GQLQuery_RootLinearVestingArgs = {
+  distinct_on?: InputMaybe<Array<GQLLinearVesting_Select_Column>>
   limit?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<LinearVesting_Order_By>>
-  where?: InputMaybe<LinearVesting_Bool_Exp>
+  order_by?: InputMaybe<Array<GQLLinearVesting_Order_By>>
+  where?: InputMaybe<GQLLinearVesting_Bool_Exp>
 }
 
-export type Query_RootLinearVesting_By_PkArgs = {
+export type GQLQuery_RootLinearVesting_By_PkArgs = {
   id: Scalars['String']['input']
 }
 
-export type Query_RootStreamingPaymentProcessorArgs = {
-  distinct_on?: InputMaybe<Array<StreamingPaymentProcessor_Select_Column>>
+export type GQLQuery_RootStreamingPaymentProcessorArgs = {
+  distinct_on?: InputMaybe<Array<GQLStreamingPaymentProcessor_Select_Column>>
   limit?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<StreamingPaymentProcessor_Order_By>>
-  where?: InputMaybe<StreamingPaymentProcessor_Bool_Exp>
+  order_by?: InputMaybe<Array<GQLStreamingPaymentProcessor_Order_By>>
+  where?: InputMaybe<GQLStreamingPaymentProcessor_Bool_Exp>
 }
 
-export type Query_RootStreamingPaymentProcessor_By_PkArgs = {
+export type GQLQuery_RootStreamingPaymentProcessor_By_PkArgs = {
   id: Scalars['String']['input']
 }
 
-export type Query_RootSwapArgs = {
-  distinct_on?: InputMaybe<Array<Swap_Select_Column>>
+export type GQLQuery_RootSwapArgs = {
+  distinct_on?: InputMaybe<Array<GQLSwap_Select_Column>>
   limit?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Swap_Order_By>>
-  where?: InputMaybe<Swap_Bool_Exp>
+  order_by?: InputMaybe<Array<GQLSwap_Order_By>>
+  where?: InputMaybe<GQLSwap_Bool_Exp>
 }
 
-export type Query_RootSwap_By_PkArgs = {
+export type GQLQuery_RootSwap_By_PkArgs = {
   id: Scalars['String']['input']
 }
 
-export type Query_RootWorkflowArgs = {
-  distinct_on?: InputMaybe<Array<Workflow_Select_Column>>
+export type GQLQuery_RootWorkflowArgs = {
+  distinct_on?: InputMaybe<Array<GQLWorkflow_Select_Column>>
   limit?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Workflow_Order_By>>
-  where?: InputMaybe<Workflow_Bool_Exp>
+  order_by?: InputMaybe<Array<GQLWorkflow_Order_By>>
+  where?: InputMaybe<GQLWorkflow_Bool_Exp>
 }
 
-export type Query_RootWorkflowModuleArgs = {
-  distinct_on?: InputMaybe<Array<WorkflowModule_Select_Column>>
+export type GQLQuery_RootWorkflowModuleArgs = {
+  distinct_on?: InputMaybe<Array<GQLWorkflowModule_Select_Column>>
   limit?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<WorkflowModule_Order_By>>
-  where?: InputMaybe<WorkflowModule_Bool_Exp>
+  order_by?: InputMaybe<Array<GQLWorkflowModule_Order_By>>
+  where?: InputMaybe<GQLWorkflowModule_Bool_Exp>
 }
 
-export type Query_RootWorkflowModuleTypeArgs = {
-  distinct_on?: InputMaybe<Array<WorkflowModuleType_Select_Column>>
+export type GQLQuery_RootWorkflowModuleTypeArgs = {
+  distinct_on?: InputMaybe<Array<GQLWorkflowModuleType_Select_Column>>
   limit?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<WorkflowModuleType_Order_By>>
-  where?: InputMaybe<WorkflowModuleType_Bool_Exp>
+  order_by?: InputMaybe<Array<GQLWorkflowModuleType_Order_By>>
+  where?: InputMaybe<GQLWorkflowModuleType_Bool_Exp>
 }
 
-export type Query_RootWorkflowModuleType_By_PkArgs = {
+export type GQLQuery_RootWorkflowModuleType_By_PkArgs = {
   id: Scalars['String']['input']
 }
 
-export type Query_RootWorkflowModule_By_PkArgs = {
+export type GQLQuery_RootWorkflowModule_By_PkArgs = {
   id: Scalars['String']['input']
 }
 
-export type Query_RootWorkflow_By_PkArgs = {
+export type GQLQuery_RootWorkflow_By_PkArgs = {
   id: Scalars['String']['input']
 }
 
-export type Query_RootChain_MetadataArgs = {
-  distinct_on?: InputMaybe<Array<Chain_Metadata_Select_Column>>
+export type GQLQuery_RootChain_MetadataArgs = {
+  distinct_on?: InputMaybe<Array<GQLChain_Metadata_Select_Column>>
   limit?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Chain_Metadata_Order_By>>
-  where?: InputMaybe<Chain_Metadata_Bool_Exp>
+  order_by?: InputMaybe<Array<GQLChain_Metadata_Order_By>>
+  where?: InputMaybe<GQLChain_Metadata_Bool_Exp>
 }
 
-export type Query_RootChain_Metadata_By_PkArgs = {
+export type GQLQuery_RootChain_Metadata_By_PkArgs = {
   chain_id: Scalars['Int']['input']
 }
 
-export type Query_RootDynamic_Contract_RegistryArgs = {
-  distinct_on?: InputMaybe<Array<Dynamic_Contract_Registry_Select_Column>>
+export type GQLQuery_RootDynamic_Contract_RegistryArgs = {
+  distinct_on?: InputMaybe<Array<GQLDynamic_Contract_Registry_Select_Column>>
   limit?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Dynamic_Contract_Registry_Order_By>>
-  where?: InputMaybe<Dynamic_Contract_Registry_Bool_Exp>
+  order_by?: InputMaybe<Array<GQLDynamic_Contract_Registry_Order_By>>
+  where?: InputMaybe<GQLDynamic_Contract_Registry_Bool_Exp>
 }
 
-export type Query_RootDynamic_Contract_Registry_By_PkArgs = {
+export type GQLQuery_RootDynamic_Contract_Registry_By_PkArgs = {
   chain_id: Scalars['Int']['input']
   contract_address: Scalars['String']['input']
 }
 
-export type Query_RootEnd_Of_Block_Range_Scanned_DataArgs = {
-  distinct_on?: InputMaybe<Array<End_Of_Block_Range_Scanned_Data_Select_Column>>
+export type GQLQuery_RootEnd_Of_Block_Range_Scanned_DataArgs = {
+  distinct_on?: InputMaybe<
+    Array<GQLEnd_Of_Block_Range_Scanned_Data_Select_Column>
+  >
   limit?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<End_Of_Block_Range_Scanned_Data_Order_By>>
-  where?: InputMaybe<End_Of_Block_Range_Scanned_Data_Bool_Exp>
+  order_by?: InputMaybe<Array<GQLEnd_Of_Block_Range_Scanned_Data_Order_By>>
+  where?: InputMaybe<GQLEnd_Of_Block_Range_Scanned_Data_Bool_Exp>
 }
 
-export type Query_RootEnd_Of_Block_Range_Scanned_Data_By_PkArgs = {
+export type GQLQuery_RootEnd_Of_Block_Range_Scanned_Data_By_PkArgs = {
   block_number: Scalars['Int']['input']
   chain_id: Scalars['Int']['input']
 }
 
-export type Query_RootEntity_HistoryArgs = {
-  distinct_on?: InputMaybe<Array<Entity_History_Select_Column>>
+export type GQLQuery_RootEntity_HistoryArgs = {
+  distinct_on?: InputMaybe<Array<GQLEntity_History_Select_Column>>
   limit?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Entity_History_Order_By>>
-  where?: InputMaybe<Entity_History_Bool_Exp>
+  order_by?: InputMaybe<Array<GQLEntity_History_Order_By>>
+  where?: InputMaybe<GQLEntity_History_Bool_Exp>
 }
 
-export type Query_RootEntity_History_By_PkArgs = {
+export type GQLQuery_RootEntity_History_By_PkArgs = {
   block_number: Scalars['Int']['input']
   block_timestamp: Scalars['Int']['input']
   chain_id: Scalars['Int']['input']
@@ -2036,15 +2038,15 @@ export type Query_RootEntity_History_By_PkArgs = {
   log_index: Scalars['Int']['input']
 }
 
-export type Query_RootEntity_History_FilterArgs = {
-  distinct_on?: InputMaybe<Array<Entity_History_Filter_Select_Column>>
+export type GQLQuery_RootEntity_History_FilterArgs = {
+  distinct_on?: InputMaybe<Array<GQLEntity_History_Filter_Select_Column>>
   limit?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Entity_History_Filter_Order_By>>
-  where?: InputMaybe<Entity_History_Filter_Bool_Exp>
+  order_by?: InputMaybe<Array<GQLEntity_History_Filter_Order_By>>
+  where?: InputMaybe<GQLEntity_History_Filter_Bool_Exp>
 }
 
-export type Query_RootEntity_History_Filter_By_PkArgs = {
+export type GQLQuery_RootEntity_History_Filter_By_PkArgs = {
   block_number: Scalars['Int']['input']
   block_timestamp: Scalars['Int']['input']
   chain_id: Scalars['Int']['input']
@@ -2054,61 +2056,61 @@ export type Query_RootEntity_History_Filter_By_PkArgs = {
   previous_log_index: Scalars['Int']['input']
 }
 
-export type Query_RootEvent_Sync_StateArgs = {
-  distinct_on?: InputMaybe<Array<Event_Sync_State_Select_Column>>
+export type GQLQuery_RootEvent_Sync_StateArgs = {
+  distinct_on?: InputMaybe<Array<GQLEvent_Sync_State_Select_Column>>
   limit?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Event_Sync_State_Order_By>>
-  where?: InputMaybe<Event_Sync_State_Bool_Exp>
+  order_by?: InputMaybe<Array<GQLEvent_Sync_State_Order_By>>
+  where?: InputMaybe<GQLEvent_Sync_State_Bool_Exp>
 }
 
-export type Query_RootEvent_Sync_State_By_PkArgs = {
+export type GQLQuery_RootEvent_Sync_State_By_PkArgs = {
   chain_id: Scalars['Int']['input']
 }
 
-export type Query_RootGet_Entity_History_FilterArgs = {
-  args: Get_Entity_History_Filter_Args
-  distinct_on?: InputMaybe<Array<Entity_History_Filter_Select_Column>>
+export type GQLQuery_RootGet_Entity_History_FilterArgs = {
+  args: GQLGet_Entity_History_Filter_Args
+  distinct_on?: InputMaybe<Array<GQLEntity_History_Filter_Select_Column>>
   limit?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Entity_History_Filter_Order_By>>
-  where?: InputMaybe<Entity_History_Filter_Bool_Exp>
+  order_by?: InputMaybe<Array<GQLEntity_History_Filter_Order_By>>
+  where?: InputMaybe<GQLEntity_History_Filter_Bool_Exp>
 }
 
-export type Query_RootPersisted_StateArgs = {
-  distinct_on?: InputMaybe<Array<Persisted_State_Select_Column>>
+export type GQLQuery_RootPersisted_StateArgs = {
+  distinct_on?: InputMaybe<Array<GQLPersisted_State_Select_Column>>
   limit?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Persisted_State_Order_By>>
-  where?: InputMaybe<Persisted_State_Bool_Exp>
+  order_by?: InputMaybe<Array<GQLPersisted_State_Order_By>>
+  where?: InputMaybe<GQLPersisted_State_Bool_Exp>
 }
 
-export type Query_RootPersisted_State_By_PkArgs = {
+export type GQLQuery_RootPersisted_State_By_PkArgs = {
   id: Scalars['Int']['input']
 }
 
-export type Query_RootRaw_EventsArgs = {
-  distinct_on?: InputMaybe<Array<Raw_Events_Select_Column>>
+export type GQLQuery_RootRaw_EventsArgs = {
+  distinct_on?: InputMaybe<Array<GQLRaw_Events_Select_Column>>
   limit?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Raw_Events_Order_By>>
-  where?: InputMaybe<Raw_Events_Bool_Exp>
+  order_by?: InputMaybe<Array<GQLRaw_Events_Order_By>>
+  where?: InputMaybe<GQLRaw_Events_Bool_Exp>
 }
 
-export type Query_RootRaw_Events_By_PkArgs = {
+export type GQLQuery_RootRaw_Events_By_PkArgs = {
   chain_id: Scalars['Int']['input']
   event_id: Scalars['numeric']['input']
 }
 
 /** columns and relationships of "raw_events" */
-export type Raw_Events = {
+export type GQLRaw_Events = {
   block_hash: Scalars['String']['output']
   block_number: Scalars['Int']['output']
   block_timestamp: Scalars['Int']['output']
   chain_id: Scalars['Int']['output']
   db_write_timestamp?: Maybe<Scalars['timestamp']['output']>
   /** An array relationship */
-  event_history: Array<Entity_History>
+  event_history: Array<GQLEntity_History>
   event_id: Scalars['numeric']['output']
   event_type: Scalars['event_type']['output']
   log_index: Scalars['Int']['output']
@@ -2119,58 +2121,58 @@ export type Raw_Events = {
 }
 
 /** columns and relationships of "raw_events" */
-export type Raw_EventsEvent_HistoryArgs = {
-  distinct_on?: InputMaybe<Array<Entity_History_Select_Column>>
+export type GQLRaw_EventsEvent_HistoryArgs = {
+  distinct_on?: InputMaybe<Array<GQLEntity_History_Select_Column>>
   limit?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Entity_History_Order_By>>
-  where?: InputMaybe<Entity_History_Bool_Exp>
+  order_by?: InputMaybe<Array<GQLEntity_History_Order_By>>
+  where?: InputMaybe<GQLEntity_History_Bool_Exp>
 }
 
 /** columns and relationships of "raw_events" */
-export type Raw_EventsParamsArgs = {
+export type GQLRaw_EventsParamsArgs = {
   path?: InputMaybe<Scalars['String']['input']>
 }
 
 /** Boolean expression to filter rows from the table "raw_events". All fields are combined with a logical 'AND'. */
-export type Raw_Events_Bool_Exp = {
-  _and?: InputMaybe<Array<Raw_Events_Bool_Exp>>
-  _not?: InputMaybe<Raw_Events_Bool_Exp>
-  _or?: InputMaybe<Array<Raw_Events_Bool_Exp>>
-  block_hash?: InputMaybe<String_Comparison_Exp>
-  block_number?: InputMaybe<Int_Comparison_Exp>
-  block_timestamp?: InputMaybe<Int_Comparison_Exp>
-  chain_id?: InputMaybe<Int_Comparison_Exp>
-  db_write_timestamp?: InputMaybe<Timestamp_Comparison_Exp>
-  event_history?: InputMaybe<Entity_History_Bool_Exp>
-  event_id?: InputMaybe<Numeric_Comparison_Exp>
-  event_type?: InputMaybe<Event_Type_Comparison_Exp>
-  log_index?: InputMaybe<Int_Comparison_Exp>
-  params?: InputMaybe<Json_Comparison_Exp>
-  src_address?: InputMaybe<String_Comparison_Exp>
-  transaction_hash?: InputMaybe<String_Comparison_Exp>
-  transaction_index?: InputMaybe<Int_Comparison_Exp>
+export type GQLRaw_Events_Bool_Exp = {
+  _and?: InputMaybe<Array<GQLRaw_Events_Bool_Exp>>
+  _not?: InputMaybe<GQLRaw_Events_Bool_Exp>
+  _or?: InputMaybe<Array<GQLRaw_Events_Bool_Exp>>
+  block_hash?: InputMaybe<GQLString_Comparison_Exp>
+  block_number?: InputMaybe<GQLInt_Comparison_Exp>
+  block_timestamp?: InputMaybe<GQLInt_Comparison_Exp>
+  chain_id?: InputMaybe<GQLInt_Comparison_Exp>
+  db_write_timestamp?: InputMaybe<GQLTimestamp_Comparison_Exp>
+  event_history?: InputMaybe<GQLEntity_History_Bool_Exp>
+  event_id?: InputMaybe<GQLNumeric_Comparison_Exp>
+  event_type?: InputMaybe<GQLEvent_Type_Comparison_Exp>
+  log_index?: InputMaybe<GQLInt_Comparison_Exp>
+  params?: InputMaybe<GQLJson_Comparison_Exp>
+  src_address?: InputMaybe<GQLString_Comparison_Exp>
+  transaction_hash?: InputMaybe<GQLString_Comparison_Exp>
+  transaction_index?: InputMaybe<GQLInt_Comparison_Exp>
 }
 
 /** Ordering options when selecting data from "raw_events". */
-export type Raw_Events_Order_By = {
-  block_hash?: InputMaybe<Order_By>
-  block_number?: InputMaybe<Order_By>
-  block_timestamp?: InputMaybe<Order_By>
-  chain_id?: InputMaybe<Order_By>
-  db_write_timestamp?: InputMaybe<Order_By>
-  event_history_aggregate?: InputMaybe<Entity_History_Aggregate_Order_By>
-  event_id?: InputMaybe<Order_By>
-  event_type?: InputMaybe<Order_By>
-  log_index?: InputMaybe<Order_By>
-  params?: InputMaybe<Order_By>
-  src_address?: InputMaybe<Order_By>
-  transaction_hash?: InputMaybe<Order_By>
-  transaction_index?: InputMaybe<Order_By>
+export type GQLRaw_Events_Order_By = {
+  block_hash?: InputMaybe<GQLOrder_By>
+  block_number?: InputMaybe<GQLOrder_By>
+  block_timestamp?: InputMaybe<GQLOrder_By>
+  chain_id?: InputMaybe<GQLOrder_By>
+  db_write_timestamp?: InputMaybe<GQLOrder_By>
+  event_history_aggregate?: InputMaybe<GQLEntity_History_Aggregate_Order_By>
+  event_id?: InputMaybe<GQLOrder_By>
+  event_type?: InputMaybe<GQLOrder_By>
+  log_index?: InputMaybe<GQLOrder_By>
+  params?: InputMaybe<GQLOrder_By>
+  src_address?: InputMaybe<GQLOrder_By>
+  transaction_hash?: InputMaybe<GQLOrder_By>
+  transaction_index?: InputMaybe<GQLOrder_By>
 }
 
 /** select columns of table "raw_events" */
-export enum Raw_Events_Select_Column {
+export enum GQLRaw_Events_Select_Column {
   /** column name */
   BlockHash = 'block_hash',
   /** column name */
@@ -2198,15 +2200,15 @@ export enum Raw_Events_Select_Column {
 }
 
 /** Streaming cursor of the table "raw_events" */
-export type Raw_Events_Stream_Cursor_Input = {
+export type GQLRaw_Events_Stream_Cursor_Input = {
   /** Stream column input with initial value */
-  initial_value: Raw_Events_Stream_Cursor_Value_Input
+  initial_value: GQLRaw_Events_Stream_Cursor_Value_Input
   /** cursor ordering */
-  ordering?: InputMaybe<Cursor_Ordering>
+  ordering?: InputMaybe<GQLCursor_Ordering>
 }
 
 /** Initial value of the column from where the streaming should start */
-export type Raw_Events_Stream_Cursor_Value_Input = {
+export type GQLRaw_Events_Stream_Cursor_Value_Input = {
   block_hash?: InputMaybe<Scalars['String']['input']>
   block_number?: InputMaybe<Scalars['Int']['input']>
   block_timestamp?: InputMaybe<Scalars['Int']['input']>
@@ -2221,292 +2223,296 @@ export type Raw_Events_Stream_Cursor_Value_Input = {
   transaction_index?: InputMaybe<Scalars['Int']['input']>
 }
 
-export type Subscription_Root = {
+export type GQLSubscription_Root = {
   /** fetch data from the table: "BondingCurve" */
-  BondingCurve: Array<BondingCurve>
+  BondingCurve: Array<GQLBondingCurve>
   /** fetch data from the table: "BondingCurve" using primary key columns */
-  BondingCurve_by_pk?: Maybe<BondingCurve>
+  BondingCurve_by_pk?: Maybe<GQLBondingCurve>
   /** fetch data from the table in a streaming manner: "BondingCurve" */
-  BondingCurve_stream: Array<BondingCurve>
+  BondingCurve_stream: Array<GQLBondingCurve>
   /** fetch data from the table: "LinearVesting" */
-  LinearVesting: Array<LinearVesting>
+  LinearVesting: Array<GQLLinearVesting>
   /** fetch data from the table: "LinearVesting" using primary key columns */
-  LinearVesting_by_pk?: Maybe<LinearVesting>
+  LinearVesting_by_pk?: Maybe<GQLLinearVesting>
   /** fetch data from the table in a streaming manner: "LinearVesting" */
-  LinearVesting_stream: Array<LinearVesting>
+  LinearVesting_stream: Array<GQLLinearVesting>
   /** fetch data from the table: "StreamingPaymentProcessor" */
-  StreamingPaymentProcessor: Array<StreamingPaymentProcessor>
+  StreamingPaymentProcessor: Array<GQLStreamingPaymentProcessor>
   /** fetch data from the table: "StreamingPaymentProcessor" using primary key columns */
-  StreamingPaymentProcessor_by_pk?: Maybe<StreamingPaymentProcessor>
+  StreamingPaymentProcessor_by_pk?: Maybe<GQLStreamingPaymentProcessor>
   /** fetch data from the table in a streaming manner: "StreamingPaymentProcessor" */
-  StreamingPaymentProcessor_stream: Array<StreamingPaymentProcessor>
+  StreamingPaymentProcessor_stream: Array<GQLStreamingPaymentProcessor>
   /** fetch data from the table: "Swap" */
-  Swap: Array<Swap>
+  Swap: Array<GQLSwap>
   /** fetch data from the table: "Swap" using primary key columns */
-  Swap_by_pk?: Maybe<Swap>
+  Swap_by_pk?: Maybe<GQLSwap>
   /** fetch data from the table in a streaming manner: "Swap" */
-  Swap_stream: Array<Swap>
+  Swap_stream: Array<GQLSwap>
   /** fetch data from the table: "Workflow" */
-  Workflow: Array<Workflow>
+  Workflow: Array<GQLWorkflow>
   /** fetch data from the table: "WorkflowModule" */
-  WorkflowModule: Array<WorkflowModule>
+  WorkflowModule: Array<GQLWorkflowModule>
   /** fetch data from the table: "WorkflowModuleType" */
-  WorkflowModuleType: Array<WorkflowModuleType>
+  WorkflowModuleType: Array<GQLWorkflowModuleType>
   /** fetch data from the table: "WorkflowModuleType" using primary key columns */
-  WorkflowModuleType_by_pk?: Maybe<WorkflowModuleType>
+  WorkflowModuleType_by_pk?: Maybe<GQLWorkflowModuleType>
   /** fetch data from the table in a streaming manner: "WorkflowModuleType" */
-  WorkflowModuleType_stream: Array<WorkflowModuleType>
+  WorkflowModuleType_stream: Array<GQLWorkflowModuleType>
   /** fetch data from the table: "WorkflowModule" using primary key columns */
-  WorkflowModule_by_pk?: Maybe<WorkflowModule>
+  WorkflowModule_by_pk?: Maybe<GQLWorkflowModule>
   /** fetch data from the table in a streaming manner: "WorkflowModule" */
-  WorkflowModule_stream: Array<WorkflowModule>
+  WorkflowModule_stream: Array<GQLWorkflowModule>
   /** fetch data from the table: "Workflow" using primary key columns */
-  Workflow_by_pk?: Maybe<Workflow>
+  Workflow_by_pk?: Maybe<GQLWorkflow>
   /** fetch data from the table in a streaming manner: "Workflow" */
-  Workflow_stream: Array<Workflow>
+  Workflow_stream: Array<GQLWorkflow>
   /** fetch data from the table: "chain_metadata" */
-  chain_metadata: Array<Chain_Metadata>
+  chain_metadata: Array<GQLChain_Metadata>
   /** fetch data from the table: "chain_metadata" using primary key columns */
-  chain_metadata_by_pk?: Maybe<Chain_Metadata>
+  chain_metadata_by_pk?: Maybe<GQLChain_Metadata>
   /** fetch data from the table in a streaming manner: "chain_metadata" */
-  chain_metadata_stream: Array<Chain_Metadata>
+  chain_metadata_stream: Array<GQLChain_Metadata>
   /** fetch data from the table: "dynamic_contract_registry" */
-  dynamic_contract_registry: Array<Dynamic_Contract_Registry>
+  dynamic_contract_registry: Array<GQLDynamic_Contract_Registry>
   /** fetch data from the table: "dynamic_contract_registry" using primary key columns */
-  dynamic_contract_registry_by_pk?: Maybe<Dynamic_Contract_Registry>
+  dynamic_contract_registry_by_pk?: Maybe<GQLDynamic_Contract_Registry>
   /** fetch data from the table in a streaming manner: "dynamic_contract_registry" */
-  dynamic_contract_registry_stream: Array<Dynamic_Contract_Registry>
+  dynamic_contract_registry_stream: Array<GQLDynamic_Contract_Registry>
   /** fetch data from the table: "end_of_block_range_scanned_data" */
-  end_of_block_range_scanned_data: Array<End_Of_Block_Range_Scanned_Data>
+  end_of_block_range_scanned_data: Array<GQLEnd_Of_Block_Range_Scanned_Data>
   /** fetch data from the table: "end_of_block_range_scanned_data" using primary key columns */
-  end_of_block_range_scanned_data_by_pk?: Maybe<End_Of_Block_Range_Scanned_Data>
+  end_of_block_range_scanned_data_by_pk?: Maybe<GQLEnd_Of_Block_Range_Scanned_Data>
   /** fetch data from the table in a streaming manner: "end_of_block_range_scanned_data" */
-  end_of_block_range_scanned_data_stream: Array<End_Of_Block_Range_Scanned_Data>
+  end_of_block_range_scanned_data_stream: Array<GQLEnd_Of_Block_Range_Scanned_Data>
   /** fetch data from the table: "entity_history" */
-  entity_history: Array<Entity_History>
+  entity_history: Array<GQLEntity_History>
   /** fetch data from the table: "entity_history" using primary key columns */
-  entity_history_by_pk?: Maybe<Entity_History>
+  entity_history_by_pk?: Maybe<GQLEntity_History>
   /** fetch data from the table: "entity_history_filter" */
-  entity_history_filter: Array<Entity_History_Filter>
+  entity_history_filter: Array<GQLEntity_History_Filter>
   /** fetch data from the table: "entity_history_filter" using primary key columns */
-  entity_history_filter_by_pk?: Maybe<Entity_History_Filter>
+  entity_history_filter_by_pk?: Maybe<GQLEntity_History_Filter>
   /** fetch data from the table in a streaming manner: "entity_history_filter" */
-  entity_history_filter_stream: Array<Entity_History_Filter>
+  entity_history_filter_stream: Array<GQLEntity_History_Filter>
   /** fetch data from the table in a streaming manner: "entity_history" */
-  entity_history_stream: Array<Entity_History>
+  entity_history_stream: Array<GQLEntity_History>
   /** fetch data from the table: "event_sync_state" */
-  event_sync_state: Array<Event_Sync_State>
+  event_sync_state: Array<GQLEvent_Sync_State>
   /** fetch data from the table: "event_sync_state" using primary key columns */
-  event_sync_state_by_pk?: Maybe<Event_Sync_State>
+  event_sync_state_by_pk?: Maybe<GQLEvent_Sync_State>
   /** fetch data from the table in a streaming manner: "event_sync_state" */
-  event_sync_state_stream: Array<Event_Sync_State>
+  event_sync_state_stream: Array<GQLEvent_Sync_State>
   /** This function helps search for articles */
-  get_entity_history_filter: Array<Entity_History_Filter>
+  get_entity_history_filter: Array<GQLEntity_History_Filter>
   /** fetch data from the table: "persisted_state" */
-  persisted_state: Array<Persisted_State>
+  persisted_state: Array<GQLPersisted_State>
   /** fetch data from the table: "persisted_state" using primary key columns */
-  persisted_state_by_pk?: Maybe<Persisted_State>
+  persisted_state_by_pk?: Maybe<GQLPersisted_State>
   /** fetch data from the table in a streaming manner: "persisted_state" */
-  persisted_state_stream: Array<Persisted_State>
+  persisted_state_stream: Array<GQLPersisted_State>
   /** fetch data from the table: "raw_events" */
-  raw_events: Array<Raw_Events>
+  raw_events: Array<GQLRaw_Events>
   /** fetch data from the table: "raw_events" using primary key columns */
-  raw_events_by_pk?: Maybe<Raw_Events>
+  raw_events_by_pk?: Maybe<GQLRaw_Events>
   /** fetch data from the table in a streaming manner: "raw_events" */
-  raw_events_stream: Array<Raw_Events>
+  raw_events_stream: Array<GQLRaw_Events>
 }
 
-export type Subscription_RootBondingCurveArgs = {
-  distinct_on?: InputMaybe<Array<BondingCurve_Select_Column>>
+export type GQLSubscription_RootBondingCurveArgs = {
+  distinct_on?: InputMaybe<Array<GQLBondingCurve_Select_Column>>
   limit?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<BondingCurve_Order_By>>
-  where?: InputMaybe<BondingCurve_Bool_Exp>
+  order_by?: InputMaybe<Array<GQLBondingCurve_Order_By>>
+  where?: InputMaybe<GQLBondingCurve_Bool_Exp>
 }
 
-export type Subscription_RootBondingCurve_By_PkArgs = {
+export type GQLSubscription_RootBondingCurve_By_PkArgs = {
   id: Scalars['String']['input']
 }
 
-export type Subscription_RootBondingCurve_StreamArgs = {
+export type GQLSubscription_RootBondingCurve_StreamArgs = {
   batch_size: Scalars['Int']['input']
-  cursor: Array<InputMaybe<BondingCurve_Stream_Cursor_Input>>
-  where?: InputMaybe<BondingCurve_Bool_Exp>
+  cursor: Array<InputMaybe<GQLBondingCurve_Stream_Cursor_Input>>
+  where?: InputMaybe<GQLBondingCurve_Bool_Exp>
 }
 
-export type Subscription_RootLinearVestingArgs = {
-  distinct_on?: InputMaybe<Array<LinearVesting_Select_Column>>
+export type GQLSubscription_RootLinearVestingArgs = {
+  distinct_on?: InputMaybe<Array<GQLLinearVesting_Select_Column>>
   limit?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<LinearVesting_Order_By>>
-  where?: InputMaybe<LinearVesting_Bool_Exp>
+  order_by?: InputMaybe<Array<GQLLinearVesting_Order_By>>
+  where?: InputMaybe<GQLLinearVesting_Bool_Exp>
 }
 
-export type Subscription_RootLinearVesting_By_PkArgs = {
+export type GQLSubscription_RootLinearVesting_By_PkArgs = {
   id: Scalars['String']['input']
 }
 
-export type Subscription_RootLinearVesting_StreamArgs = {
+export type GQLSubscription_RootLinearVesting_StreamArgs = {
   batch_size: Scalars['Int']['input']
-  cursor: Array<InputMaybe<LinearVesting_Stream_Cursor_Input>>
-  where?: InputMaybe<LinearVesting_Bool_Exp>
+  cursor: Array<InputMaybe<GQLLinearVesting_Stream_Cursor_Input>>
+  where?: InputMaybe<GQLLinearVesting_Bool_Exp>
 }
 
-export type Subscription_RootStreamingPaymentProcessorArgs = {
-  distinct_on?: InputMaybe<Array<StreamingPaymentProcessor_Select_Column>>
+export type GQLSubscription_RootStreamingPaymentProcessorArgs = {
+  distinct_on?: InputMaybe<Array<GQLStreamingPaymentProcessor_Select_Column>>
   limit?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<StreamingPaymentProcessor_Order_By>>
-  where?: InputMaybe<StreamingPaymentProcessor_Bool_Exp>
+  order_by?: InputMaybe<Array<GQLStreamingPaymentProcessor_Order_By>>
+  where?: InputMaybe<GQLStreamingPaymentProcessor_Bool_Exp>
 }
 
-export type Subscription_RootStreamingPaymentProcessor_By_PkArgs = {
+export type GQLSubscription_RootStreamingPaymentProcessor_By_PkArgs = {
   id: Scalars['String']['input']
 }
 
-export type Subscription_RootStreamingPaymentProcessor_StreamArgs = {
+export type GQLSubscription_RootStreamingPaymentProcessor_StreamArgs = {
   batch_size: Scalars['Int']['input']
-  cursor: Array<InputMaybe<StreamingPaymentProcessor_Stream_Cursor_Input>>
-  where?: InputMaybe<StreamingPaymentProcessor_Bool_Exp>
+  cursor: Array<InputMaybe<GQLStreamingPaymentProcessor_Stream_Cursor_Input>>
+  where?: InputMaybe<GQLStreamingPaymentProcessor_Bool_Exp>
 }
 
-export type Subscription_RootSwapArgs = {
-  distinct_on?: InputMaybe<Array<Swap_Select_Column>>
+export type GQLSubscription_RootSwapArgs = {
+  distinct_on?: InputMaybe<Array<GQLSwap_Select_Column>>
   limit?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Swap_Order_By>>
-  where?: InputMaybe<Swap_Bool_Exp>
+  order_by?: InputMaybe<Array<GQLSwap_Order_By>>
+  where?: InputMaybe<GQLSwap_Bool_Exp>
 }
 
-export type Subscription_RootSwap_By_PkArgs = {
+export type GQLSubscription_RootSwap_By_PkArgs = {
   id: Scalars['String']['input']
 }
 
-export type Subscription_RootSwap_StreamArgs = {
+export type GQLSubscription_RootSwap_StreamArgs = {
   batch_size: Scalars['Int']['input']
-  cursor: Array<InputMaybe<Swap_Stream_Cursor_Input>>
-  where?: InputMaybe<Swap_Bool_Exp>
+  cursor: Array<InputMaybe<GQLSwap_Stream_Cursor_Input>>
+  where?: InputMaybe<GQLSwap_Bool_Exp>
 }
 
-export type Subscription_RootWorkflowArgs = {
-  distinct_on?: InputMaybe<Array<Workflow_Select_Column>>
+export type GQLSubscription_RootWorkflowArgs = {
+  distinct_on?: InputMaybe<Array<GQLWorkflow_Select_Column>>
   limit?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Workflow_Order_By>>
-  where?: InputMaybe<Workflow_Bool_Exp>
+  order_by?: InputMaybe<Array<GQLWorkflow_Order_By>>
+  where?: InputMaybe<GQLWorkflow_Bool_Exp>
 }
 
-export type Subscription_RootWorkflowModuleArgs = {
-  distinct_on?: InputMaybe<Array<WorkflowModule_Select_Column>>
+export type GQLSubscription_RootWorkflowModuleArgs = {
+  distinct_on?: InputMaybe<Array<GQLWorkflowModule_Select_Column>>
   limit?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<WorkflowModule_Order_By>>
-  where?: InputMaybe<WorkflowModule_Bool_Exp>
+  order_by?: InputMaybe<Array<GQLWorkflowModule_Order_By>>
+  where?: InputMaybe<GQLWorkflowModule_Bool_Exp>
 }
 
-export type Subscription_RootWorkflowModuleTypeArgs = {
-  distinct_on?: InputMaybe<Array<WorkflowModuleType_Select_Column>>
+export type GQLSubscription_RootWorkflowModuleTypeArgs = {
+  distinct_on?: InputMaybe<Array<GQLWorkflowModuleType_Select_Column>>
   limit?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<WorkflowModuleType_Order_By>>
-  where?: InputMaybe<WorkflowModuleType_Bool_Exp>
+  order_by?: InputMaybe<Array<GQLWorkflowModuleType_Order_By>>
+  where?: InputMaybe<GQLWorkflowModuleType_Bool_Exp>
 }
 
-export type Subscription_RootWorkflowModuleType_By_PkArgs = {
+export type GQLSubscription_RootWorkflowModuleType_By_PkArgs = {
   id: Scalars['String']['input']
 }
 
-export type Subscription_RootWorkflowModuleType_StreamArgs = {
+export type GQLSubscription_RootWorkflowModuleType_StreamArgs = {
   batch_size: Scalars['Int']['input']
-  cursor: Array<InputMaybe<WorkflowModuleType_Stream_Cursor_Input>>
-  where?: InputMaybe<WorkflowModuleType_Bool_Exp>
+  cursor: Array<InputMaybe<GQLWorkflowModuleType_Stream_Cursor_Input>>
+  where?: InputMaybe<GQLWorkflowModuleType_Bool_Exp>
 }
 
-export type Subscription_RootWorkflowModule_By_PkArgs = {
+export type GQLSubscription_RootWorkflowModule_By_PkArgs = {
   id: Scalars['String']['input']
 }
 
-export type Subscription_RootWorkflowModule_StreamArgs = {
+export type GQLSubscription_RootWorkflowModule_StreamArgs = {
   batch_size: Scalars['Int']['input']
-  cursor: Array<InputMaybe<WorkflowModule_Stream_Cursor_Input>>
-  where?: InputMaybe<WorkflowModule_Bool_Exp>
+  cursor: Array<InputMaybe<GQLWorkflowModule_Stream_Cursor_Input>>
+  where?: InputMaybe<GQLWorkflowModule_Bool_Exp>
 }
 
-export type Subscription_RootWorkflow_By_PkArgs = {
+export type GQLSubscription_RootWorkflow_By_PkArgs = {
   id: Scalars['String']['input']
 }
 
-export type Subscription_RootWorkflow_StreamArgs = {
+export type GQLSubscription_RootWorkflow_StreamArgs = {
   batch_size: Scalars['Int']['input']
-  cursor: Array<InputMaybe<Workflow_Stream_Cursor_Input>>
-  where?: InputMaybe<Workflow_Bool_Exp>
+  cursor: Array<InputMaybe<GQLWorkflow_Stream_Cursor_Input>>
+  where?: InputMaybe<GQLWorkflow_Bool_Exp>
 }
 
-export type Subscription_RootChain_MetadataArgs = {
-  distinct_on?: InputMaybe<Array<Chain_Metadata_Select_Column>>
+export type GQLSubscription_RootChain_MetadataArgs = {
+  distinct_on?: InputMaybe<Array<GQLChain_Metadata_Select_Column>>
   limit?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Chain_Metadata_Order_By>>
-  where?: InputMaybe<Chain_Metadata_Bool_Exp>
+  order_by?: InputMaybe<Array<GQLChain_Metadata_Order_By>>
+  where?: InputMaybe<GQLChain_Metadata_Bool_Exp>
 }
 
-export type Subscription_RootChain_Metadata_By_PkArgs = {
+export type GQLSubscription_RootChain_Metadata_By_PkArgs = {
   chain_id: Scalars['Int']['input']
 }
 
-export type Subscription_RootChain_Metadata_StreamArgs = {
+export type GQLSubscription_RootChain_Metadata_StreamArgs = {
   batch_size: Scalars['Int']['input']
-  cursor: Array<InputMaybe<Chain_Metadata_Stream_Cursor_Input>>
-  where?: InputMaybe<Chain_Metadata_Bool_Exp>
+  cursor: Array<InputMaybe<GQLChain_Metadata_Stream_Cursor_Input>>
+  where?: InputMaybe<GQLChain_Metadata_Bool_Exp>
 }
 
-export type Subscription_RootDynamic_Contract_RegistryArgs = {
-  distinct_on?: InputMaybe<Array<Dynamic_Contract_Registry_Select_Column>>
+export type GQLSubscription_RootDynamic_Contract_RegistryArgs = {
+  distinct_on?: InputMaybe<Array<GQLDynamic_Contract_Registry_Select_Column>>
   limit?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Dynamic_Contract_Registry_Order_By>>
-  where?: InputMaybe<Dynamic_Contract_Registry_Bool_Exp>
+  order_by?: InputMaybe<Array<GQLDynamic_Contract_Registry_Order_By>>
+  where?: InputMaybe<GQLDynamic_Contract_Registry_Bool_Exp>
 }
 
-export type Subscription_RootDynamic_Contract_Registry_By_PkArgs = {
+export type GQLSubscription_RootDynamic_Contract_Registry_By_PkArgs = {
   chain_id: Scalars['Int']['input']
   contract_address: Scalars['String']['input']
 }
 
-export type Subscription_RootDynamic_Contract_Registry_StreamArgs = {
+export type GQLSubscription_RootDynamic_Contract_Registry_StreamArgs = {
   batch_size: Scalars['Int']['input']
-  cursor: Array<InputMaybe<Dynamic_Contract_Registry_Stream_Cursor_Input>>
-  where?: InputMaybe<Dynamic_Contract_Registry_Bool_Exp>
+  cursor: Array<InputMaybe<GQLDynamic_Contract_Registry_Stream_Cursor_Input>>
+  where?: InputMaybe<GQLDynamic_Contract_Registry_Bool_Exp>
 }
 
-export type Subscription_RootEnd_Of_Block_Range_Scanned_DataArgs = {
-  distinct_on?: InputMaybe<Array<End_Of_Block_Range_Scanned_Data_Select_Column>>
+export type GQLSubscription_RootEnd_Of_Block_Range_Scanned_DataArgs = {
+  distinct_on?: InputMaybe<
+    Array<GQLEnd_Of_Block_Range_Scanned_Data_Select_Column>
+  >
   limit?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<End_Of_Block_Range_Scanned_Data_Order_By>>
-  where?: InputMaybe<End_Of_Block_Range_Scanned_Data_Bool_Exp>
+  order_by?: InputMaybe<Array<GQLEnd_Of_Block_Range_Scanned_Data_Order_By>>
+  where?: InputMaybe<GQLEnd_Of_Block_Range_Scanned_Data_Bool_Exp>
 }
 
-export type Subscription_RootEnd_Of_Block_Range_Scanned_Data_By_PkArgs = {
+export type GQLSubscription_RootEnd_Of_Block_Range_Scanned_Data_By_PkArgs = {
   block_number: Scalars['Int']['input']
   chain_id: Scalars['Int']['input']
 }
 
-export type Subscription_RootEnd_Of_Block_Range_Scanned_Data_StreamArgs = {
+export type GQLSubscription_RootEnd_Of_Block_Range_Scanned_Data_StreamArgs = {
   batch_size: Scalars['Int']['input']
-  cursor: Array<InputMaybe<End_Of_Block_Range_Scanned_Data_Stream_Cursor_Input>>
-  where?: InputMaybe<End_Of_Block_Range_Scanned_Data_Bool_Exp>
+  cursor: Array<
+    InputMaybe<GQLEnd_Of_Block_Range_Scanned_Data_Stream_Cursor_Input>
+  >
+  where?: InputMaybe<GQLEnd_Of_Block_Range_Scanned_Data_Bool_Exp>
 }
 
-export type Subscription_RootEntity_HistoryArgs = {
-  distinct_on?: InputMaybe<Array<Entity_History_Select_Column>>
+export type GQLSubscription_RootEntity_HistoryArgs = {
+  distinct_on?: InputMaybe<Array<GQLEntity_History_Select_Column>>
   limit?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Entity_History_Order_By>>
-  where?: InputMaybe<Entity_History_Bool_Exp>
+  order_by?: InputMaybe<Array<GQLEntity_History_Order_By>>
+  where?: InputMaybe<GQLEntity_History_Bool_Exp>
 }
 
-export type Subscription_RootEntity_History_By_PkArgs = {
+export type GQLSubscription_RootEntity_History_By_PkArgs = {
   block_number: Scalars['Int']['input']
   block_timestamp: Scalars['Int']['input']
   chain_id: Scalars['Int']['input']
@@ -2515,15 +2521,15 @@ export type Subscription_RootEntity_History_By_PkArgs = {
   log_index: Scalars['Int']['input']
 }
 
-export type Subscription_RootEntity_History_FilterArgs = {
-  distinct_on?: InputMaybe<Array<Entity_History_Filter_Select_Column>>
+export type GQLSubscription_RootEntity_History_FilterArgs = {
+  distinct_on?: InputMaybe<Array<GQLEntity_History_Filter_Select_Column>>
   limit?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Entity_History_Filter_Order_By>>
-  where?: InputMaybe<Entity_History_Filter_Bool_Exp>
+  order_by?: InputMaybe<Array<GQLEntity_History_Filter_Order_By>>
+  where?: InputMaybe<GQLEntity_History_Filter_Bool_Exp>
 }
 
-export type Subscription_RootEntity_History_Filter_By_PkArgs = {
+export type GQLSubscription_RootEntity_History_Filter_By_PkArgs = {
   block_number: Scalars['Int']['input']
   block_timestamp: Scalars['Int']['input']
   chain_id: Scalars['Int']['input']
@@ -2533,84 +2539,84 @@ export type Subscription_RootEntity_History_Filter_By_PkArgs = {
   previous_log_index: Scalars['Int']['input']
 }
 
-export type Subscription_RootEntity_History_Filter_StreamArgs = {
+export type GQLSubscription_RootEntity_History_Filter_StreamArgs = {
   batch_size: Scalars['Int']['input']
-  cursor: Array<InputMaybe<Entity_History_Filter_Stream_Cursor_Input>>
-  where?: InputMaybe<Entity_History_Filter_Bool_Exp>
+  cursor: Array<InputMaybe<GQLEntity_History_Filter_Stream_Cursor_Input>>
+  where?: InputMaybe<GQLEntity_History_Filter_Bool_Exp>
 }
 
-export type Subscription_RootEntity_History_StreamArgs = {
+export type GQLSubscription_RootEntity_History_StreamArgs = {
   batch_size: Scalars['Int']['input']
-  cursor: Array<InputMaybe<Entity_History_Stream_Cursor_Input>>
-  where?: InputMaybe<Entity_History_Bool_Exp>
+  cursor: Array<InputMaybe<GQLEntity_History_Stream_Cursor_Input>>
+  where?: InputMaybe<GQLEntity_History_Bool_Exp>
 }
 
-export type Subscription_RootEvent_Sync_StateArgs = {
-  distinct_on?: InputMaybe<Array<Event_Sync_State_Select_Column>>
+export type GQLSubscription_RootEvent_Sync_StateArgs = {
+  distinct_on?: InputMaybe<Array<GQLEvent_Sync_State_Select_Column>>
   limit?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Event_Sync_State_Order_By>>
-  where?: InputMaybe<Event_Sync_State_Bool_Exp>
+  order_by?: InputMaybe<Array<GQLEvent_Sync_State_Order_By>>
+  where?: InputMaybe<GQLEvent_Sync_State_Bool_Exp>
 }
 
-export type Subscription_RootEvent_Sync_State_By_PkArgs = {
+export type GQLSubscription_RootEvent_Sync_State_By_PkArgs = {
   chain_id: Scalars['Int']['input']
 }
 
-export type Subscription_RootEvent_Sync_State_StreamArgs = {
+export type GQLSubscription_RootEvent_Sync_State_StreamArgs = {
   batch_size: Scalars['Int']['input']
-  cursor: Array<InputMaybe<Event_Sync_State_Stream_Cursor_Input>>
-  where?: InputMaybe<Event_Sync_State_Bool_Exp>
+  cursor: Array<InputMaybe<GQLEvent_Sync_State_Stream_Cursor_Input>>
+  where?: InputMaybe<GQLEvent_Sync_State_Bool_Exp>
 }
 
-export type Subscription_RootGet_Entity_History_FilterArgs = {
-  args: Get_Entity_History_Filter_Args
-  distinct_on?: InputMaybe<Array<Entity_History_Filter_Select_Column>>
+export type GQLSubscription_RootGet_Entity_History_FilterArgs = {
+  args: GQLGet_Entity_History_Filter_Args
+  distinct_on?: InputMaybe<Array<GQLEntity_History_Filter_Select_Column>>
   limit?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Entity_History_Filter_Order_By>>
-  where?: InputMaybe<Entity_History_Filter_Bool_Exp>
+  order_by?: InputMaybe<Array<GQLEntity_History_Filter_Order_By>>
+  where?: InputMaybe<GQLEntity_History_Filter_Bool_Exp>
 }
 
-export type Subscription_RootPersisted_StateArgs = {
-  distinct_on?: InputMaybe<Array<Persisted_State_Select_Column>>
+export type GQLSubscription_RootPersisted_StateArgs = {
+  distinct_on?: InputMaybe<Array<GQLPersisted_State_Select_Column>>
   limit?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Persisted_State_Order_By>>
-  where?: InputMaybe<Persisted_State_Bool_Exp>
+  order_by?: InputMaybe<Array<GQLPersisted_State_Order_By>>
+  where?: InputMaybe<GQLPersisted_State_Bool_Exp>
 }
 
-export type Subscription_RootPersisted_State_By_PkArgs = {
+export type GQLSubscription_RootPersisted_State_By_PkArgs = {
   id: Scalars['Int']['input']
 }
 
-export type Subscription_RootPersisted_State_StreamArgs = {
+export type GQLSubscription_RootPersisted_State_StreamArgs = {
   batch_size: Scalars['Int']['input']
-  cursor: Array<InputMaybe<Persisted_State_Stream_Cursor_Input>>
-  where?: InputMaybe<Persisted_State_Bool_Exp>
+  cursor: Array<InputMaybe<GQLPersisted_State_Stream_Cursor_Input>>
+  where?: InputMaybe<GQLPersisted_State_Bool_Exp>
 }
 
-export type Subscription_RootRaw_EventsArgs = {
-  distinct_on?: InputMaybe<Array<Raw_Events_Select_Column>>
+export type GQLSubscription_RootRaw_EventsArgs = {
+  distinct_on?: InputMaybe<Array<GQLRaw_Events_Select_Column>>
   limit?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
-  order_by?: InputMaybe<Array<Raw_Events_Order_By>>
-  where?: InputMaybe<Raw_Events_Bool_Exp>
+  order_by?: InputMaybe<Array<GQLRaw_Events_Order_By>>
+  where?: InputMaybe<GQLRaw_Events_Bool_Exp>
 }
 
-export type Subscription_RootRaw_Events_By_PkArgs = {
+export type GQLSubscription_RootRaw_Events_By_PkArgs = {
   chain_id: Scalars['Int']['input']
   event_id: Scalars['numeric']['input']
 }
 
-export type Subscription_RootRaw_Events_StreamArgs = {
+export type GQLSubscription_RootRaw_Events_StreamArgs = {
   batch_size: Scalars['Int']['input']
-  cursor: Array<InputMaybe<Raw_Events_Stream_Cursor_Input>>
-  where?: InputMaybe<Raw_Events_Bool_Exp>
+  cursor: Array<InputMaybe<GQLRaw_Events_Stream_Cursor_Input>>
+  where?: InputMaybe<GQLRaw_Events_Bool_Exp>
 }
 
 /** Boolean expression to compare columns of type "swaptype". All fields are combined with logical 'AND'. */
-export type Swaptype_Comparison_Exp = {
+export type GQLSwaptype_Comparison_Exp = {
   _eq?: InputMaybe<Scalars['swaptype']['input']>
   _gt?: InputMaybe<Scalars['swaptype']['input']>
   _gte?: InputMaybe<Scalars['swaptype']['input']>
@@ -2623,7 +2629,7 @@ export type Swaptype_Comparison_Exp = {
 }
 
 /** Boolean expression to compare columns of type "timestamp". All fields are combined with logical 'AND'. */
-export type Timestamp_Comparison_Exp = {
+export type GQLTimestamp_Comparison_Exp = {
   _eq?: InputMaybe<Scalars['timestamp']['input']>
   _gt?: InputMaybe<Scalars['timestamp']['input']>
   _gte?: InputMaybe<Scalars['timestamp']['input']>
@@ -2636,7 +2642,7 @@ export type Timestamp_Comparison_Exp = {
 }
 
 /** Boolean expression to compare columns of type "timestamptz". All fields are combined with logical 'AND'. */
-export type Timestamptz_Comparison_Exp = {
+export type GQLTimestamptz_Comparison_Exp = {
   _eq?: InputMaybe<Scalars['timestamptz']['input']>
   _gt?: InputMaybe<Scalars['timestamptz']['input']>
   _gte?: InputMaybe<Scalars['timestamptz']['input']>
@@ -2649,7 +2655,7 @@ export type Timestamptz_Comparison_Exp = {
 }
 
 /** Boolean expression to compare columns of type "vestingstatus". All fields are combined with logical 'AND'. */
-export type Vestingstatus_Comparison_Exp = {
+export type GQLVestingstatus_Comparison_Exp = {
   _eq?: InputMaybe<Scalars['vestingstatus']['input']>
   _gt?: InputMaybe<Scalars['vestingstatus']['input']>
   _gte?: InputMaybe<Scalars['vestingstatus']['input']>
