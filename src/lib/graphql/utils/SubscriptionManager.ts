@@ -26,9 +26,25 @@ class SubscriptionManager<
   private fields: subscription_rootGenqlSelection & { __name?: string }
   private subscriptionOperation: (() => void) | null = null
   private isSubscribed = false
+  private static instances: Map<string, SubscriptionManager<any>> = new Map()
 
-  constructor(fields: T) {
+  private constructor(fields: T) {
     this.fields = fields
+  }
+
+  /**
+   * Get or create a SubscriptionManager instance for the given fields.
+   * @param fields - The subscription fields.
+   * @returns SubscriptionManager instance.
+   */
+  public static getInstance<
+    T extends subscription_rootGenqlSelection & { __name?: string },
+  >(fields: T): SubscriptionManager<T> {
+    const key = JSON.stringify(fields)
+    if (!this.instances.has(key)) {
+      this.instances.set(key, new SubscriptionManager(fields))
+    }
+    return this.instances.get(key) as SubscriptionManager<T>
   }
 
   /**
@@ -60,6 +76,9 @@ class SubscriptionManager<
     // Stop subscription if no callbacks remain
     if (this.callbacks.size === 0) {
       this.stopSubscription()
+      // Remove this instance from the static instances map
+      const key = JSON.stringify(this.fields)
+      SubscriptionManager.instances.delete(key)
     }
   }
 

@@ -7,9 +7,12 @@ import type {
 import client from './client'
 import { SubscriptionManager } from './utils'
 
-const query = async <T extends query_rootGenqlSelection & { __name?: string }>(
+export type GraphQLQueryArgs = query_rootGenqlSelection & { __name?: string }
+export type GraphQLQueryResult<T extends GraphQLQueryArgs> = QueryResult<T>
+
+const query = async <T extends GraphQLQueryArgs>(
   fields: T
-): Promise<QueryResult<T>> => {
+): Promise<GraphQLQueryResult<T>> => {
   const { query, variables } = generateQueryOp(fields)
 
   const data = await client.query(query, variables)
@@ -17,12 +20,16 @@ const query = async <T extends query_rootGenqlSelection & { __name?: string }>(
   return data.data
 }
 
-const subscription = async <
-  T extends subscription_rootGenqlSelection & { __name?: string },
->(
+export type GraphQLSubscriptionArgs = subscription_rootGenqlSelection & {
+  __name?: string
+}
+export type GraphQLSubscriptionResult<T extends GraphQLSubscriptionArgs> =
+  SubscriptionManager<T>
+
+const subscription = async <T extends GraphQLSubscriptionArgs>(
   fields: T
-) => {
-  const subscriptionManager = new SubscriptionManager(fields)
+): Promise<GraphQLSubscriptionResult<T>> => {
+  const subscriptionManager = SubscriptionManager.getInstance(fields)
 
   return subscriptionManager
 }
