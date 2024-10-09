@@ -1,14 +1,17 @@
 import { pipe, subscribe } from 'wonka'
-import client from '../client' // Your urql client configuration
-import type { TypedDocumentNode } from '@urql/core'
+import client from '../client'
+import {
+  generateSubscriptionOp,
+  type subscription_rootGenqlSelection,
+  type SubscriptionResult,
+} from '../build'
 
 type CallbackId = string
 
-/**
- * Type for the subscription callback function.
- * @template T - The expected shape of the subscription data.
- */
-type SubscriptionCallback<T> = (data: { [key: string]: T[] }) => void
+// Updated SubscriptionCallback type
+type SubscriptionCallback<
+  T extends subscription_rootGenqlSelection & { __name?: string },
+> = (data: SubscriptionResult<T>) => void
 
 /**
  * SubscriptionManager manages GraphQL subscriptions with URQL,
@@ -16,16 +19,16 @@ type SubscriptionCallback<T> = (data: { [key: string]: T[] }) => void
  *
  * @template T - The shape of the data returned by the subscription.
  */
-class SubscriptionManager<T> {
+class SubscriptionManager<
+  T extends subscription_rootGenqlSelection & { __name?: string },
+> {
   public callbacks: Map<CallbackId, SubscriptionCallback<T>> = new Map()
-  private subscriptionDocument: TypedDocumentNode<{ [key: string]: T[] }, any>
+  private fields: subscription_rootGenqlSelection & { __name?: string }
   private subscriptionOperation: (() => void) | null = null
   private isSubscribed = false
 
-  constructor(
-    subscriptionDocument: TypedDocumentNode<{ [key: string]: T[] }, any>
-  ) {
-    this.subscriptionDocument = subscriptionDocument
+  constructor(fields: T) {
+    this.fields = fields
   }
 
   /**
@@ -68,18 +71,17 @@ class SubscriptionManager<T> {
     console.log('Starting subscription...')
     this.isSubscribed = true
 
-    // Use urql's subscription API
+    const { query, variables } = generateSubscriptionOp(this.fields)
+
     const { unsubscribe } = pipe(
-      client.subscription(this.subscriptionDocument, {}),
+      client.subscription(query, variables),
       subscribe((result) => {
         if (result.data) {
-          // Assume the subscription response has the expected shape { [key: string]: T[] }
-          this.triggerCallbacks(result.data) // For simplicity, we assume the first item
+          this.triggerCallbacks(result.data as SubscriptionResult<T>)
         }
       })
     )
 
-    // Store the unsubscribe function to stop later
     this.subscriptionOperation = unsubscribe
   }
 
@@ -99,7 +101,7 @@ class SubscriptionManager<T> {
    * Trigger all registered callbacks with the new subscription data.
    * @param data - The new data received from the subscription.
    */
-  private triggerCallbacks(data: { [key: string]: T[] }) {
+  private triggerCallbacks(data: SubscriptionResult<T>) {
     this.callbacks.forEach((callback) => callback(data))
   }
 

@@ -5,18 +5,18 @@ import { privateKeyToAccount } from 'viem/accounts'
 import { optimismSepolia } from 'viem/chains'
 
 describe('#INDEXER_SUBSCRIPTION', () => {
-  let subscriptionInstance: ReturnType<
-    typeof graphql.subscription.WorkflowSubscription
-  > | null = null
+  const subscriptionInstance = graphql.subscription({
+    Workflow: {
+      id: true,
+    },
+  })
 
   let id: string | null = null
 
   beforeAll(async () => {
-    subscriptionInstance = graphql.subscription.WorkflowSubscription({
-      project: ['id'],
-    })
+    const awaited = await subscriptionInstance
 
-    subscriptionInstance.addCallback((data) => {
+    awaited.addCallback((data) => {
       id = data.Workflow[0].id
     })
   })
