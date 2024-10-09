@@ -1,8 +1,8 @@
-import {
-  generateQueryOp,
-  type query_rootGenqlSelection,
-  type QueryResult,
-  type subscription_rootGenqlSelection,
+import { generateQueryOp } from './build'
+import type {
+  query_rootGenqlSelection,
+  QueryResult,
+  subscription_rootGenqlSelection,
 } from './build'
 import client from './client'
 import { SubscriptionManager } from './utils'

@@ -1,9 +1,9 @@
 import { pipe, subscribe } from 'wonka'
 import client from '../client'
-import {
-  generateSubscriptionOp,
-  type subscription_rootGenqlSelection,
-  type SubscriptionResult,
+import { generateSubscriptionOp } from '../build'
+import type {
+  subscription_rootGenqlSelection,
+  SubscriptionResult,
 } from '../build'
 
 type CallbackId = string

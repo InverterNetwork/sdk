@@ -1,5 +1,6 @@
 import { MANDATORY_MODULES } from './constants'
-import { getModuleData, type ModuleName } from '@inverter-network/abis'
+import { getModuleData } from '@inverter-network/abis'
+import type { ModuleName } from '@inverter-network/abis'
 
 import type {
   DeploySchema,

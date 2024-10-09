@@ -4,7 +4,8 @@ import { MANDATORY_MODULES } from './constants'
 import { assembleMetadata, getDefaultToken } from './utils'
 import { Inverter } from '@/Inverter'
 
-import { type PublicClient, encodeAbiParameters, parseUnits } from 'viem'
+import { encodeAbiParameters, parseUnits } from 'viem'
+import type { PublicClient } from 'viem'
 import type {
   Extras,
   GetDeploymentInputs,

@@ -9,10 +9,12 @@ import {
   linkTypeMap,
   createClient as createClientOriginal,
   generateGraphqlOperation,
-  type FieldsSelection,
-  type GraphqlOperation,
-  type ClientOptions,
   GenqlError,
+} from './runtime'
+import type {
+  FieldsSelection,
+  GraphqlOperation,
+  ClientOptions,
 } from './runtime'
 export type { FieldsSelection } from './runtime'
 export { GenqlError }

@@ -1,7 +1,4 @@
-import {
-  type GetModuleNameByType,
-  type ModuleName,
-} from '@inverter-network/abis'
+import type { GetModuleNameByType, ModuleName } from '@inverter-network/abis'
 import { getContract, parseUnits } from 'viem'
 import { METADATA_URL, DEPLOYMENTS_URL } from './constants'
 import { ERC20_ABI } from '../utils/constants'

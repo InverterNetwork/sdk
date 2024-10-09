@@ -1,11 +1,10 @@
 // @ts-nocheck
 
-import { type BatchOptions, createFetcher } from './fetcher'
+import { createFetcher } from './fetcher'
+import type { BatchOptions } from './fetcher'
 import type { ExecutionResult, LinkedType } from './types'
-import {
-  generateGraphqlOperation,
-  type GraphqlOperation,
-} from './generateGraphqlOperation'
+import { generateGraphqlOperation } from './generateGraphqlOperation'
+import type { GraphqlOperation } from './generateGraphqlOperation'
 
 export type Headers =
   | HeadersInit

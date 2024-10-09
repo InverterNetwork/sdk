@@ -1,7 +1,8 @@
 import getModule from '../getModule'
 import getTokenResults from './getTokenResults'
 
-import { getModuleData, type GetModuleNameByType } from '@inverter-network/abis'
+import { getModuleData } from '@inverter-network/abis'
+import type { GetModuleNameByType } from '@inverter-network/abis'
 import type {
   PopWalletClient,
   WorkflowModuleType,

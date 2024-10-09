@@ -1,5 +1,6 @@
 import type { FactoryType, FilterByPrefix } from '@'
-import { data, type GetModuleNameByType } from '@inverter-network/abis'
+import { data } from '@inverter-network/abis'
+import type { GetModuleNameByType } from '@inverter-network/abis'
 
 export default function getDeployOptions<
   FT extends FactoryType | undefined = undefined,

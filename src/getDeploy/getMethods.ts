@@ -1,4 +1,5 @@
-import { formatEther, type PublicClient } from 'viem'
+import { formatEther } from 'viem'
+import type { PublicClient } from 'viem'
 import type {
   DeployMethodKind,
   FactoryType,
