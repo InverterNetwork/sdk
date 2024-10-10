@@ -47,6 +47,7 @@ describe('#PIM_RESTRICTED', async () => {
       decimals: 18,
       maxSupply: GET_HUMAN_READABLE_UINT_MAX_SUPPLY(18),
     },
+    beneficiary: deployer,
   } as const satisfies GetUserArgs<typeof requestedModules, 'restricted-pim'>
 
   // ================PRE_DETERMINED VARIABLES================
@@ -106,7 +107,7 @@ describe('#PIM_RESTRICTED', async () => {
     expect(isHash(hash)).toBeTrue()
   })
 
-  it('4. Add Funding To Facory', async () => {
+  it('4. Add Funding To factory', async () => {
     factoryInstance = getContract({
       address: TEST_RESTRICTED_PIM_FACTORY_ADDRESS,
       client: walletClient,
@@ -135,6 +136,7 @@ describe('#PIM_RESTRICTED', async () => {
         'Restricted_PIM_Factory_v1',
         'issuanceToken'
       ),
+      beneficiary: getModuleSchema('Restricted_PIM_Factory_v1', 'beneficiary'),
     })
   })
 
