@@ -47,6 +47,7 @@ describe('#PIM_RESTRICTED', async () => {
       decimals: 18,
       maxSupply: GET_HUMAN_READABLE_UINT_MAX_SUPPLY(18),
     },
+    beneficiary: deployer,
   } as const satisfies GetUserArgs<typeof requestedModules, 'restricted-pim'>
 
   // ================PRE_DETERMINED VARIABLES================
@@ -135,6 +136,7 @@ describe('#PIM_RESTRICTED', async () => {
         'Restricted_PIM_Factory_v1',
         'issuanceToken'
       ),
+      beneficiary: getModuleSchema('Restricted_PIM_Factory_v1', 'beneficiary'),
     })
   })
 
@@ -144,7 +146,11 @@ describe('#PIM_RESTRICTED', async () => {
   })
 
   it('7. Deploy the workflow', async () => {
-    orchestratorAddress = (await getDeployReturn.run(args)).orchestratorAddress
+    orchestratorAddress = (
+      await getDeployReturn.run(args, {
+        confirmations: 1,
+      })
+    ).orchestratorAddress
     expect(isAddress(orchestratorAddress)).toBeTrue()
   })
 

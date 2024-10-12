@@ -23,8 +23,14 @@ export const getModuleSchema = <
   if (!('deploymentInputs' in moduleData))
     throw new Error("Module data doesn't have deploymentsData")
 
+  const inputs = !!overrideName
+    ? moduleData.deploymentInputs.configData.find(
+        ({ name }) => name === overrideName
+      )
+    : moduleData.deploymentInputs.configData
+
   const result = {
-    inputs: moduleData.deploymentInputs.configData,
+    inputs,
     name: overrideName ?? name,
   } as ModuleSchema<T, ON>
 
@@ -41,11 +47,15 @@ export const getOtherFactoryTypeInputs = <FT extends FactoryType>(
           'Restricted_PIM_Factory_v1',
           'issuanceToken'
         ),
+        beneficiary: getModuleSchema(
+          'Restricted_PIM_Factory_v1',
+          'beneficiary'
+        ),
       }
     case 'immutable-pim':
       return {
         issuanceToken: getModuleSchema(
-          'Restricted_PIM_Factory_v1',
+          'Immutable_PIM_Factory_v1',
           'issuanceToken'
         ),
         initialPurchaseAmount: getModuleSchema(

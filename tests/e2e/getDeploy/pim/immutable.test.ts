@@ -64,7 +64,7 @@ describe('#PIM_IMMUTABLE', async () => {
       ),
       paymentProcessor: getModuleSchema('PP_Simple_v1'),
       issuanceToken: getModuleSchema(
-        'Restricted_PIM_Factory_v1',
+        'Immutable_PIM_Factory_v1',
         'issuanceToken'
       ),
       initialPurchaseAmount: getModuleSchema(

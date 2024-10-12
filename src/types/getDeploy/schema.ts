@@ -13,7 +13,14 @@ export type ModuleSchema<
   ON extends string | undefined = undefined,
 > = {
   name: ON extends string ? ON : N
-  inputs: GetDeploymentParameters<N>
+  inputs: ON extends string
+    ? Extract<
+        GetDeploymentParameters<N>[number],
+        {
+          name: ON
+        }
+      >
+    : GetDeploymentParameters<N>
 }
 
 export type OptionalModules<T extends RequestedModules['optionalModules']> =
@@ -40,10 +47,16 @@ export type DeploySchema<
     optionalModules: EmptyObjectToNever<OptionalModules<T['optionalModules']>>
     // OTHER FACTORY TYPE INPUTS
     issuanceToken: FT extends 'restricted-pim' | 'immutable-pim'
-      ? ModuleSchema<'Restricted_PIM_Factory_v1', 'issuanceToken'>
+      ? ModuleSchema<
+          `${FT extends 'restricted-pim' ? 'Restricted' : 'Immutable'}_PIM_Factory_v1`,
+          'issuanceToken'
+        >
       : never
     initialPurchaseAmount: FT extends 'immutable-pim'
       ? ModuleSchema<'Immutable_PIM_Factory_v1', 'initialPurchaseAmount'>
+      : never
+    beneficiary: FT extends 'restricted-pim'
+      ? ModuleSchema<'Restricted_PIM_Factory_v1', 'beneficiary'>
       : never
   }>
 >

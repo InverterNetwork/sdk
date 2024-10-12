@@ -119,8 +119,8 @@ deploy_protocol() {
     ORCHESTRATOR_FACTORY_ADDRESS=$(echo "$deploy_output" | grep -oE 'OrchestratorFactory_v1 InverterBeaconProxy_v1: 0x[0-9a-fA-F]+' | awk '{print $3}')
     ERC20_MOCK_ADDRESS=$(echo "$deploy_output" | grep -oE 'ERC20Mock iUSD: 0x[0-9a-fA-F]+' | awk '{print $3}')
     BANCOR_FORMULA_ADDRESS=$(echo "$deploy_output" | grep -oE 'BancorFormula Implementation: 0x[0-9a-fA-F]+' | awk '{print $3}')
-    RESTRICTED_PIM_FACTORY_ADDRESS=$(echo "$deploy_output" | grep -oE 'Deploying Restricted_PIM_Factory_v1 at address:\s*0x[0-9a-fA-F]+' | awk '{print $5}')
-    IMMUTABLE_PIM_FACTORY_ADDRESS=$(echo "$deploy_output" | grep -oE 'Deploying Immutable_PIM_Factory_v1 at address:\s*0x[0-9a-fA-F]+' | awk '{print $5}')
+    RESTRICTED_PIM_FACTORY_ADDRESS=$(echo "$deploy_output" | grep -oE 'Restricted_PIM_Factory_v1: 0x[0-9a-fA-F]+' | awk '{print $2}')
+    IMMUTABLE_PIM_FACTORY_ADDRESS=$(echo "$deploy_output" | grep -oE 'Immutable_PIM_Factory_v1: 0x[0-9a-fA-F]+' | awk '{print $2}')
 
     if [[ -z "$ORCHESTRATOR_FACTORY_ADDRESS" || -z "$ERC20_MOCK_ADDRESS" || -z "$BANCOR_FORMULA_ADDRESS" || -z "RESTRICTED_PIM_FACTORY_ADDRESS" || -z "IMMUTABLE_PIM_FACTORY_ADDRESS" ]]; then
         printf "Failed to extract contract addresses ❌\n" >&2

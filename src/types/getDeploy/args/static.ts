@@ -1,5 +1,4 @@
 import type { GetUserModuleArg } from '@'
-import type { ValueOf } from 'type-fest-4'
 
 export type Metadata = {
   majorVersion: bigint
@@ -27,13 +26,14 @@ export type ModuleArgs = {
   metadata: Metadata
 } & EncodedArgs
 
-export type IssuanceTokenArgs = ValueOf<
-  GetUserModuleArg<'Restricted_PIM_Factory_v1'>
->
+export type IssuanceTokenArgs =
+  GetUserModuleArg<'Restricted_PIM_Factory_v1'>['issuanceToken']
 
-export type InitialPurchaseAmountArgs = ValueOf<
-  GetUserModuleArg<'Immutable_PIM_Factory_v1'>
->
+export type InitialPurchaseAmountArgs =
+  GetUserModuleArg<'Immutable_PIM_Factory_v1'>['initialPurchaseAmount']
+
+export type BeneficiaryArgs =
+  GetUserModuleArg<'Restricted_PIM_Factory_v1'>['beneficiary']
 
 export type ConstructedArgs = {
   orchestrator: NonNullable<OrchestratorArgs>
@@ -43,6 +43,7 @@ export type ConstructedArgs = {
   optionalModules: ModuleArgs[]
   issuanceToken: IssuanceTokenArgs
   initialPurchaseAmount: InitialPurchaseAmountArgs
+  beneficiary: BeneficiaryArgs
 }
 
 export type UserModuleArg = Record<string, unknown>
@@ -54,5 +55,6 @@ export type UserArgs = {
   paymentProcessor?: UserModuleArg
   optionalModules?: Record<string, UserModuleArg>
   issuanceToken?: IssuanceTokenArgs
-  initialPurchaseAmount?: string
+  initialPurchaseAmount?: InitialPurchaseAmountArgs
+  beneficiary?: BeneficiaryArgs
 }

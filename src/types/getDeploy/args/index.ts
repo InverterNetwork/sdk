@@ -1,5 +1,6 @@
 import type { ModuleName } from '@inverter-network/abis'
 import type {
+  BeneficiaryArgs,
   InitialPurchaseAmountArgs,
   IssuanceTokenArgs,
   OrchestratorArgs,
@@ -71,5 +72,6 @@ export type GetUserArgs<
     initialPurchaseAmount: FT extends 'immutable-pim'
       ? InitialPurchaseAmountArgs
       : never
+    beneficiary: FT extends 'restricted-pim' ? BeneficiaryArgs : never
   }>
 >

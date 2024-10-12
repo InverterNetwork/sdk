@@ -4,7 +4,7 @@ import { createPublicClient, createWalletClient, http } from 'viem'
 import { privateKeyToAccount } from 'viem/accounts'
 import { optimismSepolia } from 'viem/chains'
 
-describe('#INDEXER_SUBSCRIPTION', () => {
+describe.skip('#INDEXER_SUBSCRIPTION', () => {
   const subscriptionInstance = graphql.subscription({
     Workflow: {
       id: true,

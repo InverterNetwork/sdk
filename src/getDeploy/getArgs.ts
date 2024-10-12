@@ -116,6 +116,7 @@ export const constructArgs = async ({
     optionalModules: [],
     issuanceToken: {},
     initialPurchaseAmount: '',
+    beneficiary: {},
   } as unknown as ConstructedArgs
 
   // Get the default token if the funding manager is provided
@@ -179,6 +180,11 @@ export const constructArgs = async ({
         ),
       }
 
+      // If the factory type is restricted-pim, the beneficiary is parsed if provided
+      if (factoryType === 'restricted-pim' && !!userArgs.beneficiary) {
+        args.beneficiary = userArgs.beneficiary
+      }
+
       // If the factory type is immutable-pim, the initial purchase amount is parsed if provided
       if (factoryType === 'immutable-pim' && !!userArgs.initialPurchaseAmount) {
         args.initialPurchaseAmount = String(
@@ -218,7 +224,11 @@ export default async function getArgs<
     constructed.optionalModules,
   ] as const
 
-  const withRestrictedPim = [...baseArr, constructed.issuanceToken] as const
+  const withRestrictedPim = [
+    ...baseArr,
+    constructed.issuanceToken,
+    constructed.beneficiary,
+  ] as const
 
   const withImmutablePim = [
     ...baseArr,
