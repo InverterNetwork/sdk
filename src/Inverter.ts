@@ -13,9 +13,9 @@ import type {
   Workflow,
   RequestedModules,
   FactoryType,
-  DeployParamsByKey,
-  DeployKeys,
   GetModuleParams,
+  DeployableContracts,
+  GetUserModuleArg,
 } from './types'
 
 export class Inverter<W extends PopWalletClient | undefined = undefined> {
@@ -133,17 +133,21 @@ export class Inverter<W extends PopWalletClient | undefined = undefined> {
     return result as W extends undefined ? never : typeof result
   }
 
-  deploy<K extends DeployKeys>(
-    key: K,
-    params: Omit<DeployParamsByKey<K>, 'walletClient' | 'publicClient'>
-  ) {
+  deploy<T extends DeployableContracts>({
+    name,
+    args,
+  }: {
+    name: T
+    args: GetUserModuleArg<T>
+  }) {
     if (!this.walletClient)
       throw new Error('Wallet client is required for deploy')
 
-    return deploy[key]({
-      ...params,
+    return deploy({
+      name,
       walletClient: this.walletClient,
       publicClient: this.publicClient,
+      args,
     })
   }
 

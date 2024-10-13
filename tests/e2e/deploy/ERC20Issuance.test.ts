@@ -7,19 +7,22 @@ describe('#DEPLOY_ERC20_ISSUANCE', async () => {
   let tokenAddress: `0x${string}`
 
   it('1. Should Deploy The ERC20 Issuance Contract', async () => {
-    const data = await sdk.deploy('ERC20Issuance', {
-      name: 'My Token',
-      symbol: 'MT',
-      decimals: 18,
-      maxSupply: '1000000',
-      initialAdmin: deployer,
+    const data = await sdk.deploy({
+      name: 'ERC20Issuance_v1',
+      args: {
+        name: 'My Token',
+        symbol: 'MT',
+        decimals: 18,
+        maxSupply: '1000000',
+        initialAdmin: deployer,
+      },
     })
 
-    if (!data.tokenAddress) throw new Error('Token Address Not Found')
+    if (!data.contractAddress) throw new Error('Token Address Not Found')
 
-    tokenAddress = data.tokenAddress
+    tokenAddress = data.contractAddress
 
-    expect(data).toContainKeys(['tokenAddress', 'transactionHash'])
+    expect(data).toContainKeys(['contractAddress', 'transactionHash'])
   })
 
   it('2. Should getModule && Mint Tokens', async () => {

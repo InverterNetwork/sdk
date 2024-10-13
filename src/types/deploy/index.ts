@@ -1,13 +1,6 @@
-import type { DeployReturn } from '@/deploy'
+import type { BaseData } from '@inverter-network/abis'
 
-export * from './ERC20Issuance'
-
-export type DeployKeys = keyof DeployReturn
-
-export type DeployParamsByKey<K extends DeployKeys> = Parameters<
-  DeployReturn[K]
->[0]
-
-export type DeployReturnByKey<K extends DeployKeys> = ReturnType<
-  DeployReturn[K]
->
+export type DeployableContracts = Extract<
+  BaseData[number],
+  { deploymentInputs: { bytecode: string } }
+>['name']

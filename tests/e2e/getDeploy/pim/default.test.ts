@@ -52,15 +52,18 @@ describe('#PIM_DEFAULT', async () => {
   })
 
   it('3. deploying an issuance token', async () => {
-    const data = await sdk.deploy('ERC20Issuance', {
-      name: 'My Token',
-      symbol: 'MT',
-      decimals: 18,
-      maxSupply: GET_HUMAN_READABLE_UINT_MAX_SUPPLY(18),
-      initialAdmin: walletClient.account.address,
+    const data = await sdk.deploy({
+      name: 'ERC20Issuance_v1',
+      args: {
+        name: 'My Token',
+        symbol: 'MT',
+        decimals: 18,
+        maxSupply: GET_HUMAN_READABLE_UINT_MAX_SUPPLY(18),
+        initialAdmin: walletClient.account.address,
+      },
     })
 
-    issuanceToken = data.tokenAddress!
+    issuanceToken = data.contractAddress!
 
     expect(isAddress(issuanceToken)).toBeTrue
   })

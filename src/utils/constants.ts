@@ -1,6 +1,15 @@
 import { getModuleData } from '@inverter-network/abis'
+import { formatUnits } from 'viem'
 
 export const ADDRESS_ZERO = '0x0000000000000000000000000000000000000000'
+
+// Uint Max Supply
+export const UINT_MAX_SUPPLY =
+  115792089237316195423570985008687907853269984665640564039457584007913129639935n
+
+// Formatted Uint Max Supply
+export const GET_HUMAN_READABLE_UINT_MAX_SUPPLY = (decimals: number) =>
+  formatUnits(UINT_MAX_SUPPLY, decimals)
 
 export const FM_BASE = [
   {

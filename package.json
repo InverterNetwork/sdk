@@ -62,7 +62,7 @@
     "viem": "^2.7.6"
   },
   "dependencies": {
-    "@inverter-network/abis": "0.3.0-alpha.0",
+    "@inverter-network/abis": "0.3.0-alpha.1",
     "@urql/core": "^5.0.6",
     "subscriptions-transport-ws": "^0.11.0",
     "type-fest-4": "npm:type-fest@^4.26.0"
