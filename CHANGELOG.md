@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.3.0](https://github.com/InverterNetwork/sdk/compare/v0.3.0-alpha.8...v0.3.0) (2024-10-14)
+
 ## [0.3.0-alpha.0](https://github.com/InverterNetwork/sdk/compare/v0.2.10...v0.3.0-alpha.0) (2024-10-02)
 
 
