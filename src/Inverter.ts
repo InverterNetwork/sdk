@@ -3,7 +3,7 @@ import getDeploy from './getDeploy'
 import getDeployOptions from './getDeployOptions'
 import deploy from './deploy'
 import { getModule, graphql } from '.'
-import { isEqual } from 'lodash'
+import lodash from 'lodash'
 
 import type { ModuleName } from '@inverter-network/abis'
 import type {
@@ -56,10 +56,10 @@ export class Inverter<W extends PopWalletClient | undefined = undefined> {
       Inverter.instance = new Inverter<W>({ publicClient, walletClient })
     }
 
-    if (!isEqual(Inverter.instance.publicClient, publicClient))
+    if (!lodash.isEqual(Inverter.instance.publicClient, publicClient))
       Inverter.instance.updatePublicClient(publicClient)
 
-    if (!isEqual(Inverter.instance.walletClient, walletClient))
+    if (!lodash.isEqual(Inverter.instance.walletClient, walletClient))
       Inverter.instance.updateWalletClient(walletClient)
 
     return Inverter.instance as Inverter<W>
