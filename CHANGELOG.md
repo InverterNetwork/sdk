@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.2](https://github.com/InverterNetwork/sdk/compare/v0.3.1...v0.3.2) (2024-10-15)
+
+
+### Bug Fixes
+
+* excessive type dec at workflow tokens ([7cb7c97](https://github.com/InverterNetwork/sdk/commit/7cb7c972813206ec27a0b0cf660bf9d10f0fb58a))
+
 ### [0.3.1](https://github.com/InverterNetwork/sdk/compare/v0.3.0...v0.3.1) (2024-10-15)
 
 
