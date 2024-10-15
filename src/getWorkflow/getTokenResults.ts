@@ -1,5 +1,5 @@
 import type { Hex } from 'viem'
-import type { PopPublicClient, PopWalletClient } from '@/types'
+import type { GetModuleReturn, PopPublicClient, PopWalletClient } from '@/types'
 import { ERC20_ABI, FM_BASE } from '@/utils'
 import { getModule, Inverter } from '@'
 
@@ -12,6 +12,16 @@ export type GetWorkflowTokenResultsParams<
   self?: Inverter<W>
 }
 
+export type GetWorkflowTokenResultsReturnTypes<
+  T extends 'ERC20' | 'ERC20Issuance_v1',
+  W extends PopWalletClient | undefined = undefined,
+> = {
+  address: Hex
+  module: GetModuleReturn<T, W>
+  decimals: number
+  symbol: string
+}
+
 export const getFundingTokenResults = async <
   W extends PopWalletClient | undefined = undefined,
 >({
@@ -19,7 +29,9 @@ export const getFundingTokenResults = async <
   publicClient,
   walletClient,
   self,
-}: GetWorkflowTokenResultsParams<W>) => {
+}: GetWorkflowTokenResultsParams<W>): Promise<
+  GetWorkflowTokenResultsReturnTypes<'ERC20', W>
+> => {
   const { readContract } = publicClient
 
   const address = <Hex>await readContract({
@@ -63,7 +75,9 @@ export const getIssuanceTokenResults = async <
   publicClient,
   walletClient,
   self,
-}: GetWorkflowTokenResultsParams<W>) => {
+}: GetWorkflowTokenResultsParams<W>): Promise<
+  GetWorkflowTokenResultsReturnTypes<'ERC20Issuance_v1', W>
+> => {
   const { readContract } = publicClient
 
   const address = <Hex>await readContract({
