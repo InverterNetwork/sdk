@@ -36,6 +36,9 @@ describe('#PIM_DEFAULT', async () => {
   const { estimateGas, run, inputs } = await sdk.getDeploy({ requestedModules })
 
   it('1. Match expected inputs', () => {
+    expect(
+      inputs.fundingManager.inputs.find((i) => i?.name === 'issuanceToken')
+    ).toBeDefined()
     expect(inputs).toEqual({
       orchestrator: getModuleSchema('OrchestratorFactory_v1'),
       authorizer: getModuleSchema('AUT_Roles_v1'),

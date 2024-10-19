@@ -19,7 +19,7 @@ import {
   CUSTOM_PIM_FM_BC_Bancor_VirtualSupply_v1_ARGS,
 } from 'tests/helpers'
 
-describe('#PIM_IMMUTABLE', async () => {
+describe('#PIM_IMMUTABLE_STAKING', async () => {
   const { walletClient } = sdk
   const deployer = walletClient.account.address
 
@@ -27,6 +27,7 @@ describe('#PIM_IMMUTABLE', async () => {
     fundingManager: 'FM_BC_Bancor_Redeeming_VirtualSupply_v1',
     authorizer: 'AUT_Roles_v1',
     paymentProcessor: 'PP_Simple_v1',
+    optionalModules: ['LM_PC_Staking_v1'],
   } as const satisfies RequestedModules<'restricted-pim'>
 
   const args = {
@@ -42,11 +43,33 @@ describe('#PIM_IMMUTABLE', async () => {
       maxSupply: GET_HUMAN_READABLE_UINT_MAX_SUPPLY(18),
     },
     initialPurchaseAmount: '1000',
+    optionalModules: {
+      LM_PC_Staking_v1: {
+        stakingToken: '' as `0x${string}`,
+      },
+    },
   } as const satisfies GetUserArgs<typeof requestedModules, 'immutable-pim'>
 
   let orchestratorAddress: `0x${string}`
   let getDeployReturn: GetDeployReturn<typeof requestedModules, 'immutable-pim'>
   let workflow: Workflow<typeof walletClient, typeof requestedModules>
+
+  it('0. Set Staking Token', async () => {
+    const stakingToken = await sdk.deploy({
+      name: 'ERC20Issuance_v1',
+      args: {
+        symbol: 'ST',
+        name: 'Staking Token',
+        decimals: 18,
+        maxSupply: GET_HUMAN_READABLE_UINT_MAX_SUPPLY(18),
+        initialAdmin: deployer,
+      },
+    })
+
+    // @ts-expect-error - type is not writable
+    args.optionalModules.LM_PC_Staking_v1.stakingToken =
+      stakingToken.contractAddress
+  })
 
   it('1. Set getDeployReturn', async () => {
     getDeployReturn = await sdk.getDeploy({
@@ -56,11 +79,6 @@ describe('#PIM_IMMUTABLE', async () => {
   })
 
   it('2. Match expected inputs', () => {
-    expect(
-      getDeployReturn.inputs.fundingManager.inputs.find(
-        (i) => i?.name === 'issuanceToken'
-      )
-    ).toBeUndefined()
     expect(getDeployReturn.inputs).toEqual({
       orchestrator: getModuleSchema('OrchestratorFactory_v1'),
       authorizer: getModuleSchema('AUT_Roles_v1'),
@@ -78,6 +96,7 @@ describe('#PIM_IMMUTABLE', async () => {
         'Immutable_PIM_Factory_v1',
         'initialPurchaseAmount'
       ),
+      optionalModules: [getModuleSchema('LM_PC_Staking_v1')],
     })
   })
 

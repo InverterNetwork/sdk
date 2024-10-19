@@ -129,7 +129,9 @@ describe('#PIM_RESTRICTED', async () => {
       orchestrator: getModuleSchema('OrchestratorFactory_v1'),
       authorizer: getModuleSchema('AUT_Roles_v1'),
       fundingManager: getModuleSchema(
-        'FM_BC_Restricted_Bancor_Redeeming_VirtualSupply_v1'
+        'FM_BC_Restricted_Bancor_Redeeming_VirtualSupply_v1',
+        undefined,
+        'restricted-pim'
       ),
       paymentProcessor: getModuleSchema('PP_Simple_v1'),
       issuanceToken: getModuleSchema(

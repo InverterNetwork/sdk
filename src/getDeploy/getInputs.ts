@@ -32,11 +32,7 @@ export const getModuleSchema = <
       ]
     : moduleData.deploymentInputs.configData
 
-  if (
-    name.includes('FM_BC') &&
-    factoryType !== 'default' &&
-    Array.isArray(inputs)
-  ) {
+  if (name.includes('FM_BC') && factoryType && factoryType !== 'default') {
     inputs = inputs.filter((i) => i?.name !== 'issuanceToken') as any
   }
 
@@ -85,7 +81,11 @@ export default function getInputs<
 >(requestedModules: T, factoryType: FT): DeploySchema<T, FT> {
   const mandatoryResult = MANDATORY_MODULES.reduce(
     (result, moduleType) => {
-      const moduleSchema = getModuleSchema(requestedModules[moduleType])
+      const moduleSchema = getModuleSchema(
+        requestedModules[moduleType],
+        undefined,
+        factoryType
+      )
       // @ts-expect-error - TS is not adviced to match schemas moduleType
       result[moduleType] = moduleSchema
       return result
