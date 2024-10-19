@@ -14,12 +14,14 @@ export type ModuleSchema<
 > = {
   name: ON extends string ? ON : N
   inputs: ON extends string
-    ? Extract<
-        GetDeploymentParameters<N>[number],
-        {
-          name: ON
-        }
-      >
+    ? [
+        Extract<
+          GetDeploymentParameters<N>[number],
+          {
+            name: ON
+          }
+        >,
+      ]
     : GetDeploymentParameters<N>
 }
 

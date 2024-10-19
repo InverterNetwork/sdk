@@ -16,18 +16,29 @@ export const getModuleSchema = <
   ON extends string | undefined = undefined,
 >(
   name: T,
-  overrideName?: ON
+  overrideName?: ON,
+  factoryType?: FactoryType
 ) => {
   const moduleData = getModuleData(name)
 
   if (!('deploymentInputs' in moduleData))
     throw new Error("Module data doesn't have deploymentsData")
 
-  const inputs = !!overrideName
-    ? moduleData.deploymentInputs.configData.find(
-        ({ name }) => name === overrideName
-      )
+  let inputs = !!overrideName
+    ? [
+        moduleData.deploymentInputs.configData.find(
+          ({ name }) => name === overrideName
+        ),
+      ]
     : moduleData.deploymentInputs.configData
+
+  if (
+    name.includes('FM_BC') &&
+    factoryType !== 'default' &&
+    Array.isArray(inputs)
+  ) {
+    inputs = inputs.filter((i) => i?.name !== 'issuanceToken') as any
+  }
 
   const result = {
     inputs,
@@ -81,6 +92,9 @@ export default function getInputs<
     },
     {
       orchestrator: getModuleSchema('OrchestratorFactory_v1'),
+      authorizer: {},
+      fundingManager: {},
+      paymentProcessor: {},
       ...getOtherFactoryTypeInputs(factoryType),
     } as unknown as DeploySchema<Omit<T, 'optionalModules'>, FT>
   )
