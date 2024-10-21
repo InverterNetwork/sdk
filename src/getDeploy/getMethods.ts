@@ -1,4 +1,4 @@
-import { formatEther } from 'viem'
+import { decodeEventLog, formatEther, parseAbiItem } from 'viem'
 import type { PublicClient } from 'viem'
 import type {
   DeployMethodKind,
@@ -92,18 +92,75 @@ export default async function getMethods<
           }
         },
         write: async () => {
-          const simulationRes = await simulateWrite(arr, {
-            account: walletClient.account.address,
-          })
-          const orchestratorAddress = simulationRes.result as `0x${string}`
+          let orchestratorAddress = '' as `0x${string}`
+
+          if (factoryType === 'immutable-pim') {
+            const simulationRes = await simulateWrite(arr, {
+              account: walletClient.account.address,
+            })
+            orchestratorAddress = simulationRes.result as `0x${string}`
+          }
+
+          const factoryTypeGuard = (
+            factoryType: FT
+          ): factoryType is Exclude<FT, 'immutable-pim'> =>
+            factoryType !== 'immutable-pim'
+
           const transactionHash = await write(arr, {} as any)
 
+          if (factoryTypeGuard(factoryType)) {
+            const eventAbi = {
+              'restricted-pim': () =>
+                parseAbiItem(
+                  'event PIMWorkflowCreated(address indexed orchestrator, address indexed issuanceToken, address indexed beneficiary)'
+                ),
+              default: () =>
+                parseAbiItem(
+                  'event OrchestratorCreated(uint256 indexed orchestratorId, address indexed orchestratorAddress)'
+                ),
+            }
+
+            const receipt = await publicClient.waitForTransactionReceipt({
+              hash: transactionHash,
+            })
+
+            const log = receipt.logs.find(
+              (log) =>
+                log.address.toLowerCase() === factoryAddress.toLowerCase()
+            )
+
+            if (log) {
+              switch (factoryType) {
+                case 'restricted-pim':
+                  const { args } = decodeEventLog({
+                    abi: [eventAbi['restricted-pim']()],
+                    data: log.data,
+                    topics: log.topics,
+                  })
+                  orchestratorAddress = args.orchestrator
+                  break
+                case 'default':
+                  const { args: args2 } = decodeEventLog({
+                    abi: [eventAbi.default()],
+                    data: log.data,
+                    topics: log.topics,
+                  })
+                  orchestratorAddress = args2.orchestratorAddress
+                  break
+              }
+            } else {
+              throw new Error('Expected event not found in transaction receipt')
+            }
+          }
+
           // handle options receipt
-          await handleOptions.receipt({
-            hash: transactionHash,
-            options,
-            publicClient,
-          })
+          if (!factoryTypeGuard(factoryType)) {
+            await handleOptions.receipt({
+              hash: transactionHash,
+              options,
+              publicClient,
+            })
+          }
 
           return {
             orchestratorAddress,
