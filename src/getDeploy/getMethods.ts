@@ -120,9 +120,18 @@ export default async function getMethods<
                 ),
             }
 
-            const receipt = await publicClient.waitForTransactionReceipt({
+            const receipt = await handleOptions.receipt({
               hash: transactionHash,
+              options: {
+                ...options,
+                confirmations: options?.confirmations ?? 1,
+              },
+              publicClient,
             })
+
+            if (!receipt) {
+              throw new Error('Transaction receipt not found')
+            }
 
             const log = receipt.logs.find(
               (log) =>
