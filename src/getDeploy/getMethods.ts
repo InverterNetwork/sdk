@@ -9,7 +9,11 @@ import type {
   PopWalletClient,
   RequestedModules,
 } from '..'
-import { getViemMethods, handlePimFactoryApprove } from './utils'
+import {
+  getFactoryAddress,
+  getViemMethods,
+  handlePimFactoryApprove,
+} from './utils'
 import getArgs from './getArgs'
 import { handleError, handleOptions } from '../utils'
 import { getModuleData } from '@inverter-network/abis'
@@ -94,81 +98,49 @@ export default async function getMethods<
         write: async () => {
           let orchestratorAddress = '' as `0x${string}`
 
-          if (factoryType === 'immutable-pim') {
-            const simulationRes = await simulateWrite(arr, {
-              account: walletClient.account.address,
-            })
-            orchestratorAddress = simulationRes.result as `0x${string}`
-          }
-
-          const factoryTypeGuard = (
-            factoryType: FT
-          ): factoryType is Exclude<FT, 'immutable-pim'> =>
-            factoryType !== 'immutable-pim'
-
           const transactionHash = await write(arr, {} as any)
 
-          if (factoryTypeGuard(factoryType)) {
-            const eventAbi = {
-              'restricted-pim': () =>
-                parseAbiItem(
-                  'event PIMWorkflowCreated(address indexed orchestrator, address indexed issuanceToken, address indexed beneficiary)'
-                ),
-              default: () =>
-                parseAbiItem(
-                  'event OrchestratorCreated(uint256 indexed orchestratorId, address indexed orchestratorAddress)'
-                ),
-            }
+          const eventAbi = parseAbiItem(
+            'event OrchestratorCreated(uint256 indexed orchestratorId, address indexed orchestratorAddress)'
+          )
 
-            const receipt = await handleOptions.receipt({
-              hash: transactionHash,
-              options: {
-                ...options,
-                confirmations: options?.confirmations ?? 1,
-              },
-              publicClient,
-            })
+          const receipt = await handleOptions.receipt({
+            hash: transactionHash,
+            options: {
+              ...options,
+              confirmations: options?.confirmations ?? 1,
+            },
+            publicClient,
+          })
 
-            if (!receipt) {
-              throw new Error('Transaction receipt not found')
-            }
-
-            const log = receipt.logs.find(
-              (log) =>
-                log.address.toLowerCase() === factoryAddress.toLowerCase()
-            )
-
-            if (log) {
-              switch (factoryType) {
-                case 'restricted-pim':
-                  const { args } = decodeEventLog({
-                    abi: [eventAbi['restricted-pim']()],
-                    data: log.data,
-                    topics: log.topics,
-                  })
-                  orchestratorAddress = args.orchestrator
-                  break
-                case 'default':
-                  const { args: args2 } = decodeEventLog({
-                    abi: [eventAbi.default()],
-                    data: log.data,
-                    topics: log.topics,
-                  })
-                  orchestratorAddress = args2.orchestratorAddress
-                  break
-              }
-            } else {
-              throw new Error('Expected event not found in transaction receipt')
-            }
+          if (!receipt) {
+            throw new Error('Transaction receipt not found')
           }
 
-          // handle options receipt
-          if (!factoryTypeGuard(factoryType)) {
-            await handleOptions.receipt({
-              hash: transactionHash,
-              options,
-              publicClient,
+          const defaltFactoryAddress = await getFactoryAddress({
+            version: 'v1.0.0',
+            factoryType: 'default',
+            chainId: publicClient.chain!.id,
+          })
+
+          if (!defaltFactoryAddress) {
+            throw new Error('Default factory address not found')
+          }
+
+          const log = receipt.logs.find(
+            (log) =>
+              log.address.toLowerCase() === defaltFactoryAddress.toLowerCase()
+          )
+
+          if (log) {
+            const { args } = decodeEventLog({
+              abi: [eventAbi],
+              data: log.data,
+              topics: log.topics,
             })
+            orchestratorAddress = args.orchestratorAddress
+          } else {
+            throw new Error('Expected event not found in transaction receipt')
           }
 
           return {
