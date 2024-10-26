@@ -89,10 +89,26 @@ export class Inverter<W extends PopWalletClient | undefined = undefined> {
     requestedModules?: T
   }): Promise<Workflow<W, T>> {
     const chainId = this.publicClient.chain.id
+
     const chainOrchestratorAddress =
       `${chainId}:${orchestratorAddress}` as const
+
     const cachedWorkflow = this.workflows.get(chainOrchestratorAddress)
-    if (cachedWorkflow) return cachedWorkflow
+
+    const workflowHasNoWalletClient = !cachedWorkflow?.orchestrator?.write
+
+    const missingWalletClientInCache =
+      this.walletClient && workflowHasNoWalletClient
+
+    const unwantedWalletClientInCache =
+      !this.walletClient && !workflowHasNoWalletClient
+
+    if (
+      cachedWorkflow &&
+      !missingWalletClientInCache &&
+      !unwantedWalletClientInCache
+    )
+      return cachedWorkflow
     else {
       const workflow = await getWorkflow({
         publicClient: this.publicClient,
