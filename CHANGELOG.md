@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.6](https://github.com/InverterNetwork/sdk/compare/v0.3.5...v0.3.6) (2024-10-26)
+
+
+### Bug Fixes
+
+* update workflow cache if wallet client is present or not ([739a3d2](https://github.com/InverterNetwork/sdk/commit/739a3d28bfeb6d14d37440dd51f82514a2bcd15f))
+
 ### [0.3.5](https://github.com/InverterNetwork/sdk/compare/v0.3.5-alpha.2...v0.3.5) (2024-10-26)
 
 ### [0.3.4](https://github.com/InverterNetwork/sdk/compare/v0.3.3...v0.3.4) (2024-10-19)
