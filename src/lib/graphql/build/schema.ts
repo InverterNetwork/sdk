@@ -9,8 +9,7 @@ export type Scalars = {
   String: string
   contract_type: any
   entity_type: any
-  event_type: any
-  json: any
+  jsonb: any
   numeric: any
   swaptype: any
   timestamp: any
@@ -27,6 +26,8 @@ export interface BondingCurve {
   collateralToken: Scalars['String'] | null
   collateralTokenDecimals: Scalars['Int'] | null
   db_write_timestamp: Scalars['timestamp'] | null
+  /** An array relationship */
+  feeClaim: FeeClaim[]
   id: Scalars['String']
   issuanceToken: Scalars['String'] | null
   issuanceTokenDecimals: Scalars['Int'] | null
@@ -61,6 +62,30 @@ export type BondingCurve_select_column =
   | 'virtualCollateralRaw'
   | 'virtualIssuance'
   | 'workflow_id'
+
+/** columns and relationships of "FeeClaim" */
+export interface FeeClaim {
+  amount: Scalars['numeric']
+  blockTimestamp: Scalars['Int']
+  /** An object relationship */
+  bondingCurve: BondingCurve | null
+  bondingCurve_id: Scalars['String']
+  chainId: Scalars['Int']
+  db_write_timestamp: Scalars['timestamp'] | null
+  id: Scalars['String']
+  recipient: Scalars['String']
+  __typename: 'FeeClaim'
+}
+
+/** select columns of table "FeeClaim" */
+export type FeeClaim_select_column =
+  | 'amount'
+  | 'blockTimestamp'
+  | 'bondingCurve_id'
+  | 'chainId'
+  | 'db_write_timestamp'
+  | 'id'
+  | 'recipient'
 
 /** columns and relationships of "LinearVesting" */
 export interface LinearVesting {
@@ -263,21 +288,29 @@ export type cursor_ordering = 'ASC' | 'DESC'
 
 /** columns and relationships of "dynamic_contract_registry" */
 export interface dynamic_contract_registry {
-  block_timestamp: Scalars['Int']
   chain_id: Scalars['Int']
   contract_address: Scalars['String']
   contract_type: Scalars['contract_type']
-  event_id: Scalars['numeric']
+  registering_event_block_number: Scalars['Int']
+  registering_event_block_timestamp: Scalars['Int']
+  registering_event_contract_name: Scalars['String']
+  registering_event_log_index: Scalars['Int']
+  registering_event_name: Scalars['String']
+  registering_event_src_address: Scalars['String']
   __typename: 'dynamic_contract_registry'
 }
 
 /** select columns of table "dynamic_contract_registry" */
 export type dynamic_contract_registry_select_column =
-  | 'block_timestamp'
   | 'chain_id'
   | 'contract_address'
   | 'contract_type'
-  | 'event_id'
+  | 'registering_event_block_number'
+  | 'registering_event_block_timestamp'
+  | 'registering_event_contract_name'
+  | 'registering_event_log_index'
+  | 'registering_event_name'
+  | 'registering_event_src_address'
 
 /** columns and relationships of "end_of_block_range_scanned_data" */
 export interface end_of_block_range_scanned_data {
@@ -305,7 +338,7 @@ export interface entity_history {
   /** An object relationship */
   event: raw_events | null
   log_index: Scalars['Int']
-  params: Scalars['json'] | null
+  params: Scalars['jsonb'] | null
   previous_block_number: Scalars['Int'] | null
   previous_block_timestamp: Scalars['Int'] | null
   previous_chain_id: Scalars['Int'] | null
@@ -323,8 +356,8 @@ export interface entity_history_filter {
   /** An object relationship */
   event: raw_events | null
   log_index: Scalars['Int']
-  new_val: Scalars['json'] | null
-  old_val: Scalars['json'] | null
+  new_val: Scalars['jsonb'] | null
+  old_val: Scalars['jsonb'] | null
   previous_block_number: Scalars['Int'] | null
   previous_log_index: Scalars['Int']
   __typename: 'entity_history_filter'
@@ -362,8 +395,8 @@ export interface event_sync_state {
   block_number: Scalars['Int']
   block_timestamp: Scalars['Int']
   chain_id: Scalars['Int']
+  is_pre_registering_dynamic_contracts: Scalars['Boolean']
   log_index: Scalars['Int']
-  transaction_index: Scalars['Int']
   __typename: 'event_sync_state'
 }
 
@@ -372,8 +405,8 @@ export type event_sync_state_select_column =
   | 'block_number'
   | 'block_timestamp'
   | 'chain_id'
+  | 'is_pre_registering_dynamic_contracts'
   | 'log_index'
-  | 'transaction_index'
 
 /** column ordering options */
 export type order_by =
@@ -409,6 +442,10 @@ export interface query_root {
   BondingCurve: BondingCurve[]
   /** fetch data from the table: "BondingCurve" using primary key columns */
   BondingCurve_by_pk: BondingCurve | null
+  /** fetch data from the table: "FeeClaim" */
+  FeeClaim: FeeClaim[]
+  /** fetch data from the table: "FeeClaim" using primary key columns */
+  FeeClaim_by_pk: FeeClaim | null
   /** fetch data from the table: "LinearVesting" */
   LinearVesting: LinearVesting[]
   /** fetch data from the table: "LinearVesting" using primary key columns */
@@ -472,37 +509,39 @@ export interface query_root {
 
 /** columns and relationships of "raw_events" */
 export interface raw_events {
+  block_fields: Scalars['jsonb']
   block_hash: Scalars['String']
   block_number: Scalars['Int']
   block_timestamp: Scalars['Int']
   chain_id: Scalars['Int']
+  contract_name: Scalars['String']
   db_write_timestamp: Scalars['timestamp'] | null
   /** An array relationship */
   event_history: entity_history[]
   event_id: Scalars['numeric']
-  event_type: Scalars['event_type']
+  event_name: Scalars['String']
   log_index: Scalars['Int']
-  params: Scalars['json']
+  params: Scalars['jsonb']
   src_address: Scalars['String']
-  transaction_hash: Scalars['String']
-  transaction_index: Scalars['Int']
+  transaction_fields: Scalars['jsonb']
   __typename: 'raw_events'
 }
 
 /** select columns of table "raw_events" */
 export type raw_events_select_column =
+  | 'block_fields'
   | 'block_hash'
   | 'block_number'
   | 'block_timestamp'
   | 'chain_id'
+  | 'contract_name'
   | 'db_write_timestamp'
   | 'event_id'
-  | 'event_type'
+  | 'event_name'
   | 'log_index'
   | 'params'
   | 'src_address'
-  | 'transaction_hash'
-  | 'transaction_index'
+  | 'transaction_fields'
 
 export interface subscription_root {
   /** fetch data from the table: "BondingCurve" */
@@ -511,6 +550,12 @@ export interface subscription_root {
   BondingCurve_by_pk: BondingCurve | null
   /** fetch data from the table in a streaming manner: "BondingCurve" */
   BondingCurve_stream: BondingCurve[]
+  /** fetch data from the table: "FeeClaim" */
+  FeeClaim: FeeClaim[]
+  /** fetch data from the table: "FeeClaim" using primary key columns */
+  FeeClaim_by_pk: FeeClaim | null
+  /** fetch data from the table in a streaming manner: "FeeClaim" */
+  FeeClaim_stream: FeeClaim[]
   /** fetch data from the table: "LinearVesting" */
   LinearVesting: LinearVesting[]
   /** fetch data from the table: "LinearVesting" using primary key columns */
@@ -612,6 +657,21 @@ export interface BondingCurveGenqlSelection {
   collateralToken?: boolean | number
   collateralTokenDecimals?: boolean | number
   db_write_timestamp?: boolean | number
+  /** An array relationship */
+  feeClaim?: FeeClaimGenqlSelection & {
+    __args?: {
+      /** distinct select on columns */
+      distinct_on?: FeeClaim_select_column[] | null
+      /** limit the number of rows returned */
+      limit?: Scalars['Int'] | null
+      /** skip the first n rows. Use only with order_by */
+      offset?: Scalars['Int'] | null
+      /** sort the rows by one or more columns */
+      order_by?: FeeClaim_order_by[] | null
+      /** filter the rows returned */
+      where?: FeeClaim_bool_exp | null
+    }
+  }
   id?: boolean | number
   issuanceToken?: boolean | number
   issuanceTokenDecimals?: boolean | number
@@ -654,6 +714,7 @@ export interface BondingCurve_bool_exp {
   collateralToken?: String_comparison_exp | null
   collateralTokenDecimals?: Int_comparison_exp | null
   db_write_timestamp?: timestamp_comparison_exp | null
+  feeClaim?: FeeClaim_bool_exp | null
   id?: String_comparison_exp | null
   issuanceToken?: String_comparison_exp | null
   issuanceTokenDecimals?: Int_comparison_exp | null
@@ -676,6 +737,7 @@ export interface BondingCurve_order_by {
   collateralToken?: order_by | null
   collateralTokenDecimals?: order_by | null
   db_write_timestamp?: order_by | null
+  feeClaim_aggregate?: FeeClaim_aggregate_order_by | null
   id?: order_by | null
   issuanceToken?: order_by | null
   issuanceTokenDecimals?: order_by | null
@@ -728,6 +790,160 @@ export interface Boolean_comparison_exp {
   _lte?: Scalars['Boolean'] | null
   _neq?: Scalars['Boolean'] | null
   _nin?: Scalars['Boolean'][] | null
+}
+
+/** columns and relationships of "FeeClaim" */
+export interface FeeClaimGenqlSelection {
+  amount?: boolean | number
+  blockTimestamp?: boolean | number
+  /** An object relationship */
+  bondingCurve?: BondingCurveGenqlSelection
+  bondingCurve_id?: boolean | number
+  chainId?: boolean | number
+  db_write_timestamp?: boolean | number
+  id?: boolean | number
+  recipient?: boolean | number
+  __typename?: boolean | number
+  __scalar?: boolean | number
+}
+
+/** order by aggregate values of table "FeeClaim" */
+export interface FeeClaim_aggregate_order_by {
+  avg?: FeeClaim_avg_order_by | null
+  count?: order_by | null
+  max?: FeeClaim_max_order_by | null
+  min?: FeeClaim_min_order_by | null
+  stddev?: FeeClaim_stddev_order_by | null
+  stddev_pop?: FeeClaim_stddev_pop_order_by | null
+  stddev_samp?: FeeClaim_stddev_samp_order_by | null
+  sum?: FeeClaim_sum_order_by | null
+  var_pop?: FeeClaim_var_pop_order_by | null
+  var_samp?: FeeClaim_var_samp_order_by | null
+  variance?: FeeClaim_variance_order_by | null
+}
+
+/** order by avg() on columns of table "FeeClaim" */
+export interface FeeClaim_avg_order_by {
+  amount?: order_by | null
+  blockTimestamp?: order_by | null
+  chainId?: order_by | null
+}
+
+/** Boolean expression to filter rows from the table "FeeClaim". All fields are combined with a logical 'AND'. */
+export interface FeeClaim_bool_exp {
+  _and?: FeeClaim_bool_exp[] | null
+  _not?: FeeClaim_bool_exp | null
+  _or?: FeeClaim_bool_exp[] | null
+  amount?: numeric_comparison_exp | null
+  blockTimestamp?: Int_comparison_exp | null
+  bondingCurve?: BondingCurve_bool_exp | null
+  bondingCurve_id?: String_comparison_exp | null
+  chainId?: Int_comparison_exp | null
+  db_write_timestamp?: timestamp_comparison_exp | null
+  id?: String_comparison_exp | null
+  recipient?: String_comparison_exp | null
+}
+
+/** order by max() on columns of table "FeeClaim" */
+export interface FeeClaim_max_order_by {
+  amount?: order_by | null
+  blockTimestamp?: order_by | null
+  bondingCurve_id?: order_by | null
+  chainId?: order_by | null
+  db_write_timestamp?: order_by | null
+  id?: order_by | null
+  recipient?: order_by | null
+}
+
+/** order by min() on columns of table "FeeClaim" */
+export interface FeeClaim_min_order_by {
+  amount?: order_by | null
+  blockTimestamp?: order_by | null
+  bondingCurve_id?: order_by | null
+  chainId?: order_by | null
+  db_write_timestamp?: order_by | null
+  id?: order_by | null
+  recipient?: order_by | null
+}
+
+/** Ordering options when selecting data from "FeeClaim". */
+export interface FeeClaim_order_by {
+  amount?: order_by | null
+  blockTimestamp?: order_by | null
+  bondingCurve?: BondingCurve_order_by | null
+  bondingCurve_id?: order_by | null
+  chainId?: order_by | null
+  db_write_timestamp?: order_by | null
+  id?: order_by | null
+  recipient?: order_by | null
+}
+
+/** order by stddev() on columns of table "FeeClaim" */
+export interface FeeClaim_stddev_order_by {
+  amount?: order_by | null
+  blockTimestamp?: order_by | null
+  chainId?: order_by | null
+}
+
+/** order by stddev_pop() on columns of table "FeeClaim" */
+export interface FeeClaim_stddev_pop_order_by {
+  amount?: order_by | null
+  blockTimestamp?: order_by | null
+  chainId?: order_by | null
+}
+
+/** order by stddev_samp() on columns of table "FeeClaim" */
+export interface FeeClaim_stddev_samp_order_by {
+  amount?: order_by | null
+  blockTimestamp?: order_by | null
+  chainId?: order_by | null
+}
+
+/** Streaming cursor of the table "FeeClaim" */
+export interface FeeClaim_stream_cursor_input {
+  /** Stream column input with initial value */
+  initial_value: FeeClaim_stream_cursor_value_input
+  /** cursor ordering */
+  ordering?: cursor_ordering | null
+}
+
+/** Initial value of the column from where the streaming should start */
+export interface FeeClaim_stream_cursor_value_input {
+  amount?: Scalars['numeric'] | null
+  blockTimestamp?: Scalars['Int'] | null
+  bondingCurve_id?: Scalars['String'] | null
+  chainId?: Scalars['Int'] | null
+  db_write_timestamp?: Scalars['timestamp'] | null
+  id?: Scalars['String'] | null
+  recipient?: Scalars['String'] | null
+}
+
+/** order by sum() on columns of table "FeeClaim" */
+export interface FeeClaim_sum_order_by {
+  amount?: order_by | null
+  blockTimestamp?: order_by | null
+  chainId?: order_by | null
+}
+
+/** order by var_pop() on columns of table "FeeClaim" */
+export interface FeeClaim_var_pop_order_by {
+  amount?: order_by | null
+  blockTimestamp?: order_by | null
+  chainId?: order_by | null
+}
+
+/** order by var_samp() on columns of table "FeeClaim" */
+export interface FeeClaim_var_samp_order_by {
+  amount?: order_by | null
+  blockTimestamp?: order_by | null
+  chainId?: order_by | null
+}
+
+/** order by variance() on columns of table "FeeClaim" */
+export interface FeeClaim_variance_order_by {
+  amount?: order_by | null
+  blockTimestamp?: order_by | null
+  chainId?: order_by | null
 }
 
 /** Boolean expression to compare columns of type "Int". All fields are combined with logical 'AND'. */
@@ -1552,11 +1768,15 @@ export interface contract_type_comparison_exp {
 
 /** columns and relationships of "dynamic_contract_registry" */
 export interface dynamic_contract_registryGenqlSelection {
-  block_timestamp?: boolean | number
   chain_id?: boolean | number
   contract_address?: boolean | number
   contract_type?: boolean | number
-  event_id?: boolean | number
+  registering_event_block_number?: boolean | number
+  registering_event_block_timestamp?: boolean | number
+  registering_event_contract_name?: boolean | number
+  registering_event_log_index?: boolean | number
+  registering_event_name?: boolean | number
+  registering_event_src_address?: boolean | number
   __typename?: boolean | number
   __scalar?: boolean | number
 }
@@ -1566,20 +1786,28 @@ export interface dynamic_contract_registry_bool_exp {
   _and?: dynamic_contract_registry_bool_exp[] | null
   _not?: dynamic_contract_registry_bool_exp | null
   _or?: dynamic_contract_registry_bool_exp[] | null
-  block_timestamp?: Int_comparison_exp | null
   chain_id?: Int_comparison_exp | null
   contract_address?: String_comparison_exp | null
   contract_type?: contract_type_comparison_exp | null
-  event_id?: numeric_comparison_exp | null
+  registering_event_block_number?: Int_comparison_exp | null
+  registering_event_block_timestamp?: Int_comparison_exp | null
+  registering_event_contract_name?: String_comparison_exp | null
+  registering_event_log_index?: Int_comparison_exp | null
+  registering_event_name?: String_comparison_exp | null
+  registering_event_src_address?: String_comparison_exp | null
 }
 
 /** Ordering options when selecting data from "dynamic_contract_registry". */
 export interface dynamic_contract_registry_order_by {
-  block_timestamp?: order_by | null
   chain_id?: order_by | null
   contract_address?: order_by | null
   contract_type?: order_by | null
-  event_id?: order_by | null
+  registering_event_block_number?: order_by | null
+  registering_event_block_timestamp?: order_by | null
+  registering_event_contract_name?: order_by | null
+  registering_event_log_index?: order_by | null
+  registering_event_name?: order_by | null
+  registering_event_src_address?: order_by | null
 }
 
 /** Streaming cursor of the table "dynamic_contract_registry" */
@@ -1592,11 +1820,15 @@ export interface dynamic_contract_registry_stream_cursor_input {
 
 /** Initial value of the column from where the streaming should start */
 export interface dynamic_contract_registry_stream_cursor_value_input {
-  block_timestamp?: Scalars['Int'] | null
   chain_id?: Scalars['Int'] | null
   contract_address?: Scalars['String'] | null
   contract_type?: Scalars['contract_type'] | null
-  event_id?: Scalars['numeric'] | null
+  registering_event_block_number?: Scalars['Int'] | null
+  registering_event_block_timestamp?: Scalars['Int'] | null
+  registering_event_contract_name?: Scalars['String'] | null
+  registering_event_log_index?: Scalars['Int'] | null
+  registering_event_name?: Scalars['String'] | null
+  registering_event_src_address?: Scalars['String'] | null
 }
 
 /** columns and relationships of "end_of_block_range_scanned_data" */
@@ -1710,7 +1942,7 @@ export interface entity_history_bool_exp {
   entity_type?: entity_type_comparison_exp | null
   event?: raw_events_bool_exp | null
   log_index?: Int_comparison_exp | null
-  params?: json_comparison_exp | null
+  params?: jsonb_comparison_exp | null
   previous_block_number?: Int_comparison_exp | null
   previous_block_timestamp?: Int_comparison_exp | null
   previous_chain_id?: Int_comparison_exp | null
@@ -1763,8 +1995,8 @@ export interface entity_history_filter_bool_exp {
   entity_type?: entity_type_comparison_exp | null
   event?: raw_events_bool_exp | null
   log_index?: Int_comparison_exp | null
-  new_val?: json_comparison_exp | null
-  old_val?: json_comparison_exp | null
+  new_val?: jsonb_comparison_exp | null
+  old_val?: jsonb_comparison_exp | null
   previous_block_number?: Int_comparison_exp | null
   previous_log_index?: Int_comparison_exp | null
 }
@@ -1800,8 +2032,8 @@ export interface entity_history_filter_stream_cursor_value_input {
   entity_id?: Scalars['String'] | null
   entity_type?: Scalars['entity_type'] | null
   log_index?: Scalars['Int'] | null
-  new_val?: Scalars['json'] | null
-  old_val?: Scalars['json'] | null
+  new_val?: Scalars['jsonb'] | null
+  old_val?: Scalars['jsonb'] | null
   previous_block_number?: Scalars['Int'] | null
   previous_log_index?: Scalars['Int'] | null
 }
@@ -1902,7 +2134,7 @@ export interface entity_history_stream_cursor_value_input {
   entity_id?: Scalars['String'] | null
   entity_type?: Scalars['entity_type'] | null
   log_index?: Scalars['Int'] | null
-  params?: Scalars['json'] | null
+  params?: Scalars['jsonb'] | null
   previous_block_number?: Scalars['Int'] | null
   previous_block_timestamp?: Scalars['Int'] | null
   previous_chain_id?: Scalars['Int'] | null
@@ -1975,8 +2207,8 @@ export interface event_sync_stateGenqlSelection {
   block_number?: boolean | number
   block_timestamp?: boolean | number
   chain_id?: boolean | number
+  is_pre_registering_dynamic_contracts?: boolean | number
   log_index?: boolean | number
-  transaction_index?: boolean | number
   __typename?: boolean | number
   __scalar?: boolean | number
 }
@@ -1989,8 +2221,8 @@ export interface event_sync_state_bool_exp {
   block_number?: Int_comparison_exp | null
   block_timestamp?: Int_comparison_exp | null
   chain_id?: Int_comparison_exp | null
+  is_pre_registering_dynamic_contracts?: Boolean_comparison_exp | null
   log_index?: Int_comparison_exp | null
-  transaction_index?: Int_comparison_exp | null
 }
 
 /** Ordering options when selecting data from "event_sync_state". */
@@ -1998,8 +2230,8 @@ export interface event_sync_state_order_by {
   block_number?: order_by | null
   block_timestamp?: order_by | null
   chain_id?: order_by | null
+  is_pre_registering_dynamic_contracts?: order_by | null
   log_index?: order_by | null
-  transaction_index?: order_by | null
 }
 
 /** Streaming cursor of the table "event_sync_state" */
@@ -2015,21 +2247,8 @@ export interface event_sync_state_stream_cursor_value_input {
   block_number?: Scalars['Int'] | null
   block_timestamp?: Scalars['Int'] | null
   chain_id?: Scalars['Int'] | null
+  is_pre_registering_dynamic_contracts?: Scalars['Boolean'] | null
   log_index?: Scalars['Int'] | null
-  transaction_index?: Scalars['Int'] | null
-}
-
-/** Boolean expression to compare columns of type "event_type". All fields are combined with logical 'AND'. */
-export interface event_type_comparison_exp {
-  _eq?: Scalars['event_type'] | null
-  _gt?: Scalars['event_type'] | null
-  _gte?: Scalars['event_type'] | null
-  _in?: Scalars['event_type'][] | null
-  _is_null?: Scalars['Boolean'] | null
-  _lt?: Scalars['event_type'] | null
-  _lte?: Scalars['event_type'] | null
-  _neq?: Scalars['event_type'] | null
-  _nin?: Scalars['event_type'][] | null
 }
 
 export interface get_entity_history_filter_args {
@@ -2043,17 +2262,32 @@ export interface get_entity_history_filter_args {
   start_timestamp?: Scalars['Int'] | null
 }
 
-/** Boolean expression to compare columns of type "json". All fields are combined with logical 'AND'. */
-export interface json_comparison_exp {
-  _eq?: Scalars['json'] | null
-  _gt?: Scalars['json'] | null
-  _gte?: Scalars['json'] | null
-  _in?: Scalars['json'][] | null
+export interface jsonb_cast_exp {
+  String?: String_comparison_exp | null
+}
+
+/** Boolean expression to compare columns of type "jsonb". All fields are combined with logical 'AND'. */
+export interface jsonb_comparison_exp {
+  _cast?: jsonb_cast_exp | null
+  /** is the column contained in the given json value */
+  _contained_in?: Scalars['jsonb'] | null
+  /** does the column contain the given json value at the top level */
+  _contains?: Scalars['jsonb'] | null
+  _eq?: Scalars['jsonb'] | null
+  _gt?: Scalars['jsonb'] | null
+  _gte?: Scalars['jsonb'] | null
+  /** does the string exist as a top-level key in the column */
+  _has_key?: Scalars['String'] | null
+  /** do all of these strings exist as top-level keys in the column */
+  _has_keys_all?: Scalars['String'][] | null
+  /** do any of these strings exist as top-level keys in the column */
+  _has_keys_any?: Scalars['String'][] | null
+  _in?: Scalars['jsonb'][] | null
   _is_null?: Scalars['Boolean'] | null
-  _lt?: Scalars['json'] | null
-  _lte?: Scalars['json'] | null
-  _neq?: Scalars['json'] | null
-  _nin?: Scalars['json'][] | null
+  _lt?: Scalars['jsonb'] | null
+  _lte?: Scalars['jsonb'] | null
+  _neq?: Scalars['jsonb'] | null
+  _nin?: Scalars['jsonb'][] | null
 }
 
 /** Boolean expression to compare columns of type "numeric". All fields are combined with logical 'AND'. */
@@ -2140,6 +2374,25 @@ export interface query_rootGenqlSelection {
   }
   /** fetch data from the table: "BondingCurve" using primary key columns */
   BondingCurve_by_pk?: BondingCurveGenqlSelection & {
+    __args: { id: Scalars['String'] }
+  }
+  /** fetch data from the table: "FeeClaim" */
+  FeeClaim?: FeeClaimGenqlSelection & {
+    __args?: {
+      /** distinct select on columns */
+      distinct_on?: FeeClaim_select_column[] | null
+      /** limit the number of rows returned */
+      limit?: Scalars['Int'] | null
+      /** skip the first n rows. Use only with order_by */
+      offset?: Scalars['Int'] | null
+      /** sort the rows by one or more columns */
+      order_by?: FeeClaim_order_by[] | null
+      /** filter the rows returned */
+      where?: FeeClaim_bool_exp | null
+    }
+  }
+  /** fetch data from the table: "FeeClaim" using primary key columns */
+  FeeClaim_by_pk?: FeeClaimGenqlSelection & {
     __args: { id: Scalars['String'] }
   }
   /** fetch data from the table: "LinearVesting" */
@@ -2444,10 +2697,20 @@ export interface query_rootGenqlSelection {
 
 /** columns and relationships of "raw_events" */
 export interface raw_eventsGenqlSelection {
+  block_fields?:
+    | {
+        __args: {
+          /** JSON select path */
+          path?: Scalars['String'] | null
+        }
+      }
+    | boolean
+    | number
   block_hash?: boolean | number
   block_number?: boolean | number
   block_timestamp?: boolean | number
   chain_id?: boolean | number
+  contract_name?: boolean | number
   db_write_timestamp?: boolean | number
   /** An array relationship */
   event_history?: entity_historyGenqlSelection & {
@@ -2465,7 +2728,7 @@ export interface raw_eventsGenqlSelection {
     }
   }
   event_id?: boolean | number
-  event_type?: boolean | number
+  event_name?: boolean | number
   log_index?: boolean | number
   params?:
     | {
@@ -2477,8 +2740,15 @@ export interface raw_eventsGenqlSelection {
     | boolean
     | number
   src_address?: boolean | number
-  transaction_hash?: boolean | number
-  transaction_index?: boolean | number
+  transaction_fields?:
+    | {
+        __args: {
+          /** JSON select path */
+          path?: Scalars['String'] | null
+        }
+      }
+    | boolean
+    | number
   __typename?: boolean | number
   __scalar?: boolean | number
 }
@@ -2488,36 +2758,38 @@ export interface raw_events_bool_exp {
   _and?: raw_events_bool_exp[] | null
   _not?: raw_events_bool_exp | null
   _or?: raw_events_bool_exp[] | null
+  block_fields?: jsonb_comparison_exp | null
   block_hash?: String_comparison_exp | null
   block_number?: Int_comparison_exp | null
   block_timestamp?: Int_comparison_exp | null
   chain_id?: Int_comparison_exp | null
+  contract_name?: String_comparison_exp | null
   db_write_timestamp?: timestamp_comparison_exp | null
   event_history?: entity_history_bool_exp | null
   event_id?: numeric_comparison_exp | null
-  event_type?: event_type_comparison_exp | null
+  event_name?: String_comparison_exp | null
   log_index?: Int_comparison_exp | null
-  params?: json_comparison_exp | null
+  params?: jsonb_comparison_exp | null
   src_address?: String_comparison_exp | null
-  transaction_hash?: String_comparison_exp | null
-  transaction_index?: Int_comparison_exp | null
+  transaction_fields?: jsonb_comparison_exp | null
 }
 
 /** Ordering options when selecting data from "raw_events". */
 export interface raw_events_order_by {
+  block_fields?: order_by | null
   block_hash?: order_by | null
   block_number?: order_by | null
   block_timestamp?: order_by | null
   chain_id?: order_by | null
+  contract_name?: order_by | null
   db_write_timestamp?: order_by | null
   event_history_aggregate?: entity_history_aggregate_order_by | null
   event_id?: order_by | null
-  event_type?: order_by | null
+  event_name?: order_by | null
   log_index?: order_by | null
   params?: order_by | null
   src_address?: order_by | null
-  transaction_hash?: order_by | null
-  transaction_index?: order_by | null
+  transaction_fields?: order_by | null
 }
 
 /** Streaming cursor of the table "raw_events" */
@@ -2530,18 +2802,19 @@ export interface raw_events_stream_cursor_input {
 
 /** Initial value of the column from where the streaming should start */
 export interface raw_events_stream_cursor_value_input {
+  block_fields?: Scalars['jsonb'] | null
   block_hash?: Scalars['String'] | null
   block_number?: Scalars['Int'] | null
   block_timestamp?: Scalars['Int'] | null
   chain_id?: Scalars['Int'] | null
+  contract_name?: Scalars['String'] | null
   db_write_timestamp?: Scalars['timestamp'] | null
   event_id?: Scalars['numeric'] | null
-  event_type?: Scalars['event_type'] | null
+  event_name?: Scalars['String'] | null
   log_index?: Scalars['Int'] | null
-  params?: Scalars['json'] | null
+  params?: Scalars['jsonb'] | null
   src_address?: Scalars['String'] | null
-  transaction_hash?: Scalars['String'] | null
-  transaction_index?: Scalars['Int'] | null
+  transaction_fields?: Scalars['jsonb'] | null
 }
 
 export interface subscription_rootGenqlSelection {
@@ -2573,6 +2846,36 @@ export interface subscription_rootGenqlSelection {
       cursor: (BondingCurve_stream_cursor_input | null)[]
       /** filter the rows returned */
       where?: BondingCurve_bool_exp | null
+    }
+  }
+  /** fetch data from the table: "FeeClaim" */
+  FeeClaim?: FeeClaimGenqlSelection & {
+    __args?: {
+      /** distinct select on columns */
+      distinct_on?: FeeClaim_select_column[] | null
+      /** limit the number of rows returned */
+      limit?: Scalars['Int'] | null
+      /** skip the first n rows. Use only with order_by */
+      offset?: Scalars['Int'] | null
+      /** sort the rows by one or more columns */
+      order_by?: FeeClaim_order_by[] | null
+      /** filter the rows returned */
+      where?: FeeClaim_bool_exp | null
+    }
+  }
+  /** fetch data from the table: "FeeClaim" using primary key columns */
+  FeeClaim_by_pk?: FeeClaimGenqlSelection & {
+    __args: { id: Scalars['String'] }
+  }
+  /** fetch data from the table in a streaming manner: "FeeClaim" */
+  FeeClaim_stream?: FeeClaimGenqlSelection & {
+    __args: {
+      /** maximum number of rows returned in a single batch */
+      batch_size: Scalars['Int']
+      /** cursor to stream the results returned by the query */
+      cursor: (FeeClaim_stream_cursor_input | null)[]
+      /** filter the rows returned */
+      where?: FeeClaim_bool_exp | null
     }
   }
   /** fetch data from the table: "LinearVesting" */
@@ -3093,6 +3396,14 @@ export const isBondingCurve = (
   return BondingCurve_possibleTypes.includes(obj.__typename)
 }
 
+const FeeClaim_possibleTypes: string[] = ['FeeClaim']
+export const isFeeClaim = (
+  obj?: { __typename?: any } | null
+): obj is FeeClaim => {
+  if (!obj?.__typename) throw new Error('__typename is missing in "isFeeClaim"')
+  return FeeClaim_possibleTypes.includes(obj.__typename)
+}
+
 const LinearVesting_possibleTypes: string[] = ['LinearVesting']
 export const isLinearVesting = (
   obj?: { __typename?: any } | null
@@ -3260,6 +3571,16 @@ export const enumBondingCurveSelectColumn = {
   workflow_id: 'workflow_id' as const,
 }
 
+export const enumFeeClaimSelectColumn = {
+  amount: 'amount' as const,
+  blockTimestamp: 'blockTimestamp' as const,
+  bondingCurve_id: 'bondingCurve_id' as const,
+  chainId: 'chainId' as const,
+  db_write_timestamp: 'db_write_timestamp' as const,
+  id: 'id' as const,
+  recipient: 'recipient' as const,
+}
+
 export const enumLinearVestingSelectColumn = {
   amountRaw: 'amountRaw' as const,
   blockTimestamp: 'blockTimestamp' as const,
@@ -3350,11 +3671,16 @@ export const enumCursorOrdering = {
 }
 
 export const enumDynamicContractRegistrySelectColumn = {
-  block_timestamp: 'block_timestamp' as const,
   chain_id: 'chain_id' as const,
   contract_address: 'contract_address' as const,
   contract_type: 'contract_type' as const,
-  event_id: 'event_id' as const,
+  registering_event_block_number: 'registering_event_block_number' as const,
+  registering_event_block_timestamp:
+    'registering_event_block_timestamp' as const,
+  registering_event_contract_name: 'registering_event_contract_name' as const,
+  registering_event_log_index: 'registering_event_log_index' as const,
+  registering_event_name: 'registering_event_name' as const,
+  registering_event_src_address: 'registering_event_src_address' as const,
 }
 
 export const enumEndOfBlockRangeScannedDataSelectColumn = {
@@ -3395,8 +3721,9 @@ export const enumEventSyncStateSelectColumn = {
   block_number: 'block_number' as const,
   block_timestamp: 'block_timestamp' as const,
   chain_id: 'chain_id' as const,
+  is_pre_registering_dynamic_contracts:
+    'is_pre_registering_dynamic_contracts' as const,
   log_index: 'log_index' as const,
-  transaction_index: 'transaction_index' as const,
 }
 
 export const enumOrderBy = {
@@ -3418,16 +3745,17 @@ export const enumPersistedStateSelectColumn = {
 }
 
 export const enumRawEventsSelectColumn = {
+  block_fields: 'block_fields' as const,
   block_hash: 'block_hash' as const,
   block_number: 'block_number' as const,
   block_timestamp: 'block_timestamp' as const,
   chain_id: 'chain_id' as const,
+  contract_name: 'contract_name' as const,
   db_write_timestamp: 'db_write_timestamp' as const,
   event_id: 'event_id' as const,
-  event_type: 'event_type' as const,
+  event_name: 'event_name' as const,
   log_index: 'log_index' as const,
   params: 'params' as const,
   src_address: 'src_address' as const,
-  transaction_hash: 'transaction_hash' as const,
-  transaction_index: 'transaction_index' as const,
+  transaction_fields: 'transaction_fields' as const,
 }

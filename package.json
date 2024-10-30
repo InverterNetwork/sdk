@@ -8,6 +8,11 @@
       "import": "./dist/esm/index.js",
       "default": "./dist/cjs/index.js"
     },
+    "./graphql-schema": {
+      "types": "./dist/types/lib/graphql/build/schema.d.ts",
+      "import": "./dist/esm/lib/graphql/build/schema.js",
+      "default": "./dist/cjs/lib/graphql/build/schema.js"
+    },
     "./package.json": "./package.json"
   },
   "main": "./dist/cjs/index.js",

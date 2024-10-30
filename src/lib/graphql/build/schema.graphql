@@ -23,6 +23,24 @@ type BondingCurve {
   collateralToken: String
   collateralTokenDecimals: Int
   db_write_timestamp: timestamp
+
+  """An array relationship"""
+  feeClaim(
+    """distinct select on columns"""
+    distinct_on: [FeeClaim_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [FeeClaim_order_by!]
+
+    """filter the rows returned"""
+    where: FeeClaim_bool_exp
+  ): [FeeClaim!]!
   id: String!
   issuanceToken: String
   issuanceTokenDecimals: Int
@@ -69,6 +87,7 @@ input BondingCurve_bool_exp {
   collateralToken: String_comparison_exp
   collateralTokenDecimals: Int_comparison_exp
   db_write_timestamp: timestamp_comparison_exp
+  feeClaim: FeeClaim_bool_exp
   id: String_comparison_exp
   issuanceToken: String_comparison_exp
   issuanceTokenDecimals: Int_comparison_exp
@@ -91,6 +110,7 @@ input BondingCurve_order_by {
   collateralToken: order_by
   collateralTokenDecimals: order_by
   db_write_timestamp: order_by
+  feeClaim_aggregate: FeeClaim_aggregate_order_by
   id: order_by
   issuanceToken: order_by
   issuanceTokenDecimals: order_by
@@ -201,6 +221,214 @@ input Boolean_comparison_exp {
   _lte: Boolean
   _neq: Boolean
   _nin: [Boolean!]
+}
+
+"""
+columns and relationships of "FeeClaim"
+"""
+type FeeClaim {
+  amount: numeric!
+  blockTimestamp: Int!
+
+  """An object relationship"""
+  bondingCurve: BondingCurve
+  bondingCurve_id: String!
+  chainId: Int!
+  db_write_timestamp: timestamp
+  id: String!
+  recipient: String!
+}
+
+"""
+order by aggregate values of table "FeeClaim"
+"""
+input FeeClaim_aggregate_order_by {
+  avg: FeeClaim_avg_order_by
+  count: order_by
+  max: FeeClaim_max_order_by
+  min: FeeClaim_min_order_by
+  stddev: FeeClaim_stddev_order_by
+  stddev_pop: FeeClaim_stddev_pop_order_by
+  stddev_samp: FeeClaim_stddev_samp_order_by
+  sum: FeeClaim_sum_order_by
+  var_pop: FeeClaim_var_pop_order_by
+  var_samp: FeeClaim_var_samp_order_by
+  variance: FeeClaim_variance_order_by
+}
+
+"""
+order by avg() on columns of table "FeeClaim"
+"""
+input FeeClaim_avg_order_by {
+  amount: order_by
+  blockTimestamp: order_by
+  chainId: order_by
+}
+
+"""
+Boolean expression to filter rows from the table "FeeClaim". All fields are combined with a logical 'AND'.
+"""
+input FeeClaim_bool_exp {
+  _and: [FeeClaim_bool_exp!]
+  _not: FeeClaim_bool_exp
+  _or: [FeeClaim_bool_exp!]
+  amount: numeric_comparison_exp
+  blockTimestamp: Int_comparison_exp
+  bondingCurve: BondingCurve_bool_exp
+  bondingCurve_id: String_comparison_exp
+  chainId: Int_comparison_exp
+  db_write_timestamp: timestamp_comparison_exp
+  id: String_comparison_exp
+  recipient: String_comparison_exp
+}
+
+"""
+order by max() on columns of table "FeeClaim"
+"""
+input FeeClaim_max_order_by {
+  amount: order_by
+  blockTimestamp: order_by
+  bondingCurve_id: order_by
+  chainId: order_by
+  db_write_timestamp: order_by
+  id: order_by
+  recipient: order_by
+}
+
+"""
+order by min() on columns of table "FeeClaim"
+"""
+input FeeClaim_min_order_by {
+  amount: order_by
+  blockTimestamp: order_by
+  bondingCurve_id: order_by
+  chainId: order_by
+  db_write_timestamp: order_by
+  id: order_by
+  recipient: order_by
+}
+
+"""Ordering options when selecting data from "FeeClaim"."""
+input FeeClaim_order_by {
+  amount: order_by
+  blockTimestamp: order_by
+  bondingCurve: BondingCurve_order_by
+  bondingCurve_id: order_by
+  chainId: order_by
+  db_write_timestamp: order_by
+  id: order_by
+  recipient: order_by
+}
+
+"""
+select columns of table "FeeClaim"
+"""
+enum FeeClaim_select_column {
+  """column name"""
+  amount
+
+  """column name"""
+  blockTimestamp
+
+  """column name"""
+  bondingCurve_id
+
+  """column name"""
+  chainId
+
+  """column name"""
+  db_write_timestamp
+
+  """column name"""
+  id
+
+  """column name"""
+  recipient
+}
+
+"""
+order by stddev() on columns of table "FeeClaim"
+"""
+input FeeClaim_stddev_order_by {
+  amount: order_by
+  blockTimestamp: order_by
+  chainId: order_by
+}
+
+"""
+order by stddev_pop() on columns of table "FeeClaim"
+"""
+input FeeClaim_stddev_pop_order_by {
+  amount: order_by
+  blockTimestamp: order_by
+  chainId: order_by
+}
+
+"""
+order by stddev_samp() on columns of table "FeeClaim"
+"""
+input FeeClaim_stddev_samp_order_by {
+  amount: order_by
+  blockTimestamp: order_by
+  chainId: order_by
+}
+
+"""
+Streaming cursor of the table "FeeClaim"
+"""
+input FeeClaim_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: FeeClaim_stream_cursor_value_input!
+
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input FeeClaim_stream_cursor_value_input {
+  amount: numeric
+  blockTimestamp: Int
+  bondingCurve_id: String
+  chainId: Int
+  db_write_timestamp: timestamp
+  id: String
+  recipient: String
+}
+
+"""
+order by sum() on columns of table "FeeClaim"
+"""
+input FeeClaim_sum_order_by {
+  amount: order_by
+  blockTimestamp: order_by
+  chainId: order_by
+}
+
+"""
+order by var_pop() on columns of table "FeeClaim"
+"""
+input FeeClaim_var_pop_order_by {
+  amount: order_by
+  blockTimestamp: order_by
+  chainId: order_by
+}
+
+"""
+order by var_samp() on columns of table "FeeClaim"
+"""
+input FeeClaim_var_samp_order_by {
+  amount: order_by
+  blockTimestamp: order_by
+  chainId: order_by
+}
+
+"""
+order by variance() on columns of table "FeeClaim"
+"""
+input FeeClaim_variance_order_by {
+  amount: order_by
+  blockTimestamp: order_by
+  chainId: order_by
 }
 
 """
@@ -1374,11 +1602,15 @@ enum cursor_ordering {
 columns and relationships of "dynamic_contract_registry"
 """
 type dynamic_contract_registry {
-  block_timestamp: Int!
   chain_id: Int!
   contract_address: String!
   contract_type: contract_type!
-  event_id: numeric!
+  registering_event_block_number: Int!
+  registering_event_block_timestamp: Int!
+  registering_event_contract_name: String!
+  registering_event_log_index: Int!
+  registering_event_name: String!
+  registering_event_src_address: String!
 }
 
 """
@@ -1388,29 +1620,34 @@ input dynamic_contract_registry_bool_exp {
   _and: [dynamic_contract_registry_bool_exp!]
   _not: dynamic_contract_registry_bool_exp
   _or: [dynamic_contract_registry_bool_exp!]
-  block_timestamp: Int_comparison_exp
   chain_id: Int_comparison_exp
   contract_address: String_comparison_exp
   contract_type: contract_type_comparison_exp
-  event_id: numeric_comparison_exp
+  registering_event_block_number: Int_comparison_exp
+  registering_event_block_timestamp: Int_comparison_exp
+  registering_event_contract_name: String_comparison_exp
+  registering_event_log_index: Int_comparison_exp
+  registering_event_name: String_comparison_exp
+  registering_event_src_address: String_comparison_exp
 }
 
 """Ordering options when selecting data from "dynamic_contract_registry"."""
 input dynamic_contract_registry_order_by {
-  block_timestamp: order_by
   chain_id: order_by
   contract_address: order_by
   contract_type: order_by
-  event_id: order_by
+  registering_event_block_number: order_by
+  registering_event_block_timestamp: order_by
+  registering_event_contract_name: order_by
+  registering_event_log_index: order_by
+  registering_event_name: order_by
+  registering_event_src_address: order_by
 }
 
 """
 select columns of table "dynamic_contract_registry"
 """
 enum dynamic_contract_registry_select_column {
-  """column name"""
-  block_timestamp
-
   """column name"""
   chain_id
 
@@ -1421,7 +1658,22 @@ enum dynamic_contract_registry_select_column {
   contract_type
 
   """column name"""
-  event_id
+  registering_event_block_number
+
+  """column name"""
+  registering_event_block_timestamp
+
+  """column name"""
+  registering_event_contract_name
+
+  """column name"""
+  registering_event_log_index
+
+  """column name"""
+  registering_event_name
+
+  """column name"""
+  registering_event_src_address
 }
 
 """
@@ -1437,11 +1689,15 @@ input dynamic_contract_registry_stream_cursor_input {
 
 """Initial value of the column from where the streaming should start"""
 input dynamic_contract_registry_stream_cursor_value_input {
-  block_timestamp: Int
   chain_id: Int
   contract_address: String
   contract_type: contract_type
-  event_id: numeric
+  registering_event_block_number: Int
+  registering_event_block_timestamp: Int
+  registering_event_contract_name: String
+  registering_event_log_index: Int
+  registering_event_name: String
+  registering_event_src_address: String
 }
 
 """
@@ -1529,7 +1785,7 @@ type entity_history {
   params(
     """JSON select path"""
     path: String
-  ): json
+  ): jsonb
   previous_block_number: Int
   previous_block_timestamp: Int
   previous_chain_id: Int
@@ -1581,7 +1837,7 @@ input entity_history_bool_exp {
   entity_type: entity_type_comparison_exp
   event: raw_events_bool_exp
   log_index: Int_comparison_exp
-  params: json_comparison_exp
+  params: jsonb_comparison_exp
   previous_block_number: Int_comparison_exp
   previous_block_timestamp: Int_comparison_exp
   previous_chain_id: Int_comparison_exp
@@ -1604,11 +1860,11 @@ type entity_history_filter {
   new_val(
     """JSON select path"""
     path: String
-  ): json
+  ): jsonb
   old_val(
     """JSON select path"""
     path: String
-  ): json
+  ): jsonb
   previous_block_number: Int
   previous_log_index: Int!
 }
@@ -1627,8 +1883,8 @@ input entity_history_filter_bool_exp {
   entity_type: entity_type_comparison_exp
   event: raw_events_bool_exp
   log_index: Int_comparison_exp
-  new_val: json_comparison_exp
-  old_val: json_comparison_exp
+  new_val: jsonb_comparison_exp
+  old_val: jsonb_comparison_exp
   previous_block_number: Int_comparison_exp
   previous_log_index: Int_comparison_exp
 }
@@ -1702,8 +1958,8 @@ input entity_history_filter_stream_cursor_value_input {
   entity_id: String
   entity_type: entity_type
   log_index: Int
-  new_val: json
-  old_val: json
+  new_val: jsonb
+  old_val: jsonb
   previous_block_number: Int
   previous_log_index: Int
 }
@@ -1855,7 +2111,7 @@ input entity_history_stream_cursor_value_input {
   entity_id: String
   entity_type: entity_type
   log_index: Int
-  params: json
+  params: jsonb
   previous_block_number: Int
   previous_block_timestamp: Int
   previous_chain_id: Int
@@ -1942,8 +2198,8 @@ type event_sync_state {
   block_number: Int!
   block_timestamp: Int!
   chain_id: Int!
+  is_pre_registering_dynamic_contracts: Boolean!
   log_index: Int!
-  transaction_index: Int!
 }
 
 """
@@ -1956,8 +2212,8 @@ input event_sync_state_bool_exp {
   block_number: Int_comparison_exp
   block_timestamp: Int_comparison_exp
   chain_id: Int_comparison_exp
+  is_pre_registering_dynamic_contracts: Boolean_comparison_exp
   log_index: Int_comparison_exp
-  transaction_index: Int_comparison_exp
 }
 
 """Ordering options when selecting data from "event_sync_state"."""
@@ -1965,8 +2221,8 @@ input event_sync_state_order_by {
   block_number: order_by
   block_timestamp: order_by
   chain_id: order_by
+  is_pre_registering_dynamic_contracts: order_by
   log_index: order_by
-  transaction_index: order_by
 }
 
 """
@@ -1983,10 +2239,10 @@ enum event_sync_state_select_column {
   chain_id
 
   """column name"""
-  log_index
+  is_pre_registering_dynamic_contracts
 
   """column name"""
-  transaction_index
+  log_index
 }
 
 """
@@ -2005,25 +2261,8 @@ input event_sync_state_stream_cursor_value_input {
   block_number: Int
   block_timestamp: Int
   chain_id: Int
+  is_pre_registering_dynamic_contracts: Boolean
   log_index: Int
-  transaction_index: Int
-}
-
-scalar event_type
-
-"""
-Boolean expression to compare columns of type "event_type". All fields are combined with logical 'AND'.
-"""
-input event_type_comparison_exp {
-  _eq: event_type
-  _gt: event_type
-  _gte: event_type
-  _in: [event_type!]
-  _is_null: Boolean
-  _lt: event_type
-  _lte: event_type
-  _neq: event_type
-  _nin: [event_type!]
 }
 
 input get_entity_history_filter_args {
@@ -2037,21 +2276,41 @@ input get_entity_history_filter_args {
   start_timestamp: Int
 }
 
-scalar json
+scalar jsonb
+
+input jsonb_cast_exp {
+  String: String_comparison_exp
+}
 
 """
-Boolean expression to compare columns of type "json". All fields are combined with logical 'AND'.
+Boolean expression to compare columns of type "jsonb". All fields are combined with logical 'AND'.
 """
-input json_comparison_exp {
-  _eq: json
-  _gt: json
-  _gte: json
-  _in: [json!]
+input jsonb_comparison_exp {
+  _cast: jsonb_cast_exp
+
+  """is the column contained in the given json value"""
+  _contained_in: jsonb
+
+  """does the column contain the given json value at the top level"""
+  _contains: jsonb
+  _eq: jsonb
+  _gt: jsonb
+  _gte: jsonb
+
+  """does the string exist as a top-level key in the column"""
+  _has_key: String
+
+  """do all of these strings exist as top-level keys in the column"""
+  _has_keys_all: [String!]
+
+  """do any of these strings exist as top-level keys in the column"""
+  _has_keys_any: [String!]
+  _in: [jsonb!]
   _is_null: Boolean
-  _lt: json
-  _lte: json
-  _neq: json
-  _nin: [json!]
+  _lt: jsonb
+  _lte: jsonb
+  _neq: jsonb
+  _nin: [jsonb!]
 }
 
 scalar numeric
@@ -2196,6 +2455,29 @@ type query_root {
 
   """fetch data from the table: "BondingCurve" using primary key columns"""
   BondingCurve_by_pk(id: String!): BondingCurve
+
+  """
+  fetch data from the table: "FeeClaim"
+  """
+  FeeClaim(
+    """distinct select on columns"""
+    distinct_on: [FeeClaim_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [FeeClaim_order_by!]
+
+    """filter the rows returned"""
+    where: FeeClaim_bool_exp
+  ): [FeeClaim!]!
+
+  """fetch data from the table: "FeeClaim" using primary key columns"""
+  FeeClaim_by_pk(id: String!): FeeClaim
 
   """
   fetch data from the table: "LinearVesting"
@@ -2559,10 +2841,15 @@ type query_root {
 columns and relationships of "raw_events"
 """
 type raw_events {
+  block_fields(
+    """JSON select path"""
+    path: String
+  ): jsonb!
   block_hash: String!
   block_number: Int!
   block_timestamp: Int!
   chain_id: Int!
+  contract_name: String!
   db_write_timestamp: timestamp
 
   """An array relationship"""
@@ -2583,15 +2870,17 @@ type raw_events {
     where: entity_history_bool_exp
   ): [entity_history!]!
   event_id: numeric!
-  event_type: event_type!
+  event_name: String!
   log_index: Int!
   params(
     """JSON select path"""
     path: String
-  ): json!
+  ): jsonb!
   src_address: String!
-  transaction_hash: String!
-  transaction_index: Int!
+  transaction_fields(
+    """JSON select path"""
+    path: String
+  ): jsonb!
 }
 
 """
@@ -2601,42 +2890,47 @@ input raw_events_bool_exp {
   _and: [raw_events_bool_exp!]
   _not: raw_events_bool_exp
   _or: [raw_events_bool_exp!]
+  block_fields: jsonb_comparison_exp
   block_hash: String_comparison_exp
   block_number: Int_comparison_exp
   block_timestamp: Int_comparison_exp
   chain_id: Int_comparison_exp
+  contract_name: String_comparison_exp
   db_write_timestamp: timestamp_comparison_exp
   event_history: entity_history_bool_exp
   event_id: numeric_comparison_exp
-  event_type: event_type_comparison_exp
+  event_name: String_comparison_exp
   log_index: Int_comparison_exp
-  params: json_comparison_exp
+  params: jsonb_comparison_exp
   src_address: String_comparison_exp
-  transaction_hash: String_comparison_exp
-  transaction_index: Int_comparison_exp
+  transaction_fields: jsonb_comparison_exp
 }
 
 """Ordering options when selecting data from "raw_events"."""
 input raw_events_order_by {
+  block_fields: order_by
   block_hash: order_by
   block_number: order_by
   block_timestamp: order_by
   chain_id: order_by
+  contract_name: order_by
   db_write_timestamp: order_by
   event_history_aggregate: entity_history_aggregate_order_by
   event_id: order_by
-  event_type: order_by
+  event_name: order_by
   log_index: order_by
   params: order_by
   src_address: order_by
-  transaction_hash: order_by
-  transaction_index: order_by
+  transaction_fields: order_by
 }
 
 """
 select columns of table "raw_events"
 """
 enum raw_events_select_column {
+  """column name"""
+  block_fields
+
   """column name"""
   block_hash
 
@@ -2650,13 +2944,16 @@ enum raw_events_select_column {
   chain_id
 
   """column name"""
+  contract_name
+
+  """column name"""
   db_write_timestamp
 
   """column name"""
   event_id
 
   """column name"""
-  event_type
+  event_name
 
   """column name"""
   log_index
@@ -2668,10 +2965,7 @@ enum raw_events_select_column {
   src_address
 
   """column name"""
-  transaction_hash
-
-  """column name"""
-  transaction_index
+  transaction_fields
 }
 
 """
@@ -2687,18 +2981,19 @@ input raw_events_stream_cursor_input {
 
 """Initial value of the column from where the streaming should start"""
 input raw_events_stream_cursor_value_input {
+  block_fields: jsonb
   block_hash: String
   block_number: Int
   block_timestamp: Int
   chain_id: Int
+  contract_name: String
   db_write_timestamp: timestamp
   event_id: numeric
-  event_type: event_type
+  event_name: String
   log_index: Int
-  params: json
+  params: jsonb
   src_address: String
-  transaction_hash: String
-  transaction_index: Int
+  transaction_fields: jsonb
 }
 
 type subscription_root {
@@ -2738,6 +3033,43 @@ type subscription_root {
     """filter the rows returned"""
     where: BondingCurve_bool_exp
   ): [BondingCurve!]!
+
+  """
+  fetch data from the table: "FeeClaim"
+  """
+  FeeClaim(
+    """distinct select on columns"""
+    distinct_on: [FeeClaim_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [FeeClaim_order_by!]
+
+    """filter the rows returned"""
+    where: FeeClaim_bool_exp
+  ): [FeeClaim!]!
+
+  """fetch data from the table: "FeeClaim" using primary key columns"""
+  FeeClaim_by_pk(id: String!): FeeClaim
+
+  """
+  fetch data from the table in a streaming manner: "FeeClaim"
+  """
+  FeeClaim_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+
+    """cursor to stream the results returned by the query"""
+    cursor: [FeeClaim_stream_cursor_input]!
+
+    """filter the rows returned"""
+    where: FeeClaim_bool_exp
+  ): [FeeClaim!]!
 
   """
   fetch data from the table: "LinearVesting"

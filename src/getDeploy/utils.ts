@@ -14,7 +14,7 @@ import type {
 import type { Abi } from 'abitype'
 import { anvil } from 'viem/chains'
 
-type DeploymentResponse = {
+export type DeploymentResponse = {
   bancorFormula: Record<string, `0x${string}` | undefined>
   erc20Mock: Record<string, `0x${string}` | undefined>
   orchestratorFactory: Record<string, `0x${string}` | undefined>
