@@ -42,9 +42,17 @@ export default async function decimals({
   )
 
   // INTERNAL CASE (NO SOURCE)
+  // -------------------------------------------------------------------
   if (!source) {
     decimals = extras?.decimals
     tokenAddress = extras?.defaultToken
+  }
+  // SOURCE EXTRAS
+  // -------------------------------------------------------------------
+  else if (source === 'extras') {
+    if (location === 'issuanceToken') {
+      decimals = extras?.issuanceTokenDecimals
+    }
   }
   // OVERWRITE CASES
   else if (
@@ -57,6 +65,7 @@ export default async function decimals({
     tokenAddress = cachedToken.address
   } else {
     // SOURCE PARAMS
+    // -------------------------------------------------------------------
     if (source === 'params') {
       // EXACT LOCATION
       if (location === 'exact') {
@@ -91,6 +100,7 @@ export default async function decimals({
     }
 
     // SOURCE CONTRACT
+    // -------------------------------------------------------------------
     if (source === 'contract') {
       if (location === 'indirect') {
         tokenAddress = <`0x${string}` | undefined>await contract?.read?.[name]()
