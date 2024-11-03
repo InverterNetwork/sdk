@@ -1,5 +1,6 @@
 import getModule from '../getModule'
 import getTokenResults from './getTokenResults'
+import type { GetWorkflowTokenResultsReturnTypes } from './getTokenResults'
 
 import { getModuleData } from '@inverter-network/abis'
 import type { GetModuleNameByType } from '@inverter-network/abis'
@@ -40,6 +41,22 @@ export default async function getWorkflow<
     walletClient,
     self,
   })
+
+  let issuanceToken: GetWorkflowTokenResultsReturnTypes<
+    'ERC20Issuance_v1',
+    W
+  > | null = null
+
+  try {
+    issuanceToken = await getTokenResults.getIssuanceTokenResults({
+      fundingManagerAddress,
+      publicClient,
+      walletClient,
+      self,
+    })
+  } catch {
+    issuanceToken = null
+  }
 
   // 3. initialize modules with extras
   const modules = await (async () => {
@@ -102,15 +119,6 @@ export default async function getWorkflow<
 
     return result
   })()
-
-  const issuanceToken = modules?.fundingManager?.name?.includes?.('FM_BC')
-    ? await getTokenResults.getIssuanceTokenResults({
-        fundingManagerAddress,
-        publicClient,
-        walletClient,
-        self,
-      })
-    : null
 
   // RETURN WORKFLOW CONFIG
   const returns = {
