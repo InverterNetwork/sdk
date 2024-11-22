@@ -52,6 +52,7 @@ export default async function decimals({
   else if (source === 'extras') {
     if (location === 'issuanceToken') {
       decimals = extras?.issuanceTokenDecimals
+      tokenAddress = extras?.issuanceToken
     }
   }
   // OVERWRITE CASES

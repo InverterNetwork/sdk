@@ -2,8 +2,9 @@
 export type Extras = {
   walletAddress?: `0x${string}`
   decimals?: number
-  issuanceTokenDecimals?: number
   defaultToken?: `0x${string}`
+  issuanceTokenDecimals?: number
+  issuanceToken?: `0x${string}`
 }
 
 // JsType is used for the typescript type of the function arguments

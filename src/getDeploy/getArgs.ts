@@ -117,6 +117,7 @@ export const constructArgs = async ({
     issuanceToken: {},
     initialPurchaseAmount: '',
     beneficiary: {},
+    isImmutable: true,
   } as unknown as ConstructedArgs
 
   // Get the default token if the funding manager is provided
@@ -194,6 +195,11 @@ export const constructArgs = async ({
           )
         )
       }
+
+      // If the factory type is immutable-pim, the isImmutable is parsed if provided
+      if (factoryType === 'immutable-pim' && !!userArgs.isImmutable) {
+        args.isImmutable = userArgs.isImmutable
+      }
       break
   }
 
@@ -234,6 +240,7 @@ export default async function getArgs<
     ...baseArr,
     constructed.issuanceToken,
     constructed.initialPurchaseAmount,
+    constructed.isImmutable,
   ] as const
 
   const result = {

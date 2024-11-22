@@ -44,6 +44,7 @@ export type ConstructedArgs = {
   issuanceToken: IssuanceTokenArgs
   initialPurchaseAmount: InitialPurchaseAmountArgs
   beneficiary: BeneficiaryArgs
+  isImmutable: boolean
 }
 
 export type UserModuleArg = Record<string, unknown>
@@ -57,4 +58,5 @@ export type UserArgs = {
   issuanceToken?: IssuanceTokenArgs
   initialPurchaseAmount?: InitialPurchaseAmountArgs
   beneficiary?: BeneficiaryArgs
+  isImmutable?: boolean
 }

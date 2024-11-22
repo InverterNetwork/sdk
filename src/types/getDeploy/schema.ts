@@ -60,5 +60,8 @@ export type DeploySchema<
     beneficiary: FT extends 'restricted-pim'
       ? ModuleSchema<'Restricted_PIM_Factory_v1', 'beneficiary'>
       : never
+    isImmutable: FT extends 'immutable-pim'
+      ? ModuleSchema<'Immutable_PIM_Factory_v1', 'isImmutable'>
+      : never
   }>
 >
