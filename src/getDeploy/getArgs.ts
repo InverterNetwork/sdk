@@ -197,7 +197,10 @@ export const constructArgs = async ({
       }
 
       // If the factory type is immutable-pim, the isImmutable is parsed if provided
-      if (factoryType === 'immutable-pim' && !!userArgs.isImmutable) {
+      if (
+        factoryType === 'immutable-pim' &&
+        userArgs.isImmutable !== undefined
+      ) {
         args.isImmutable = userArgs.isImmutable
       }
       break

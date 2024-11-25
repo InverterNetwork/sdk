@@ -126,16 +126,24 @@ describe('#PIM_IMMUTABLE', async () => {
     ])
   })
 
+  it('7. Should check if isImmutable false set the owner as the deployer', async () => {
+    const owner = await workflow.authorizer.read.hasRole.run([
+      '0x0000000000000000000000000000000000000000000000000000000000000000',
+      deployer,
+    ])
+    expect(owner).toBeTrue()
+  })
+
   let initiallyPurchased: string
 
-  it('7. Should Confirm The Initial Purchase Happened', async () => {
+  it('8. Should Confirm The Initial Purchase Happened', async () => {
     initiallyPurchased =
       await workflow.issuanceToken.module.read.balanceOf.run(deployer)
 
     expect(Number(initiallyPurchased)).toBeGreaterThan(0)
   })
 
-  it('8: Should set the factory module', () => {
+  it('9. Should set the factory module', () => {
     factory = sdk.getModule({
       address: TEST_IMMUTABLE_PIM_FACTORY_ADDRESS,
       name: 'Immutable_PIM_Factory_v1',
@@ -150,7 +158,7 @@ describe('#PIM_IMMUTABLE', async () => {
 
   let purchaseReturn: string
 
-  it('8. Buy From The PIM And Match Purchase Return With Balance', async () => {
+  it('10. Buy From The PIM And Match Purchase Return With Balance', async () => {
     purchaseReturn =
       await workflow.fundingManager.read.calculatePurchaseReturn.run(
         args.initialPurchaseAmount
@@ -171,7 +179,7 @@ describe('#PIM_IMMUTABLE', async () => {
     expect(subtracted).toBeGreaterThanOrEqual(Number(purchaseReturn))
   })
 
-  it('9. Should sell the bought tokens', async () => {
+  it('11. Should sell the bought tokens', async () => {
     const initialBalance =
       await workflow.issuanceToken.module.read.balanceOf.run(deployer)
 
