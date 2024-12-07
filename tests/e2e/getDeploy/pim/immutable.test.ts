@@ -95,7 +95,7 @@ describe('#PIM_IMMUTABLE', async () => {
 
   it('3. Mint Collateral For Initial Purchase / Buy From The Curve', async () => {
     // 3. Mint test tokens to deployer
-    const hash = await fundingToken.write.mint.run([deployer, '2000'])
+    const hash = await fundingToken.write.mint.run([deployer, '13000'])
 
     expect(isHash(hash)).toBeTrue()
   })
@@ -197,5 +197,21 @@ describe('#PIM_IMMUTABLE', async () => {
       await workflow.issuanceToken.module.read.balanceOf.run(deployer)
 
     expect(Number(balance)).toBeLessThan(Number(initialBalance))
+  })
+
+  it('10. Should migrate the factory', async () => {
+    purchaseReturn =
+      await workflow.fundingManager.read.calculatePurchaseReturn.run(
+        args.initialPurchaseAmount
+      )
+
+    const hash = await factory.write.buyForUpTo.run([
+      workflow.issuanceToken.address,
+      deployer,
+      '11000',
+      purchaseReturn,
+    ])
+
+    expect(isHash(hash)).toBeTrue()
   })
 })
