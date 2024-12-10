@@ -43,7 +43,6 @@
     "prepack": "pinst --disable",
     "package": "bun run build && npm pack",
     "postpack": "pinst --enable",
-    "pre-commit": "lint-staged",
     "pre-push": "bun run build",
     "release": "standard-version -a",
     "release:alpha": "standard-version -a --prerelease alpha --skip.changelog",
@@ -67,7 +66,7 @@
     "viem": "^2.7.6"
   },
   "dependencies": {
-    "@inverter-network/abis": "0.3.3-alpha.1",
+    "@inverter-network/abis": "0.3.4",
     "@urql/core": "^5.0.6",
     "subscriptions-transport-ws": "^0.11.0",
     "type-fest-4": "npm:type-fest@^4.26.0"

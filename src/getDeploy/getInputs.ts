@@ -69,7 +69,6 @@ export const getOtherFactoryTypeInputs = <FT extends FactoryType>(
           'Immutable_PIM_Factory_v1',
           'initialPurchaseAmount'
         ),
-        isImmutable: getModuleSchema('Immutable_PIM_Factory_v1', 'isImmutable'),
       }
     default:
       return {}

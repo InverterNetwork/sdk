@@ -25,7 +25,7 @@ import {
 import { getModuleSchema } from '@/getDeploy/getInputs'
 import { getModuleData, type GetModuleData } from '@inverter-network/abis'
 
-describe.skip('#PIM_RESTRICTED', async () => {
+describe('#PIM_RESTRICTED', async () => {
   const { walletClient } = sdk
   const deployer = walletClient.account.address
 

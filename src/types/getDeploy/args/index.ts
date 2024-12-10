@@ -73,6 +73,5 @@ export type GetUserArgs<
       ? InitialPurchaseAmountArgs
       : never
     beneficiary: FT extends 'restricted-pim' ? BeneficiaryArgs : never
-    isImmutable: FT extends 'immutable-pim' ? boolean : never
   }>
 >
