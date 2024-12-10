@@ -31,7 +31,7 @@ export interface Client {
 
 export const createClient = function (options?: ClientOptions): Client {
   return createClientOriginal({
-    url: 'https://indexer.bigdevenergy.link/a414bf3/v1/graphql',
+    url: 'https://indexer.hyperindex.xyz/a414bf3/v1/graphql',
 
     ...options,
     queryRoot: typeMap.Query!,

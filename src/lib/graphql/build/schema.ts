@@ -8,7 +8,7 @@ export type Scalars = {
   Int: number
   String: string
   contract_type: any
-  entity_type: any
+  float8: any
   jsonb: any
   numeric: any
   swaptype: any
@@ -35,9 +35,9 @@ export interface BondingCurve {
   sellReserveRatio: Scalars['numeric'] | null
   /** An array relationship */
   swaps: Swap[]
-  virtualCollateral: Scalars['numeric'] | null
+  virtualCollateral: Scalars['float8'] | null
   virtualCollateralRaw: Scalars['numeric'] | null
-  virtualIssuance: Scalars['numeric'] | null
+  virtualIssuance: Scalars['float8'] | null
   /** An object relationship */
   workflow: Workflow | null
   workflow_id: Scalars['String']
@@ -65,7 +65,7 @@ export type BondingCurve_select_column =
 
 /** columns and relationships of "FeeClaim" */
 export interface FeeClaim {
-  amount: Scalars['numeric']
+  amount: Scalars['float8']
   blockTimestamp: Scalars['Int']
   /** An object relationship */
   bondingCurve: BondingCurve | null
@@ -148,14 +148,14 @@ export interface Swap {
   bondingCurve: BondingCurve | null
   bondingCurve_id: Scalars['String']
   chainId: Scalars['Int']
-  collateralAmount: Scalars['numeric']
+  collateralAmount: Scalars['float8']
   collateralToken: Scalars['String']
   db_write_timestamp: Scalars['timestamp'] | null
   id: Scalars['String']
   initiator: Scalars['String']
-  issuanceAmount: Scalars['numeric']
+  issuanceAmount: Scalars['float8']
   issuanceToken: Scalars['String']
-  priceInCol: Scalars['numeric']
+  priceInCol: Scalars['float8']
   recipient: Scalars['String']
   swapType: Scalars['swaptype']
   __typename: 'Swap'
@@ -291,6 +291,7 @@ export interface dynamic_contract_registry {
   chain_id: Scalars['Int']
   contract_address: Scalars['String']
   contract_type: Scalars['contract_type']
+  id: Scalars['String']
   registering_event_block_number: Scalars['Int']
   registering_event_block_timestamp: Scalars['Int']
   registering_event_contract_name: Scalars['String']
@@ -305,6 +306,7 @@ export type dynamic_contract_registry_select_column =
   | 'chain_id'
   | 'contract_address'
   | 'contract_type'
+  | 'id'
   | 'registering_event_block_number'
   | 'registering_event_block_timestamp'
   | 'registering_event_contract_name'
@@ -327,68 +329,6 @@ export type end_of_block_range_scanned_data_select_column =
   | 'block_number'
   | 'block_timestamp'
   | 'chain_id'
-
-/** columns and relationships of "entity_history" */
-export interface entity_history {
-  block_number: Scalars['Int']
-  block_timestamp: Scalars['Int']
-  chain_id: Scalars['Int']
-  entity_id: Scalars['String']
-  entity_type: Scalars['entity_type']
-  /** An object relationship */
-  event: raw_events | null
-  log_index: Scalars['Int']
-  params: Scalars['jsonb'] | null
-  previous_block_number: Scalars['Int'] | null
-  previous_block_timestamp: Scalars['Int'] | null
-  previous_chain_id: Scalars['Int'] | null
-  previous_log_index: Scalars['Int'] | null
-  __typename: 'entity_history'
-}
-
-/** columns and relationships of "entity_history_filter" */
-export interface entity_history_filter {
-  block_number: Scalars['Int']
-  block_timestamp: Scalars['Int']
-  chain_id: Scalars['Int']
-  entity_id: Scalars['String']
-  entity_type: Scalars['entity_type']
-  /** An object relationship */
-  event: raw_events | null
-  log_index: Scalars['Int']
-  new_val: Scalars['jsonb'] | null
-  old_val: Scalars['jsonb'] | null
-  previous_block_number: Scalars['Int'] | null
-  previous_log_index: Scalars['Int']
-  __typename: 'entity_history_filter'
-}
-
-/** select columns of table "entity_history_filter" */
-export type entity_history_filter_select_column =
-  | 'block_number'
-  | 'block_timestamp'
-  | 'chain_id'
-  | 'entity_id'
-  | 'entity_type'
-  | 'log_index'
-  | 'new_val'
-  | 'old_val'
-  | 'previous_block_number'
-  | 'previous_log_index'
-
-/** select columns of table "entity_history" */
-export type entity_history_select_column =
-  | 'block_number'
-  | 'block_timestamp'
-  | 'chain_id'
-  | 'entity_id'
-  | 'entity_type'
-  | 'log_index'
-  | 'params'
-  | 'previous_block_number'
-  | 'previous_block_timestamp'
-  | 'previous_chain_id'
-  | 'previous_log_index'
 
 /** columns and relationships of "event_sync_state" */
 export interface event_sync_state {
@@ -482,20 +422,10 @@ export interface query_root {
   end_of_block_range_scanned_data: end_of_block_range_scanned_data[]
   /** fetch data from the table: "end_of_block_range_scanned_data" using primary key columns */
   end_of_block_range_scanned_data_by_pk: end_of_block_range_scanned_data | null
-  /** fetch data from the table: "entity_history" */
-  entity_history: entity_history[]
-  /** fetch data from the table: "entity_history" using primary key columns */
-  entity_history_by_pk: entity_history | null
-  /** fetch data from the table: "entity_history_filter" */
-  entity_history_filter: entity_history_filter[]
-  /** fetch data from the table: "entity_history_filter" using primary key columns */
-  entity_history_filter_by_pk: entity_history_filter | null
   /** fetch data from the table: "event_sync_state" */
   event_sync_state: event_sync_state[]
   /** fetch data from the table: "event_sync_state" using primary key columns */
   event_sync_state_by_pk: event_sync_state | null
-  /** This function helps search for articles */
-  get_entity_history_filter: entity_history_filter[]
   /** fetch data from the table: "persisted_state" */
   persisted_state: persisted_state[]
   /** fetch data from the table: "persisted_state" using primary key columns */
@@ -516,12 +446,11 @@ export interface raw_events {
   chain_id: Scalars['Int']
   contract_name: Scalars['String']
   db_write_timestamp: Scalars['timestamp'] | null
-  /** An array relationship */
-  event_history: entity_history[]
   event_id: Scalars['numeric']
   event_name: Scalars['String']
   log_index: Scalars['Int']
   params: Scalars['jsonb']
+  serial: Scalars['Int']
   src_address: Scalars['String']
   transaction_fields: Scalars['jsonb']
   __typename: 'raw_events'
@@ -540,6 +469,7 @@ export type raw_events_select_column =
   | 'event_name'
   | 'log_index'
   | 'params'
+  | 'serial'
   | 'src_address'
   | 'transaction_fields'
 
@@ -610,26 +540,12 @@ export interface subscription_root {
   end_of_block_range_scanned_data_by_pk: end_of_block_range_scanned_data | null
   /** fetch data from the table in a streaming manner: "end_of_block_range_scanned_data" */
   end_of_block_range_scanned_data_stream: end_of_block_range_scanned_data[]
-  /** fetch data from the table: "entity_history" */
-  entity_history: entity_history[]
-  /** fetch data from the table: "entity_history" using primary key columns */
-  entity_history_by_pk: entity_history | null
-  /** fetch data from the table: "entity_history_filter" */
-  entity_history_filter: entity_history_filter[]
-  /** fetch data from the table: "entity_history_filter" using primary key columns */
-  entity_history_filter_by_pk: entity_history_filter | null
-  /** fetch data from the table in a streaming manner: "entity_history_filter" */
-  entity_history_filter_stream: entity_history_filter[]
-  /** fetch data from the table in a streaming manner: "entity_history" */
-  entity_history_stream: entity_history[]
   /** fetch data from the table: "event_sync_state" */
   event_sync_state: event_sync_state[]
   /** fetch data from the table: "event_sync_state" using primary key columns */
   event_sync_state_by_pk: event_sync_state | null
   /** fetch data from the table in a streaming manner: "event_sync_state" */
   event_sync_state_stream: event_sync_state[]
-  /** This function helps search for articles */
-  get_entity_history_filter: entity_history_filter[]
   /** fetch data from the table: "persisted_state" */
   persisted_state: persisted_state[]
   /** fetch data from the table: "persisted_state" using primary key columns */
@@ -721,9 +637,9 @@ export interface BondingCurve_bool_exp {
   sellFee?: numeric_comparison_exp | null
   sellReserveRatio?: numeric_comparison_exp | null
   swaps?: Swap_bool_exp | null
-  virtualCollateral?: numeric_comparison_exp | null
+  virtualCollateral?: float8_comparison_exp | null
   virtualCollateralRaw?: numeric_comparison_exp | null
-  virtualIssuance?: numeric_comparison_exp | null
+  virtualIssuance?: float8_comparison_exp | null
   workflow?: Workflow_bool_exp | null
   workflow_id?: String_comparison_exp | null
 }
@@ -773,9 +689,9 @@ export interface BondingCurve_stream_cursor_value_input {
   issuanceTokenDecimals?: Scalars['Int'] | null
   sellFee?: Scalars['numeric'] | null
   sellReserveRatio?: Scalars['numeric'] | null
-  virtualCollateral?: Scalars['numeric'] | null
+  virtualCollateral?: Scalars['float8'] | null
   virtualCollateralRaw?: Scalars['numeric'] | null
-  virtualIssuance?: Scalars['numeric'] | null
+  virtualIssuance?: Scalars['float8'] | null
   workflow_id?: Scalars['String'] | null
 }
 
@@ -834,7 +750,7 @@ export interface FeeClaim_bool_exp {
   _and?: FeeClaim_bool_exp[] | null
   _not?: FeeClaim_bool_exp | null
   _or?: FeeClaim_bool_exp[] | null
-  amount?: numeric_comparison_exp | null
+  amount?: float8_comparison_exp | null
   blockTimestamp?: Int_comparison_exp | null
   bondingCurve?: BondingCurve_bool_exp | null
   bondingCurve_id?: String_comparison_exp | null
@@ -909,7 +825,7 @@ export interface FeeClaim_stream_cursor_input {
 
 /** Initial value of the column from where the streaming should start */
 export interface FeeClaim_stream_cursor_value_input {
-  amount?: Scalars['numeric'] | null
+  amount?: Scalars['float8'] | null
   blockTimestamp?: Scalars['Int'] | null
   bondingCurve_id?: Scalars['String'] | null
   chainId?: Scalars['Int'] | null
@@ -1337,14 +1253,14 @@ export interface Swap_bool_exp {
   bondingCurve?: BondingCurve_bool_exp | null
   bondingCurve_id?: String_comparison_exp | null
   chainId?: Int_comparison_exp | null
-  collateralAmount?: numeric_comparison_exp | null
+  collateralAmount?: float8_comparison_exp | null
   collateralToken?: String_comparison_exp | null
   db_write_timestamp?: timestamp_comparison_exp | null
   id?: String_comparison_exp | null
   initiator?: String_comparison_exp | null
-  issuanceAmount?: numeric_comparison_exp | null
+  issuanceAmount?: float8_comparison_exp | null
   issuanceToken?: String_comparison_exp | null
-  priceInCol?: numeric_comparison_exp | null
+  priceInCol?: float8_comparison_exp | null
   recipient?: String_comparison_exp | null
   swapType?: swaptype_comparison_exp | null
 }
@@ -1441,14 +1357,14 @@ export interface Swap_stream_cursor_value_input {
   blockTimestamp?: Scalars['Int'] | null
   bondingCurve_id?: Scalars['String'] | null
   chainId?: Scalars['Int'] | null
-  collateralAmount?: Scalars['numeric'] | null
+  collateralAmount?: Scalars['float8'] | null
   collateralToken?: Scalars['String'] | null
   db_write_timestamp?: Scalars['timestamp'] | null
   id?: Scalars['String'] | null
   initiator?: Scalars['String'] | null
-  issuanceAmount?: Scalars['numeric'] | null
+  issuanceAmount?: Scalars['float8'] | null
   issuanceToken?: Scalars['String'] | null
-  priceInCol?: Scalars['numeric'] | null
+  priceInCol?: Scalars['float8'] | null
   recipient?: Scalars['String'] | null
   swapType?: Scalars['swaptype'] | null
 }
@@ -1771,6 +1687,7 @@ export interface dynamic_contract_registryGenqlSelection {
   chain_id?: boolean | number
   contract_address?: boolean | number
   contract_type?: boolean | number
+  id?: boolean | number
   registering_event_block_number?: boolean | number
   registering_event_block_timestamp?: boolean | number
   registering_event_contract_name?: boolean | number
@@ -1789,6 +1706,7 @@ export interface dynamic_contract_registry_bool_exp {
   chain_id?: Int_comparison_exp | null
   contract_address?: String_comparison_exp | null
   contract_type?: contract_type_comparison_exp | null
+  id?: String_comparison_exp | null
   registering_event_block_number?: Int_comparison_exp | null
   registering_event_block_timestamp?: Int_comparison_exp | null
   registering_event_contract_name?: String_comparison_exp | null
@@ -1802,6 +1720,7 @@ export interface dynamic_contract_registry_order_by {
   chain_id?: order_by | null
   contract_address?: order_by | null
   contract_type?: order_by | null
+  id?: order_by | null
   registering_event_block_number?: order_by | null
   registering_event_block_timestamp?: order_by | null
   registering_event_contract_name?: order_by | null
@@ -1823,6 +1742,7 @@ export interface dynamic_contract_registry_stream_cursor_value_input {
   chain_id?: Scalars['Int'] | null
   contract_address?: Scalars['String'] | null
   contract_type?: Scalars['contract_type'] | null
+  id?: Scalars['String'] | null
   registering_event_block_number?: Scalars['Int'] | null
   registering_event_block_timestamp?: Scalars['Int'] | null
   registering_event_contract_name?: Scalars['String'] | null
@@ -1876,332 +1796,6 @@ export interface end_of_block_range_scanned_data_stream_cursor_value_input {
   chain_id?: Scalars['Int'] | null
 }
 
-/** columns and relationships of "entity_history" */
-export interface entity_historyGenqlSelection {
-  block_number?: boolean | number
-  block_timestamp?: boolean | number
-  chain_id?: boolean | number
-  entity_id?: boolean | number
-  entity_type?: boolean | number
-  /** An object relationship */
-  event?: raw_eventsGenqlSelection
-  log_index?: boolean | number
-  params?:
-    | {
-        __args: {
-          /** JSON select path */
-          path?: Scalars['String'] | null
-        }
-      }
-    | boolean
-    | number
-  previous_block_number?: boolean | number
-  previous_block_timestamp?: boolean | number
-  previous_chain_id?: boolean | number
-  previous_log_index?: boolean | number
-  __typename?: boolean | number
-  __scalar?: boolean | number
-}
-
-/** order by aggregate values of table "entity_history" */
-export interface entity_history_aggregate_order_by {
-  avg?: entity_history_avg_order_by | null
-  count?: order_by | null
-  max?: entity_history_max_order_by | null
-  min?: entity_history_min_order_by | null
-  stddev?: entity_history_stddev_order_by | null
-  stddev_pop?: entity_history_stddev_pop_order_by | null
-  stddev_samp?: entity_history_stddev_samp_order_by | null
-  sum?: entity_history_sum_order_by | null
-  var_pop?: entity_history_var_pop_order_by | null
-  var_samp?: entity_history_var_samp_order_by | null
-  variance?: entity_history_variance_order_by | null
-}
-
-/** order by avg() on columns of table "entity_history" */
-export interface entity_history_avg_order_by {
-  block_number?: order_by | null
-  block_timestamp?: order_by | null
-  chain_id?: order_by | null
-  log_index?: order_by | null
-  previous_block_number?: order_by | null
-  previous_block_timestamp?: order_by | null
-  previous_chain_id?: order_by | null
-  previous_log_index?: order_by | null
-}
-
-/** Boolean expression to filter rows from the table "entity_history". All fields are combined with a logical 'AND'. */
-export interface entity_history_bool_exp {
-  _and?: entity_history_bool_exp[] | null
-  _not?: entity_history_bool_exp | null
-  _or?: entity_history_bool_exp[] | null
-  block_number?: Int_comparison_exp | null
-  block_timestamp?: Int_comparison_exp | null
-  chain_id?: Int_comparison_exp | null
-  entity_id?: String_comparison_exp | null
-  entity_type?: entity_type_comparison_exp | null
-  event?: raw_events_bool_exp | null
-  log_index?: Int_comparison_exp | null
-  params?: jsonb_comparison_exp | null
-  previous_block_number?: Int_comparison_exp | null
-  previous_block_timestamp?: Int_comparison_exp | null
-  previous_chain_id?: Int_comparison_exp | null
-  previous_log_index?: Int_comparison_exp | null
-}
-
-/** columns and relationships of "entity_history_filter" */
-export interface entity_history_filterGenqlSelection {
-  block_number?: boolean | number
-  block_timestamp?: boolean | number
-  chain_id?: boolean | number
-  entity_id?: boolean | number
-  entity_type?: boolean | number
-  /** An object relationship */
-  event?: raw_eventsGenqlSelection
-  log_index?: boolean | number
-  new_val?:
-    | {
-        __args: {
-          /** JSON select path */
-          path?: Scalars['String'] | null
-        }
-      }
-    | boolean
-    | number
-  old_val?:
-    | {
-        __args: {
-          /** JSON select path */
-          path?: Scalars['String'] | null
-        }
-      }
-    | boolean
-    | number
-  previous_block_number?: boolean | number
-  previous_log_index?: boolean | number
-  __typename?: boolean | number
-  __scalar?: boolean | number
-}
-
-/** Boolean expression to filter rows from the table "entity_history_filter". All fields are combined with a logical 'AND'. */
-export interface entity_history_filter_bool_exp {
-  _and?: entity_history_filter_bool_exp[] | null
-  _not?: entity_history_filter_bool_exp | null
-  _or?: entity_history_filter_bool_exp[] | null
-  block_number?: Int_comparison_exp | null
-  block_timestamp?: Int_comparison_exp | null
-  chain_id?: Int_comparison_exp | null
-  entity_id?: String_comparison_exp | null
-  entity_type?: entity_type_comparison_exp | null
-  event?: raw_events_bool_exp | null
-  log_index?: Int_comparison_exp | null
-  new_val?: jsonb_comparison_exp | null
-  old_val?: jsonb_comparison_exp | null
-  previous_block_number?: Int_comparison_exp | null
-  previous_log_index?: Int_comparison_exp | null
-}
-
-/** Ordering options when selecting data from "entity_history_filter". */
-export interface entity_history_filter_order_by {
-  block_number?: order_by | null
-  block_timestamp?: order_by | null
-  chain_id?: order_by | null
-  entity_id?: order_by | null
-  entity_type?: order_by | null
-  event?: raw_events_order_by | null
-  log_index?: order_by | null
-  new_val?: order_by | null
-  old_val?: order_by | null
-  previous_block_number?: order_by | null
-  previous_log_index?: order_by | null
-}
-
-/** Streaming cursor of the table "entity_history_filter" */
-export interface entity_history_filter_stream_cursor_input {
-  /** Stream column input with initial value */
-  initial_value: entity_history_filter_stream_cursor_value_input
-  /** cursor ordering */
-  ordering?: cursor_ordering | null
-}
-
-/** Initial value of the column from where the streaming should start */
-export interface entity_history_filter_stream_cursor_value_input {
-  block_number?: Scalars['Int'] | null
-  block_timestamp?: Scalars['Int'] | null
-  chain_id?: Scalars['Int'] | null
-  entity_id?: Scalars['String'] | null
-  entity_type?: Scalars['entity_type'] | null
-  log_index?: Scalars['Int'] | null
-  new_val?: Scalars['jsonb'] | null
-  old_val?: Scalars['jsonb'] | null
-  previous_block_number?: Scalars['Int'] | null
-  previous_log_index?: Scalars['Int'] | null
-}
-
-/** order by max() on columns of table "entity_history" */
-export interface entity_history_max_order_by {
-  block_number?: order_by | null
-  block_timestamp?: order_by | null
-  chain_id?: order_by | null
-  entity_id?: order_by | null
-  entity_type?: order_by | null
-  log_index?: order_by | null
-  previous_block_number?: order_by | null
-  previous_block_timestamp?: order_by | null
-  previous_chain_id?: order_by | null
-  previous_log_index?: order_by | null
-}
-
-/** order by min() on columns of table "entity_history" */
-export interface entity_history_min_order_by {
-  block_number?: order_by | null
-  block_timestamp?: order_by | null
-  chain_id?: order_by | null
-  entity_id?: order_by | null
-  entity_type?: order_by | null
-  log_index?: order_by | null
-  previous_block_number?: order_by | null
-  previous_block_timestamp?: order_by | null
-  previous_chain_id?: order_by | null
-  previous_log_index?: order_by | null
-}
-
-/** Ordering options when selecting data from "entity_history". */
-export interface entity_history_order_by {
-  block_number?: order_by | null
-  block_timestamp?: order_by | null
-  chain_id?: order_by | null
-  entity_id?: order_by | null
-  entity_type?: order_by | null
-  event?: raw_events_order_by | null
-  log_index?: order_by | null
-  params?: order_by | null
-  previous_block_number?: order_by | null
-  previous_block_timestamp?: order_by | null
-  previous_chain_id?: order_by | null
-  previous_log_index?: order_by | null
-}
-
-/** order by stddev() on columns of table "entity_history" */
-export interface entity_history_stddev_order_by {
-  block_number?: order_by | null
-  block_timestamp?: order_by | null
-  chain_id?: order_by | null
-  log_index?: order_by | null
-  previous_block_number?: order_by | null
-  previous_block_timestamp?: order_by | null
-  previous_chain_id?: order_by | null
-  previous_log_index?: order_by | null
-}
-
-/** order by stddev_pop() on columns of table "entity_history" */
-export interface entity_history_stddev_pop_order_by {
-  block_number?: order_by | null
-  block_timestamp?: order_by | null
-  chain_id?: order_by | null
-  log_index?: order_by | null
-  previous_block_number?: order_by | null
-  previous_block_timestamp?: order_by | null
-  previous_chain_id?: order_by | null
-  previous_log_index?: order_by | null
-}
-
-/** order by stddev_samp() on columns of table "entity_history" */
-export interface entity_history_stddev_samp_order_by {
-  block_number?: order_by | null
-  block_timestamp?: order_by | null
-  chain_id?: order_by | null
-  log_index?: order_by | null
-  previous_block_number?: order_by | null
-  previous_block_timestamp?: order_by | null
-  previous_chain_id?: order_by | null
-  previous_log_index?: order_by | null
-}
-
-/** Streaming cursor of the table "entity_history" */
-export interface entity_history_stream_cursor_input {
-  /** Stream column input with initial value */
-  initial_value: entity_history_stream_cursor_value_input
-  /** cursor ordering */
-  ordering?: cursor_ordering | null
-}
-
-/** Initial value of the column from where the streaming should start */
-export interface entity_history_stream_cursor_value_input {
-  block_number?: Scalars['Int'] | null
-  block_timestamp?: Scalars['Int'] | null
-  chain_id?: Scalars['Int'] | null
-  entity_id?: Scalars['String'] | null
-  entity_type?: Scalars['entity_type'] | null
-  log_index?: Scalars['Int'] | null
-  params?: Scalars['jsonb'] | null
-  previous_block_number?: Scalars['Int'] | null
-  previous_block_timestamp?: Scalars['Int'] | null
-  previous_chain_id?: Scalars['Int'] | null
-  previous_log_index?: Scalars['Int'] | null
-}
-
-/** order by sum() on columns of table "entity_history" */
-export interface entity_history_sum_order_by {
-  block_number?: order_by | null
-  block_timestamp?: order_by | null
-  chain_id?: order_by | null
-  log_index?: order_by | null
-  previous_block_number?: order_by | null
-  previous_block_timestamp?: order_by | null
-  previous_chain_id?: order_by | null
-  previous_log_index?: order_by | null
-}
-
-/** order by var_pop() on columns of table "entity_history" */
-export interface entity_history_var_pop_order_by {
-  block_number?: order_by | null
-  block_timestamp?: order_by | null
-  chain_id?: order_by | null
-  log_index?: order_by | null
-  previous_block_number?: order_by | null
-  previous_block_timestamp?: order_by | null
-  previous_chain_id?: order_by | null
-  previous_log_index?: order_by | null
-}
-
-/** order by var_samp() on columns of table "entity_history" */
-export interface entity_history_var_samp_order_by {
-  block_number?: order_by | null
-  block_timestamp?: order_by | null
-  chain_id?: order_by | null
-  log_index?: order_by | null
-  previous_block_number?: order_by | null
-  previous_block_timestamp?: order_by | null
-  previous_chain_id?: order_by | null
-  previous_log_index?: order_by | null
-}
-
-/** order by variance() on columns of table "entity_history" */
-export interface entity_history_variance_order_by {
-  block_number?: order_by | null
-  block_timestamp?: order_by | null
-  chain_id?: order_by | null
-  log_index?: order_by | null
-  previous_block_number?: order_by | null
-  previous_block_timestamp?: order_by | null
-  previous_chain_id?: order_by | null
-  previous_log_index?: order_by | null
-}
-
-/** Boolean expression to compare columns of type "entity_type". All fields are combined with logical 'AND'. */
-export interface entity_type_comparison_exp {
-  _eq?: Scalars['entity_type'] | null
-  _gt?: Scalars['entity_type'] | null
-  _gte?: Scalars['entity_type'] | null
-  _in?: Scalars['entity_type'][] | null
-  _is_null?: Scalars['Boolean'] | null
-  _lt?: Scalars['entity_type'] | null
-  _lte?: Scalars['entity_type'] | null
-  _neq?: Scalars['entity_type'] | null
-  _nin?: Scalars['entity_type'][] | null
-}
-
 /** columns and relationships of "event_sync_state" */
 export interface event_sync_stateGenqlSelection {
   block_number?: boolean | number
@@ -2251,15 +1845,17 @@ export interface event_sync_state_stream_cursor_value_input {
   log_index?: Scalars['Int'] | null
 }
 
-export interface get_entity_history_filter_args {
-  end_block?: Scalars['Int'] | null
-  end_chain_id?: Scalars['Int'] | null
-  end_log_index?: Scalars['Int'] | null
-  end_timestamp?: Scalars['Int'] | null
-  start_block?: Scalars['Int'] | null
-  start_chain_id?: Scalars['Int'] | null
-  start_log_index?: Scalars['Int'] | null
-  start_timestamp?: Scalars['Int'] | null
+/** Boolean expression to compare columns of type "float8". All fields are combined with logical 'AND'. */
+export interface float8_comparison_exp {
+  _eq?: Scalars['float8'] | null
+  _gt?: Scalars['float8'] | null
+  _gte?: Scalars['float8'] | null
+  _in?: Scalars['float8'][] | null
+  _is_null?: Scalars['Boolean'] | null
+  _lt?: Scalars['float8'] | null
+  _lte?: Scalars['float8'] | null
+  _neq?: Scalars['float8'] | null
+  _nin?: Scalars['float8'][] | null
 }
 
 export interface jsonb_cast_exp {
@@ -2543,7 +2139,7 @@ export interface query_rootGenqlSelection {
   }
   /** fetch data from the table: "dynamic_contract_registry" using primary key columns */
   dynamic_contract_registry_by_pk?: dynamic_contract_registryGenqlSelection & {
-    __args: { chain_id: Scalars['Int']; contract_address: Scalars['String'] }
+    __args: { id: Scalars['String'] }
   }
   /** fetch data from the table: "end_of_block_range_scanned_data" */
   end_of_block_range_scanned_data?: end_of_block_range_scanned_dataGenqlSelection & {
@@ -2564,59 +2160,6 @@ export interface query_rootGenqlSelection {
   end_of_block_range_scanned_data_by_pk?: end_of_block_range_scanned_dataGenqlSelection & {
     __args: { block_number: Scalars['Int']; chain_id: Scalars['Int'] }
   }
-  /** fetch data from the table: "entity_history" */
-  entity_history?: entity_historyGenqlSelection & {
-    __args?: {
-      /** distinct select on columns */
-      distinct_on?: entity_history_select_column[] | null
-      /** limit the number of rows returned */
-      limit?: Scalars['Int'] | null
-      /** skip the first n rows. Use only with order_by */
-      offset?: Scalars['Int'] | null
-      /** sort the rows by one or more columns */
-      order_by?: entity_history_order_by[] | null
-      /** filter the rows returned */
-      where?: entity_history_bool_exp | null
-    }
-  }
-  /** fetch data from the table: "entity_history" using primary key columns */
-  entity_history_by_pk?: entity_historyGenqlSelection & {
-    __args: {
-      block_number: Scalars['Int']
-      block_timestamp: Scalars['Int']
-      chain_id: Scalars['Int']
-      entity_id: Scalars['String']
-      entity_type: Scalars['entity_type']
-      log_index: Scalars['Int']
-    }
-  }
-  /** fetch data from the table: "entity_history_filter" */
-  entity_history_filter?: entity_history_filterGenqlSelection & {
-    __args?: {
-      /** distinct select on columns */
-      distinct_on?: entity_history_filter_select_column[] | null
-      /** limit the number of rows returned */
-      limit?: Scalars['Int'] | null
-      /** skip the first n rows. Use only with order_by */
-      offset?: Scalars['Int'] | null
-      /** sort the rows by one or more columns */
-      order_by?: entity_history_filter_order_by[] | null
-      /** filter the rows returned */
-      where?: entity_history_filter_bool_exp | null
-    }
-  }
-  /** fetch data from the table: "entity_history_filter" using primary key columns */
-  entity_history_filter_by_pk?: entity_history_filterGenqlSelection & {
-    __args: {
-      block_number: Scalars['Int']
-      block_timestamp: Scalars['Int']
-      chain_id: Scalars['Int']
-      entity_id: Scalars['String']
-      entity_type: Scalars['entity_type']
-      log_index: Scalars['Int']
-      previous_log_index: Scalars['Int']
-    }
-  }
   /** fetch data from the table: "event_sync_state" */
   event_sync_state?: event_sync_stateGenqlSelection & {
     __args?: {
@@ -2635,23 +2178,6 @@ export interface query_rootGenqlSelection {
   /** fetch data from the table: "event_sync_state" using primary key columns */
   event_sync_state_by_pk?: event_sync_stateGenqlSelection & {
     __args: { chain_id: Scalars['Int'] }
-  }
-  /** This function helps search for articles */
-  get_entity_history_filter?: entity_history_filterGenqlSelection & {
-    __args: {
-      /** input parameters for function "get_entity_history_filter" */
-      args: get_entity_history_filter_args
-      /** distinct select on columns */
-      distinct_on?: entity_history_filter_select_column[] | null
-      /** limit the number of rows returned */
-      limit?: Scalars['Int'] | null
-      /** skip the first n rows. Use only with order_by */
-      offset?: Scalars['Int'] | null
-      /** sort the rows by one or more columns */
-      order_by?: entity_history_filter_order_by[] | null
-      /** filter the rows returned */
-      where?: entity_history_filter_bool_exp | null
-    }
   }
   /** fetch data from the table: "persisted_state" */
   persisted_state?: persisted_stateGenqlSelection & {
@@ -2689,7 +2215,7 @@ export interface query_rootGenqlSelection {
   }
   /** fetch data from the table: "raw_events" using primary key columns */
   raw_events_by_pk?: raw_eventsGenqlSelection & {
-    __args: { chain_id: Scalars['Int']; event_id: Scalars['numeric'] }
+    __args: { serial: Scalars['Int'] }
   }
   __typename?: boolean | number
   __scalar?: boolean | number
@@ -2712,21 +2238,6 @@ export interface raw_eventsGenqlSelection {
   chain_id?: boolean | number
   contract_name?: boolean | number
   db_write_timestamp?: boolean | number
-  /** An array relationship */
-  event_history?: entity_historyGenqlSelection & {
-    __args?: {
-      /** distinct select on columns */
-      distinct_on?: entity_history_select_column[] | null
-      /** limit the number of rows returned */
-      limit?: Scalars['Int'] | null
-      /** skip the first n rows. Use only with order_by */
-      offset?: Scalars['Int'] | null
-      /** sort the rows by one or more columns */
-      order_by?: entity_history_order_by[] | null
-      /** filter the rows returned */
-      where?: entity_history_bool_exp | null
-    }
-  }
   event_id?: boolean | number
   event_name?: boolean | number
   log_index?: boolean | number
@@ -2739,6 +2250,7 @@ export interface raw_eventsGenqlSelection {
       }
     | boolean
     | number
+  serial?: boolean | number
   src_address?: boolean | number
   transaction_fields?:
     | {
@@ -2765,11 +2277,11 @@ export interface raw_events_bool_exp {
   chain_id?: Int_comparison_exp | null
   contract_name?: String_comparison_exp | null
   db_write_timestamp?: timestamp_comparison_exp | null
-  event_history?: entity_history_bool_exp | null
   event_id?: numeric_comparison_exp | null
   event_name?: String_comparison_exp | null
   log_index?: Int_comparison_exp | null
   params?: jsonb_comparison_exp | null
+  serial?: Int_comparison_exp | null
   src_address?: String_comparison_exp | null
   transaction_fields?: jsonb_comparison_exp | null
 }
@@ -2783,11 +2295,11 @@ export interface raw_events_order_by {
   chain_id?: order_by | null
   contract_name?: order_by | null
   db_write_timestamp?: order_by | null
-  event_history_aggregate?: entity_history_aggregate_order_by | null
   event_id?: order_by | null
   event_name?: order_by | null
   log_index?: order_by | null
   params?: order_by | null
+  serial?: order_by | null
   src_address?: order_by | null
   transaction_fields?: order_by | null
 }
@@ -2813,6 +2325,7 @@ export interface raw_events_stream_cursor_value_input {
   event_name?: Scalars['String'] | null
   log_index?: Scalars['Int'] | null
   params?: Scalars['jsonb'] | null
+  serial?: Scalars['Int'] | null
   src_address?: Scalars['String'] | null
   transaction_fields?: Scalars['jsonb'] | null
 }
@@ -3103,7 +2616,7 @@ export interface subscription_rootGenqlSelection {
   }
   /** fetch data from the table: "dynamic_contract_registry" using primary key columns */
   dynamic_contract_registry_by_pk?: dynamic_contract_registryGenqlSelection & {
-    __args: { chain_id: Scalars['Int']; contract_address: Scalars['String'] }
+    __args: { id: Scalars['String'] }
   }
   /** fetch data from the table in a streaming manner: "dynamic_contract_registry" */
   dynamic_contract_registry_stream?: dynamic_contract_registryGenqlSelection & {
@@ -3146,81 +2659,6 @@ export interface subscription_rootGenqlSelection {
       where?: end_of_block_range_scanned_data_bool_exp | null
     }
   }
-  /** fetch data from the table: "entity_history" */
-  entity_history?: entity_historyGenqlSelection & {
-    __args?: {
-      /** distinct select on columns */
-      distinct_on?: entity_history_select_column[] | null
-      /** limit the number of rows returned */
-      limit?: Scalars['Int'] | null
-      /** skip the first n rows. Use only with order_by */
-      offset?: Scalars['Int'] | null
-      /** sort the rows by one or more columns */
-      order_by?: entity_history_order_by[] | null
-      /** filter the rows returned */
-      where?: entity_history_bool_exp | null
-    }
-  }
-  /** fetch data from the table: "entity_history" using primary key columns */
-  entity_history_by_pk?: entity_historyGenqlSelection & {
-    __args: {
-      block_number: Scalars['Int']
-      block_timestamp: Scalars['Int']
-      chain_id: Scalars['Int']
-      entity_id: Scalars['String']
-      entity_type: Scalars['entity_type']
-      log_index: Scalars['Int']
-    }
-  }
-  /** fetch data from the table: "entity_history_filter" */
-  entity_history_filter?: entity_history_filterGenqlSelection & {
-    __args?: {
-      /** distinct select on columns */
-      distinct_on?: entity_history_filter_select_column[] | null
-      /** limit the number of rows returned */
-      limit?: Scalars['Int'] | null
-      /** skip the first n rows. Use only with order_by */
-      offset?: Scalars['Int'] | null
-      /** sort the rows by one or more columns */
-      order_by?: entity_history_filter_order_by[] | null
-      /** filter the rows returned */
-      where?: entity_history_filter_bool_exp | null
-    }
-  }
-  /** fetch data from the table: "entity_history_filter" using primary key columns */
-  entity_history_filter_by_pk?: entity_history_filterGenqlSelection & {
-    __args: {
-      block_number: Scalars['Int']
-      block_timestamp: Scalars['Int']
-      chain_id: Scalars['Int']
-      entity_id: Scalars['String']
-      entity_type: Scalars['entity_type']
-      log_index: Scalars['Int']
-      previous_log_index: Scalars['Int']
-    }
-  }
-  /** fetch data from the table in a streaming manner: "entity_history_filter" */
-  entity_history_filter_stream?: entity_history_filterGenqlSelection & {
-    __args: {
-      /** maximum number of rows returned in a single batch */
-      batch_size: Scalars['Int']
-      /** cursor to stream the results returned by the query */
-      cursor: (entity_history_filter_stream_cursor_input | null)[]
-      /** filter the rows returned */
-      where?: entity_history_filter_bool_exp | null
-    }
-  }
-  /** fetch data from the table in a streaming manner: "entity_history" */
-  entity_history_stream?: entity_historyGenqlSelection & {
-    __args: {
-      /** maximum number of rows returned in a single batch */
-      batch_size: Scalars['Int']
-      /** cursor to stream the results returned by the query */
-      cursor: (entity_history_stream_cursor_input | null)[]
-      /** filter the rows returned */
-      where?: entity_history_bool_exp | null
-    }
-  }
   /** fetch data from the table: "event_sync_state" */
   event_sync_state?: event_sync_stateGenqlSelection & {
     __args?: {
@@ -3249,23 +2687,6 @@ export interface subscription_rootGenqlSelection {
       cursor: (event_sync_state_stream_cursor_input | null)[]
       /** filter the rows returned */
       where?: event_sync_state_bool_exp | null
-    }
-  }
-  /** This function helps search for articles */
-  get_entity_history_filter?: entity_history_filterGenqlSelection & {
-    __args: {
-      /** input parameters for function "get_entity_history_filter" */
-      args: get_entity_history_filter_args
-      /** distinct select on columns */
-      distinct_on?: entity_history_filter_select_column[] | null
-      /** limit the number of rows returned */
-      limit?: Scalars['Int'] | null
-      /** skip the first n rows. Use only with order_by */
-      offset?: Scalars['Int'] | null
-      /** sort the rows by one or more columns */
-      order_by?: entity_history_filter_order_by[] | null
-      /** filter the rows returned */
-      where?: entity_history_filter_bool_exp | null
     }
   }
   /** fetch data from the table: "persisted_state" */
@@ -3315,7 +2736,7 @@ export interface subscription_rootGenqlSelection {
   }
   /** fetch data from the table: "raw_events" using primary key columns */
   raw_events_by_pk?: raw_eventsGenqlSelection & {
-    __args: { chain_id: Scalars['Int']; event_id: Scalars['numeric'] }
+    __args: { serial: Scalars['Int'] }
   }
   /** fetch data from the table in a streaming manner: "raw_events" */
   raw_events_stream?: raw_eventsGenqlSelection & {
@@ -3489,24 +2910,6 @@ export const isend_of_block_range_scanned_data = (
   return end_of_block_range_scanned_data_possibleTypes.includes(obj.__typename)
 }
 
-const entity_history_possibleTypes: string[] = ['entity_history']
-export const isentity_history = (
-  obj?: { __typename?: any } | null
-): obj is entity_history => {
-  if (!obj?.__typename)
-    throw new Error('__typename is missing in "isentity_history"')
-  return entity_history_possibleTypes.includes(obj.__typename)
-}
-
-const entity_history_filter_possibleTypes: string[] = ['entity_history_filter']
-export const isentity_history_filter = (
-  obj?: { __typename?: any } | null
-): obj is entity_history_filter => {
-  if (!obj?.__typename)
-    throw new Error('__typename is missing in "isentity_history_filter"')
-  return entity_history_filter_possibleTypes.includes(obj.__typename)
-}
-
 const event_sync_state_possibleTypes: string[] = ['event_sync_state']
 export const isevent_sync_state = (
   obj?: { __typename?: any } | null
@@ -3674,6 +3077,7 @@ export const enumDynamicContractRegistrySelectColumn = {
   chain_id: 'chain_id' as const,
   contract_address: 'contract_address' as const,
   contract_type: 'contract_type' as const,
+  id: 'id' as const,
   registering_event_block_number: 'registering_event_block_number' as const,
   registering_event_block_timestamp:
     'registering_event_block_timestamp' as const,
@@ -3688,33 +3092,6 @@ export const enumEndOfBlockRangeScannedDataSelectColumn = {
   block_number: 'block_number' as const,
   block_timestamp: 'block_timestamp' as const,
   chain_id: 'chain_id' as const,
-}
-
-export const enumEntityHistoryFilterSelectColumn = {
-  block_number: 'block_number' as const,
-  block_timestamp: 'block_timestamp' as const,
-  chain_id: 'chain_id' as const,
-  entity_id: 'entity_id' as const,
-  entity_type: 'entity_type' as const,
-  log_index: 'log_index' as const,
-  new_val: 'new_val' as const,
-  old_val: 'old_val' as const,
-  previous_block_number: 'previous_block_number' as const,
-  previous_log_index: 'previous_log_index' as const,
-}
-
-export const enumEntityHistorySelectColumn = {
-  block_number: 'block_number' as const,
-  block_timestamp: 'block_timestamp' as const,
-  chain_id: 'chain_id' as const,
-  entity_id: 'entity_id' as const,
-  entity_type: 'entity_type' as const,
-  log_index: 'log_index' as const,
-  params: 'params' as const,
-  previous_block_number: 'previous_block_number' as const,
-  previous_block_timestamp: 'previous_block_timestamp' as const,
-  previous_chain_id: 'previous_chain_id' as const,
-  previous_log_index: 'previous_log_index' as const,
 }
 
 export const enumEventSyncStateSelectColumn = {
@@ -3756,6 +3133,7 @@ export const enumRawEventsSelectColumn = {
   event_name: 'event_name' as const,
   log_index: 'log_index' as const,
   params: 'params' as const,
+  serial: 'serial' as const,
   src_address: 'src_address' as const,
   transaction_fields: 'transaction_fields' as const,
 }

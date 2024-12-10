@@ -49,7 +49,7 @@
     "release:beta": "standard-version -a --prerelease beta --skip.changelog",
     "release:pub": "git push --follow-tags origin main",
     "protocol-rpc": "tools/protocol-rpc.sh --wait",
-    "gen:graphql": "genql --endpoint https://indexer.bigdevenergy.link/a414bf3/v1/graphql --prefix GQL --output src/lib/graphql/build && prettier --write src/lib/graphql/build/**/*.ts",
+    "gen:graphql": "genql --endpoint https://indexer.hyperindex.xyz/a414bf3/v1/graphql --prefix GQL --output src/lib/graphql/build && prettier --write src/lib/graphql/build/**/*.ts",
     "copy:dist": "bun run build && bun tools/copy-dist.js"
   },
   "lint-staged": {

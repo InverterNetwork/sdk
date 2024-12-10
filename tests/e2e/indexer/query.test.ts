@@ -1,7 +1,7 @@
 import graphql from '@/lib/graphql'
 import { expect, describe, it } from 'bun:test'
 
-describe.skip('#INDEXER_QUERY', () => {
+describe('#INDEXER_QUERY', () => {
   it('1. Should Query The Swap Endpoint And Confirm The Result', async () => {
     const response = await graphql.query({
       Swap: {
@@ -9,7 +9,7 @@ describe.skip('#INDEXER_QUERY', () => {
         __args: {
           where: {
             id: {
-              _eq: '4-0x5d346fd9e1070d1f1874e894feccbfad11ae9761c29169c4e58c8c7043f2beec',
+              _eq: '0x5823966fbeb988858d3232a89071d7ed640cb4f329a026a19b7fe64f23a8a756-17',
             },
           },
         },
