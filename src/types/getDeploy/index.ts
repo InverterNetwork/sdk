@@ -7,6 +7,7 @@ export * from './requested'
 export * from './parameter'
 export * from './schema'
 export * from './args'
+export * from './get-methods'
 
 export type GetDeployParams<
   T extends RequestedModules<FT extends undefined ? 'default' : FT>,

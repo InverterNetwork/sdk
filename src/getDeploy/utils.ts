@@ -5,6 +5,7 @@ import { ERC20_ABI } from '../utils/constants'
 
 import type { PublicClient, WalletClient } from 'viem'
 import type {
+  Extras,
   FactoryType,
   FilterByPrefix,
   GetUserArgs,
@@ -142,18 +143,22 @@ export const assembleMetadata = <N extends ModuleName>(name: N) => {
 export const getDefaultToken = async (
   publicClient: PublicClient,
   fundingManager: UserModuleArg
-) => {
-  const { readContract } = publicClient
+): Promise<Extras> => {
+  try {
+    const { readContract } = publicClient
 
-  const tokenAddress = (fundingManager['collateralToken'] ??
-    fundingManager['orchestratorTokenAddress']) as `0x${string}`
+    const tokenAddress = (fundingManager['collateralToken'] ??
+      fundingManager['orchestratorTokenAddress']) as `0x${string}`
 
-  const decimals = <number>await readContract({
-    address: tokenAddress!,
-    functionName: 'decimals',
-    abi: ERC20_ABI,
-  })
-  return { defaultToken: tokenAddress!, decimals }
+    const decimals = <number>await readContract({
+      address: tokenAddress!,
+      functionName: 'decimals',
+      abi: ERC20_ABI,
+    })
+    return { defaultToken: tokenAddress!, decimals }
+  } catch {
+    return { defaultToken: '0x' as `0x${string}`, decimals: 18 }
+  }
 }
 
 const isPimArgs = (

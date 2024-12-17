@@ -1,12 +1,11 @@
 import { decodeEventLog, formatEther, parseAbiItem } from 'viem'
-import type { PublicClient } from 'viem'
 import type {
   DeployMethodKind,
   FactoryType,
+  GetMethodsParams,
+  GetMethodsReturnType,
   GetUserArgs,
-  Inverter,
   MethodOptions,
-  PopWalletClient,
   RequestedModules,
 } from '..'
 import {
@@ -24,13 +23,7 @@ import { getModuleData } from '@inverter-network/abis'
 export default async function getMethods<
   T extends RequestedModules,
   FT extends FactoryType,
->(params: {
-  requestedModules: T
-  factoryType: FT
-  publicClient: PublicClient
-  walletClient: PopWalletClient
-  self?: Inverter
-}) {
+>(params: GetMethodsParams<T, FT>): Promise<GetMethodsReturnType<T, FT>> {
   const { publicClient, walletClient, requestedModules, factoryType } = params
 
   const abi = {
@@ -154,7 +147,8 @@ export default async function getMethods<
 
       const res = (await selected()) as Awaited<ReturnType<typeof selected>>
 
-      return res
+      // TODO: Refactor this to not use any type
+      return res as any
     } catch (e: any) {
       throw handleError({ requestedModules, error: e })
     }
