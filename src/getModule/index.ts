@@ -4,7 +4,7 @@ import { getContract } from 'viem'
 import type { Abi } from 'viem'
 import iterateMethods from './iterateMethods'
 
-import type { GetModuleParams, PopWalletClient } from '@/types'
+import type { GetModuleParams, GetModuleReturn, PopWalletClient } from '@/types'
 
 export default function getModule<
   N extends ModuleName,
@@ -16,7 +16,7 @@ export default function getModule<
   walletClient,
   extras,
   self,
-}: GetModuleParams<N, W>) {
+}: GetModuleParams<N, W>): GetModuleReturn<N, W> {
   const mv = getModuleData(name)
 
   if (!mv) throw new Error(`Module ${name} was not found`)

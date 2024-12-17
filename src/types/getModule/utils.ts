@@ -10,8 +10,20 @@ import type {
   PopPublicClient,
   PopWalletClient,
 } from '@/types'
-import type { Inverter } from '@'
-import type { AbiStateMutability } from 'abitype'
+import type {
+  EstimateGasOutput,
+  GetMethodArgs,
+  GetMethodResponse,
+  Inverter,
+  MethodOptions,
+  WriteOutput,
+} from '@'
+import type {
+  AbiStateMutability,
+  ExtractAbiFunction,
+  ExtractAbiFunctionNames,
+} from 'abitype'
+import type { TupleToUnion, Simplify } from 'type-fest-4'
 
 /**
  * The Parameters for the getRun function
@@ -56,6 +68,17 @@ export type GetModuleItterateMethodsParams<
   self?: Inverter<any>
 }
 
+export type GetModuleIterateMethodsReturnType<
+  A extends ExtendedAbi,
+  T extends AbiStateMutability[],
+  Kind extends MethodKind,
+> = Simplify<{
+  [N in ExtractAbiFunctionNames<
+    A,
+    TupleToUnion<T>
+  >]: GetModuleConstructMethodReturnType<ExtractAbiFunction<A, N>, Kind>
+}>
+
 /**
  * The Parameters for the constructMethod function
  * @template TAbiFunction - The extended abi function
@@ -72,4 +95,33 @@ export type GetModuleConstructMethodParams<
   extras?: Extras
   kind: Kind
   self?: Inverter
+}
+
+export type GetModuleGetRunReturnType<
+  ExtendedInputs extends readonly ExtendedAbiParameter[],
+  ExtendedOutputs extends readonly ExtendedAbiParameter[],
+  Kind extends MethodKind,
+> = (
+  args: GetMethodArgs<ExtendedInputs>,
+  options?: MethodOptions
+) => Promise<GetMethodResponse<ExtendedOutputs, Kind>>
+
+export type GetModuleConstructMethodReturnType<
+  TAbiFunction extends ExtendedAbiFunction,
+  Kind extends MethodKind,
+> = {
+  name: TAbiFunction['name']
+  description: TAbiFunction['description']
+  inputs: TAbiFunction['inputs']
+  outputs: Kind extends 'read' | 'simulate'
+    ? TAbiFunction['outputs']
+    : Kind extends 'write'
+      ? WriteOutput
+      : EstimateGasOutput
+
+  run: GetModuleGetRunReturnType<
+    TAbiFunction['inputs'],
+    TAbiFunction['outputs'],
+    Kind
+  >
 }

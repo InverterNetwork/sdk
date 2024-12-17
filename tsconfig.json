@@ -3,9 +3,8 @@
   "extends": "./tsconfig.base.json",
   "include": ["src", "tests", "tools"],
   "compilerOptions": {
-    "composite": true,
     "module": "ESNext",
-    "moduleResolution": "Node",
+    "moduleResolution": "Bundler",
     "noEmit": true,
     "paths": {
       "@": ["./src"],

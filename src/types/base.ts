@@ -18,3 +18,17 @@ export type JsType =
   | '0xstring[]'
   | 'any'
   | 'boolean[]'
+
+export type WriteOutput = {
+  name: 'txHash'
+  type: 'bytes32'
+}[]
+
+export type EstimateGasOutput = {
+  name: 'gas'
+  type: 'tuple'
+  components: {
+    name: 'value'
+    type: 'uint256'
+  }[]
+}[]

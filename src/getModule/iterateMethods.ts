@@ -1,13 +1,12 @@
 import constructMethod from './constructMethod'
 
-import type {
-  AbiStateMutability,
-  ExtractAbiFunctionNames,
-  ExtractAbiFunction,
-} from 'abitype'
-import type { Simplify, TupleToUnion } from 'type-fest-4'
+import type { AbiStateMutability } from 'abitype'
 import type { ExtendedAbi, ExtendedAbiFunction } from '@inverter-network/abis'
-import type { GetModuleItterateMethodsParams, MethodKind } from '../types'
+import type {
+  GetModuleIterateMethodsReturnType,
+  GetModuleItterateMethodsParams,
+  MethodKind,
+} from '../types'
 
 // The prepareFunction function is used to prepare the functions from the abi
 export default function iterateMethods<
@@ -27,13 +26,7 @@ export default function iterateMethods<
   A,
   T,
   Kind
->): // The result object type, maps the function names to their return types
-Simplify<{
-  [N in ExtractAbiFunctionNames<A, TupleToUnion<T>>]: ReturnType<
-    // Gets the return type of the constructMethod function
-    typeof constructMethod<ExtractAbiFunction<A, N>, Kind>
-  >
-}> {
+>): GetModuleIterateMethodsReturnType<A, T, Kind> {
   // Itterate over the abi functions
   const iterated = abi
     // Filter the functions by their stateMutability

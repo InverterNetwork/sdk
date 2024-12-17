@@ -1,6 +1,12 @@
 import getRun from './getRun'
 
-import type { GetModuleConstructMethodParams, MethodKind } from '@/types'
+import type {
+  EstimateGasOutput,
+  GetModuleConstructMethodParams,
+  GetModuleConstructMethodReturnType,
+  MethodKind,
+  WriteOutput,
+} from '@/types'
 import type { ExtendedAbiFunction } from '@inverter-network/abis'
 import { estimateGasOutputs, writeOutputs } from '@/utils'
 
@@ -16,7 +22,10 @@ export default function constructMethod<
   publicClient,
   self,
   walletClient,
-}: GetModuleConstructMethodParams<TAbiFunction, Kind>) {
+}: GetModuleConstructMethodParams<
+  TAbiFunction,
+  Kind
+>): GetModuleConstructMethodReturnType<TAbiFunction, Kind> {
   // Construct the data preserving the type properties of the abiFunction
   const {
     description,
@@ -30,7 +39,11 @@ export default function constructMethod<
     simulate: outputs,
     write: writeOutputs,
     estimateGas: estimateGasOutputs,
-  }[kind]
+  }[kind] as unknown as Kind extends 'read' | 'simulate'
+    ? TAbiFunction['outputs']
+    : Kind extends 'write'
+      ? WriteOutput
+      : EstimateGasOutput
 
   // Construct the run function
   const run = getRun({
