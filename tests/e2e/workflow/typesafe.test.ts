@@ -213,6 +213,7 @@ describe('#WORKFLOW', () => {
       expect(bountyArgs[0]).toEqual(<any>bounty.minimumPayoutAmount)
       expect(bountyArgs[1]).toEqual(<any>bounty.maximumPayoutAmount)
       expect(bountyArgs[2]).toEqual(bounty.details)
+      expect(bountyArgs[2].message).toEqual(bounty.details.message)
     })
 
     it('7. Should Add A Claim', async () => {
