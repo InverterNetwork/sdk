@@ -5,6 +5,7 @@ export * from './handleError'
 export * from './constants'
 export * from './processInputs'
 export * from './formatOutputs'
+export * from './external'
 
 export { default as tagProcessor } from './tagProcessor'
 export { default as handleOptions } from './handleOptions'
