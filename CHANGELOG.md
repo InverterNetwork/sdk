@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.12](https://github.com/InverterNetwork/sdk/compare/v0.3.11...v0.3.12) (2024-12-23)
+
+
+### Bug Fixes
+
+* missing export at utils ([673ee5d](https://github.com/InverterNetwork/sdk/commit/673ee5d1dd462e3e8cd45172eba8d7e15df32bb7))
+
 ### [0.3.11](https://github.com/InverterNetwork/sdk/compare/v0.3.10...v0.3.11) (2024-12-23)
 
 
