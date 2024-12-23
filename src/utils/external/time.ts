@@ -53,11 +53,12 @@ export const getTimeDiff = (date?: Date | string | number) => {
  * @param date - The date or unix time to convert
  * @returns The date in display format
  */
-export const dateToDisplay = (date: number | Date) => {
+export const dateToDisplay = (date: number | Date | string) => {
   let timestamp: number
 
   try {
     if (date instanceof Date) timestamp = date.getTime()
+    else if (typeof date === 'string') timestamp = new Date(date).getTime()
     else timestamp = date * 1000
 
     return new Intl.DateTimeFormat('en-CA', {
