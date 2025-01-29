@@ -6,7 +6,7 @@
  * @returns Response with the result of the promise and the status code
  */
 export async function apiResponse<T>(
-  call: () => Promise<T>,
+  call: () => Promise<T> | T,
   successStatus = 200,
   errorStatus = 500
 ) {
