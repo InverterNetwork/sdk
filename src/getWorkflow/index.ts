@@ -93,6 +93,7 @@ export default async function getWorkflow<
           defaultToken: fundingToken.address,
           decimals: fundingToken.decimals,
           issuanceTokenDecimals: issuanceToken?.decimals,
+          issuanceToken: issuanceToken?.address,
         },
         self,
       })
