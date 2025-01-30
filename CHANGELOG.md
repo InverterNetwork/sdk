@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.16](https://github.com/InverterNetwork/sdk/compare/v0.3.15...v0.3.16) (2025-01-30)
+
+
+### Features
+
+* add issuance token address to workflow details ([e6407f2](https://github.com/InverterNetwork/sdk/commit/e6407f28f24397f44a3606acb56e2113aa3d1845))
+
 ### [0.3.15](https://github.com/InverterNetwork/sdk/compare/v0.3.14...v0.3.15) (2025-01-29)
 
 ### [0.3.14](https://github.com/InverterNetwork/sdk/compare/v0.3.13...v0.3.14) (2024-12-26)
