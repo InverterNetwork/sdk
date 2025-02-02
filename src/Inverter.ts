@@ -2,7 +2,7 @@ import getWorkflow from './getWorkflow'
 import getDeploy from './getDeploy'
 import getDeployOptions from './getDeployOptions'
 import deploy from './deploy'
-import { getModule, graphql } from '.'
+import getModule from './getModule'
 import lodash from 'lodash'
 
 import type { ModuleName } from '@inverter-network/abis'
@@ -180,6 +180,4 @@ export class Inverter<W extends PopWalletClient | undefined = undefined> {
       self: this,
     })
   }
-
-  graphql = graphql
 }

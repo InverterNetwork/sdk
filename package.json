@@ -8,11 +8,6 @@
       "import": "./dist/esm/index.js",
       "default": "./dist/cjs/index.js"
     },
-    "./graphql-schema": {
-      "types": "./dist/types/lib/graphql/build/schema.d.ts",
-      "import": "./dist/esm/lib/graphql/build/schema.js",
-      "default": "./dist/cjs/lib/graphql/build/schema.js"
-    },
     "./package.json": "./package.json"
   },
   "main": "./dist/cjs/index.js",
@@ -49,7 +44,6 @@
     "release:beta": "standard-version -a --prerelease beta --skip.changelog",
     "release:pub": "git push --follow-tags origin $(git rev-parse --abbrev-ref HEAD)",
     "protocol-rpc": "tools/protocol-rpc.sh --wait",
-    "gen:graphql": "genql --endpoint https://indexer.hyperindex.xyz/a414bf3/v1/graphql --prefix GQL --output src/lib/graphql/build && prettier --write src/lib/graphql/build/**/*.ts",
     "copy:dist": "bun run build && bun tools/copy-dist.js"
   },
   "lint-staged": {
@@ -67,8 +61,6 @@
   },
   "dependencies": {
     "@inverter-network/abis": "0.3.11",
-    "@urql/core": "^5.0.6",
-    "subscriptions-transport-ws": "^0.11.0",
     "type-fest-4": "npm:type-fest@^4.26.0"
   },
   "devDependencies": {
