@@ -30,6 +30,7 @@ export type GetMethodArgs<I> =
  * @param {Function} params.onApprove - The callback for the approval
  */
 export type MethodOptions = OmitNever<{
+  nonce?: number
   confirmations?: number
   onHash?: (hash: `0x${string}`) => void
   onConfirmation?: (receipt: TransactionReceipt) => void

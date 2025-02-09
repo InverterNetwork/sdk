@@ -91,7 +91,9 @@ export default async function getMethods<
         write: async () => {
           let orchestratorAddress = '' as `0x${string}`
 
-          const transactionHash = await write(arr, {} as any)
+          const transactionHash = await write(arr, {
+            ...(options?.nonce ? { nonce: options.nonce } : {}),
+          } as any)
 
           const eventAbi = parseAbiItem(
             'event OrchestratorCreated(uint256 indexed orchestratorId, address indexed orchestratorAddress)'

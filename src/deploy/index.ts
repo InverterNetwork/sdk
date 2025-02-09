@@ -2,22 +2,26 @@ import { processInputs } from '../'
 import type {
   DeployableContracts,
   GetUserModuleArg,
+  MethodOptions,
   PopPublicClient,
   PopWalletClient,
 } from '..'
 import { getModuleData } from '@inverter-network/abis'
 
-export default async function <T extends DeployableContracts>({
-  name,
-  walletClient,
-  publicClient,
-  args,
-}: {
-  name: T
-  walletClient: PopWalletClient
-  publicClient: PopPublicClient
-  args: GetUserModuleArg<T>
-}) {
+export default async function <T extends DeployableContracts>(
+  {
+    name,
+    walletClient,
+    publicClient,
+    args,
+  }: {
+    name: T
+    walletClient: PopWalletClient
+    publicClient: PopPublicClient
+    args: GetUserModuleArg<T>
+  },
+  options?: MethodOptions
+) {
   const moduleData = getModuleData<T>(name)
 
   if (!('deploymentInputs' in moduleData)) {
@@ -40,12 +44,28 @@ export default async function <T extends DeployableContracts>({
     abi: moduleData.abi,
     bytecode: moduleData.deploymentInputs.bytecode,
     args: processedArgs.processedInputs as any,
+    // if nonce is provided, use it
+    ...(options?.nonce ? { nonce: options.nonce } : {}),
   })
 
+  // If onHash is provided, call it
+  if (options?.onHash) {
+    options.onHash(transactionHash)
+  }
+
   // Wait for the transaction to be mined
-  const { contractAddress } = await publicClient.waitForTransactionReceipt({
+  const receipt = await publicClient.waitForTransactionReceipt({
+    // if confirmations is provided and not 0, use it else default to 1
+    confirmations: !options?.confirmations ? 1 : options?.confirmations,
     hash: transactionHash,
   })
+
+  // If onConfirmation is provided, call it
+  if (options?.onConfirmation) {
+    options.onConfirmation(receipt)
+  }
+
+  const { contractAddress } = receipt
 
   const result = {
     contractAddress,

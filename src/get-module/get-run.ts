@@ -66,7 +66,11 @@ export default function getRun<
         return simRes
       },
       // If the kind is write, use the write method
-      write: () => contract.write[name](processedInputs),
+      write: () =>
+        contract.write[name](processedInputs, {
+          // If options has a nonce, use it
+          ...(options?.nonce ? { nonce: options.nonce } : {}),
+        }),
       // If the kind is read, use the read method
       read: () => contract.read[name](processedInputs),
       // If the kind is estimateGas, use the estimateGas method

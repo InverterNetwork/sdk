@@ -16,6 +16,7 @@ import type {
   GetModuleParams,
   DeployableContracts,
   GetUserModuleArg,
+  MethodOptions,
 } from './types'
 
 export class Inverter<W extends PopWalletClient | undefined = undefined> {
@@ -149,22 +150,28 @@ export class Inverter<W extends PopWalletClient | undefined = undefined> {
     return result as W extends undefined ? never : typeof result
   }
 
-  deploy<T extends DeployableContracts>({
-    name,
-    args,
-  }: {
-    name: T
-    args: GetUserModuleArg<T>
-  }) {
+  deploy<T extends DeployableContracts>(
+    {
+      name,
+      args,
+    }: {
+      name: T
+      args: GetUserModuleArg<T>
+    },
+    options?: MethodOptions
+  ) {
     if (!this.walletClient)
       throw new Error('Wallet client is required for deploy')
 
-    return deploy({
-      name,
-      walletClient: this.walletClient,
-      publicClient: this.publicClient,
-      args,
-    })
+    return deploy(
+      {
+        name,
+        walletClient: this.walletClient,
+        publicClient: this.publicClient,
+        args,
+      },
+      options
+    )
   }
 
   getModule<N extends ModuleName>(
