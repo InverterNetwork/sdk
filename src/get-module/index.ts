@@ -2,7 +2,7 @@ import type { ModuleName } from '@inverter-network/abis'
 import { getModuleData } from '@inverter-network/abis'
 import { getContract } from 'viem'
 import type { Abi } from 'viem'
-import iterateMethods from './iterateMethods'
+import iterateMethods from './iterate-methods'
 
 import type { GetModuleParams, GetModuleReturn, PopWalletClient } from '@/types'
 

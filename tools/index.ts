@@ -1,5 +1,5 @@
-import readPath from './readPath'
-import writeLog from './writeLog'
+import readPath from './read-path'
+import writeLog from './write-log'
 
 export default {
   readPath,

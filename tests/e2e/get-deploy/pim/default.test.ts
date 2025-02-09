@@ -1,7 +1,7 @@
 import { expect, describe, it } from 'bun:test'
 
 import { type GetUserArgs, type RequestedModules, type Workflow } from '@'
-import { getModuleSchema } from '@/getDeploy/getInputs'
+import { getModuleSchema } from '@/get-deploy/get-inputs'
 import { getContract, isAddress, isHash, parseUnits } from 'viem'
 import {
   FM_BC_Bancor_VirtualSupply_v1_ARGS,

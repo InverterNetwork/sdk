@@ -1,15 +1,15 @@
 export * from './base'
 export * from './utils'
 export * from './guards'
-export * from './getModule'
-export * from './getWorkflow'
-export * from './getDeploy'
+export * from './get-module'
+export * from './get-workflow'
+export * from './get-deploy'
 export * from './tag'
 export * from './utils'
 export * from './deploy'
-export * from './formatOutputs'
-export * from './processInputs'
-export * from './tagProcessor'
+export * from './format-outputs'
+export * from './process-inputs'
+export * from './tag-processor'
 
 export type {
   ExtendedAbiParameter,

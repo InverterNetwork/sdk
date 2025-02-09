@@ -1,4 +1,4 @@
-export * from './bondingCurve'
+export * from './bonding-curve'
 export * from './orchestrator'
-export * from './kpiRewarder'
+export * from './kpi-rewarder'
 export * from './base'

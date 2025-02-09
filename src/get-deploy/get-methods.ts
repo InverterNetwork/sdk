@@ -13,7 +13,7 @@ import {
   getViemMethods,
   handlePimFactoryApprove,
 } from './utils'
-import getArgs from './getArgs'
+import getArgs from './get-args'
 import { handleError, handleOptions } from '../utils'
 import { getModuleData } from '@inverter-network/abis'
 

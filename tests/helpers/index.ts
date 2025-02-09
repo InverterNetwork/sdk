@@ -1,3 +1,3 @@
 export * from './sdk'
-export * from './getTestConnectors'
+export * from './get-test-connectors'
 export * from './constants'

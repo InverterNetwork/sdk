@@ -22,7 +22,7 @@ import {
   isHash,
   isAddress,
 } from 'viem'
-import { getModuleSchema } from '@/getDeploy/getInputs'
+import { getModuleSchema } from '@/get-deploy/get-inputs'
 import { getModuleData, type GetModuleData } from '@inverter-network/abis'
 
 describe('#PIM_RESTRICTED', async () => {

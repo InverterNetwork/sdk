@@ -10,7 +10,7 @@ import {
   type RequestedModules,
   type Workflow,
 } from '@'
-import { getModuleSchema } from '@/getDeploy/getInputs'
+import { getModuleSchema } from '@/get-deploy/get-inputs'
 
 import {
   sdk,

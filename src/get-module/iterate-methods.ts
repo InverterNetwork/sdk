@@ -1,4 +1,4 @@
-import constructMethod from './constructMethod'
+import constructMethod from './construct-method'
 
 import type { AbiStateMutability } from 'abitype'
 import type { ExtendedAbi, ExtendedAbiFunction } from '@inverter-network/abis'

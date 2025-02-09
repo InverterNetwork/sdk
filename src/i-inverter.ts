@@ -1,8 +1,8 @@
-import getWorkflow from './getWorkflow'
-import getDeploy from './getDeploy'
-import getDeployOptions from './getDeployOptions'
+import getWorkflow from './get-workflow'
+import getDeploy from './get-deploy'
+import getDeployOptions from './get-deploy-options'
 import deploy from './deploy'
-import getModule from './getModule'
+import getModule from './get-module'
 import lodash from 'lodash'
 
 import type { ModuleName } from '@inverter-network/abis'

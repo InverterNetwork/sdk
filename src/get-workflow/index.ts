@@ -1,6 +1,6 @@
-import getModule from '../getModule'
-import getTokenResults from './getTokenResults'
-import type { GetWorkflowTokenResultsReturnTypes } from './getTokenResults'
+import getModule from '../get-module'
+import getTokenResults from './get-token-results'
+import type { GetWorkflowTokenResultsReturnTypes } from './get-token-results'
 
 import { getModuleData } from '@inverter-network/abis'
 import type { GetModuleNameByType } from '@inverter-network/abis'

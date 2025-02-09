@@ -1,4 +1,4 @@
-import getRun from './getRun'
+import getRun from './get-run'
 
 import type {
   EstimateGasOutput,

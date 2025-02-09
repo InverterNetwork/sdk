@@ -1,5 +1,5 @@
 import { Inverter } from '@'
-import { getTestConnectors } from './getTestConnectors'
+import { getTestConnectors } from './get-test-connectors'
 
 const { publicClient, walletClient } = getTestConnectors()
 

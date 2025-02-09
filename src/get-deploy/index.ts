@@ -1,6 +1,6 @@
-import getInputs from './getInputs'
+import getInputs from './get-inputs'
 import type { FactoryType, GetDeployParams, RequestedModules } from '../types'
-import getMethods from './getMethods'
+import getMethods from './get-methods'
 
 export default async function getDeploy<
   T extends RequestedModules<FT extends undefined ? 'default' : FT>,

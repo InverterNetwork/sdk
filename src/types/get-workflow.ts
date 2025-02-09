@@ -1,4 +1,4 @@
-import { Inverter } from '@/Inverter'
+import { Inverter } from '@/i-inverter'
 
 import type {
   UserFacingModuleType,

@@ -23,4 +23,4 @@ export type GetDeployParams<
 export type GetDeployReturn<
   T extends RequestedModules<FT extends undefined ? 'default' : FT>,
   FT extends FactoryType | undefined = undefined,
-> = Awaited<ReturnType<typeof import('@/getDeploy').default<T, FT>>>
+> = Awaited<ReturnType<typeof import('@/get-deploy').default<T, FT>>>

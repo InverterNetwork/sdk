@@ -1,17 +1,17 @@
 export * from './types'
 export * from './utils'
 
-export type { DeploymentResponse, DeploymentVersion } from './getDeploy/utils'
+export type { DeploymentResponse, DeploymentVersion } from './get-deploy/utils'
 
 export {
   fetchDeployment,
   getVersions,
   getFactoryAddress,
-} from './getDeploy/utils'
+} from './get-deploy/utils'
 
 export { default as deploy } from './deploy'
-export { default as getModule } from './getModule'
-export { default as getWorkflow } from './getWorkflow'
-export { default as getDeploy } from './getDeploy'
-export { default as getDeployOptions } from './getDeployOptions'
-export { Inverter } from './Inverter'
+export { default as getModule } from './get-module'
+export { default as getWorkflow } from './get-workflow'
+export { default as getDeploy } from './get-deploy'
+export { default as getDeployOptions } from './get-deploy-options'
+export { Inverter } from './i-inverter'
