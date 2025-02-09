@@ -2,7 +2,7 @@ import { getModuleData } from '@inverter-network/abis'
 import { processInputs, ADDRESS_ZERO } from '@/utils'
 import { MANDATORY_MODULES } from './constants'
 import { assembleMetadata, getDefaultToken } from './utils'
-import { Inverter } from '@/i-inverter'
+import { Inverter } from '@/inverter'
 
 import { encodeAbiParameters, parseUnits } from 'viem'
 import type { PublicClient } from 'viem'

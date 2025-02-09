@@ -1,4 +1,4 @@
-import type { Inverter } from '@/i-inverter'
+import type { Inverter } from '@/inverter'
 
 import type { PublicClient, SimulateContractReturnType } from 'viem'
 import type { FactoryType } from './generic'
