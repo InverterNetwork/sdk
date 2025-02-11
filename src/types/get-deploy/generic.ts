@@ -3,7 +3,11 @@ import type {
   UserFacingModuleType,
 } from '@inverter-network/abis'
 
-export type FactoryType = 'default' | 'restricted-pim' | 'immutable-pim'
+export type FactoryType =
+  | 'default'
+  | 'restricted-pim'
+  | 'immutable-pim'
+  | 'migrating-pim'
 
 // Module Types Start
 export type ModuleType = Exclude<UserFacingModuleType, 'orchestrator'>

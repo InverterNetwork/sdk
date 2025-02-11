@@ -22,6 +22,10 @@ import type {
   TagOverwrites,
 } from '@/types'
 
+import d from 'debug'
+
+const debug = d('inverter:sdk:get-args')
+
 let extras: Extras
 
 export type JointParams = {
@@ -51,12 +55,17 @@ export const getEncodedArgs = async ({
     : '0x00'
   // Process the inputs
 
+  debug('pre processInputs args', args)
+
   const { processedInputs } = <any>await processInputs({
     extendedInputs: configData,
     args,
     extras,
     ...params,
   })
+
+  debug('processedInputs', processedInputs)
+
   // Encode the processed inputs
   const encodedArgs = encodeAbiParameters(configData, processedInputs)
   // Return the encoded arguments
@@ -117,6 +126,7 @@ export const constructArgs = async ({
     issuanceToken: {},
     initialPurchaseAmount: '',
     beneficiary: {},
+    migrationConfig: {},
   } as unknown as ConstructedArgs
 
   // Get the default token if the funding manager is provided
@@ -167,6 +177,7 @@ export const constructArgs = async ({
   switch (factoryType) {
     case 'restricted-pim':
     case 'immutable-pim':
+    case 'migrating-pim':
       if (!userArgs.issuanceToken) throw new Error('Issuance token is required')
 
       // In either case, the issuance token is required
@@ -186,13 +197,28 @@ export const constructArgs = async ({
       }
 
       // If the factory type is immutable-pim, the initial purchase amount is parsed if provided
-      if (factoryType === 'immutable-pim' && !!userArgs.initialPurchaseAmount) {
+      if (
+        ['immutable-pim', 'migrating-pim'].includes(factoryType) &&
+        !!userArgs.initialPurchaseAmount
+      ) {
         args.initialPurchaseAmount = String(
           parseUnits(
             userArgs.initialPurchaseAmount,
             Number(issuanceTokenDecimals)
           )
         )
+      }
+
+      if (factoryType === 'migrating-pim' && !!userArgs.migrationConfig) {
+        args.migrationConfig = {
+          ...userArgs.migrationConfig,
+          migrationThreshold: String(
+            parseUnits(
+              userArgs.migrationConfig.migrationThreshold,
+              Number(extras.decimals)
+            )
+          ),
+        }
       }
       break
   }
@@ -236,9 +262,17 @@ export default async function getArgs<
     constructed.initialPurchaseAmount,
   ] as const
 
+  const withMigratingPim = [
+    ...baseArr,
+    constructed.issuanceToken,
+    constructed.initialPurchaseAmount,
+    constructed.migrationConfig,
+  ] as const
+
   const result = {
     'restricted-pim': withRestrictedPim,
     'immutable-pim': withImmutablePim,
+    'migrating-pim': withMigratingPim,
     default: baseArr,
   }[params.factoryType]
 

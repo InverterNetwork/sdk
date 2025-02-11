@@ -3,6 +3,7 @@ import type {
   BeneficiaryArgs,
   InitialPurchaseAmountArgs,
   IssuanceTokenArgs,
+  MigrationConfigArgs,
   OrchestratorArgs,
 } from './static'
 import type {
@@ -66,12 +67,16 @@ export type GetUserArgs<
     authorizer: GetUserModuleArg<T['authorizer']>
     paymentProcessor: GetUserModuleArg<T['paymentProcessor']>
     optionalModules: GetUserOptionalArgs<T['optionalModules']>
-    issuanceToken: FT extends 'restricted-pim' | 'immutable-pim'
+    issuanceToken: FT extends
+      | 'restricted-pim'
+      | 'immutable-pim'
+      | 'migrating-pim'
       ? IssuanceTokenArgs
       : never
-    initialPurchaseAmount: FT extends 'immutable-pim'
+    initialPurchaseAmount: FT extends 'immutable-pim' | 'migrating-pim'
       ? InitialPurchaseAmountArgs
       : never
     beneficiary: FT extends 'restricted-pim' ? BeneficiaryArgs : never
+    migrationConfig: FT extends 'migrating-pim' ? MigrationConfigArgs : never
   }>
 >

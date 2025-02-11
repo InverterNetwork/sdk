@@ -29,6 +29,7 @@ export default async function getMethods<
   const abi = {
     'restricted-pim': () => getModuleData('Restricted_PIM_Factory_v1').abi,
     'immutable-pim': () => getModuleData('Immutable_PIM_Factory_v1').abi,
+    'migrating-pim': () => getModuleData('Migrating_PIM_Factory_v1').abi,
     default: () => getModuleData('OrchestratorFactory_v1').abi,
   }[factoryType]()
 

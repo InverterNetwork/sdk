@@ -35,6 +35,9 @@ export type InitialPurchaseAmountArgs =
 export type BeneficiaryArgs =
   GetUserModuleArg<'Restricted_PIM_Factory_v1'>['beneficiary']
 
+export type MigrationConfigArgs =
+  GetUserModuleArg<'Migrating_PIM_Factory_v1'>['migrationConfig']
+
 export type ConstructedArgs = {
   orchestrator: NonNullable<OrchestratorArgs>
   fundingManager: ModuleArgs
@@ -44,6 +47,7 @@ export type ConstructedArgs = {
   issuanceToken: IssuanceTokenArgs
   initialPurchaseAmount: InitialPurchaseAmountArgs
   beneficiary: BeneficiaryArgs
+  migrationConfig: MigrationConfigArgs
 }
 
 export type UserModuleArg = Record<string, unknown>
@@ -57,4 +61,5 @@ export type UserArgs = {
   issuanceToken?: IssuanceTokenArgs
   initialPurchaseAmount?: InitialPurchaseAmountArgs
   beneficiary?: BeneficiaryArgs
+  migrationConfig?: MigrationConfigArgs
 }

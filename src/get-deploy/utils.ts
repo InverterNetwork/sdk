@@ -21,6 +21,7 @@ export type DeploymentResponse = {
   orchestratorFactory: Record<string, `0x${string}` | undefined>
   restrictedPimFactory: Record<string, `0x${string}` | undefined>
   immutablePimFactory: Record<string, `0x${string}` | undefined>
+  migratingPimFactory: Record<string, `0x${string}` | undefined>
 }
 
 export type DeploymentVersion = 'v1.0.0'
@@ -57,6 +58,12 @@ export const getFactoryAddress = async ({
         return process.env.TEST_IMMUTABLE_PIM_FACTORY_ADDRESS as `0x${string}`
 
       return deployment.immutablePimFactory?.[chainId]
+
+    case 'migrating-pim':
+      if (chainId === anvil.id)
+        return process.env.TEST_MIGRATING_PIM_FACTORY_ADDRESS as `0x${string}`
+
+      return deployment.migratingPimFactory?.[chainId]
     case 'default':
       if (chainId === anvil.id)
         return process.env.TEST_ORCHESTRATOR_FACTORY_ADDRESS as `0x${string}`
@@ -95,6 +102,7 @@ export const getViemMethods = async ({
   const methodName = {
     'restricted-pim': 'createPIMWorkflow' as const,
     'immutable-pim': 'createPIMWorkflow' as const,
+    'migrating-pim': 'createPIMWorkflow' as const,
     default: 'createOrchestrator' as const,
   }[factoryType]
 
@@ -179,6 +187,7 @@ const isPimArgs = (
     case 'restricted-pim':
       return !!args?.fundingManager?.bondingCurveParams?.initialCollateralSupply
     case 'immutable-pim':
+    case 'migrating-pim':
       return !!args?.initialPurchaseAmount
     default:
       return false
@@ -238,6 +247,7 @@ export const handlePimFactoryApprove = async ({
   // handle the PIM factory approve
   switch (factoryType) {
     case 'immutable-pim':
+    case 'migrating-pim':
       return await handle(userArgs.initialPurchaseAmount)
   }
 

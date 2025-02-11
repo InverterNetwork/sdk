@@ -70,6 +70,21 @@ export const getOtherFactoryTypeInputs = <FT extends FactoryType>(
           'initialPurchaseAmount'
         ),
       }
+    case 'migrating-pim':
+      return {
+        issuanceToken: getModuleSchema(
+          'Immutable_PIM_Factory_v1',
+          'issuanceToken'
+        ),
+        initialPurchaseAmount: getModuleSchema(
+          'Immutable_PIM_Factory_v1',
+          'initialPurchaseAmount'
+        ),
+        migrationConfig: getModuleSchema(
+          'Migrating_PIM_Factory_v1',
+          'migrationConfig'
+        ),
+      }
     default:
       return {}
   }

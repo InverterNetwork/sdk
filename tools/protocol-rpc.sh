@@ -121,6 +121,8 @@ deploy_protocol() {
     BANCOR_FORMULA_ADDRESS=$(echo "$deploy_output" | grep -oE 'BancorFormula Implementation: 0x[0-9a-fA-F]+' | awk '{print $3}')
     RESTRICTED_PIM_FACTORY_ADDRESS=$(echo "$deploy_output" | grep -oE 'Restricted_PIM_Factory_v1: 0x[0-9a-fA-F]+' | awk '{print $2}')
     IMMUTABLE_PIM_FACTORY_ADDRESS=$(echo "$deploy_output" | grep -oE 'Immutable_PIM_Factory_v1: 0x[0-9a-fA-F]+' | awk '{print $2}')
+    MIGRATING_PIM_FACTORY_ADDRESS=$(echo "$deploy_output" | grep -oE 'Migrating_PIM_Factory_v1: 0x[0-9a-fA-F]+' | awk '{print $2}')
+    UNISWAP_V2_ADAPTER_ADDRESS=$(echo "$deploy_output" | grep -oE 'UniswapV2Adapter: 0x[0-9a-fA-F]+' | awk '{print $2}')
 
     if [[ -z "$ORCHESTRATOR_FACTORY_ADDRESS" || -z "$ERC20_MOCK_ADDRESS" || -z "$BANCOR_FORMULA_ADDRESS" || -z "RESTRICTED_PIM_FACTORY_ADDRESS" || -z "IMMUTABLE_PIM_FACTORY_ADDRESS" ]]; then
         printf "Failed to extract contract addresses ❌\n" >&2
@@ -164,6 +166,8 @@ update_env() {
     update_env_var "TEST_BANCOR_FORMULA_ADDRESS" "$BANCOR_FORMULA_ADDRESS" "$ENV_FILE"
     update_env_var "TEST_IMMUTABLE_PIM_FACTORY_ADDRESS" "$IMMUTABLE_PIM_FACTORY_ADDRESS" "$ENV_FILE"
     update_env_var "TEST_RESTRICTED_PIM_FACTORY_ADDRESS" "$RESTRICTED_PIM_FACTORY_ADDRESS" "$ENV_FILE"
+    update_env_var "TEST_MIGRATING_PIM_FACTORY_ADDRESS" "$MIGRATING_PIM_FACTORY_ADDRESS" "$ENV_FILE"
+    update_env_var "TEST_UNISWAP_V2_ADAPTER_ADDRESS" "$UNISWAP_V2_ADAPTER_ADDRESS" "$ENV_FILE"
 
     rm -f .env.bak
 }
