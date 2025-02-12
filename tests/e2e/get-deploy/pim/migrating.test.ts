@@ -1,6 +1,6 @@
 import { expect, describe, it, beforeAll } from 'bun:test'
 
-import { hexToString, isAddress, isHash } from 'viem'
+import { hexToString, isAddress, isHash, parseAbiItem } from 'viem'
 
 import {
   type GetDeployReturn,
@@ -44,7 +44,7 @@ describe('#PIM_IMMUTABLE', async () => {
       decimals: 18,
       maxSupply: GET_HUMAN_READABLE_UINT_MAX_SUPPLY(18),
     },
-    initialPurchaseAmount: '0',
+    initialPurchaseAmount: '500',
     migrationConfig: {
       dexAdapter: TEST_UNISWAP_V2_ADAPTER_ADDRESS,
       isImmutable: true,
@@ -53,7 +53,7 @@ describe('#PIM_IMMUTABLE', async () => {
     },
   } as const satisfies GetUserArgs<typeof requestedModules, 'migrating-pim'>
 
-  const secondaryPurchaseAmount = '1200'
+  const secondaryPurchaseAmount = '600'
   const initialMintAmount = String(
     Number(args.initialPurchaseAmount) + Number(secondaryPurchaseAmount)
   )
@@ -74,6 +74,18 @@ describe('#PIM_IMMUTABLE', async () => {
         decimals: 18,
       },
     })
+  })
+
+  it('0. Confirm Uniswap V2 Router is deployed', async () => {
+    const addr = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D'
+    const abi = [parseAbiItem('function factory() view returns (address)')]
+    const router = await sdk.publicClient.readContract({
+      address: addr,
+      abi,
+      functionName: 'factory',
+    })
+
+    expect(isAddress(router)).toBeTrue()
   })
 
   it('1. Set getDeployReturn', async () => {
