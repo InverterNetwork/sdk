@@ -1,6 +1,6 @@
 import { expect, describe, it, beforeAll } from 'bun:test'
 
-import { isAddress, isHash } from 'viem'
+import { hexToString, isAddress, isHash } from 'viem'
 
 import {
   type GetDeployReturn,
@@ -44,20 +44,27 @@ describe('#PIM_IMMUTABLE', async () => {
       decimals: 18,
       maxSupply: GET_HUMAN_READABLE_UINT_MAX_SUPPLY(18),
     },
-    initialPurchaseAmount: '500',
+    initialPurchaseAmount: '0',
     migrationConfig: {
       dexAdapter: TEST_UNISWAP_V2_ADAPTER_ADDRESS,
-      isImmutable: false,
+      isImmutable: true,
       lpTokenRecipient: deployer,
       migrationThreshold: '1000',
     },
   } as const satisfies GetUserArgs<typeof requestedModules, 'migrating-pim'>
+
+  const secondaryPurchaseAmount = '1200'
+  const initialMintAmount = String(
+    Number(args.initialPurchaseAmount) + Number(secondaryPurchaseAmount)
+  )
 
   let orchestratorAddress: `0x${string}`
   let getDeployReturn: GetDeployReturn<typeof requestedModules, 'migrating-pim'>
   let workflow: Workflow<typeof walletClient, typeof requestedModules>
   let factory: GetModuleReturn<'Migrating_PIM_Factory_v1', PopWalletClient>
   let fundingToken: GetModuleReturn<'ERC20Issuance_v1', PopWalletClient>
+
+  let deployerCollateralBalance: string
 
   beforeAll(() => {
     fundingToken = sdk.getModule({
@@ -103,7 +110,16 @@ describe('#PIM_IMMUTABLE', async () => {
   })
 
   it('3. Mint Collateral For Initial Purchase / Buy From The Curve', async () => {
-    const hash = await fundingToken.write.mint.run([deployer, '2000'])
+    const hash = await fundingToken.write.mint.run([
+      deployer,
+      initialMintAmount,
+    ])
+
+    deployerCollateralBalance = await fundingToken.read.balanceOf.run(deployer)
+    console.log(
+      'deployerCollateralBalance post initial mint',
+      deployerCollateralBalance
+    )
 
     expect(isHash(hash)).toBeTrue()
   })
@@ -150,35 +166,67 @@ describe('#PIM_IMMUTABLE', async () => {
     initiallyPurchased =
       await workflow.issuanceToken.module.read.balanceOf.run(deployer)
 
+    deployerCollateralBalance = await fundingToken.read.balanceOf.run(deployer)
+    console.log(
+      'deployerCollateralBalance post initial purchase balance',
+      deployerCollateralBalance
+    )
+
+    expect(Number(deployerCollateralBalance)).toBeCloseTo(
+      Number(initialMintAmount) - Number(args.initialPurchaseAmount),
+      -2
+    )
     expect(Number(initiallyPurchased)).toBeGreaterThan(0)
   })
 
   let purchaseReturn: string
 
-  it('8. Buy From The PIM And Match Purchase Return With Balance', async () => {
+  it('8. Buy From The PIM And trigger migration with secondary purchase', async () => {
     purchaseReturn =
       await workflow.fundingManager.read.calculatePurchaseReturn.run(
-        args.initialPurchaseAmount
+        secondaryPurchaseAmount
       )
 
     await factory.write.buyForUpTo.run([
       workflow.issuanceToken.address,
       deployer,
-      '500',
+      secondaryPurchaseAmount,
       purchaseReturn,
     ])
 
-    const balance =
-      await workflow.issuanceToken.module.read.balanceOf.run(deployer)
+    deployerCollateralBalance = await fundingToken.read.balanceOf.run(deployer)
+    console.log(
+      'deployerCollateralBalance post secondary purchase balance',
+      deployerCollateralBalance
+    )
 
-    const subtracted = Number(balance) - Number(initiallyPurchased)
+    const refundAmount =
+      Number(initialMintAmount) -
+      Number(args.migrationConfig.migrationThreshold)
 
-    expect(subtracted).toBeGreaterThanOrEqual(Number(purchaseReturn))
+    expect(Number(deployerCollateralBalance)).toBeCloseTo(refundAmount, -2)
   })
 
   it('9. Should check if the migration threshold is reached', async () => {
     const isMigrated = await factory.read.isGraduated.run()
 
     expect(isMigrated).toBeTrue()
+  })
+
+  it('10. Should check if FM has only fees left in it', async () => {
+    const collateralBalance = await fundingToken.read.balanceOf.run(
+      workflow.fundingManager.address
+    )
+
+    const collectedFees = Number(
+      await workflow.fundingManager.read.projectCollateralFeeCollected.run()
+    )
+
+    const threshold = Number(args.migrationConfig.migrationThreshold)
+
+    expect(Number(collateralBalance)).toBeCloseTo(
+      threshold - (threshold - collectedFees),
+      -2
+    )
   })
 })
