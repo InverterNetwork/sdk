@@ -1,6 +1,6 @@
 import { expect, describe, it, beforeAll } from 'bun:test'
 
-import { hexToString, isAddress, isHash, parseAbiItem } from 'viem'
+import { isAddress, isHash, parseAbiItem } from 'viem'
 
 import {
   type GetDeployReturn,
@@ -52,6 +52,9 @@ describe('#PIM_IMMUTABLE', async () => {
       migrationThreshold: '1000',
     },
   } as const satisfies GetUserArgs<typeof requestedModules, 'migrating-pim'>
+
+  const uniswapFactoryAddress = '0xF62c03E08ada871A0bEb309762E260a7a6a880E6'
+  const uniswapRouterAddress = '0xeE567Fe1712Faf6149d80dA1E6934E354124CfE3'
 
   const secondaryPurchaseAmount = '600'
   const initialMintAmount = String(
@@ -142,7 +145,22 @@ describe('#PIM_IMMUTABLE', async () => {
     expect(gasEstimate).toContainKeys(['value', 'formatted'])
   })
 
-  it('5. Deploy the workflow', async () => {
+  it('5. Deploy the uniswap v2 adapter', async () => {
+    const { contractAddress } = await sdk.deploy({
+      name: 'UniswapV2Adapter',
+      args: {
+        factoryAddress: uniswapFactoryAddress,
+        routerAddress: uniswapRouterAddress,
+      },
+    })
+
+    // @ts-expect-error - This is a test
+    args.migrationConfig.dexAdapter = contractAddress
+
+    expect(isAddress(contractAddress ?? '')).toBeTrue()
+  })
+
+  it('5.1. Deploy the workflow', async () => {
     orchestratorAddress = (await getDeployReturn.run(args)).orchestratorAddress
     expect(isAddress(orchestratorAddress)).toBeTrue()
   })
