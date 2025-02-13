@@ -83,7 +83,7 @@ install_dependency() {
 start_anvil() {
     printf "Starting Anvil blockchain simulator 🔥\n"
     pkill anvil
-    anvil &
+    anvil --fork-url https://inverter.web3no.de/main/evm/11155111 --chain-id 31337 &
     ANVIL_PID=$!
     # echo "$ANVIL_PID" >"$ANVIL_PID_FILE"
 }
@@ -206,6 +206,8 @@ main() {
         exit 1
     }
 
+    sleep 2
+
     printf "Entering contracts directory 📂\n"
     cd ./contracts || {
         printf "Failed to enter ./contracts ❌\n" >&2
@@ -221,6 +223,8 @@ main() {
         printf "Protocol deployment failed ❌\n"
         exit 1
     }
+
+    sleep 1
 
     printf "Returning to the root directory 📂\n"
     cd .. || {

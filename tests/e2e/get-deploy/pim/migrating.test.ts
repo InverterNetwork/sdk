@@ -77,7 +77,8 @@ describe('#PIM_IMMUTABLE', async () => {
   })
 
   it('0. Confirm Uniswap V2 Router is deployed', async () => {
-    const addr = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D'
+    const addr = '0xeE567Fe1712Faf6149d80dA1E6934E354124CfE3'
+
     const abi = [parseAbiItem('function factory() view returns (address)')]
     const router = await sdk.publicClient.readContract({
       address: addr,
