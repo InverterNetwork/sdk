@@ -176,6 +176,7 @@ describe('#PIM_IMMUTABLE', async () => {
       name: 'Migrating_PIM_Factory_v1',
       extras: {
         decimals: 18,
+        issuanceTokenDecimals: workflow.issuanceToken.decimals,
         issuanceToken: workflow.issuanceToken.address,
         defaultToken: args.fundingManager.collateralToken,
       },
@@ -218,8 +219,8 @@ describe('#PIM_IMMUTABLE', async () => {
         secondaryPurchaseAmount
       )
 
-    await factory.write.buyForUpTo.run([
-      workflow.issuanceToken.address,
+    await factory.write.buyFor.run([
+      workflow.fundingManager.address,
       deployer,
       secondaryPurchaseAmount,
       purchaseReturn,
@@ -239,7 +240,9 @@ describe('#PIM_IMMUTABLE', async () => {
   })
 
   it('9. Should check if the migration threshold is reached', async () => {
-    const isMigrated = await factory.read.isGraduated.run()
+    const isMigrated = await factory.read.getIsGraduated.run(
+      workflow.fundingManager.address
+    )
 
     expect(isMigrated).toBeTrue()
   })
