@@ -50,6 +50,7 @@ describe('#PIM_IMMUTABLE', async () => {
       isImmutable: true,
       lpTokenRecipient: deployer,
       migrationThreshold: '1000',
+      initialRewardDuration: '7884000',
     },
   } as const satisfies GetUserArgs<typeof requestedModules, 'migrating-pim'>
 
