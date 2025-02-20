@@ -32,6 +32,11 @@ describe('#PIM_IMMUTABLE', async () => {
     optionalModules: ['LM_PC_PaymentRouter_v1'],
   } as const satisfies RequestedModules<'migrating-pim'>
 
+  const workflowRequestedModules = {
+    ...requestedModules,
+    optionalModules: ['LM_PC_Staking_v1', 'LM_PC_PaymentRouter_v1'],
+  } as const satisfies RequestedModules<'migrating-pim'>
+
   const args = {
     orchestrator: GET_ORCHESTRATOR_ARGS(deployer),
     authorizer: {
@@ -64,7 +69,7 @@ describe('#PIM_IMMUTABLE', async () => {
 
   let orchestratorAddress: `0x${string}`
   let getDeployReturn: GetDeployReturn<typeof requestedModules, 'migrating-pim'>
-  let workflow: Workflow<typeof walletClient, typeof requestedModules>
+  let workflow: Workflow<typeof walletClient, typeof workflowRequestedModules>
   let factory: GetModuleReturn<'Migrating_PIM_Factory_v1', PopWalletClient>
   let fundingToken: GetModuleReturn<'ERC20Issuance_v1', PopWalletClient>
 
@@ -169,7 +174,10 @@ describe('#PIM_IMMUTABLE', async () => {
   it('6. Set The Workflow', async () => {
     workflow = await sdk.getWorkflow({
       orchestratorAddress,
-      requestedModules,
+      requestedModules: {
+        ...requestedModules,
+        optionalModules: ['LM_PC_Staking_v1', 'LM_PC_PaymentRouter_v1'],
+      },
     })
 
     factory = sdk.getModule({
@@ -248,9 +256,9 @@ describe('#PIM_IMMUTABLE', async () => {
     expect(isMigrated).toBeTrue()
   })
 
-  it('10. Should check if FM has only fees left in it', async () => {
+  it('10. Should check if the staking module has only fees left in it', async () => {
     const collateralBalance = await fundingToken.read.balanceOf.run(
-      workflow.fundingManager.address
+      workflow.optionalModule.LM_PC_Staking_v1.address
     )
 
     const collectedFees = Number(
