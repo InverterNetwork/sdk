@@ -5,7 +5,6 @@ INSTALL_URL="https://foundry.paradigm.xyz"
 DEPS=("curl" "make" "forge" "anvil")
 DEPLOY_SCRIPT="script/deploymentScript/TestnetDeploymentScript.s.sol"
 ENV_FILE=".env"
-# ANVIL_PID_FILE=".anvil.pid"
 DEPLOYER_PRIVATE_KEY="0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
 TEST_PRIVATE_KEY="TEST_PRIVATE_KEY=$DEPLOYER_PRIVATE_KEY"
 RPC_URL="http://127.0.0.1:8545"
@@ -83,9 +82,21 @@ install_dependency() {
 start_anvil() {
     printf "Starting Anvil blockchain simulator 🔥\n"
     pkill anvil
-    anvil --fork-url https://inverter.web3no.de/main/evm/11155111 --chain-id 31337 &
-    ANVIL_PID=$!
-    # echo "$ANVIL_PID" >"$ANVIL_PID_FILE"
+
+    if [[ "$USE_FORK" == "true" ]]; then
+        printf "Starting Anvil in fork mode from Sepolia testnet 🔄\n"
+        anvil --fork-url https://inverter.web3no.de/main/evm/11155111 --chain-id 31337 &
+        ANVIL_PID=$!
+    else
+        printf "Starting Anvil in standard mode ⚡\n"
+        anvil --chain-id 31337 &
+        ANVIL_PID=$!
+    fi
+
+    if [[ "$USE_FORK" == "true" ]]; then
+        printf "Sleeping for 2 seconds to allow for fork to sync 🔄\n"
+        sleep 2
+    fi
 }
 
 # Function to handle contract installation
@@ -131,6 +142,11 @@ deploy_protocol() {
 
     printf "OrchestratorFactory Address: $ORCHESTRATOR_FACTORY_ADDRESS ✅\n"
     printf "ERC20Mock Address: $ERC20_MOCK_ADDRESS ✅\n"
+
+    if [[ "$USE_FORK" == "true" ]]; then
+        printf "Sleeping for 1 seconds to allow for fork to sync 🔄\n"
+        sleep 1
+    fi
 }
 
 # Function to update or add a variable in the .env file
@@ -206,8 +222,6 @@ main() {
         exit 1
     }
 
-    sleep 2
-
     printf "Entering contracts directory 📂\n"
     cd ./contracts || {
         printf "Failed to enter ./contracts ❌\n" >&2
@@ -223,8 +237,6 @@ main() {
         printf "Protocol deployment failed ❌\n"
         exit 1
     }
-
-    sleep 1
 
     printf "Returning to the root directory 📂\n"
     cd .. || {
