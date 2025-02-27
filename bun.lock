@@ -4,7 +4,7 @@
     "": {
       "name": "@inverter-network/sdk",
       "dependencies": {
-        "@inverter-network/abis": "0.3.15",
+        "@inverter-network/abis": "0.3.23-alpha.1",
         "debug": "^4.4.0",
         "type-fest-4": "npm:type-fest@^4.26.0",
       },
@@ -121,7 +121,7 @@
 
     "@hutson/parse-repository-url": ["@hutson/parse-repository-url@3.0.2", "", {}, "sha512-H9XAx3hc0BQHY6l+IFSWHDySypcXsvsuLhgYLUGywmJ5pswRVQJUHpOsobnLYp2ZUaUlKiKDrgWWhosOwAEM8Q=="],
 
-    "@inverter-network/abis": ["@inverter-network/abis@0.3.15", "", { "peerDependencies": { "typescript": "^5.6.2" } }, "sha512-b7IUmFg3hFpRLh8iJG2QGCLpjHarl7HmJgTRbYPmniNK0vg88PPR6lcpwaWpyr0eSCy5F9Yunnoslw6v/HxPvg=="],
+    "@inverter-network/abis": ["@inverter-network/abis@0.3.23-alpha.1", "", { "peerDependencies": { "typescript": "^5.6.2" } }, "sha512-zl4dQwVfoar+HnZigwgXNJZA9vvm1UWloUcX4ap+sR+FSjdrH0YHJpM6iciQ2UR/wluHRzv1TxXulY3nBjNBIg=="],
 
     "@noble/curves": ["@noble/curves@1.8.1", "", { "dependencies": { "@noble/hashes": "1.7.1" } }, "sha512-warwspo+UYUPep0Q+vtdVB4Ugn8GGQj8iyB3gnRWsztmUHTI3S1nhdiWNsPUGL0vud7JlRRk1XEu7Lq1KGTnMQ=="],
 
