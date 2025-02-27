@@ -15,7 +15,6 @@ describe('#DEPLOY_ERC20_ISSUANCE_BLACKLIST', async () => {
         decimals: 18,
         maxSupply: '1000000',
         initialAdmin: deployer,
-        initialBlacklistManager: deployer,
       },
     })
 
