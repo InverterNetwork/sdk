@@ -21,7 +21,7 @@ import {
   TEST_MIGRATING_PIM_FACTORY_ADDRESS,
 } from 'tests/helpers'
 
-describe.skipIf(process.env.USE_FORK !== 'true')('#PIM_IMMUTABLE', async () => {
+describe.skipIf(process.env.USE_FORK !== 'true')('#PIM_MIGRATING', async () => {
   const { walletClient } = sdk
   const deployer = walletClient.account.address
 

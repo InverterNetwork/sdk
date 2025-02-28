@@ -126,14 +126,15 @@ export const getViemMethods = async ({
 export const getVersions = (name: ModuleName) => {
   const nameParts = name.split('_'),
     majorString = nameParts[nameParts.length - 1].slice(1),
-    major = Number(majorString) > 1 ? 1 : Number(majorString),
+    major = Number(majorString) > 1 ? Number(majorString) : 1,
     majorBigint = BigInt(major),
     minorBigint = BigInt(0), // TODO: find a way to get the latest minor version
-    pathcBigint = BigInt(0) // TODO: find a way to get the latest patch version
+    patchBigint = BigInt(0) // TODO: find a way to get the latest patch version
+
   return {
     majorVersion: majorBigint,
     minorVersion: minorBigint,
-    patchVersion: pathcBigint,
+    patchVersion: patchBigint,
   }
 }
 

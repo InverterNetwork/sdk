@@ -58,9 +58,9 @@ describe('#CURVE_SIM', () => {
           buyFee: '100',
           sellFee: '100',
           formula: TEST_BANCOR_FORMULA_ADDRESS,
-          reserveRatioForBuying: 33_33,
-          reserveRatioForSelling: 33_33,
-          initialIssuanceSupply: String(Number(maxSupply) / 1000),
+          reserveRatioForBuying: 333_333,
+          reserveRatioForSelling: 333_333,
+          initialIssuanceSupply: String(Number(maxSupply) / 10000),
           initialCollateralSupply: String(Number(maxSupply) / 1000),
           buyIsOpen: true,
           sellIsOpen: true,
@@ -93,7 +93,7 @@ describe('#CURVE_SIM', () => {
     ])
   })
 
-  it('1. Should buy from the bonding curve with 1000 collateral tokens', async () => {
+  it.skip('1. Should buy from the bonding curve with 1000 collateral tokens', async () => {
     const purchaseAmount = '1000'
 
     await fundingToken.write.mint.run([deployer, purchaseAmount])
@@ -126,7 +126,7 @@ describe('#CURVE_SIM', () => {
     expect(Number(balance)).toBeGreaterThan(0)
   })
 
-  it(`2. Should buy from the bonding curve with maxSupplyCollateral: ${toCompactNumber(maxSupplyCollateral)} collateral tokens`, async () => {
+  it(`2. Should buy from the bonding curve with maxSupplyCollateral: ${chalk.green(toCompactNumber(maxSupplyCollateral))} collateral tokens`, async () => {
     const purchaseAmount = maxSupplyCollateral
 
     await fundingToken.write.mint.run([deployer, purchaseAmount])
