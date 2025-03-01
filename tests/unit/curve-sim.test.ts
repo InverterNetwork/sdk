@@ -60,8 +60,8 @@ describe('#CURVE_SIM', () => {
           formula: TEST_BANCOR_FORMULA_ADDRESS,
           reserveRatioForBuying: 333_333,
           reserveRatioForSelling: 333_333,
-          initialIssuanceSupply: String(Number(maxSupply) / 10000),
-          initialCollateralSupply: String(Number(maxSupply) / 1000),
+          initialIssuanceSupply: String(Number(maxSupply) / 10),
+          initialCollateralSupply: '760',
           buyIsOpen: true,
           sellIsOpen: true,
         },
@@ -93,40 +93,7 @@ describe('#CURVE_SIM', () => {
     ])
   })
 
-  it.skip('1. Should buy from the bonding curve with 1000 collateral tokens', async () => {
-    const purchaseAmount = '1000'
-
-    await fundingToken.write.mint.run([deployer, purchaseAmount])
-
-    const purchaseReturn =
-      await workflow.fundingManager.read.calculatePurchaseReturn.run(
-        purchaseAmount
-      )
-
-    console.log('purchaseReturn', purchaseReturn)
-
-    expect(Number(purchaseReturn)).toBeGreaterThan(0)
-
-    await fundingToken.write.approve.run([
-      workflow.fundingManager.address,
-      purchaseReturn,
-    ])
-    const hash = await workflow.fundingManager.write.buy.run([
-      purchaseAmount,
-      purchaseReturn,
-    ])
-
-    expect(hash).toBeDefined()
-
-    const balance =
-      await workflow.issuanceToken.module.read.balanceOf.run(deployer)
-
-    console.log('balance', balance)
-
-    expect(Number(balance)).toBeGreaterThan(0)
-  })
-
-  it(`2. Should buy from the bonding curve with maxSupplyCollateral: ${chalk.green(toCompactNumber(maxSupplyCollateral))} collateral tokens`, async () => {
+  it(`1. Should buy from the bonding curve with maxSupplyCollateral: ${chalk.green(toCompactNumber(maxSupplyCollateral))} collateral tokens`, async () => {
     const purchaseAmount = maxSupplyCollateral
 
     await fundingToken.write.mint.run([deployer, purchaseAmount])
@@ -160,13 +127,8 @@ describe('#CURVE_SIM', () => {
       await workflow.fundingManager.read.getVirtualIssuanceSupply.run()
 
     console.log(
-      chalk.green('virtualIssuanceSupply'),
-      toCompactNumber(virtualIssuanceSupply)
-    )
-
-    console.log(
       chalk.green('graduationIssuanceSupply'),
-      toCompactNumber(Number(virtualIssuanceSupply) + Number(balance))
+      toCompactNumber(Number(virtualIssuanceSupply))
     )
 
     expect(Number(balance)).toBeGreaterThan(0)

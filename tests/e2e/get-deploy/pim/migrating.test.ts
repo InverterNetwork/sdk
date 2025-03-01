@@ -52,10 +52,9 @@ describe.skipIf(process.env.USE_FORK !== 'true')('#PIM_MIGRATING', async () => {
     initialPurchaseAmount: '500',
     migrationConfig: {
       dexAdapter: TEST_UNISWAP_V2_ADAPTER_ADDRESS,
-      isImmutable: true,
+      isImmutable: false,
       lpTokenRecipient: deployer,
       migrationThreshold: '1000',
-      initialRewardDuration: '7884000',
     },
   } as const satisfies GetUserArgs<typeof requestedModules, 'migrating-pim'>
 
@@ -190,6 +189,9 @@ describe.skipIf(process.env.USE_FORK !== 'true')('#PIM_MIGRATING', async () => {
         defaultToken: args.fundingManager.collateralToken,
       },
     })
+
+    const admin = await factory.read.admin.run()
+    expect(admin).toBe(deployer)
 
     expect(workflow).toContainKeys([
       'orchestrator',
