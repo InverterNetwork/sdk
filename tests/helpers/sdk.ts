@@ -1,4 +1,4 @@
-import { Inverter } from '@'
+import { Inverter } from '@/index'
 import { getTestConnectors } from './get-test-connectors'
 
 const { publicClient, walletClient } = getTestConnectors()

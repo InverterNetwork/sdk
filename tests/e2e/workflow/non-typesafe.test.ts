@@ -3,7 +3,7 @@ import { expect, describe, it } from 'bun:test'
 import { sdk } from 'tests/helpers'
 import { TEST_ERC20_MOCK_ADDRESS } from '../../helpers/constants'
 
-import type { Workflow } from '@'
+import type { Workflow } from '@/index'
 
 describe('#WORKFLOW_NON_TYPESAFE', () => {
   let workflow: Workflow<typeof sdk.walletClient, undefined>
@@ -12,7 +12,7 @@ describe('#WORKFLOW_NON_TYPESAFE', () => {
   it('1. Should Deploy The Workflow', async () => {
     orchestratorAddress = (
       await (
-        await sdk.getDeploy({
+        await sdk.deployWorkflow({
           requestedModules: {
             authorizer: 'AUT_Roles_v1',
             fundingManager: 'FM_DepositVault_v1',

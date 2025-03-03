@@ -1,26 +1,40 @@
+// external dependencies
 import type { PublicClient, WalletClient } from 'viem'
-import type { Extras, ExtendedAbiParameter } from '.'
-import type { MethodKind, RequiredAllowances } from '@/types'
+
+// sdk types
 import type {
-  Inverter,
+  MethodKind,
+  RequiredAllowances,
+  TagConfig,
+  ExtendedAbiParameter,
   TagCallback,
   TagOverwrites,
   TupleExtendedAbiParameter,
-} from '@'
+} from '@/types'
+import type { Inverter } from '@/index'
 
+/**
+ * @description The base parameters for the processInputs function
+ */
 export type ProcessInputsBaseParams = {
-  extras?: Extras
+  tagConfig?: TagConfig
   extendedInputs: readonly ExtendedAbiParameter[]
   args: any
   kind: MethodKind
   tagOverwrites?: TagOverwrites
 }
 
+/**
+ * @description The parameters for the processInputs function
+ */
 export type ProcessInputsParams = Omit<
   ParseGetTagCallbackParams,
   'requiredAllowances'
 >
 
+/**
+ * @description The parameters for the parseGetTagCallback function
+ */
 export type ParseGetTagCallbackParams = {
   requiredAllowances: RequiredAllowances[]
   publicClient: PublicClient
@@ -29,13 +43,19 @@ export type ParseGetTagCallbackParams = {
   self?: Inverter<any>
 } & ProcessInputsBaseParams
 
+/**
+ * @description The parameters for the parseInputs function
+ */
 export type ParseInputsParams = {
   input: ExtendedAbiParameter
   arg: any
-  extras?: Extras
+  tagConfig?: TagConfig
   tagCallback: TagCallback
 }
 
+/**
+ * @description The parameters for the parseInputTupleCase function
+ */
 export type ParseInputTupleCaseParams = ParseInputsParams & {
   input: TupleExtendedAbiParameter
 }

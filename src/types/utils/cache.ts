@@ -1,7 +1,10 @@
-import type { Inverter } from '@'
+import type { Inverter } from '@/index'
 import type { Tag } from '@inverter-network/abis'
 
-export type CacheTokenProps = {
+/**
+ * @description The parameters for the cacheToken function
+ */
+export type CacheTokenParams = {
   self: Inverter
   tag: Tag
   tokenAddress?: `0x${string}`

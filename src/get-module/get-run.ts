@@ -1,22 +1,30 @@
+// external dependencies
+import type { ExtendedAbiParameter } from '@inverter-network/abis'
+import { formatEther } from 'viem'
+
+// sdk utils
 import {
   processInputs,
   formatOutputs,
   tagProcessor,
   handleOptions,
+  handleError,
 } from '@/utils'
 
+// sdk types
 import type {
-  GetMethodArgs,
+  GetMethodParams,
+  GetMethodReturnType,
   MethodKind,
-  GetMethodResponse,
   GetModuleGetRunParams,
   MethodOptions,
 } from '@/types'
-import { formatEther } from 'viem'
-import { handleError } from '../utils'
-import type { ExtendedAbiParameter } from '@inverter-network/abis'
 
-// Construct the run function
+/**
+ * @description Constructs the run function for a given method
+ * @param params - The parameters for the run function
+ * @returns The run function
+ */
 export default function getRun<
   ExtendedInputs extends readonly ExtendedAbiParameter[],
   ExtendedOutputs extends readonly ExtendedAbiParameter[],
@@ -28,7 +36,7 @@ export default function getRun<
   contract,
   extendedInputs,
   extendedOutputs,
-  extras,
+  tagConfig,
   kind,
   self,
 }: GetModuleGetRunParams<ExtendedInputs, ExtendedOutputs, Kind>) {
@@ -38,14 +46,14 @@ export default function getRun<
    * @returns The response of the method
    */
   async function run(
-    args: GetMethodArgs<typeof extendedInputs>,
+    args: GetMethodParams<typeof extendedInputs>,
     options?: MethodOptions
-  ): Promise<GetMethodResponse<ExtendedOutputs, Kind>> {
+  ): Promise<GetMethodReturnType<ExtendedOutputs, Kind>> {
     // Parse the inputs, from user input to contract input
     const { processedInputs, requiredAllowances } = await processInputs({
       extendedInputs,
       args,
-      extras,
+      tagConfig,
       publicClient,
       walletClient,
       contract,
@@ -57,9 +65,9 @@ export default function getRun<
       // If the kind is simulate, use the simulate method
       simulate: async () => {
         const simRes = await contract.simulate[name](processedInputs, {
-          // If extras has a wallet address, use it
-          ...(extras?.walletAddress && {
-            account: extras.walletAddress,
+          // If tagConfig has a wallet address, use it
+          ...(tagConfig?.walletAddress && {
+            account: tagConfig.walletAddress,
           }),
         })
 
@@ -124,7 +132,7 @@ export default function getRun<
     const formattedRes = await formatOutputs({
       extendedOutputs,
       res: resByKind,
-      extras,
+      tagConfig,
       publicClient,
       contract,
       self,

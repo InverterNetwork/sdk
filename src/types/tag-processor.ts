@@ -1,18 +1,24 @@
+// external dependencies
+import type { ExtendedAbiParameter, Tag } from '@inverter-network/abis'
+import type { PublicClient } from 'viem'
+
+// sdk types
+import type { Inverter } from '@/inverter'
 import type {
-  Extras,
-  Inverter,
+  TagConfig,
   PopPublicClient,
   PopWalletClient,
   RequiredAllowances,
   TagOverwrites,
-} from '@'
-import type { ExtendedAbiParameter, Tag } from '@inverter-network/abis'
-import type { PublicClient } from 'viem'
+} from '@/types'
 
+/**
+ * @description The parameters for the tagProcessorDecimals function
+ */
 export type TagProcessorDecimalsParams = {
   argsOrRes: any[]
   parameters: readonly ExtendedAbiParameter[]
-  extras?: Extras
+  tagConfig?: TagConfig
   tag?: Tag
   publicClient: PublicClient
   contract?: any
@@ -20,6 +26,9 @@ export type TagProcessorDecimalsParams = {
   tagOverwrites?: TagOverwrites
 }
 
+/**
+ * @description The parameters for the tagProcessorAllowances function
+ */
 export type TagProcessorAllowancesParams = {
   transferAmount: bigint
   spenderAddress: `0x${string}`
@@ -28,6 +37,9 @@ export type TagProcessorAllowancesParams = {
   userAddress?: `0x${string}`
 }
 
+/**
+ * @description The parameters for the tagProcessorApprove function
+ */
 export type TagProcessorApproveParams = {
   requiredAllowances: RequiredAllowances[]
   publicClient: PopPublicClient

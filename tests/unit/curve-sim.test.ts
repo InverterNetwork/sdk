@@ -8,11 +8,11 @@ import {
 } from 'tests/helpers'
 import {
   toCompactNumber,
-  type GetModuleReturn,
+  type GetModuleReturnType,
   type PopWalletClient,
   type RequestedModules,
   type Workflow,
-} from '@'
+} from '@/index'
 
 describe('#CURVE_SIM', () => {
   const deployer = sdk.walletClient.account.address
@@ -27,7 +27,7 @@ describe('#CURVE_SIM', () => {
   } as const satisfies RequestedModules
 
   let workflow: Workflow<PopWalletClient, typeof requestedModules>
-  let fundingToken: GetModuleReturn<'ERC20Issuance_v1', PopWalletClient>
+  let fundingToken: GetModuleReturnType<'ERC20Issuance_v1', PopWalletClient>
 
   beforeEach(async () => {
     const { contractAddress: issuanceTokenAddress } = await sdk.deploy({
@@ -45,7 +45,7 @@ describe('#CURVE_SIM', () => {
       throw new Error('Issuance token address is undefined')
     }
 
-    const { run } = await sdk.getDeploy({
+    const { run } = await sdk.deployWorkflow({
       requestedModules,
     })
 
@@ -82,7 +82,7 @@ describe('#CURVE_SIM', () => {
     fundingToken = sdk.getModule({
       address: workflow.fundingToken.address,
       name: 'ERC20Issuance_v1',
-      extras: {
+      tagConfig: {
         decimals: 18,
       },
     })

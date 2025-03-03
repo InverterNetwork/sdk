@@ -12,9 +12,9 @@ import {
   ERC20_MINTABLE_ABI,
   type RequestedModules,
   type GetUserArgs,
-  type GetDeployReturn,
+  type DeployWorkflowReturnType,
   type Workflow,
-} from '@'
+} from '@/index'
 import {
   parseUnits,
   getContract,
@@ -22,7 +22,7 @@ import {
   isHash,
   isAddress,
 } from 'viem'
-import { getModuleSchema } from '@/get-deploy/get-inputs'
+import { getDeployWorkflowModuleInputs } from '@/deploy-workflow/get-inputs'
 import { getModuleData, type GetModuleData } from '@inverter-network/abis'
 
 describe('#PIM_RESTRICTED', async () => {
@@ -52,7 +52,7 @@ describe('#PIM_RESTRICTED', async () => {
 
   // ================PRE_DETERMINED VARIABLES================
   let orchestratorAddress: `0x${string}`
-  let getDeployReturn: GetDeployReturn<
+  let deployWorkflowReturn: DeployWorkflowReturnType<
     typeof requestedModules,
     'restricted-pim'
   >
@@ -70,13 +70,13 @@ describe('#PIM_RESTRICTED', async () => {
   let workflow: Workflow<typeof walletClient, typeof requestedModules>
   // ========================================================
 
-  it('1. Set getDeployReturn', async () => {
-    getDeployReturn = await sdk.getDeploy({
+  it('1. Set deployWorkflowReturn', async () => {
+    deployWorkflowReturn = await sdk.deployWorkflow({
       requestedModules,
       factoryType: 'restricted-pim',
     })
 
-    expect(getDeployReturn).toContainKeys(['estimateGas', 'run', 'inputs'])
+    expect(deployWorkflowReturn).toContainKeys(['estimateGas', 'run', 'inputs'])
   })
 
   it('2. Mint test tokens to deployer', async () => {
@@ -125,31 +125,34 @@ describe('#PIM_RESTRICTED', async () => {
   })
 
   it('5. Match expected inputs', () => {
-    expect(getDeployReturn.inputs).toEqual({
-      orchestrator: getModuleSchema('OrchestratorFactory_v1'),
-      authorizer: getModuleSchema('AUT_Roles_v1'),
-      fundingManager: getModuleSchema(
+    expect(deployWorkflowReturn.inputs).toEqual({
+      orchestrator: getDeployWorkflowModuleInputs('OrchestratorFactory_v1'),
+      authorizer: getDeployWorkflowModuleInputs('AUT_Roles_v1'),
+      fundingManager: getDeployWorkflowModuleInputs(
         'FM_BC_Restricted_Bancor_Redeeming_VirtualSupply_v1',
         undefined,
         'restricted-pim'
       ),
-      paymentProcessor: getModuleSchema('PP_Simple_v1'),
-      issuanceToken: getModuleSchema(
+      paymentProcessor: getDeployWorkflowModuleInputs('PP_Simple_v1'),
+      issuanceToken: getDeployWorkflowModuleInputs(
         'Restricted_PIM_Factory_v1',
         'issuanceToken'
       ),
-      beneficiary: getModuleSchema('Restricted_PIM_Factory_v1', 'beneficiary'),
+      beneficiary: getDeployWorkflowModuleInputs(
+        'Restricted_PIM_Factory_v1',
+        'beneficiary'
+      ),
     })
   })
 
   it('6. Estimates gas for deployment', async () => {
-    const gasEstimate = await getDeployReturn.estimateGas(args)
+    const gasEstimate = await deployWorkflowReturn.estimateGas(args)
     expect(gasEstimate).toContainKeys(['value', 'formatted'])
   })
 
   it('7. Deploy the workflow', async () => {
     orchestratorAddress = (
-      await getDeployReturn.run(args, {
+      await deployWorkflowReturn.run(args, {
         confirmations: 1,
       })
     ).orchestratorAddress

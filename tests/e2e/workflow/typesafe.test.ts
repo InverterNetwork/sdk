@@ -6,7 +6,7 @@ import {
   sdk,
   TEST_ERC20_MOCK_ADDRESS,
 } from 'tests/helpers'
-import type { GetUserArgs, RequestedModules, Workflow } from '@'
+import type { GetUserArgs, RequestedModules, Workflow } from '@/index'
 import { decodeEventLog, parseAbiItem } from 'viem'
 
 describe('#WORKFLOW', () => {
@@ -33,7 +33,7 @@ describe('#WORKFLOW', () => {
     it('1. Should Deploy The Workflow', async () => {
       orchestratorAddress = (
         await (
-          await sdk.getDeploy({
+          await sdk.deployWorkflow({
             requestedModules,
           })
         ).run(args)
@@ -106,7 +106,7 @@ describe('#WORKFLOW', () => {
       const testToken = sdk.getModule({
         address: TEST_ERC20_MOCK_ADDRESS,
         name: 'ERC20Issuance_v1',
-        extras: {
+        tagConfig: {
           decimals: 18,
         },
       })
@@ -118,7 +118,7 @@ describe('#WORKFLOW', () => {
 
       orchestratorAddress = (
         await (
-          await sdk.getDeploy({
+          await sdk.deployWorkflow({
             requestedModules,
           })
         ).run(args)

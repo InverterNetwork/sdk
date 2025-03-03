@@ -10,7 +10,7 @@ import {
   type GetUserArgs,
   type RequestedModules,
   type Workflow,
-} from '@'
+} from '@/index'
 import { getContract, parseUnits } from 'viem'
 
 describe('#RUN_OPTIONS', () => {
@@ -34,7 +34,7 @@ describe('#RUN_OPTIONS', () => {
 
   describe('#DEPLOY', () => {
     it('1. Should Confirm onApprove, onHash, onConfirmation callbacks return correct data', async () => {
-      const { run } = await sdk.getDeploy({
+      const { run } = await sdk.deployWorkflow({
         requestedModules,
       })
 
@@ -60,7 +60,7 @@ describe('#RUN_OPTIONS', () => {
     it('1. Should Deploy The Workflow', async () => {
       orchestratorAddress = (
         await (
-          await sdk.getDeploy({
+          await sdk.deployWorkflow({
             requestedModules,
           })
         ).run(args)

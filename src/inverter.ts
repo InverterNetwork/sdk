@@ -1,24 +1,33 @@
-import getWorkflow from './get-workflow'
-import getDeploy from './get-deploy'
-import getDeployOptions from './get-deploy-options'
-import deploy from './deploy'
-import getModule from './get-module'
+// external dependencies
+import type { ModuleName } from '@inverter-network/abis'
 import lodash from 'lodash'
 
-import type { ModuleName } from '@inverter-network/abis'
+// sdk types
 import type {
   PopPublicClient,
   PopWalletClient,
-  WorkflowRequestedModules,
-  Workflow,
   RequestedModules,
+  Workflow,
   FactoryType,
   GetModuleParams,
   DeployableContracts,
   GetUserModuleArg,
   MethodOptions,
-} from './types'
+} from '@/types'
 
+// sdk utils
+import { getWorkflow } from './get-workflow'
+import { deployWorkflow } from './deploy-workflow'
+import { getDeployOptions } from './get-deploy-options'
+import { deploy } from './deploy'
+import { getModule } from './get-module'
+
+/**
+ * @description The Inverter class is the main class for interacting with the Inverter Network
+ * @template W - The wallet client
+ * @param publicClient - The public client
+ * @param walletClient - The wallet client
+ */
 export class Inverter<W extends PopWalletClient | undefined = undefined> {
   publicClient: PopPublicClient
   walletClient: W
@@ -43,8 +52,11 @@ export class Inverter<W extends PopWalletClient | undefined = undefined> {
   }
 
   /**
-   * Static method to get the singleton instance
-   * Uses the correct `new` to instantiate the Inverter internally
+   * @description Get the singleton instance of the Inverter
+   * @template W - The wallet client
+   * @param publicClient - The public client
+   * @param walletClient - The wallet client
+   * @returns The singleton instance of the Inverter
    */
   static getInstance<W extends PopWalletClient | undefined = undefined>({
     publicClient,
@@ -67,22 +79,29 @@ export class Inverter<W extends PopWalletClient | undefined = undefined> {
   }
 
   /**
-   * Updates the publicClient safely
+   * @description Updates the publicClient safely
+   * @param publicClient - The public client
    */
   private updatePublicClient(publicClient: PopPublicClient) {
     this.publicClient = publicClient
   }
 
   /**
-   * Updates the walletClient safely
+   * @description Updates the walletClient safely
+   * @param walletClient - The wallet client
    */
   private updateWalletClient(walletClient: W) {
     this.walletClient = walletClient
   }
 
-  async getWorkflow<
-    T extends WorkflowRequestedModules | undefined = undefined,
-  >({
+  /**
+   * @description Get a workflow
+   * @param params - The parameters for the workflow
+   * @param params.orchestratorAddress - The address of the orchestrator
+   * @param params.requestedModules - The requested modules
+   * @returns The workflow
+   */
+  async getWorkflow<T extends RequestedModules | undefined = undefined>({
     orchestratorAddress,
     requestedModules,
   }: {
@@ -125,7 +144,14 @@ export class Inverter<W extends PopWalletClient | undefined = undefined> {
 
   getDeployOptions = getDeployOptions
 
-  getDeploy<
+  /**
+   * @description Retreive the deploy workflow methods and inputs array
+   * @param params - The parameters for the deploy options
+   * @param params.requestedModules - The requested modules
+   * @param params.factoryType - The factory type
+   * @returns The deploy options
+   */
+  deployWorkflow<
     T extends RequestedModules<FT extends undefined ? 'default' : FT>,
     FT extends FactoryType | undefined = undefined,
   >({
@@ -138,7 +164,7 @@ export class Inverter<W extends PopWalletClient | undefined = undefined> {
     if (!this.walletClient)
       throw new Error('Wallet client is required for deploy')
 
-    const result = getDeploy({
+    const result = deployWorkflow({
       publicClient: this.publicClient,
       walletClient: this.walletClient,
       requestedModules,
@@ -150,6 +176,13 @@ export class Inverter<W extends PopWalletClient | undefined = undefined> {
     return result as W extends undefined ? never : typeof result
   }
 
+  /**
+   * @description Deploy a contract
+   * @param params - The parameters for the deploy
+   * @param params.name - The name of the contract
+   * @param params.args - The arguments for the deploy
+   * @returns The result of the deploy
+   */
   deploy<T extends DeployableContracts>(
     {
       name,
@@ -174,6 +207,11 @@ export class Inverter<W extends PopWalletClient | undefined = undefined> {
     )
   }
 
+  /**
+   * @description Get a module
+   * @param params - The parameters for the module
+   * @returns The module
+   */
   getModule<N extends ModuleName>(
     params: Omit<
       GetModuleParams<N, W>,

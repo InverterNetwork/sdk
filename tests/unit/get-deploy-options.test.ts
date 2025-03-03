@@ -1,4 +1,4 @@
-import type { FilterByPrefix } from '@'
+import type { FilterByPrefix } from '@/index'
 import { data } from '@inverter-network/abis'
 import { expect, describe, it } from 'bun:test'
 

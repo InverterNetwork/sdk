@@ -1,8 +1,17 @@
-import type { FactoryType, FilterByPrefix } from '@'
-import { data } from '@inverter-network/abis'
+// external dependencies
 import type { GetModuleNameByType } from '@inverter-network/abis'
+import { data } from '@inverter-network/abis'
 
-export default function getDeployOptions<
+// sdk types
+import type { FactoryType, FilterByPrefix } from '@/types'
+
+/**
+ * @description Get the available modules for deployment
+ * @template FT - The factory type
+ * @param factoryType - The factory type
+ * @returns The available modules for deployment
+ */
+export function getDeployOptions<
   FT extends FactoryType | undefined = undefined,
 >(factoryType?: FT) {
   // Default factory type handling

@@ -1,20 +1,31 @@
-import getModule from '../get-module'
-import getTokenResults from './get-token-results'
-import type { GetWorkflowTokenResultsReturnTypes } from './get-token-results'
-
+// @inverter-network/abis
 import { getModuleData } from '@inverter-network/abis'
 import type { GetModuleNameByType } from '@inverter-network/abis'
+
+// sdk types
 import type {
   PopWalletClient,
   WorkflowModuleType,
-  WorkflowRequestedModules,
+  RequestedModules,
   Workflow,
   GetWorkflowParams,
   FlattenObjectValues,
-} from '../types'
+  GetWorkflowTokenResultReturnType,
+} from '@/types'
 
-export default async function getWorkflow<
-  O extends WorkflowRequestedModules | undefined = undefined,
+// sdk utils
+import { getModule } from '@/get-module'
+import getTokenResults from './token'
+
+/**
+ * @description Get a Inverter workflow
+ * @template O - The requested modules
+ * @template W - The wallet client
+ * @param params - The parameters for the gathering of a workflow
+ * @returns The result of the workflow
+ */
+export async function getWorkflow<
+  O extends RequestedModules | undefined = undefined,
   W extends PopWalletClient | undefined = undefined,
 >({
   publicClient,
@@ -42,7 +53,7 @@ export default async function getWorkflow<
     self,
   })
 
-  let issuanceToken: GetWorkflowTokenResultsReturnTypes<
+  let issuanceToken: GetWorkflowTokenResultReturnType<
     'ERC20Issuance_v1',
     W
   > | null = null
@@ -62,7 +73,7 @@ export default async function getWorkflow<
   const modules = await (async () => {
     // 0. Define the source data based on the optional requestedModules
     const source = await (async () => {
-      type Name = O extends WorkflowRequestedModules
+      type Name = O extends RequestedModules
         ? FlattenObjectValues<O>
         : GetModuleNameByType<WorkflowModuleType>
 
@@ -89,7 +100,7 @@ export default async function getWorkflow<
         address,
         publicClient,
         walletClient,
-        extras: {
+        tagConfig: {
           defaultToken: fundingToken.address,
           decimals: fundingToken.decimals,
           issuanceTokenDecimals: issuanceToken?.decimals,

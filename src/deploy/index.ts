@@ -1,14 +1,26 @@
-import { processInputs } from '../'
+// external dependencies
+import { getModuleData } from '@inverter-network/abis'
+
+// sdk types
 import type {
   DeployableContracts,
   GetUserModuleArg,
   MethodOptions,
   PopPublicClient,
   PopWalletClient,
-} from '..'
-import { getModuleData } from '@inverter-network/abis'
+} from '@/types'
 
-export default async function <T extends DeployableContracts>(
+// sdk utils
+import { processInputs } from '@/utils'
+
+/**
+ * @description Deploy a contract
+ * @template T - The name of the contract
+ * @param params - The parameters for the deploy function
+ * @param options - The options for the deploy function
+ * @returns The result of the deploy function
+ */
+export async function deploy<T extends DeployableContracts>(
   {
     name,
     walletClient,

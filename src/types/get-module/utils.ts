@@ -1,29 +1,35 @@
+// external dependencies
 import type {
   ExtendedAbi,
   ExtendedAbiFunction,
   ExtendedAbiParameter,
 } from '@inverter-network/abis'
-import type {
-  Extras,
-  MethodKind,
-  PopContractReturnType,
-  PopPublicClient,
-  PopWalletClient,
-} from '@/types'
-import type {
-  EstimateGasOutput,
-  GetMethodArgs,
-  GetMethodResponse,
-  Inverter,
-  MethodOptions,
-  WriteOutput,
-} from '@'
+
 import type {
   AbiStateMutability,
   ExtractAbiFunction,
   ExtractAbiFunctionNames,
 } from 'abitype'
 import type { TupleToUnion, Simplify } from 'type-fest-4'
+
+// sdk types
+import type {
+  TagConfig,
+  MethodKind,
+  PopContractReturnType,
+  PopPublicClient,
+  PopWalletClient,
+  EstimateGasOutput,
+  GetMethodParams,
+  GetMethodReturnType,
+  MethodOptions,
+  WriteOutput,
+} from '@/types'
+
+import type { Inverter } from '@/inverter'
+
+// GET RUN
+// ----------------------------------------------------------------------------
 
 /**
  * The Parameters for the getRun function
@@ -42,10 +48,28 @@ export type GetModuleGetRunParams<
   extendedInputs: ExtendedInputs
   extendedOutputs: ExtendedOutputs
   walletClient?: PopWalletClient
-  extras?: Extras
+  tagConfig?: TagConfig
   kind: Kind
   self?: Inverter
 }
+
+/**
+ * The return type for the getRun function
+ * @template ExtendedInputs - The extended inputs
+ * @template ExtendedOutputs - The extended outputs
+ * @template Kind - The kind of method
+ */
+export type GetModuleGetRunReturnType<
+  ExtendedInputs extends readonly ExtendedAbiParameter[],
+  ExtendedOutputs extends readonly ExtendedAbiParameter[],
+  Kind extends MethodKind,
+> = (
+  args: GetMethodParams<ExtendedInputs>,
+  options?: MethodOptions
+) => Promise<GetMethodReturnType<ExtendedOutputs, Kind>>
+
+// GET ITERATE METHODS
+// ----------------------------------------------------------------------------
 
 /**
  * The Parameters for the iterateMethods function
@@ -64,10 +88,16 @@ export type GetModuleItterateMethodsParams<
   kind: Kind
   publicClient: PopPublicClient
   walletClient?: PopWalletClient
-  extras?: Extras
+  tagConfig?: TagConfig
   self?: Inverter<any>
 }
 
+/**
+ * The return type for the iterateMethods function
+ * @template A - The extended abi
+ * @template T - The state mutability array
+ * @template Kind - The kind of method
+ */
 export type GetModuleIterateMethodsReturnType<
   A extends ExtendedAbi,
   T extends AbiStateMutability[],
@@ -78,6 +108,9 @@ export type GetModuleIterateMethodsReturnType<
     TupleToUnion<T>
   >]: GetModuleConstructMethodReturnType<ExtractAbiFunction<A, N>, Kind>
 }>
+
+// CONSTRUCT METHOD
+// ----------------------------------------------------------------------------
 
 /**
  * The Parameters for the constructMethod function
@@ -92,20 +125,16 @@ export type GetModuleConstructMethodParams<
   publicClient: PopPublicClient
   abiFunction: TAbiFunction
   contract: PopContractReturnType
-  extras?: Extras
+  tagConfig?: TagConfig
   kind: Kind
   self?: Inverter
 }
 
-export type GetModuleGetRunReturnType<
-  ExtendedInputs extends readonly ExtendedAbiParameter[],
-  ExtendedOutputs extends readonly ExtendedAbiParameter[],
-  Kind extends MethodKind,
-> = (
-  args: GetMethodArgs<ExtendedInputs>,
-  options?: MethodOptions
-) => Promise<GetMethodResponse<ExtendedOutputs, Kind>>
-
+/**
+ * The return type for the constructMethod function
+ * @template TAbiFunction - The extended abi function
+ * @template Kind - The kind of method
+ */
 export type GetModuleConstructMethodReturnType<
   TAbiFunction extends ExtendedAbiFunction,
   Kind extends MethodKind,

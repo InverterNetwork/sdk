@@ -2,14 +2,22 @@ import type { AbiParameter, AbiParameterToPrimitiveType } from 'abitype'
 import type { Simplify, Includes } from 'type-fest-4'
 import type { Tag } from '@inverter-network/abis'
 
-// Tag to Primitive type
+/**
+ * @description The tag to primitive type
+ * @template P - The parameter
+ * @returns The primitive type
+ */
 type TagToPrimitiveType<P> = P extends { tags: readonly Tag[] }
   ? Includes<P['tags'], 'any'> extends true
     ? any
     : never
   : never
 
-// Non Tuple types Formatter
+/**
+ * @description The simple primitive type
+ * @template P - The parameter
+ * @returns The primitive type
+ */
 type SimplePrimitive<P> = P extends AbiParameter
   ? // Check if the parameter has a tag type
     TagToPrimitiveType<P> extends never
@@ -29,13 +37,22 @@ type SimplePrimitive<P> = P extends AbiParameter
     : TagToPrimitiveType<P>
   : never
 
-// Tuple Util deduplication
+/**
+ * @description The tuple utils
+ * @template Components - The components
+ * @returns The tuple utils
+ */
 type TupleUtils<Components extends readonly any[]> = {
   [N in Components[number]['name']]: ExtendedParameterToPrimitiveType<
     Extract<Components[number], { name: N }>
   >
 }
-// For Reccursive Tuple types
+
+/**
+ * @description The tuple primitive type with recursive tuple types
+ * @template P - The parameter
+ * @returns The tuple primitive type
+ */
 type TuplePrimitive<P> = P extends {
   name: string
   type: 'tuple' | 'tuple[]'
@@ -50,11 +67,19 @@ type TuplePrimitive<P> = P extends {
     >
   : never
 
-// Main Formatter
+/**
+ * @description The main formatter
+ * @template P - The parameter
+ * @returns The main formatter
+ */
 export type ExtendedParameterToPrimitiveType<P> =
   TuplePrimitive<P> extends never ? SimplePrimitive<P> : TuplePrimitive<P>
 
-// Itterate over the parameters and format them to primitive types
+/**
+ * @description Itterate over the parameters and format them to primitive types
+ * @template Parameters - The parameters
+ * @returns The parameters formatted to primitive types
+ */
 export type ExtendedParametersToPrimitiveType<Parameters> = {
   [K in keyof Parameters]: ExtendedParameterToPrimitiveType<Parameters[K]>
 }
