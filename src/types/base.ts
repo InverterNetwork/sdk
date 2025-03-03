@@ -1,5 +1,5 @@
 /**
- * @description The configs for getModule, getDeploy functions these enable tags to calculate certain values like simulations and number formats and parses
+ * @description The configs for getModule, deployWorkflow functions these enable tags to calculate certain values like simulations and number formats and parses
  */
 export type TagConfig = {
   walletAddress?: `0x${string}`

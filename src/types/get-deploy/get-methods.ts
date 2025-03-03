@@ -13,7 +13,7 @@ import type {
 } from '@/types'
 
 /**
- * @description getDeploy functions write return type
+ * @description deployWorkflow functions write return type
  */
 export type GetDeployWriteReturn = {
   transactionHash: `0x${string}`
@@ -21,7 +21,7 @@ export type GetDeployWriteReturn = {
 }
 
 /**
- * @description getDeploy functions simulate return type
+ * @description deployWorkflow functions simulate return type
  */
 export type GetDeploySimulateReturn = {
   result: `0x${string}`
@@ -29,7 +29,7 @@ export type GetDeploySimulateReturn = {
 }
 
 /**
- * @description getDeploy functions estimate gas return type
+ * @description deployWorkflow functions estimate gas return type
  */
 export type GetDeployEstimateGasReturn = {
   value: string
@@ -37,7 +37,7 @@ export type GetDeployEstimateGasReturn = {
 }
 
 /**
- * @description Parameters for the getMothods util of getDeploy function
+ * @description Parameters for the getMothods util of deployWorkflow function
  */
 export type GetMethodsParams<
   T extends RequestedModules,
@@ -51,7 +51,7 @@ export type GetMethodsParams<
 }
 
 /**
- * @description Return type for the getMothods util of getDeploy function
+ * @description Return type for the getMothods util of deployWorkflow function
  */
 export type GetMethodsReturnType<
   T extends RequestedModules,

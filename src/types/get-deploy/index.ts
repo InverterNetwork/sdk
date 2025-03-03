@@ -19,7 +19,7 @@ export * from './args'
 export * from './get-methods'
 
 /**
- * @description Parameters for the getDeploy function
+ * @description Parameters for the deployWorkflow function
  */
 export type DeployWorkflowParams<
   T extends RequestedModules<FT extends undefined ? 'default' : FT>,
@@ -33,7 +33,7 @@ export type DeployWorkflowParams<
 }
 
 /**
- * @description Return type for the getDeploy function
+ * @description Return type for the deployWorkflow function
  */
 export type DeployWorkflowReturnType<
   T extends RequestedModules<FT extends undefined ? 'default' : FT>,
