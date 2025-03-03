@@ -1,7 +1,7 @@
 import parse from './parse'
 
 import type { ProcessInputsParams, RequiredAllowances } from '@/types'
-import getTagCallback from './getTagCallback'
+import getTagCallback from './get-tag-callback'
 
 export async function processInputs(params: ProcessInputsParams) {
   const requiredAllowances: RequiredAllowances[] = []

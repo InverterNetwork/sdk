@@ -1,4 +1,4 @@
-import tagProcessor from '@/utils/tagProcessor'
+import tagProcessor from '@/utils/tag-processor'
 import { parseDecimals } from './parse'
 
 import type {

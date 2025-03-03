@@ -2,7 +2,7 @@ import format from './format'
 
 import { isDefinedExtendedAbiMemberArray } from '@/types'
 import type { FormatGetTagCallbackParams } from '@/types'
-import getTagCallback from './getTagCallback'
+import getTagCallback from './get-tag-callback'
 
 export async function formatOutputs(props: FormatGetTagCallbackParams) {
   const { extendedOutputs, res, extras } = props

@@ -1,6 +1,6 @@
 // external dependencies
 import { getModuleData } from '@inverter-network/abis'
-import { encodeAbiParameters, parseUnits } from 'viem'
+import { encodeAbiParameters, parseUnits, zeroAddress } from 'viem'
 import type { PublicClient } from 'viem'
 
 // sdk types
@@ -22,7 +22,7 @@ import type {
 } from '@/types'
 
 // sdk utils
-import { processInputs, ADDRESS_ZERO } from '@/utils'
+import { processInputs } from '@/utils'
 
 // get-deploy constants
 import { MANDATORY_MODULES } from './constants'
@@ -124,7 +124,7 @@ export const constructArgs = async ({
   if (!orchestrator?.independentUpdates)
     orchestrator = {
       independentUpdates: false,
-      independentUpdateAdmin: ADDRESS_ZERO,
+      independentUpdateAdmin: zeroAddress,
     }
 
   // Set up the initial arguments
@@ -155,7 +155,7 @@ export const constructArgs = async ({
       requestedModules.fundingManager.startsWith('FM_BC') &&
       factoryType !== 'default'
     ) {
-      userArgs.fundingManager!.issuanceToken = ADDRESS_ZERO
+      userArgs.fundingManager!.issuanceToken = zeroAddress
     }
 
     const argObj = await assembleModuleArgs({

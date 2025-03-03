@@ -1,4 +1,4 @@
-import tagProcessor from '../../utils/tagProcessor'
+import tagProcessor from '../tag-processor'
 import { formatDecimals } from './utils'
 
 import type {
