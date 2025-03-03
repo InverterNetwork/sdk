@@ -15,11 +15,11 @@ import type {
 import iterateMethods from './iterate-methods'
 
 /**
- * @description Gets a module from the module data
+ * @description Constructs a Inverter module
  * @param params - The parameters for the module
  * @returns The module
  */
-export default function getModule<
+export function getModule<
   N extends ModuleName,
   W extends PopWalletClient | undefined = undefined,
 >({

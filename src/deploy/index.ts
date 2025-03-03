@@ -13,7 +13,14 @@ import type {
 // sdk utils
 import { processInputs } from '@/utils'
 
-export default async function <T extends DeployableContracts>(
+/**
+ * @description Deploy a contract
+ * @template T - The name of the contract
+ * @param params - The parameters for the deploy function
+ * @param options - The options for the deploy function
+ * @returns The result of the deploy function
+ */
+export async function deploy<T extends DeployableContracts>(
   {
     name,
     walletClient,

@@ -10,7 +10,13 @@ import type {
 import getInputs from './get-inputs'
 import getMethods from './get-methods'
 
-export default async function getDeploy<
+/**
+ * @description Get the deploy function for workflow deployment
+ * @template T - The requested modules to deploy
+ * @param params - The parameters for the preperation of the deploy function
+ * @returns The result of the deploy function
+ */
+export async function getDeploy<
   T extends RequestedModules<FT extends undefined ? 'default' : FT>,
   FT extends FactoryType | undefined = undefined,
 >({

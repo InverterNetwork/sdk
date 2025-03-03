@@ -14,10 +14,17 @@ import type {
 } from '@/types'
 
 // sdk utils
-import getModule from '@/get-module'
+import { getModule } from '@/get-module'
 import getTokenResults from './token'
 
-export default async function getWorkflow<
+/**
+ * @description Get a Inverter workflow
+ * @template O - The requested modules
+ * @template W - The wallet client
+ * @param params - The parameters for the gathering of a workflow
+ * @returns The result of the workflow
+ */
+export async function getWorkflow<
   O extends RequestedModules | undefined = undefined,
   W extends PopWalletClient | undefined = undefined,
 >({

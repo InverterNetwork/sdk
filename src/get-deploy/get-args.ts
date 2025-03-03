@@ -48,7 +48,7 @@ export type GetDeployGetArgsSharedParams = {
 }
 
 /**
- * Encodes arguments for a module based on configuration data and user-provided arguments.
+ * @description Encodes arguments for a module based on configuration data and user-provided arguments.
  */
 export const getEncodedArgs = async ({
   deploymentInputs,
@@ -83,6 +83,9 @@ export const getEncodedArgs = async ({
   return encodedArgs
 }
 
+/**
+ * @description Assembles the arguments into evm encoded arguments for a module
+ */
 export const assembleModuleArgs = async ({
   name,
   ...params
@@ -107,7 +110,7 @@ export const assembleModuleArgs = async ({
 }
 
 /**
- * Constructs the arguments required for the requested modules.
+ * @description Constructs the arguments required for the requested modules.
  */
 export const constructArgs = async ({
   requestedModules,
@@ -238,7 +241,7 @@ export const constructArgs = async ({
 }
 
 /**
- * Retrieves the arguments required for the requested modules.
+ * @description Retrieves the arguments required for the requested modules.
  */
 export default async function getArgs<
   T extends RequestedModules,

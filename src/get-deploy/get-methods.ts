@@ -25,7 +25,7 @@ import {
 import getArgs from './get-args'
 
 /**
- * Provides RPC interactions for the requested modules.
+ * @description Provides RPC interactions for the requested modules.
  */
 export default async function getMethods<
   T extends RequestedModules,
