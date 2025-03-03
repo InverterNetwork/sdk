@@ -23,7 +23,7 @@ describe('#GET_DEPLOY_OPTIONS', () => {
   )
 
   it('1. Match Default Available Options', async () => {
-    const options = sdk.getDeployOptions()
+    const options = sdk.getDeployWorkflowOptions()
 
     expect(options.authorizer).toEqual(rawAuthorizerOptions)
     expect(options.fundingManager).toEqual(rawFundingManagerOptions)
@@ -32,7 +32,7 @@ describe('#GET_DEPLOY_OPTIONS', () => {
   })
 
   it('2. Should Match Restricted PIM Factory Options', async () => {
-    const options = sdk.getDeployOptions('restricted-pim')
+    const options = sdk.getDeployWorkflowOptions('restricted-pim')
 
     expect(options.authorizer).toEqual(rawAuthorizerOptions)
     expect(options.fundingManager).toEqual(rawCustomFactoryFundManagerOptions)
@@ -41,7 +41,7 @@ describe('#GET_DEPLOY_OPTIONS', () => {
   })
 
   it('3. Should Match Immutable PIM Factory Options', async () => {
-    const options = sdk.getDeployOptions('immutable-pim')
+    const options = sdk.getDeployWorkflowOptions('immutable-pim')
 
     expect(options.authorizer).toEqual(rawAuthorizerOptions)
     expect(options.fundingManager).toEqual(rawCustomFactoryFundManagerOptions)

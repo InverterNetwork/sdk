@@ -6,12 +6,12 @@ import { data } from '@inverter-network/abis'
 import type { FactoryType, FilterByPrefix } from '@/types'
 
 /**
- * @description Get the available modules for deployment
+ * @description Get the available modules for workflow deployment
  * @template FT - The factory type
  * @param factoryType - The factory type
- * @returns The available modules for deployment
+ * @returns The available modules for workflow deployment
  */
-export function getDeployOptions<
+export function getDeployWorkflowOptions<
   FT extends FactoryType | undefined = undefined,
 >(factoryType?: FT) {
   // Default factory type handling

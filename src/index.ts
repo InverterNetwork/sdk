@@ -6,7 +6,7 @@ export { deploy } from './deploy'
 export { getModule } from './get-module'
 export { getWorkflow } from './get-workflow'
 export { deployWorkflow } from './deploy-workflow'
-export { getDeployOptions } from './get-deploy-options'
+export { getDeployWorkflowOptions } from './get-deploy-workflow-options'
 export { Inverter } from './inverter'
 
 // util exports

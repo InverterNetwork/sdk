@@ -18,7 +18,7 @@ import type {
 // sdk utils
 import { getWorkflow } from './get-workflow'
 import { deployWorkflow } from './deploy-workflow'
-import { getDeployOptions } from './get-deploy-options'
+import { getDeployWorkflowOptions } from './get-deploy-workflow-options'
 import { deploy } from './deploy'
 import { getModule } from './get-module'
 
@@ -142,7 +142,7 @@ export class Inverter<W extends PopWalletClient | undefined = undefined> {
     }
   }
 
-  getDeployOptions = getDeployOptions
+  getDeployWorkflowOptions = getDeployWorkflowOptions
 
   /**
    * @description Retreive the deploy workflow methods and inputs array
