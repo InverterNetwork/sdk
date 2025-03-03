@@ -5,7 +5,7 @@ import type { PublicClient, SimulateContractReturnType } from 'viem'
 import type { Inverter } from '@/inverter'
 
 import type {
-  GetUserArgs,
+  GetDeployWorkflowArgs,
   MethodOptions,
   PopWalletClient,
   RequestedModules,
@@ -56,7 +56,7 @@ export type GetMethodsParams<
 export type GetMethodsReturnType<
   T extends RequestedModules,
   FT extends FactoryType,
-  Args = GetUserArgs<T, FT>,
+  Args = GetDeployWorkflowArgs<T, FT>,
 > = {
   run: (
     userArgs: Args,

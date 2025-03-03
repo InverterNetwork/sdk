@@ -29,7 +29,7 @@ export * from './static'
  * @param CD - The config data = `GetModuleConfigData<N>[number]`
  * @returns The user module argument
  */
-export type GetUserModuleArg<
+export type GetDeployWorkflowModuleArg<
   N extends ModuleName = ModuleName,
   CD = GetModuleConfigData<N>[number],
 > = EmptyObjectToNever<{
@@ -44,12 +44,12 @@ export type GetUserModuleArg<
  * @param T - The optional modules
  * @returns The user optional module arguments
  */
-export type GetUserOptionalArgsBase<
+export type GetDeployWorkflowOptionalArgsBase<
   T extends RequestedModules['optionalModules'],
 > = T extends undefined
   ? never
   : {
-      [K in NonNullable<T>[number]]: GetUserModuleArg<K>
+      [K in NonNullable<T>[number]]: GetDeployWorkflowModuleArg<K>
     }
 
 /**
@@ -57,9 +57,9 @@ export type GetUserOptionalArgsBase<
  * @param T - The optional modules
  * @returns The user optional module arguments
  */
-export type GetUserOptionalArgs<
+export type GetDeployWorkflowOptionalArgs<
   T extends RequestedModules['optionalModules'],
-  R = GetUserOptionalArgsBase<T>,
+  R = GetDeployWorkflowOptionalArgsBase<T>,
 > = EmptyObjectToNever<
   OmitNever<{
     [K in keyof R]: IsEmptyObject<R[K]> extends true ? never : R[K]
@@ -72,15 +72,15 @@ export type GetUserOptionalArgs<
  * @param FT - The factory type
  * @returns The user funding manager argument
  */
-export type GetFundingManagerArg<
+export type GetDeployWorkflowFundingManagerArg<
   T extends ModuleName,
   FT extends FactoryType = 'default',
 > = Simplify<
   FilterByPrefix<T, 'FM_BC'> extends never
-    ? GetUserModuleArg<T>
+    ? GetDeployWorkflowModuleArg<T>
     : FT extends 'default'
-      ? GetUserModuleArg<T>
-      : Omit<GetUserModuleArg<T>, 'issuanceToken'>
+      ? GetDeployWorkflowModuleArg<T>
+      : Omit<GetDeployWorkflowModuleArg<T>, 'issuanceToken'>
 >
 
 /**
@@ -89,16 +89,16 @@ export type GetFundingManagerArg<
  * @param FT - The factory type
  * @returns The user arguments
  */
-export type GetUserArgs<
+export type GetDeployWorkflowArgs<
   T extends RequestedModules = RequestedModules,
   FT extends FactoryType = 'default',
 > = Simplify<
   OmitNever<{
     orchestrator?: OrchestratorArgs
-    fundingManager: GetFundingManagerArg<T['fundingManager'], FT>
-    authorizer: GetUserModuleArg<T['authorizer']>
-    paymentProcessor: GetUserModuleArg<T['paymentProcessor']>
-    optionalModules: GetUserOptionalArgs<T['optionalModules']>
+    fundingManager: GetDeployWorkflowFundingManagerArg<T['fundingManager'], FT>
+    authorizer: GetDeployWorkflowModuleArg<T['authorizer']>
+    paymentProcessor: GetDeployWorkflowModuleArg<T['paymentProcessor']>
+    optionalModules: GetDeployWorkflowOptionalArgs<T['optionalModules']>
     issuanceToken: FT extends
       | 'restricted-pim'
       | 'immutable-pim'

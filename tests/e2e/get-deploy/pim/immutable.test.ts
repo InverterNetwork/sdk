@@ -5,7 +5,7 @@ import { isAddress, isHash } from 'viem'
 import {
   type DeployWorkflowReturnType,
   type GetModuleReturnType,
-  type GetUserArgs,
+  type GetDeployWorkflowArgs,
   type PopWalletClient,
   type RequestedModules,
   type Workflow,
@@ -42,7 +42,10 @@ describe('#PIM_IMMUTABLE', async () => {
       maxSupply: GET_HUMAN_READABLE_UINT_MAX_SUPPLY(18),
     },
     initialPurchaseAmount: '1000',
-  } as const satisfies GetUserArgs<typeof requestedModules, 'immutable-pim'>
+  } as const satisfies GetDeployWorkflowArgs<
+    typeof requestedModules,
+    'immutable-pim'
+  >
 
   let orchestratorAddress: `0x${string}`
   let deployWorkflowReturn: DeployWorkflowReturnType<

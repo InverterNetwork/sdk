@@ -1,4 +1,4 @@
-import type { GetUserModuleArg } from '@/index'
+import type { GetDeployWorkflowModuleArg } from '@/index'
 
 /**
  * @description Static metadata type for the deployment
@@ -42,25 +42,25 @@ export type ModuleArgs = {
  * @description Issuance token arguments type for the deployment
  */
 export type IssuanceTokenArgs =
-  GetUserModuleArg<'Restricted_PIM_Factory_v1'>['issuanceToken']
+  GetDeployWorkflowModuleArg<'Restricted_PIM_Factory_v1'>['issuanceToken']
 
 /**
  * @description Initial purchase amount arguments type for the deployment
  */
 export type InitialPurchaseAmountArgs =
-  GetUserModuleArg<'Immutable_PIM_Factory_v1'>['initialPurchaseAmount']
+  GetDeployWorkflowModuleArg<'Immutable_PIM_Factory_v1'>['initialPurchaseAmount']
 
 /**
  * @description Beneficiary arguments type for the deployment
  */
 export type BeneficiaryArgs =
-  GetUserModuleArg<'Restricted_PIM_Factory_v1'>['beneficiary']
+  GetDeployWorkflowModuleArg<'Restricted_PIM_Factory_v1'>['beneficiary']
 
 /**
  * @description Migration config arguments type for the deployment
  */
 export type MigrationConfigArgs =
-  GetUserModuleArg<'Migrating_PIM_Factory_v1'>['migrationConfig']
+  GetDeployWorkflowModuleArg<'Migrating_PIM_Factory_v1'>['migrationConfig']
 
 /**
  * @description Constructed arguments type for the deployment

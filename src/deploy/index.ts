@@ -4,7 +4,7 @@ import { getModuleData } from '@inverter-network/abis'
 // sdk types
 import type {
   DeployableContracts,
-  GetUserModuleArg,
+  GetDeployWorkflowModuleArg,
   MethodOptions,
   PopPublicClient,
   PopWalletClient,
@@ -30,7 +30,7 @@ export async function deploy<T extends DeployableContracts>(
     name: T
     walletClient: PopWalletClient
     publicClient: PopPublicClient
-    args: GetUserModuleArg<T>
+    args: GetDeployWorkflowModuleArg<T>
   },
   options?: MethodOptions
 ) {

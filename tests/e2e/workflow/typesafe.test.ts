@@ -6,7 +6,7 @@ import {
   sdk,
   TEST_ERC20_MOCK_ADDRESS,
 } from 'tests/helpers'
-import type { GetUserArgs, RequestedModules, Workflow } from '@/index'
+import type { GetDeployWorkflowArgs, RequestedModules, Workflow } from '@/index'
 import { decodeEventLog, parseAbiItem } from 'viem'
 
 describe('#WORKFLOW', () => {
@@ -25,7 +25,7 @@ describe('#WORKFLOW', () => {
       },
       fundingManager: FM_BC_Bancor_VirtualSupply_v1_ARGS,
       orchestrator: GET_ORCHESTRATOR_ARGS(deployer),
-    } as const satisfies GetUserArgs<typeof requestedModules>
+    } as const satisfies GetDeployWorkflowArgs<typeof requestedModules>
 
     let orchestratorAddress: `0x${string}`
     let workflow: Workflow<typeof sdk.walletClient, typeof requestedModules>
@@ -86,7 +86,7 @@ describe('#WORKFLOW', () => {
         orchestratorTokenAddress: TEST_ERC20_MOCK_ADDRESS,
       },
       orchestrator: GET_ORCHESTRATOR_ARGS(deployer),
-    } as const satisfies GetUserArgs<typeof requestedModules>
+    } as const satisfies GetDeployWorkflowArgs<typeof requestedModules>
 
     const bountyArgs = [
       '100',

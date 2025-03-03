@@ -5,7 +5,7 @@ import { isAddress, isHash, parseAbiItem } from 'viem'
 import {
   type DeployWorkflowReturnType,
   type GetModuleReturnType,
-  type GetUserArgs,
+  type GetDeployWorkflowArgs,
   type PopWalletClient,
   type RequestedModules,
   type Workflow,
@@ -56,7 +56,10 @@ describe.skipIf(process.env.USE_FORK !== 'true')('#PIM_MIGRATING', async () => {
       lpTokenRecipient: deployer,
       migrationThreshold: '1000',
     },
-  } as const satisfies GetUserArgs<typeof requestedModules, 'migrating-pim'>
+  } as const satisfies GetDeployWorkflowArgs<
+    typeof requestedModules,
+    'migrating-pim'
+  >
 
   const uniswapFactoryAddress = '0xF62c03E08ada871A0bEb309762E260a7a6a880E6'
   const uniswapRouterAddress = '0xeE567Fe1712Faf6149d80dA1E6934E354124CfE3'

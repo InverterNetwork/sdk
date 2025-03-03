@@ -11,7 +11,7 @@ import type {
   FactoryType,
   GetModuleParams,
   DeployableContracts,
-  GetUserModuleArg,
+  GetDeployWorkflowModuleArg,
   MethodOptions,
 } from '@/types'
 
@@ -189,7 +189,7 @@ export class Inverter<W extends PopWalletClient | undefined = undefined> {
       args,
     }: {
       name: T
-      args: GetUserModuleArg<T>
+      args: GetDeployWorkflowModuleArg<T>
     },
     options?: MethodOptions
   ) {

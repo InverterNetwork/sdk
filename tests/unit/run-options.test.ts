@@ -7,7 +7,7 @@ import {
 } from 'tests/helpers'
 import {
   ERC20_MINTABLE_ABI,
-  type GetUserArgs,
+  type GetDeployWorkflowArgs,
   type RequestedModules,
   type Workflow,
 } from '@/index'
@@ -30,7 +30,7 @@ describe('#RUN_OPTIONS', () => {
       orchestratorTokenAddress: TEST_ERC20_MOCK_ADDRESS,
     },
     orchestrator: GET_ORCHESTRATOR_ARGS(deployer),
-  } as const satisfies GetUserArgs<typeof requestedModules>
+  } as const satisfies GetDeployWorkflowArgs<typeof requestedModules>
 
   describe('#DEPLOY', () => {
     it('1. Should Confirm onApprove, onHash, onConfirmation callbacks return correct data', async () => {

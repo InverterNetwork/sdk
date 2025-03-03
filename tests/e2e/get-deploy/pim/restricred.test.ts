@@ -11,7 +11,7 @@ import {
 import {
   ERC20_MINTABLE_ABI,
   type RequestedModules,
-  type GetUserArgs,
+  type GetDeployWorkflowArgs,
   type DeployWorkflowReturnType,
   type Workflow,
 } from '@/index'
@@ -48,7 +48,10 @@ describe('#PIM_RESTRICTED', async () => {
       maxSupply: GET_HUMAN_READABLE_UINT_MAX_SUPPLY(18),
     },
     beneficiary: deployer,
-  } as const satisfies GetUserArgs<typeof requestedModules, 'restricted-pim'>
+  } as const satisfies GetDeployWorkflowArgs<
+    typeof requestedModules,
+    'restricted-pim'
+  >
 
   // ================PRE_DETERMINED VARIABLES================
   let orchestratorAddress: `0x${string}`

@@ -12,7 +12,7 @@ import type {
   FactoryType,
   FetchDeploymentReturnType,
   FilterByPrefix,
-  GetUserArgs,
+  GetDeployWorkflowArgs,
   PopWalletClient,
   UserModuleArg,
 } from '@/types'
@@ -211,7 +211,7 @@ export const getDefaultToken = async (
 const isPimArgs = (
   args: any,
   factoryType: FactoryType
-): args is GetUserArgs<
+): args is GetDeployWorkflowArgs<
   {
     fundingManager: FilterByPrefix<
       GetModuleNameByType<'fundingManager'>,

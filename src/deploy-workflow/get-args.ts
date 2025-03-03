@@ -13,7 +13,7 @@ import type {
   ModuleArgs,
   RequestedModule,
   RequestedModules,
-  GetUserArgs,
+  GetDeployWorkflowArgs,
   UserModuleArg,
   UserArgs,
   DeployMethodKind,
@@ -253,7 +253,7 @@ export default async function getArgs<
   params: {
     requestedModules: T
     factoryType: FT
-    userArgs: GetUserArgs<T, FT>
+    userArgs: GetDeployWorkflowArgs<T, FT>
   } & DeployWorkflowGetArgsSharedParams
 ) {
   // Construct the arguments in a object

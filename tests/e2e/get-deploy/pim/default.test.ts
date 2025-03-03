@@ -1,6 +1,10 @@
 import { expect, describe, it } from 'bun:test'
 
-import { type GetUserArgs, type RequestedModules, type Workflow } from '@/index'
+import {
+  type GetDeployWorkflowArgs,
+  type RequestedModules,
+  type Workflow,
+} from '@/index'
 import { getDeployWorkflowModuleInputs } from '@/deploy-workflow/get-inputs'
 import { getContract, isAddress, isHash, parseUnits } from 'viem'
 import {
@@ -27,7 +31,7 @@ describe('#PIM_DEFAULT', async () => {
     },
     fundingManager: FM_BC_Bancor_VirtualSupply_v1_ARGS,
     orchestrator: GET_ORCHESTRATOR_ARGS(deployer),
-  } as const satisfies GetUserArgs<typeof requestedModules>
+  } as const satisfies GetDeployWorkflowArgs<typeof requestedModules>
 
   let orchestratorAddress: `0x${string}`
   let issuanceToken: `0x${string}`

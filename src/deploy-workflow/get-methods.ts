@@ -8,7 +8,7 @@ import type {
   FactoryType,
   GetMethodsParams,
   GetMethodsReturnType,
-  GetUserArgs,
+  GetDeployWorkflowArgs,
   MethodOptions,
   RequestedModules,
 } from '@/types'
@@ -53,7 +53,7 @@ export default async function getMethods<
     version: 'v1.0.0',
   })
 
-  type Args = GetUserArgs<T, FT>
+  type Args = GetDeployWorkflowArgs<T, FT>
 
   async function handleDeployment<K extends DeployMethodKind>(
     kind: K,
