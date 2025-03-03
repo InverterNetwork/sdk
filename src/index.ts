@@ -1,8 +1,6 @@
 export * from './types'
 export * from './utils'
 
-export type { DeploymentResponse, DeploymentVersion } from './get-deploy/utils'
-
 export {
   fetchDeployment,
   getVersions,

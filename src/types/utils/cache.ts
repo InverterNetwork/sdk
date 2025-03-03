@@ -1,4 +1,4 @@
-import type { Inverter } from '@'
+import type { Inverter } from '@/index'
 import type { Tag } from '@inverter-network/abis'
 
 /**

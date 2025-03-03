@@ -1,4 +1,4 @@
-import type { MethodOptions } from '@'
+import type { MethodOptions } from '@/index'
 import type { PublicClient } from 'viem'
 
 const receipt = async ({

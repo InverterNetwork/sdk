@@ -11,7 +11,7 @@ import type {
   TagOverwrites,
   TupleExtendedAbiParameter,
 } from '@/types'
-import type { Inverter } from '@'
+import type { Inverter } from '@/index'
 
 /**
  * @description The base parameters for the processInputs function

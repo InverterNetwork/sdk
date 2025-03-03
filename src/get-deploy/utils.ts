@@ -1,38 +1,47 @@
+// external dependencies
 import type { GetModuleNameByType, ModuleName } from '@inverter-network/abis'
-import { getContract, parseUnits } from 'viem'
-import { METADATA_URL, DEPLOYMENTS_URL } from './constants'
-import { ERC20_ABI } from '../utils/constants'
-
 import type { PublicClient, WalletClient } from 'viem'
+import { getContract, parseUnits } from 'viem'
+import type { Abi } from 'abitype'
+import { anvil } from 'viem/chains'
+
+// sdk types
 import type {
+  DeploymentVersion,
   Extras,
   FactoryType,
+  FetchDeploymentReturnType,
   FilterByPrefix,
   GetUserArgs,
   PopWalletClient,
   UserModuleArg,
-} from '..'
-import type { Abi } from 'abitype'
-import { anvil } from 'viem/chains'
+} from '@/types'
 
-export type DeploymentResponse = {
-  bancorFormula: Record<string, `0x${string}` | undefined>
-  erc20Mock: Record<string, `0x${string}` | undefined>
-  orchestratorFactory: Record<string, `0x${string}` | undefined>
-  restrictedPimFactory: Record<string, `0x${string}` | undefined>
-  immutablePimFactory: Record<string, `0x${string}` | undefined>
-  migratingPimFactory: Record<string, `0x${string}` | undefined>
-}
+// get-deploy constants
+import { METADATA_URL, DEPLOYMENTS_URL } from './constants'
 
-export type DeploymentVersion = 'v1.0.0'
+// sdk utils
+import { ERC20_ABI } from '@/utils'
 
+/**
+ * @description Fetches the deployment for a given version
+ * @param version - The version of the deployment
+ * @returns The deployment for the given version
+ */
 export const fetchDeployment = async (
   version: DeploymentVersion
-): Promise<DeploymentResponse> => {
+): Promise<FetchDeploymentReturnType> => {
   const response = await fetch(`${DEPLOYMENTS_URL}/${version}.json`)
   return await response.json()
 }
 
+/**
+ * @description Gets the factory address for a given factory type
+ * @param version - The version of the deployment
+ * @param factoryType - The type of factory
+ * @param chainId - The chain ID
+ * @returns The factory address for the given factory type
+ */
 export const getFactoryAddress = async ({
   version,
   factoryType,
@@ -74,7 +83,15 @@ export const getFactoryAddress = async ({
   }
 }
 
-// retrieves the deployment function via viem
+/**
+ * @description Retrieves the viem methods for deployment
+ * @param walletClient - The wallet client
+ * @param publicClient - The public client
+ * @param factoryType - The type of factory
+ * @param version - The version of the deployment
+ * @param abi - The ABI of the factory
+ * @returns The viem methods for the given factory type
+ */
 export const getViemMethods = async ({
   walletClient,
   publicClient,
@@ -123,6 +140,11 @@ export const getViemMethods = async ({
   }
 }
 
+/**
+ * @description Gets the versions for a given module name
+ * @param name - The name of the module
+ * @returns The versions for the given module name
+ */
 export const getVersions = (name: ModuleName) => {
   const nameParts = name.split('_'),
     majorString = nameParts[nameParts.length - 1].slice(1),
@@ -138,7 +160,11 @@ export const getVersions = (name: ModuleName) => {
   }
 }
 
-// returns the MetaData struct that the deploy function requires for each module
+/**
+ * @description Assembles the metadata for a given module name
+ * @param name - The name of the module
+ * @returns The metadata for the given module name
+ */
 export const assembleMetadata = <N extends ModuleName>(name: N) => {
   const versions = getVersions(name)
   const assembled = {
@@ -149,6 +175,12 @@ export const assembleMetadata = <N extends ModuleName>(name: N) => {
   return assembled
 }
 
+/**
+ * @description Gets the default token for a given funding manager
+ * @param publicClient - The public client
+ * @param fundingManager - The funding manager
+ * @returns The default token for the given funding manager
+ */
 export const getDefaultToken = async (
   publicClient: PublicClient,
   fundingManager: UserModuleArg
@@ -170,6 +202,12 @@ export const getDefaultToken = async (
   }
 }
 
+/**
+ * @description Checks if the user args are for a PIM factory
+ * @param args - The user args
+ * @param factoryType - The type of factory
+ * @returns True if the user args are for a PIM factory, false otherwise
+ */
 const isPimArgs = (
   args: any,
   factoryType: FactoryType
@@ -195,6 +233,14 @@ const isPimArgs = (
   }
 }
 
+/**
+ * @description Handles the PIM factory approve
+ * @param factoryType - The type of factory
+ * @param factoryAddress - The address of the factory
+ * @param userArgs - The user args
+ * @param walletClient - The wallet client
+ * @param publicClient - The public client
+ */
 export const handlePimFactoryApprove = async ({
   factoryType,
   factoryAddress,

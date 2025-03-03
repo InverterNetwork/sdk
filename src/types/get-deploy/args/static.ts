@@ -1,4 +1,4 @@
-import type { GetUserModuleArg } from '@'
+import type { GetUserModuleArg } from '@/index'
 
 /**
  * @description Static metadata type for the deployment

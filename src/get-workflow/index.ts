@@ -10,13 +10,12 @@ import type {
   Workflow,
   GetWorkflowParams,
   FlattenObjectValues,
+  GetWorkflowTokenResultReturnType,
 } from '@/types'
-
-import type { GetWorkflowTokenResultsReturnTypes } from './get-token-results'
 
 // sdk utils
 import getModule from '@/get-module'
-import getTokenResults from './get-token-results'
+import getTokenResults from './token'
 
 export default async function getWorkflow<
   O extends RequestedModules | undefined = undefined,
@@ -47,7 +46,7 @@ export default async function getWorkflow<
     self,
   })
 
-  let issuanceToken: GetWorkflowTokenResultsReturnTypes<
+  let issuanceToken: GetWorkflowTokenResultReturnType<
     'ERC20Issuance_v1',
     W
   > | null = null

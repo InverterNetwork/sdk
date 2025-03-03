@@ -1,4 +1,8 @@
+// external dependencies
+import { getModuleData } from '@inverter-network/abis'
 import { decodeEventLog, formatEther, parseAbiItem } from 'viem'
+
+// sdk types
 import type {
   DeployMethodKind,
   FactoryType,
@@ -7,15 +11,18 @@ import type {
   GetUserArgs,
   MethodOptions,
   RequestedModules,
-} from '..'
+} from '@/types'
+
+// sdk utils
+import { handleError, handleOptions } from '@/utils'
+
+// get-deploy utils
 import {
   getFactoryAddress,
   getViemMethods,
   handlePimFactoryApprove,
 } from './utils'
 import getArgs from './get-args'
-import { handleError, handleOptions } from '../utils'
-import { getModuleData } from '@inverter-network/abis'
 
 /**
  * Provides RPC interactions for the requested modules.

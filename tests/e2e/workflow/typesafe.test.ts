@@ -6,7 +6,7 @@ import {
   sdk,
   TEST_ERC20_MOCK_ADDRESS,
 } from 'tests/helpers'
-import type { GetUserArgs, RequestedModules, Workflow } from '@'
+import type { GetUserArgs, RequestedModules, Workflow } from '@/index'
 import { decodeEventLog, parseAbiItem } from 'viem'
 
 describe('#WORKFLOW', () => {

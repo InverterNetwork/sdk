@@ -1,11 +1,10 @@
+// external dependencies
 import { getModuleData } from '@inverter-network/abis'
-import { processInputs, ADDRESS_ZERO } from '@/utils'
-import { MANDATORY_MODULES } from './constants'
-import { assembleMetadata, getDefaultToken } from './utils'
-import { Inverter } from '@/inverter'
-
 import { encodeAbiParameters, parseUnits } from 'viem'
 import type { PublicClient } from 'viem'
+
+// sdk types
+import type { Inverter } from '@/inverter'
 import type {
   Extras,
   GetModuleDeploymentInputs,
@@ -21,6 +20,15 @@ import type {
   FactoryType,
   TagOverwrites,
 } from '@/types'
+
+// sdk utils
+import { processInputs, ADDRESS_ZERO } from '@/utils'
+
+// get-deploy constants
+import { MANDATORY_MODULES } from './constants'
+
+// get-deploy utils
+import { assembleMetadata, getDefaultToken } from './utils'
 
 import d from 'debug'
 

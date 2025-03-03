@@ -10,7 +10,7 @@ import {
   type GetUserArgs,
   type RequestedModules,
   type Workflow,
-} from '@'
+} from '@/index'
 import { getContract, parseUnits } from 'viem'
 
 describe('#RUN_OPTIONS', () => {

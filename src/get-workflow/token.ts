@@ -3,32 +3,19 @@ import type { Hex } from 'viem'
 
 // sdk types
 import type {
-  GetModuleReturnType,
-  PopPublicClient,
+  GetWorkflowTokenResultParams,
+  GetWorkflowTokenResultReturnType,
   PopWalletClient,
 } from '@/types'
 
-import { getModule, Inverter, ERC20_ABI, FM_BASE } from '@'
+import { getModule, ERC20_ABI, FM_BASE } from '@/index'
 
-export type GetWorkflowTokenResultsParams<
-  W extends PopWalletClient | undefined = undefined,
-> = {
-  fundingManagerAddress: Hex
-  publicClient: PopPublicClient
-  walletClient?: W
-  self?: Inverter<W>
-}
-
-export type GetWorkflowTokenResultsReturnTypes<
-  T extends 'ERC20' | 'ERC20Issuance_v1',
-  W extends PopWalletClient | undefined = undefined,
-> = {
-  address: Hex
-  module: GetModuleReturnType<T, W>
-  decimals: number
-  symbol: string
-}
-
+/**
+ * @description Get the funding token results
+ * @template W - The wallet client
+ * @param params - The parameters for the getFundingTokenResults function
+ * @returns The funding token results
+ */
 export const getFundingTokenResults = async <
   W extends PopWalletClient | undefined = undefined,
 >({
@@ -36,8 +23,8 @@ export const getFundingTokenResults = async <
   publicClient,
   walletClient,
   self,
-}: GetWorkflowTokenResultsParams<W>): Promise<
-  GetWorkflowTokenResultsReturnTypes<'ERC20', W>
+}: GetWorkflowTokenResultParams<W>): Promise<
+  GetWorkflowTokenResultReturnType<'ERC20', W>
 > => {
   const { readContract } = publicClient
 
@@ -75,6 +62,12 @@ export const getFundingTokenResults = async <
   }
 }
 
+/**
+ * @description Get the issuance token results
+ * @template W - The wallet client
+ * @param params - The parameters for the getIssuanceTokenResults function
+ * @returns The issuance token results
+ */
 export const getIssuanceTokenResults = async <
   W extends PopWalletClient | undefined = undefined,
 >({
@@ -82,8 +75,8 @@ export const getIssuanceTokenResults = async <
   publicClient,
   walletClient,
   self,
-}: GetWorkflowTokenResultsParams<W>): Promise<
-  GetWorkflowTokenResultsReturnTypes<'ERC20Issuance_v1', W>
+}: GetWorkflowTokenResultParams<W>): Promise<
+  GetWorkflowTokenResultReturnType<'ERC20Issuance_v1', W>
 > => {
   const { readContract } = publicClient
 

@@ -9,7 +9,7 @@ import type {
   Extras,
   PopPublicClient,
   PopWalletClient,
-} from '@'
+} from '@/index'
 
 /**
  * @description The parameters for the getModule function

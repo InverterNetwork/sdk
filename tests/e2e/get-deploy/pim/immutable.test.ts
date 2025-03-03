@@ -9,7 +9,7 @@ import {
   type PopWalletClient,
   type RequestedModules,
   type Workflow,
-} from '@'
+} from '@/index'
 import { getModuleSchema } from '@/get-deploy/get-inputs'
 
 import {

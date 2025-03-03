@@ -7,7 +7,6 @@
     "moduleResolution": "Bundler",
     "noEmit": true,
     "paths": {
-      "@": ["./src"],
       "@/*": ["./src/*"],
       "tests/*": ["./tests/*"]
     }

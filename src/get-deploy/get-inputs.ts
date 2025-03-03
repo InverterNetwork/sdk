@@ -1,7 +1,8 @@
-import { MANDATORY_MODULES } from './constants'
+// external dependencies
 import { getModuleData } from '@inverter-network/abis'
 import type { ModuleName } from '@inverter-network/abis'
 
+// sdk types
 import type {
   DeploySchema,
   FactoryType,
@@ -9,7 +10,10 @@ import type {
   ModuleSchema,
   RequestedModule,
   RequestedModules,
-} from '../types'
+} from '@/types'
+
+// get-deploy constants
+import { MANDATORY_MODULES } from './constants'
 
 /**
  * @description Get the module schema for the deployment

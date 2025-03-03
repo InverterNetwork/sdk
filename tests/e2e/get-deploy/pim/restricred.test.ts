@@ -14,7 +14,7 @@ import {
   type GetUserArgs,
   type GetDeployReturnType,
   type Workflow,
-} from '@'
+} from '@/index'
 import {
   parseUnits,
   getContract,

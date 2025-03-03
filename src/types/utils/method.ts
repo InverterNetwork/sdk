@@ -2,7 +2,7 @@
 import type { SimulateContractReturnType, TransactionReceipt } from 'viem'
 
 // sdk types
-import type { OmitNever, ExtendedParametersToPrimitiveType } from '@'
+import type { OmitNever, ExtendedParametersToPrimitiveType } from '@/index'
 
 /**
  * @description The kind of methods

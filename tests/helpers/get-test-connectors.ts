@@ -1,4 +1,4 @@
-import type { PopPublicClient, PopWalletClient } from '@'
+import type { PopPublicClient, PopWalletClient } from '@/index'
 import { http, createPublicClient, createWalletClient } from 'viem'
 import { privateKeyToAccount } from 'viem/accounts'
 

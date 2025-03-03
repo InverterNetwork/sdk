@@ -6,13 +6,18 @@ import type { Hex } from 'viem'
 // sdk types
 import { Inverter } from '@/inverter'
 import type {
-  FilterByPrefix,
   GetModuleReturnType,
   OmitNever,
   PopPublicClient,
   PopWalletClient,
   RequestedModules,
 } from '@/types'
+
+// get-workflow types
+import type { TokenModuleData, ConditionalIssuanceToken } from './token'
+
+// exports
+export * from './token'
 
 /**
  * @description The parameters for the getWorkflow function
@@ -97,35 +102,3 @@ export type MendatoryAndOptionalWorkflow<
   W extends PopWalletClient | undefined,
   O extends RequestedModules | undefined,
 > = MandatoryResult<W, O> & OptionalResult<W, O>
-
-/**
- * @description The token module data type
- * @template W - The wallet client
- * @template A - The module type
- */
-export type TokenModuleData<
-  W extends PopWalletClient | undefined,
-  A extends 'ERC20' | 'ERC20Issuance_v1',
-> = {
-  address: Hex
-  module: GetModuleReturnType<A, W>
-  decimals: number
-  symbol: string
-}
-
-/**
- * @description The conditional issuance token type
- * @template W - The wallet client
- * @template O - The requested modules
- * @template A - The module type
- */
-export type ConditionalIssuanceToken<
-  W extends PopWalletClient | undefined,
-  O extends RequestedModules | undefined,
-  A extends 'ERC20' | 'ERC20Issuance_v1',
-> =
-  O extends NonNullable<O>
-    ? FilterByPrefix<O['fundingManager'], 'FM_BC'> extends never
-      ? TokenModuleData<W, A> | undefined
-      : TokenModuleData<W, A>
-    : TokenModuleData<W, A> | undefined

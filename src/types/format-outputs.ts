@@ -8,7 +8,7 @@ import type {
   TagCallback,
   ExtendedAbiParameter,
 } from '@/types'
-import type { Inverter } from '@'
+import type { Inverter } from '@/index'
 
 /**
  * @description The parameters for the formatOutputs function

@@ -1,5 +1,7 @@
-import getRun from './get-run'
+// external dependencies
+import type { ExtendedAbiFunction } from '@inverter-network/abis'
 
+// sdk types
 import type {
   EstimateGasOutput,
   GetModuleConstructMethodParams,
@@ -7,10 +9,20 @@ import type {
   MethodKind,
   WriteOutput,
 } from '@/types'
-import type { ExtendedAbiFunction } from '@inverter-network/abis'
+
+// sdk utils
 import { estimateGasOutputs, writeOutputs } from '@/utils'
 
-// This function is used to construct a method from an abiFunction
+// get-module utils
+import getRun from './get-run'
+
+/**
+ * @description Constructs a method from an abiFunction
+ * @param abiFunction - The abiFunction to construct the method from
+ * @param contract - The contract to construct the method from
+ * @param extras - The extras to construct the method from
+ * @param kind - The kind of method to construct
+ */
 export default function constructMethod<
   TAbiFunction extends ExtendedAbiFunction,
   Kind extends MethodKind,

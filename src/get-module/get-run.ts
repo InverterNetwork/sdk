@@ -1,10 +1,17 @@
+// external dependencies
+import type { ExtendedAbiParameter } from '@inverter-network/abis'
+import { formatEther } from 'viem'
+
+// sdk utils
 import {
   processInputs,
   formatOutputs,
   tagProcessor,
   handleOptions,
+  handleError,
 } from '@/utils'
 
+// sdk types
 import type {
   GetMethodParams,
   GetMethodReturnType,
@@ -12,11 +19,12 @@ import type {
   GetModuleGetRunParams,
   MethodOptions,
 } from '@/types'
-import { formatEther } from 'viem'
-import { handleError } from '../utils'
-import type { ExtendedAbiParameter } from '@inverter-network/abis'
 
-// Construct the run function
+/**
+ * @description Constructs the run function for a given method
+ * @param params - The parameters for the run function
+ * @returns The run function
+ */
 export default function getRun<
   ExtendedInputs extends readonly ExtendedAbiParameter[],
   ExtendedOutputs extends readonly ExtendedAbiParameter[],

@@ -12,7 +12,7 @@ import {
   type PopWalletClient,
   type RequestedModules,
   type Workflow,
-} from '@'
+} from '@/index'
 
 describe('#CURVE_SIM', () => {
   const deployer = sdk.walletClient.account.address

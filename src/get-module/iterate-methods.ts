@@ -1,14 +1,22 @@
-import constructMethod from './construct-method'
-
+// external dependencies
 import type { AbiStateMutability } from 'abitype'
 import type { ExtendedAbi, ExtendedAbiFunction } from '@inverter-network/abis'
+
+// sdk types
 import type {
   GetModuleIterateMethodsReturnType,
   GetModuleItterateMethodsParams,
   MethodKind,
-} from '../types'
+} from '@/types'
 
-// The prepareFunction function is used to prepare the functions from the abi
+// get-module utils
+import constructMethod from './construct-method'
+
+/**
+ * @description Iterates over the abi functions and constructs the methods
+ * @param params - The parameters for the iterateMethods function
+ * @returns The methods
+ */
 export default function iterateMethods<
   A extends ExtendedAbi,
   T extends AbiStateMutability[],
