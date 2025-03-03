@@ -4,10 +4,10 @@ import type { ModuleName } from '@inverter-network/abis'
 
 // sdk types
 import type {
-  DeploySchema,
+  GetGetDeploySchema,
   FactoryType,
   FindStringByPart,
-  ModuleSchema,
+  GetGetDeployModuleSchema,
   RequestedModule,
   RequestedModules,
 } from '@/types'
@@ -22,10 +22,14 @@ import { MANDATORY_MODULES } from './constants'
  * @param factoryType - The factory type of the module
  * @returns The module schema
  */
-export function getModuleSchema<
+export function getDeployModuleSchema<
   T extends RequestedModule | FindStringByPart<ModuleName, 'Factory'>,
   ON extends string | undefined = undefined,
->(name: T, overrideName?: ON, factoryType?: FactoryType): ModuleSchema<T, ON> {
+>(
+  name: T,
+  overrideName?: ON,
+  factoryType?: FactoryType
+): GetGetDeployModuleSchema<T, ON> {
   const moduleData = getModuleData(name)
 
   if (!('deploymentInputs' in moduleData))
@@ -46,7 +50,7 @@ export function getModuleSchema<
   const result = {
     inputs,
     name: overrideName ?? name,
-  } as ModuleSchema<T, ON>
+  } as GetGetDeployModuleSchema<T, ON>
 
   return result
 }
@@ -62,37 +66,37 @@ export const getOtherFactoryTypeInputs = <FT extends FactoryType>(
   switch (factoryType) {
     case 'restricted-pim':
       return {
-        issuanceToken: getModuleSchema(
+        issuanceToken: getDeployModuleSchema(
           'Restricted_PIM_Factory_v1',
           'issuanceToken'
         ),
-        beneficiary: getModuleSchema(
+        beneficiary: getDeployModuleSchema(
           'Restricted_PIM_Factory_v1',
           'beneficiary'
         ),
       }
     case 'immutable-pim':
       return {
-        issuanceToken: getModuleSchema(
+        issuanceToken: getDeployModuleSchema(
           'Immutable_PIM_Factory_v1',
           'issuanceToken'
         ),
-        initialPurchaseAmount: getModuleSchema(
+        initialPurchaseAmount: getDeployModuleSchema(
           'Immutable_PIM_Factory_v1',
           'initialPurchaseAmount'
         ),
       }
     case 'migrating-pim':
       return {
-        issuanceToken: getModuleSchema(
+        issuanceToken: getDeployModuleSchema(
           'Immutable_PIM_Factory_v1',
           'issuanceToken'
         ),
-        initialPurchaseAmount: getModuleSchema(
+        initialPurchaseAmount: getDeployModuleSchema(
           'Immutable_PIM_Factory_v1',
           'initialPurchaseAmount'
         ),
-        migrationConfig: getModuleSchema(
+        migrationConfig: getDeployModuleSchema(
           'Migrating_PIM_Factory_v1',
           'migrationConfig'
         ),
@@ -111,10 +115,10 @@ export const getOtherFactoryTypeInputs = <FT extends FactoryType>(
 export default function getInputs<
   T extends RequestedModules,
   FT extends FactoryType,
->(requestedModules: T, factoryType: FT): DeploySchema<T, FT> {
+>(requestedModules: T, factoryType: FT): GetGetDeploySchema<T, FT> {
   const mandatoryResult = MANDATORY_MODULES.reduce(
     (result, moduleType) => {
-      const moduleSchema = getModuleSchema(
+      const moduleSchema = getDeployModuleSchema(
         requestedModules[moduleType],
         undefined,
         factoryType
@@ -124,18 +128,18 @@ export default function getInputs<
       return result
     },
     {
-      orchestrator: getModuleSchema('OrchestratorFactory_v1'),
+      orchestrator: getDeployModuleSchema('OrchestratorFactory_v1'),
       authorizer: {},
       fundingManager: {},
       paymentProcessor: {},
       ...getOtherFactoryTypeInputs(factoryType),
-    } as unknown as DeploySchema<Omit<T, 'optionalModules'>, FT>
+    } as unknown as GetGetDeploySchema<Omit<T, 'optionalModules'>, FT>
   )
 
   if (!requestedModules.optionalModules?.length) return mandatoryResult
 
   const optionalModules = requestedModules.optionalModules.map((module) =>
-    getModuleSchema(module)
+    getDeployModuleSchema(module)
   )
 
   return {

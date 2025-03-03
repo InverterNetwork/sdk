@@ -1,7 +1,7 @@
 import { expect, describe, it } from 'bun:test'
 
 import { type GetUserArgs, type RequestedModules, type Workflow } from '@/index'
-import { getModuleSchema } from '@/get-deploy/get-inputs'
+import { getDeployModuleSchema } from '@/get-deploy/get-inputs'
 import { getContract, isAddress, isHash, parseUnits } from 'viem'
 import {
   FM_BC_Bancor_VirtualSupply_v1_ARGS,
@@ -40,12 +40,12 @@ describe('#PIM_DEFAULT', async () => {
       inputs.fundingManager.inputs.find((i) => i?.name === 'issuanceToken')
     ).toBeDefined()
     expect(inputs).toEqual({
-      orchestrator: getModuleSchema('OrchestratorFactory_v1'),
-      authorizer: getModuleSchema('AUT_Roles_v1'),
-      fundingManager: getModuleSchema(
+      orchestrator: getDeployModuleSchema('OrchestratorFactory_v1'),
+      authorizer: getDeployModuleSchema('AUT_Roles_v1'),
+      fundingManager: getDeployModuleSchema(
         'FM_BC_Restricted_Bancor_Redeeming_VirtualSupply_v1'
       ),
-      paymentProcessor: getModuleSchema('PP_Simple_v1'),
+      paymentProcessor: getDeployModuleSchema('PP_Simple_v1'),
     })
   })
 

@@ -4,7 +4,7 @@ import type { PublicClient } from 'viem'
 // sdk types
 import type { Inverter } from '@/inverter'
 import type {
-  DeploySchema,
+  GetGetDeploySchema,
   FactoryType,
   RequestedModules,
   PopWalletClient,
@@ -39,5 +39,5 @@ export type GetDeployReturnType<
   T extends RequestedModules<FT extends undefined ? 'default' : FT>,
   FT extends FactoryType | undefined = undefined,
 > = {
-  inputs: DeploySchema<T, FT extends undefined ? 'default' : FT>
+  inputs: GetGetDeploySchema<T, FT extends undefined ? 'default' : FT>
 } & GetMethodsReturnType<T, FT extends undefined ? 'default' : FT>

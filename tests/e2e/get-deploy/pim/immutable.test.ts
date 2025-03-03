@@ -10,7 +10,7 @@ import {
   type RequestedModules,
   type Workflow,
 } from '@/index'
-import { getModuleSchema } from '@/get-deploy/get-inputs'
+import { getDeployModuleSchema } from '@/get-deploy/get-inputs'
 
 import {
   sdk,
@@ -71,19 +71,19 @@ describe('#PIM_IMMUTABLE', async () => {
 
   it('2. Match expected inputs', () => {
     expect(getDeployReturn.inputs).toEqual({
-      orchestrator: getModuleSchema('OrchestratorFactory_v1'),
-      authorizer: getModuleSchema('AUT_Roles_v1'),
-      fundingManager: getModuleSchema(
+      orchestrator: getDeployModuleSchema('OrchestratorFactory_v1'),
+      authorizer: getDeployModuleSchema('AUT_Roles_v1'),
+      fundingManager: getDeployModuleSchema(
         'FM_BC_Bancor_Redeeming_VirtualSupply_v1',
         undefined,
         'immutable-pim'
       ),
-      paymentProcessor: getModuleSchema('PP_Simple_v1'),
-      issuanceToken: getModuleSchema(
+      paymentProcessor: getDeployModuleSchema('PP_Simple_v1'),
+      issuanceToken: getDeployModuleSchema(
         'Immutable_PIM_Factory_v1',
         'issuanceToken'
       ),
-      initialPurchaseAmount: getModuleSchema(
+      initialPurchaseAmount: getDeployModuleSchema(
         'Immutable_PIM_Factory_v1',
         'initialPurchaseAmount'
       ),

@@ -17,7 +17,7 @@ import type {
  * @template ON - The optional module name
  * @returns The module schema
  */
-export type ModuleSchema<
+export type GetGetDeployModuleSchema<
   N extends ModuleName = ModuleName,
   ON extends string | undefined = undefined,
 > = {
@@ -44,7 +44,7 @@ export type OptionalModules<T extends RequestedModules['optionalModules']> =
     T extends undefined
       ? never
       : {
-          [K in keyof T]: ModuleSchema<
+          [K in keyof T]: GetGetDeployModuleSchema<
             // @ts-expect-error - TS cant resolve name
             T[K]
           >
@@ -57,34 +57,37 @@ export type OptionalModules<T extends RequestedModules['optionalModules']> =
  * @template FT - The factory type
  * @returns The deployment schema
  */
-export type DeploySchema<
+export type GetGetDeploySchema<
   T extends RequestedModules = RequestedModules,
   FT extends FactoryType = 'default',
 > = Simplify<
   OmitNever<{
-    orchestrator: ModuleSchema<'OrchestratorFactory_v1'>
-    paymentProcessor: ModuleSchema<T['paymentProcessor']>
-    fundingManager: ModuleSchema<T['fundingManager']>
-    authorizer: ModuleSchema<T['authorizer']>
+    orchestrator: GetGetDeployModuleSchema<'OrchestratorFactory_v1'>
+    paymentProcessor: GetGetDeployModuleSchema<T['paymentProcessor']>
+    fundingManager: GetGetDeployModuleSchema<T['fundingManager']>
+    authorizer: GetGetDeployModuleSchema<T['authorizer']>
     optionalModules: EmptyObjectToNever<OptionalModules<T['optionalModules']>>
     // OTHER FACTORY TYPE INPUTS
     issuanceToken: FT extends
       | 'restricted-pim'
       | 'immutable-pim'
       | 'migrating-pim'
-      ? ModuleSchema<
+      ? GetGetDeployModuleSchema<
           `${FT extends 'restricted-pim' ? 'Restricted' : 'Immutable'}_PIM_Factory_v1`,
           'issuanceToken'
         >
       : never
     initialPurchaseAmount: FT extends 'immutable-pim' | 'migrating-pim'
-      ? ModuleSchema<'Immutable_PIM_Factory_v1', 'initialPurchaseAmount'>
+      ? GetGetDeployModuleSchema<
+          'Immutable_PIM_Factory_v1',
+          'initialPurchaseAmount'
+        >
       : never
     beneficiary: FT extends 'restricted-pim'
-      ? ModuleSchema<'Restricted_PIM_Factory_v1', 'beneficiary'>
+      ? GetGetDeployModuleSchema<'Restricted_PIM_Factory_v1', 'beneficiary'>
       : never
     migrationConfig: FT extends 'migrating-pim'
-      ? ModuleSchema<'Migrating_PIM_Factory_v1', 'migrationConfig'>
+      ? GetGetDeployModuleSchema<'Migrating_PIM_Factory_v1', 'migrationConfig'>
       : never
   }>
 >
