@@ -29,7 +29,7 @@ describe('#DEPLOY_ERC20_ISSUANCE_BLACKLIST', async () => {
     const module = sdk.getModule({
       address: tokenAddress,
       name: 'ERC20Issuance_v1',
-      extras: {
+      tagConfig: {
         decimals: 18,
       },
     })

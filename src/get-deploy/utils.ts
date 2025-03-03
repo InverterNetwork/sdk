@@ -8,7 +8,7 @@ import { anvil } from 'viem/chains'
 // sdk types
 import type {
   DeploymentVersion,
-  Extras,
+  TagConfig,
   FactoryType,
   FetchDeploymentReturnType,
   FilterByPrefix,
@@ -184,7 +184,7 @@ export const assembleMetadata = <N extends ModuleName>(name: N) => {
 export const getDefaultToken = async (
   publicClient: PublicClient,
   fundingManager: UserModuleArg
-): Promise<Extras> => {
+): Promise<TagConfig> => {
   try {
     const { readContract } = publicClient
 

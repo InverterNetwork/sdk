@@ -6,14 +6,15 @@ import type { FormatOutputsParams } from '@/types'
 export default async function format({
   output,
   res,
-  extras,
+  tagConfig,
   tagCallback,
 }: FormatOutputsParams) {
   const { type } = output
   // These first two cases are for the recursive tuple types
-  if (type === 'tuple') return await tuple({ output, res, extras, tagCallback })
+  if (type === 'tuple')
+    return await tuple({ output, res, tagConfig, tagCallback })
   if (type === 'tuple[]')
-    return await tupleArray({ output, res, extras, tagCallback })
+    return await tupleArray({ output, res, tagConfig, tagCallback })
 
   // If the output is not a tuple,
 

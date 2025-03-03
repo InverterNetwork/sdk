@@ -56,7 +56,7 @@ describe('#PIM_IMMUTABLE', async () => {
     fundingToken = sdk.getModule({
       address: args.fundingManager.collateralToken,
       name: 'ERC20Issuance_v1',
-      extras: {
+      tagConfig: {
         decimals: 18,
       },
     })

@@ -10,14 +10,15 @@ export const parseDecimals = (arg: any, decimals: number) =>
 export default async function parse({
   input,
   arg,
-  extras,
+  tagConfig,
   tagCallback,
 }: ParseInputsParams) {
   const { type } = input
   // These first two cases are for the recursive tuple types
-  if (type === 'tuple') return await tuple({ input, arg, extras, tagCallback })
+  if (type === 'tuple')
+    return await tuple({ input, arg, tagConfig, tagCallback })
   if (type === 'tuple[]')
-    return await tupleArray({ arg, input, extras, tagCallback })
+    return await tupleArray({ arg, input, tagConfig, tagCallback })
 
   // if the input has a tag ( this has to come before the jsType check)
   if ('tags' in input && !!input.tags) {

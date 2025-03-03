@@ -6,7 +6,7 @@ import type { PublicClient } from 'viem'
 // sdk types
 import type { Inverter } from '@/inverter'
 import type {
-  Extras,
+  TagConfig,
   GetModuleDeploymentInputs,
   PopWalletClient,
   ConstructedArgs,
@@ -34,7 +34,7 @@ import d from 'debug'
 
 const debug = d('inverter:sdk:get-args')
 
-let extras: Extras
+let tagConfig: TagConfig
 
 /**
  * @description The shared parameters for the getArgs function and its utils
@@ -71,7 +71,7 @@ export const getEncodedArgs = async ({
   const { processedInputs } = <any>await processInputs({
     extendedInputs: configData,
     args,
-    extras,
+    tagConfig,
     ...params,
   })
 
@@ -145,7 +145,10 @@ export const constructArgs = async ({
 
   // Get the default token if the funding manager is provided
   if (userArgs.fundingManager)
-    extras = await getDefaultToken(rest.publicClient, userArgs.fundingManager)
+    tagConfig = await getDefaultToken(
+      rest.publicClient,
+      userArgs.fundingManager
+    )
 
   // if the factory type is restricted-pim or immutable-pim, define the issuance token decimals
   const issuanceTokenDecimals = userArgs?.issuanceToken?.decimals
@@ -229,7 +232,7 @@ export const constructArgs = async ({
           migrationThreshold: String(
             parseUnits(
               userArgs.migrationConfig.migrationThreshold,
-              Number(extras.decimals)
+              Number(tagConfig.decimals)
             )
           ),
         }

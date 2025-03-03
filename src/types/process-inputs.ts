@@ -5,7 +5,7 @@ import type { PublicClient, WalletClient } from 'viem'
 import type {
   MethodKind,
   RequiredAllowances,
-  Extras,
+  TagConfig,
   ExtendedAbiParameter,
   TagCallback,
   TagOverwrites,
@@ -17,7 +17,7 @@ import type { Inverter } from '@/index'
  * @description The base parameters for the processInputs function
  */
 export type ProcessInputsBaseParams = {
-  extras?: Extras
+  tagConfig?: TagConfig
   extendedInputs: readonly ExtendedAbiParameter[]
   args: any
   kind: MethodKind
@@ -49,7 +49,7 @@ export type ParseGetTagCallbackParams = {
 export type ParseInputsParams = {
   input: ExtendedAbiParameter
   arg: any
-  extras?: Extras
+  tagConfig?: TagConfig
   tagCallback: TagCallback
 }
 

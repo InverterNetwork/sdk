@@ -14,7 +14,7 @@ export default function getTagCallback({
   contract,
   self,
   extendedInputs,
-  extras,
+  tagConfig,
   args,
   kind,
   tagOverwrites,
@@ -27,7 +27,7 @@ export default function getTagCallback({
       decimalsRes = await tagProcessor.decimals({
         argsOrRes: args,
         parameters: extendedInputs,
-        extras,
+        tagConfig,
         tag: tags.find((t) => t.startsWith('decimals')),
         publicClient,
         contract,

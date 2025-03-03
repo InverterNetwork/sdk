@@ -29,7 +29,7 @@ export default function constructMethod<
 >({
   abiFunction,
   contract,
-  extras,
+  tagConfig,
   kind,
   publicClient,
   self,
@@ -63,7 +63,7 @@ export default function constructMethod<
     contract,
     extendedInputs: inputs,
     extendedOutputs: outputsByKind,
-    extras,
+    tagConfig,
     kind,
     walletClient,
     publicClient,

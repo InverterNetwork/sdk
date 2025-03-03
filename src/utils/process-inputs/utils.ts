@@ -2,11 +2,17 @@ import { stringToHex } from 'viem'
 import parse from './parse'
 import type { ParseInputTupleCaseParams } from '@/types'
 
-// The case for tuple arguments
+/**
+ * @description The case for tuple arguments
+ * @param input - The input
+ * @param arg - The argument
+ * @param tagConfig - The tag config
+ * @param tagCallback - The tag callback
+ */
 export const tuple = async ({
   input,
   arg,
-  extras,
+  tagConfig,
   tagCallback,
 }: ParseInputTupleCaseParams) => {
   const formattedTuple: any = {}
@@ -17,7 +23,7 @@ export const tuple = async ({
       formattedTuple[c.name ?? `_${index}`] = await parse({
         input: c,
         arg: arg[c.name ?? index],
-        extras,
+        tagConfig,
         tagCallback,
       })
     })
@@ -26,12 +32,22 @@ export const tuple = async ({
   return formattedTuple
 }
 
-// The case for tuple[] arguments
+/**
+ * @description The case for tuple[] arguments
+ * @param arg - The argument
+ * @param rest - The rest of the parameters
+ * @returns The formatted tuple
+ */
 export const tupleArray = async ({ arg, ...rest }: ParseInputTupleCaseParams) =>
   await Promise.all(
     arg.map(async (argI: any) => await tuple({ arg: argI, ...rest }))
   )
 
+/**
+ * @description The case for any tag argument
+ * @param arg - The argument
+ * @returns The formatted argument
+ */
 export const parseAny = (arg: any) => {
   try {
     return stringToHex(JSON.stringify(arg))

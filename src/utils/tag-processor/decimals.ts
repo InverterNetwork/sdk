@@ -24,7 +24,7 @@ const cacheToken = (props: CacheTokenParams) => {
 export default async function decimals({
   argsOrRes,
   parameters,
-  extras,
+  tagConfig,
   tag,
   publicClient,
   contract,
@@ -47,15 +47,15 @@ export default async function decimals({
   // INTERNAL CASE (NO SOURCE)
   // -------------------------------------------------------------------
   if (!source) {
-    decimals = extras?.decimals
-    tokenAddress = extras?.defaultToken
+    decimals = tagConfig?.decimals
+    tokenAddress = tagConfig?.defaultToken
   }
   // SOURCE EXTRAS
   // -------------------------------------------------------------------
   else if (source === 'extras') {
     if (location === 'issuanceToken') {
-      decimals = extras?.issuanceTokenDecimals
-      tokenAddress = extras?.issuanceToken
+      decimals = tagConfig?.issuanceTokenDecimals
+      tokenAddress = tagConfig?.issuanceToken
     }
   }
   // OVERWRITE CASES

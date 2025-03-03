@@ -81,7 +81,7 @@ describe.skipIf(process.env.USE_FORK !== 'true')('#PIM_MIGRATING', async () => {
     fundingToken = sdk.getModule({
       address: args.fundingManager.collateralToken,
       name: 'ERC20Issuance_v1',
-      extras: {
+      tagConfig: {
         decimals: 18,
       },
     })
@@ -185,7 +185,7 @@ describe.skipIf(process.env.USE_FORK !== 'true')('#PIM_MIGRATING', async () => {
     factory = sdk.getModule({
       address: TEST_MIGRATING_PIM_FACTORY_ADDRESS,
       name: 'Migrating_PIM_Factory_v1',
-      extras: {
+      tagConfig: {
         decimals: 18,
         issuanceTokenDecimals: workflow.issuanceToken.decimals,
         issuanceToken: workflow.issuanceToken.address,

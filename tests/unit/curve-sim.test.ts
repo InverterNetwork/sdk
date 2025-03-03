@@ -82,7 +82,7 @@ describe('#CURVE_SIM', () => {
     fundingToken = sdk.getModule({
       address: workflow.fundingToken.address,
       name: 'ERC20Issuance_v1',
-      extras: {
+      tagConfig: {
         decimals: 18,
       },
     })

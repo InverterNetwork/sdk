@@ -27,7 +27,7 @@ export default function iterateMethods<
   type,
   contract,
   kind,
-  extras,
+  tagConfig,
   self,
   walletClient,
 }: GetModuleItterateMethodsParams<
@@ -49,7 +49,7 @@ export default function iterateMethods<
         walletClient,
         abiFunction,
         contract,
-        extras,
+        tagConfig,
         kind,
         self,
       })

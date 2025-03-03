@@ -106,7 +106,7 @@ describe('#WORKFLOW', () => {
       const testToken = sdk.getModule({
         address: TEST_ERC20_MOCK_ADDRESS,
         name: 'ERC20Issuance_v1',
-        extras: {
+        tagConfig: {
           decimals: 18,
         },
       })

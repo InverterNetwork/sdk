@@ -6,7 +6,7 @@ import type { FormatOutputTupleCaseParams } from '@/types'
 export const tuple = async ({
   output,
   res,
-  extras,
+  tagConfig,
   tagCallback,
 }: FormatOutputTupleCaseParams) => {
   const formattedTuple: any = {}
@@ -17,7 +17,7 @@ export const tuple = async ({
       formattedTuple[c.name ?? `_${index}`] = await format({
         output: c,
         res: res[c.name ?? index],
-        extras,
+        tagConfig,
         tagCallback,
       })
     })

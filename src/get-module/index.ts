@@ -27,7 +27,7 @@ export function getModule<
   address,
   publicClient,
   walletClient,
-  extras,
+  tagConfig,
   self,
 }: GetModuleParams<N, W>): GetModuleReturnType<N, W> {
   const mv = getModuleData(name)
@@ -39,7 +39,7 @@ export function getModule<
   // If the walletClient is valid add walletAddress to the extras-
   // this is used to simulate transactions with the wallet address
   if (!!walletClient)
-    extras = { ...extras, walletAddress: walletClient.account.address }
+    tagConfig = { ...tagConfig, walletAddress: walletClient.account.address }
 
   // Get the moduletype, abi, description, and methodMetas from the module version
   const moduleType = mv.moduleType as MV['moduleType'],
@@ -61,7 +61,7 @@ export function getModule<
       abi,
       type: ['pure', 'view'],
       contract,
-      extras,
+      tagConfig,
       // We need to pass simulate undefined to not override the default inputs to txHash
       kind: 'read',
       self,
@@ -73,7 +73,7 @@ export function getModule<
       abi,
       type: ['nonpayable', 'payable'],
       contract,
-      extras,
+      tagConfig,
       kind: 'simulate',
       self,
       walletClient,
@@ -84,7 +84,7 @@ export function getModule<
       abi,
       type: ['nonpayable', 'payable'],
       contract,
-      extras,
+      tagConfig,
       kind: 'estimateGas',
       self,
       walletClient,
@@ -96,7 +96,7 @@ export function getModule<
           abi,
           type: ['nonpayable', 'payable'],
           contract,
-          extras,
+          tagConfig,
           kind: 'write',
           self,
           walletClient,

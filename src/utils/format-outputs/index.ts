@@ -5,7 +5,7 @@ import type { FormatGetTagCallbackParams } from '@/types'
 import getTagCallback from './get-tag-callback'
 
 export async function formatOutputs(props: FormatGetTagCallbackParams) {
-  const { extendedOutputs, res, extras } = props
+  const { extendedOutputs, res, tagConfig } = props
 
   // format the outputs
   const mapped = await Promise.all(
@@ -27,7 +27,7 @@ export async function formatOutputs(props: FormatGetTagCallbackParams) {
       const formatted = await format({
         output,
         res: selectedRes,
-        extras,
+        tagConfig,
         tagCallback: getTagCallback(props),
       })
 

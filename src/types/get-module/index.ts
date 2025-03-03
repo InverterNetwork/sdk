@@ -6,7 +6,7 @@ import type { Hex } from 'viem'
 import type { Inverter } from '@/inverter'
 import type {
   GetModuleIterateMethodsReturnType,
-  Extras,
+  TagConfig,
   PopPublicClient,
   PopWalletClient,
 } from '@/index'
@@ -25,7 +25,7 @@ export type GetModuleParams<
   address: Hex
   publicClient: PopPublicClient
   walletClient?: W
-  extras?: Extras
+  tagConfig?: TagConfig
   self?: Inverter<W>
 }
 

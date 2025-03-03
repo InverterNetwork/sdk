@@ -48,7 +48,7 @@ export const getFundingTokenResults = async <
       walletClient,
       address,
       name: 'ERC20',
-      extras: {
+      tagConfig: {
         decimals,
       },
       self,
@@ -100,7 +100,7 @@ export const getIssuanceTokenResults = async <
       walletClient,
       address,
       name: 'ERC20Issuance_v1',
-      extras: {
+      tagConfig: {
         decimals,
       },
       self,

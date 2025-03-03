@@ -14,7 +14,7 @@ import type { TupleToUnion, Simplify } from 'type-fest-4'
 
 // sdk types
 import type {
-  Extras,
+  TagConfig,
   MethodKind,
   PopContractReturnType,
   PopPublicClient,
@@ -48,7 +48,7 @@ export type GetModuleGetRunParams<
   extendedInputs: ExtendedInputs
   extendedOutputs: ExtendedOutputs
   walletClient?: PopWalletClient
-  extras?: Extras
+  tagConfig?: TagConfig
   kind: Kind
   self?: Inverter
 }
@@ -88,7 +88,7 @@ export type GetModuleItterateMethodsParams<
   kind: Kind
   publicClient: PopPublicClient
   walletClient?: PopWalletClient
-  extras?: Extras
+  tagConfig?: TagConfig
   self?: Inverter<any>
 }
 
@@ -125,7 +125,7 @@ export type GetModuleConstructMethodParams<
   publicClient: PopPublicClient
   abiFunction: TAbiFunction
   contract: PopContractReturnType
-  extras?: Extras
+  tagConfig?: TagConfig
   kind: Kind
   self?: Inverter
 }

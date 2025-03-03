@@ -36,7 +36,7 @@ export default function getRun<
   contract,
   extendedInputs,
   extendedOutputs,
-  extras,
+  tagConfig,
   kind,
   self,
 }: GetModuleGetRunParams<ExtendedInputs, ExtendedOutputs, Kind>) {
@@ -53,7 +53,7 @@ export default function getRun<
     const { processedInputs, requiredAllowances } = await processInputs({
       extendedInputs,
       args,
-      extras,
+      tagConfig,
       publicClient,
       walletClient,
       contract,
@@ -65,9 +65,9 @@ export default function getRun<
       // If the kind is simulate, use the simulate method
       simulate: async () => {
         const simRes = await contract.simulate[name](processedInputs, {
-          // If extras has a wallet address, use it
-          ...(extras?.walletAddress && {
-            account: extras.walletAddress,
+          // If tagConfig has a wallet address, use it
+          ...(tagConfig?.walletAddress && {
+            account: tagConfig.walletAddress,
           }),
         })
 
@@ -132,7 +132,7 @@ export default function getRun<
     const formattedRes = await formatOutputs({
       extendedOutputs,
       res: resByKind,
-      extras,
+      tagConfig,
       publicClient,
       contract,
       self,

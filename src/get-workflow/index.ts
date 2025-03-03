@@ -100,7 +100,7 @@ export async function getWorkflow<
         address,
         publicClient,
         walletClient,
-        extras: {
+        tagConfig: {
           defaultToken: fundingToken.address,
           decimals: fundingToken.decimals,
           issuanceTokenDecimals: issuanceToken?.decimals,

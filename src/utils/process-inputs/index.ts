@@ -6,7 +6,7 @@ import getTagCallback from './get-tag-callback'
 export async function processInputs(params: ProcessInputsParams) {
   const requiredAllowances: RequiredAllowances[] = []
 
-  const { extendedInputs, args, extras } = params
+  const { extendedInputs, args, tagConfig } = params
 
   // parse the inputs
   const processedInputs = await Promise.all(
@@ -17,7 +17,7 @@ export async function processInputs(params: ProcessInputsParams) {
       return await parse({
         input,
         arg,
-        extras,
+        tagConfig,
         tagCallback: getTagCallback({ requiredAllowances, ...params }),
       })
     })

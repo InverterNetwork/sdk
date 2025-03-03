@@ -5,7 +5,7 @@ import type { PublicClient } from 'viem'
 // sdk types
 import type { Inverter } from '@/inverter'
 import type {
-  Extras,
+  TagConfig,
   PopPublicClient,
   PopWalletClient,
   RequiredAllowances,
@@ -18,7 +18,7 @@ import type {
 export type TagProcessorDecimalsParams = {
   argsOrRes: any[]
   parameters: readonly ExtendedAbiParameter[]
-  extras?: Extras
+  tagConfig?: TagConfig
   tag?: Tag
   publicClient: PublicClient
   contract?: any

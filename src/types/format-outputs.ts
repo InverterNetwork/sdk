@@ -4,7 +4,7 @@ import type { PublicClient } from 'viem'
 // sdk types
 import type {
   TupleExtendedAbiParameter,
-  Extras,
+  TagConfig,
   TagCallback,
   ExtendedAbiParameter,
 } from '@/types'
@@ -16,7 +16,7 @@ import type { Inverter } from '@/index'
 export type FormatOutputsParams = {
   output: ExtendedAbiParameter
   res: any
-  extras?: Extras
+  tagConfig?: TagConfig
   tagCallback: TagCallback
 }
 
@@ -26,7 +26,7 @@ export type FormatOutputsParams = {
 export type FormatOutputTupleCaseParams = {
   output: TupleExtendedAbiParameter
   res: any
-  extras?: Extras
+  tagConfig?: TagConfig
   tagCallback: TagCallback
 }
 
@@ -36,7 +36,7 @@ export type FormatOutputTupleCaseParams = {
 export type FormatGetTagCallbackParams = {
   extendedOutputs: readonly ExtendedAbiParameter[]
   res: any
-  extras?: Extras
+  tagConfig?: TagConfig
   publicClient: PublicClient
   contract?: any
   self?: Inverter

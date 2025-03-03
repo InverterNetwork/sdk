@@ -1,7 +1,7 @@
 /**
  * @description The configs for getModule, getDeploy functions these enable tags to calculate certain values like simulations and number formats and parses
  */
-export type Extras = {
+export type TagConfig = {
   walletAddress?: `0x${string}`
   decimals?: number
   defaultToken?: `0x${string}`
