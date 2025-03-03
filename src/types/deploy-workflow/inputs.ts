@@ -57,7 +57,7 @@ export type OptionalModules<T extends RequestedModules['optionalModules']> =
  * @template FT - The factory type
  * @returns The deployment schema
  */
-export type GetDeployWorkflowSchema<
+export type GetDeployWorkflowInputs<
   T extends RequestedModules = RequestedModules,
   FT extends FactoryType = 'default',
 > = Simplify<

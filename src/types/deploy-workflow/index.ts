@@ -4,7 +4,7 @@ import type { PublicClient } from 'viem'
 // sdk types
 import type { Inverter } from '@/inverter'
 import type {
-  GetDeployWorkflowSchema,
+  GetDeployWorkflowInputs,
   FactoryType,
   RequestedModules,
   PopWalletClient,
@@ -39,5 +39,5 @@ export type DeployWorkflowReturnType<
   T extends RequestedModules<FT extends undefined ? 'default' : FT>,
   FT extends FactoryType | undefined = undefined,
 > = {
-  inputs: GetDeployWorkflowSchema<T, FT extends undefined ? 'default' : FT>
+  inputs: GetDeployWorkflowInputs<T, FT extends undefined ? 'default' : FT>
 } & GetMethodsReturnType<T, FT extends undefined ? 'default' : FT>

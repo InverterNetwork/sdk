@@ -4,7 +4,7 @@ import type { ModuleName } from '@inverter-network/abis'
 
 // sdk types
 import type {
-  GetDeployWorkflowSchema,
+  GetDeployWorkflowInputs,
   GetDeployWorkflowModuleInputs,
   FactoryType,
   FindStringByPart,
@@ -115,7 +115,7 @@ export function getOtherFactoryTypeInputs<FT extends FactoryType>(
 export function getDeployWorkflowInputs<
   T extends RequestedModules,
   FT extends FactoryType,
->(requestedModules: T, factoryType: FT): GetDeployWorkflowSchema<T, FT> {
+>(requestedModules: T, factoryType: FT): GetDeployWorkflowInputs<T, FT> {
   const mandatoryResult = MANDATORY_MODULES.reduce(
     (result, moduleType) => {
       const moduleSchema = getDeployWorkflowModuleInputs(
@@ -133,7 +133,7 @@ export function getDeployWorkflowInputs<
       fundingManager: {},
       paymentProcessor: {},
       ...getOtherFactoryTypeInputs(factoryType),
-    } as unknown as GetDeployWorkflowSchema<Omit<T, 'optionalModules'>, FT>
+    } as unknown as GetDeployWorkflowInputs<Omit<T, 'optionalModules'>, FT>
   )
 
   if (!requestedModules.optionalModules?.length) return mandatoryResult
