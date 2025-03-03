@@ -1,20 +1,25 @@
-import getModule from '../get-module'
-import getTokenResults from './get-token-results'
-import type { GetWorkflowTokenResultsReturnTypes } from './get-token-results'
-
+// @inverter-network/abis
 import { getModuleData } from '@inverter-network/abis'
 import type { GetModuleNameByType } from '@inverter-network/abis'
+
+// sdk types
 import type {
   PopWalletClient,
   WorkflowModuleType,
-  WorkflowRequestedModules,
+  RequestedModules,
   Workflow,
   GetWorkflowParams,
   FlattenObjectValues,
-} from '../types'
+} from '@/types'
+
+import type { GetWorkflowTokenResultsReturnTypes } from './get-token-results'
+
+// sdk utils
+import getModule from '@/get-module'
+import getTokenResults from './get-token-results'
 
 export default async function getWorkflow<
-  O extends WorkflowRequestedModules | undefined = undefined,
+  O extends RequestedModules | undefined = undefined,
   W extends PopWalletClient | undefined = undefined,
 >({
   publicClient,
@@ -62,7 +67,7 @@ export default async function getWorkflow<
   const modules = await (async () => {
     // 0. Define the source data based on the optional requestedModules
     const source = await (async () => {
-      type Name = O extends WorkflowRequestedModules
+      type Name = O extends RequestedModules
         ? FlattenObjectValues<O>
         : GetModuleNameByType<WorkflowModuleType>
 

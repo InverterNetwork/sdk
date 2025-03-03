@@ -1,4 +1,6 @@
-// These Extras are used for auto filling function arguments
+/**
+ * @description The configs for getModule, getDeploy functions these enable tags to calculate certain values like simulations and number formats and parses
+ */
 export type Extras = {
   walletAddress?: `0x${string}`
   decimals?: number
@@ -7,7 +9,9 @@ export type Extras = {
   issuanceToken?: `0x${string}`
 }
 
-// JsType is used for the typescript type of the function arguments
+/**
+ * @description The js type conversion for evm types
+ */
 export type JsType =
   | 'numberString'
   | 'numberString[]'
@@ -19,11 +23,17 @@ export type JsType =
   | 'any'
   | 'boolean[]'
 
+/**
+ * @description The output type for the write method
+ */
 export type WriteOutput = {
   name: 'txHash'
   type: 'bytes32'
 }[]
 
+/**
+ * @description The output type for the estimateGas method
+ */
 export type EstimateGasOutput = {
   name: 'gas'
   type: 'tuple'

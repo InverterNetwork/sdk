@@ -1,13 +1,39 @@
+// external dependencies
 import type { GetModuleNameByType } from '@inverter-network/abis'
-import type { FactoryType, MendatoryModuleType, ModuleType } from '.'
 import type { Simplify } from 'type-fest-4'
-import type { FilterByPrefix } from '../utils'
 
+// sdk types
+import type {
+  FilterByPrefix,
+  FactoryType,
+  MendatoryModuleType,
+  ModuleType,
+} from '@/types'
+
+/**
+ * @description The requested module options for moduleType and moduleName
+ * @template MT - The module type
+ * @template N - The module name
+ * @returns The requested module option
+ */
 export type RequestedModule<
   MT extends ModuleType = ModuleType,
   N extends GetModuleNameByType<MT> = GetModuleNameByType<MT>,
 > = N
 
+/**
+ * @description The requested mandatory module options for deployment
+ * @returns The requested mandatory module option
+ */
+export type RequestedMandatoryModule = RequestedModule<
+  'paymentProcessor' | 'authorizer' | 'fundingManager'
+>
+
+/**
+ * @description The requested modules options for deployment
+ * @template FT - The factory type
+ * @returns The requested modules options
+ */
 export type RequestedModules<FT extends FactoryType = 'default'> = Simplify<
   {
     [K in MendatoryModuleType]: K extends 'fundingManager'
@@ -18,8 +44,4 @@ export type RequestedModules<FT extends FactoryType = 'default'> = Simplify<
   } & {
     optionalModules?: RequestedModule<'optionalModule'>[]
   }
->
-
-export type RequestedMandatoryModule = RequestedModule<
-  'paymentProcessor' | 'authorizer' | 'fundingManager'
 >

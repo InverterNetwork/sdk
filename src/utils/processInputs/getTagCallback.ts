@@ -2,7 +2,7 @@ import tagProcessor from '@/utils/tagProcessor'
 import { parseDecimals } from './parse'
 
 import type {
-  DecimalsTagReturn,
+  DecimalsTagReturnType,
   ParseGetTagCallbackParams,
   TagCallback,
 } from '@/types'
@@ -20,7 +20,7 @@ export default function getTagCallback({
   tagOverwrites,
 }: ParseGetTagCallbackParams) {
   const tagCallback: TagCallback = async (type, tags, arg) => {
-    let decimalsRes: DecimalsTagReturn
+    let decimalsRes: DecimalsTagReturnType
     let parsedAmount: bigint
 
     if (type === 'parseDecimals') {

@@ -22,8 +22,16 @@ export type EmptyObjectToNever<T> = IsEmptyObject<T> extends true ? never : T
  * @template N - The module name
  * @returns The deployment inputs for the module
  */
-export type GetDeploymentInputs<N extends ModuleName = ModuleName> =
+export type GetModuleDeploymentInputs<N extends ModuleName = ModuleName> =
   GetModuleData<N>['deploymentInputs']
+
+/**
+ * Get the config data for a module
+ * @template N - The module name
+ * @returns The config data for the module
+ */
+export type GetModuleConfigData<N extends ModuleName> =
+  GetModuleDeploymentInputs<N>['configData']
 
 /**
  * Filter a string by a prefix

@@ -1,23 +1,26 @@
-import getWorkflow from './get-workflow'
-import getDeploy from './get-deploy'
-import getDeployOptions from './get-deploy-options'
-import deploy from './deploy'
-import getModule from './get-module'
+// external dependencies
 import lodash from 'lodash'
 
+// sdk types
 import type { ModuleName } from '@inverter-network/abis'
 import type {
   PopPublicClient,
   PopWalletClient,
-  WorkflowRequestedModules,
-  Workflow,
   RequestedModules,
+  Workflow,
   FactoryType,
   GetModuleParams,
   DeployableContracts,
   GetUserModuleArg,
   MethodOptions,
-} from './types'
+} from '@/types'
+
+// sdk utils
+import getWorkflow from './get-workflow'
+import getDeploy from './get-deploy'
+import getDeployOptions from './get-deploy-options'
+import deploy from './deploy'
+import getModule from './get-module'
 
 export class Inverter<W extends PopWalletClient | undefined = undefined> {
   publicClient: PopPublicClient
@@ -80,9 +83,7 @@ export class Inverter<W extends PopWalletClient | undefined = undefined> {
     this.walletClient = walletClient
   }
 
-  async getWorkflow<
-    T extends WorkflowRequestedModules | undefined = undefined,
-  >({
+  async getWorkflow<T extends RequestedModules | undefined = undefined>({
     orchestratorAddress,
     requestedModules,
   }: {

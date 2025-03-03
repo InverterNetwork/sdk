@@ -11,14 +11,17 @@ import type {
   RequestedModules,
 } from '../types'
 
-export const getModuleSchema = <
+/**
+ * @description Get the module schema for the deployment
+ * @param name - The name of the module
+ * @param overrideName - The override name of the module
+ * @param factoryType - The factory type of the module
+ * @returns The module schema
+ */
+export function getModuleSchema<
   T extends RequestedModule | FindStringByPart<ModuleName, 'Factory'>,
   ON extends string | undefined = undefined,
->(
-  name: T,
-  overrideName?: ON,
-  factoryType?: FactoryType
-) => {
+>(name: T, overrideName?: ON, factoryType?: FactoryType): ModuleSchema<T, ON> {
   const moduleData = getModuleData(name)
 
   if (!('deploymentInputs' in moduleData))
@@ -44,6 +47,11 @@ export const getModuleSchema = <
   return result
 }
 
+/**
+ * @description Get the other factory type inputs for the deployment
+ * @param factoryType - The factory type of the deployment
+ * @returns The other factory type inputs
+ */
 export const getOtherFactoryTypeInputs = <FT extends FactoryType>(
   factoryType: FT
 ) => {
@@ -90,6 +98,12 @@ export const getOtherFactoryTypeInputs = <FT extends FactoryType>(
   }
 }
 
+/**
+ * @description Get the inputs for the deployment
+ * @param requestedModules - The requested modules
+ * @param factoryType - The factory type
+ * @returns The inputs
+ */
 export default function getInputs<
   T extends RequestedModules,
   FT extends FactoryType,

@@ -1,7 +1,14 @@
+// external dependencies
 import type { Hex } from 'viem'
-import type { GetModuleReturn, PopPublicClient, PopWalletClient } from '@/types'
-import { ERC20_ABI, FM_BASE } from '@/utils'
-import { getModule, Inverter } from '@'
+
+// sdk types
+import type {
+  GetModuleReturnType,
+  PopPublicClient,
+  PopWalletClient,
+} from '@/types'
+
+import { getModule, Inverter, ERC20_ABI, FM_BASE } from '@'
 
 export type GetWorkflowTokenResultsParams<
   W extends PopWalletClient | undefined = undefined,
@@ -17,7 +24,7 @@ export type GetWorkflowTokenResultsReturnTypes<
   W extends PopWalletClient | undefined = undefined,
 > = {
   address: Hex
-  module: GetModuleReturn<T, W>
+  module: GetModuleReturnType<T, W>
   decimals: number
   symbol: string
 }

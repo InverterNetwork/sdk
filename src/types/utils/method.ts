@@ -1,18 +1,33 @@
+// external dependencies
 import type { SimulateContractReturnType, TransactionReceipt } from 'viem'
-import type { ExtendedParametersToPrimitiveType } from './primitive'
-import type { OmitNever } from '@'
 
+// sdk types
+import type { OmitNever, ExtendedParametersToPrimitiveType } from '@'
+
+/**
+ * @description The kind of methods
+ */
 export type MethodKind = 'read' | 'write' | 'simulate' | 'estimateGas'
 
+/**
+ * @description The kind of deploy methods
+ */
 export type DeployMethodKind = 'write' | 'simulate' | 'estimateGas'
 
-export type EstimateGasReturn = {
+/**
+ * @description The return type for the estimateGas method
+ */
+export type EstimateGasReturnType = {
   value: string
   formatted: string
 }
 
-// Decides on the arguments orders
-export type GetMethodArgs<I> =
+/**
+ * @description The parameters for the method
+ * @template I - The inputs of the method
+ * @returns The parameters for the method
+ */
+export type GetMethodParams<I> =
   ExtendedParametersToPrimitiveType<I> extends infer R extends
     readonly unknown[]
     ? R['length'] extends 0
@@ -47,9 +62,17 @@ type InferReturn<O> =
       : never
     : never
 
-// Get the return type of the method, based on read, write or simulate
-export type GetMethodResponse<O, T extends MethodKind> = T extends 'estimateGas'
-  ? EstimateGasReturn
+/**
+ * @description The return type for the method
+ * @template O - The outputs of the method
+ * @template T - The kind of method
+ * @returns The return type for the method
+ */
+export type GetMethodReturnType<
+  O,
+  T extends MethodKind,
+> = T extends 'estimateGas'
+  ? EstimateGasReturnType
   : T extends 'simulate'
     ? { result: InferReturn<O>; request: SimulateContractReturnType['request'] }
     : T extends 'write'

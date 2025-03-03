@@ -12,7 +12,7 @@ import {
   ERC20_MINTABLE_ABI,
   type RequestedModules,
   type GetUserArgs,
-  type GetDeployReturn,
+  type GetDeployReturnType,
   type Workflow,
 } from '@'
 import {
@@ -52,7 +52,7 @@ describe('#PIM_RESTRICTED', async () => {
 
   // ================PRE_DETERMINED VARIABLES================
   let orchestratorAddress: `0x${string}`
-  let getDeployReturn: GetDeployReturn<
+  let getDeployReturn: GetDeployReturnType<
     typeof requestedModules,
     'restricted-pim'
   >

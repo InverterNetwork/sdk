@@ -3,8 +3,8 @@ import { expect, describe, it, beforeAll } from 'bun:test'
 import { isAddress, isHash, parseAbiItem } from 'viem'
 
 import {
-  type GetDeployReturn,
-  type GetModuleReturn,
+  type GetDeployReturnType,
+  type GetModuleReturnType,
   type GetUserArgs,
   type PopWalletClient,
   type RequestedModules,
@@ -67,10 +67,13 @@ describe.skipIf(process.env.USE_FORK !== 'true')('#PIM_MIGRATING', async () => {
   )
 
   let orchestratorAddress: `0x${string}`
-  let getDeployReturn: GetDeployReturn<typeof requestedModules, 'migrating-pim'>
+  let getDeployReturn: GetDeployReturnType<
+    typeof requestedModules,
+    'migrating-pim'
+  >
   let workflow: Workflow<typeof walletClient, typeof workflowRequestedModules>
-  let factory: GetModuleReturn<'Migrating_PIM_Factory_v1', PopWalletClient>
-  let fundingToken: GetModuleReturn<'ERC20Issuance_v1', PopWalletClient>
+  let factory: GetModuleReturnType<'Migrating_PIM_Factory_v1', PopWalletClient>
+  let fundingToken: GetModuleReturnType<'ERC20Issuance_v1', PopWalletClient>
 
   let deployerCollateralBalance: string
 

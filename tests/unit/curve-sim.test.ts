@@ -8,7 +8,7 @@ import {
 } from 'tests/helpers'
 import {
   toCompactNumber,
-  type GetModuleReturn,
+  type GetModuleReturnType,
   type PopWalletClient,
   type RequestedModules,
   type Workflow,
@@ -27,7 +27,7 @@ describe('#CURVE_SIM', () => {
   } as const satisfies RequestedModules
 
   let workflow: Workflow<PopWalletClient, typeof requestedModules>
-  let fundingToken: GetModuleReturn<'ERC20Issuance_v1', PopWalletClient>
+  let fundingToken: GetModuleReturnType<'ERC20Issuance_v1', PopWalletClient>
 
   beforeEach(async () => {
     const { contractAddress: issuanceTokenAddress } = await sdk.deploy({

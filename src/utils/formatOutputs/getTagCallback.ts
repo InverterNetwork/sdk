@@ -2,7 +2,7 @@ import tagProcessor from '../../utils/tagProcessor'
 import { formatDecimals } from './utils'
 
 import type {
-  DecimalsTagReturn,
+  DecimalsTagReturnType,
   FormatGetTagCallbackParams,
   TagCallback,
 } from '@/types'
@@ -16,7 +16,7 @@ export default function getTagCallback({
   res,
 }: FormatGetTagCallbackParams) {
   const tagCallback: TagCallback = async (type, tags, arg) => {
-    let decimalsRes: DecimalsTagReturn
+    let decimalsRes: DecimalsTagReturnType
     let formattedAmount: string
 
     if (type === 'formatDecimals') {

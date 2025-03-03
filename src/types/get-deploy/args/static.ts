@@ -1,5 +1,8 @@
 import type { GetUserModuleArg } from '@'
 
+/**
+ * @description Static metadata type for the deployment
+ */
 export type Metadata = {
   majorVersion: bigint
   minorVersion: bigint
@@ -7,10 +10,16 @@ export type Metadata = {
   title: string
 }
 
+/**
+ * @description Encoded arguments type for the deployment
+ */
 export type EncodedArgs = {
   configData: `0x${string}`
 }
 
+/**
+ * @description Orchestrator arguments type for the deployment
+ */
 export type OrchestratorArgs =
   | {
       independentUpdates: true
@@ -22,22 +31,40 @@ export type OrchestratorArgs =
     }
   | undefined
 
+/**
+ * @description Module arguments type for the deployment
+ */
 export type ModuleArgs = {
   metadata: Metadata
 } & EncodedArgs
 
+/**
+ * @description Issuance token arguments type for the deployment
+ */
 export type IssuanceTokenArgs =
   GetUserModuleArg<'Restricted_PIM_Factory_v1'>['issuanceToken']
 
+/**
+ * @description Initial purchase amount arguments type for the deployment
+ */
 export type InitialPurchaseAmountArgs =
   GetUserModuleArg<'Immutable_PIM_Factory_v1'>['initialPurchaseAmount']
 
+/**
+ * @description Beneficiary arguments type for the deployment
+ */
 export type BeneficiaryArgs =
   GetUserModuleArg<'Restricted_PIM_Factory_v1'>['beneficiary']
 
+/**
+ * @description Migration config arguments type for the deployment
+ */
 export type MigrationConfigArgs =
   GetUserModuleArg<'Migrating_PIM_Factory_v1'>['migrationConfig']
 
+/**
+ * @description Constructed arguments type for the deployment
+ */
 export type ConstructedArgs = {
   orchestrator: NonNullable<OrchestratorArgs>
   fundingManager: ModuleArgs
@@ -50,8 +77,14 @@ export type ConstructedArgs = {
   migrationConfig: MigrationConfigArgs
 }
 
+/**
+ * @description User module argument type for the deployment
+ */
 export type UserModuleArg = Record<string, unknown>
 
+/**
+ * @description User arguments type for the deployment
+ */
 export type UserArgs = {
   orchestrator?: OrchestratorArgs
   fundingManager?: UserModuleArg

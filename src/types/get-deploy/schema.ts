@@ -1,13 +1,22 @@
+// external dependencies
 import type { ModuleName } from '@inverter-network/abis'
 import type { Simplify } from 'type-fest-4'
+
+// sdk types
 import type {
   EmptyObjectToNever,
   OmitNever,
   RequestedModules,
   FactoryType,
-  GetDeploymentParameters,
+  GetModuleConfigData,
 } from '@/types'
 
+/**
+ * @description The module schema for a module
+ * @template N - The module name
+ * @template ON - The optional module name
+ * @returns The module schema
+ */
 export type ModuleSchema<
   N extends ModuleName = ModuleName,
   ON extends string | undefined = undefined,
@@ -16,15 +25,20 @@ export type ModuleSchema<
   inputs: ON extends string
     ? [
         Extract<
-          GetDeploymentParameters<N>[number],
+          GetModuleConfigData<N>[number],
           {
             name: ON
           }
         >,
       ]
-    : GetDeploymentParameters<N>
+    : GetModuleConfigData<N>
 }
 
+/**
+ * @description The optional modules schema for deployment
+ * @template T - The optional modules
+ * @returns The optional modules schema
+ */
 export type OptionalModules<T extends RequestedModules['optionalModules']> =
   Simplify<
     T extends undefined
@@ -37,6 +51,12 @@ export type OptionalModules<T extends RequestedModules['optionalModules']> =
         }
   >
 
+/**
+ * @description The deployment schema for a factory type
+ * @template T - The requested modules
+ * @template FT - The factory type
+ * @returns The deployment schema
+ */
 export type DeploySchema<
   T extends RequestedModules = RequestedModules,
   FT extends FactoryType = 'default',

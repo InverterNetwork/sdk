@@ -1,10 +1,22 @@
-import { Inverter } from '@/inverter'
-
+// external dependencies
 import type { GetModuleData, ModuleName } from '@inverter-network/abis'
 import type { Hex } from 'viem'
-import type { Extras, PopPublicClient, PopWalletClient } from '@/types'
-import type { GetModuleIterateMethodsReturnType } from '@'
 
+// sdk types
+import type { Inverter } from '@/inverter'
+import type {
+  GetModuleIterateMethodsReturnType,
+  Extras,
+  PopPublicClient,
+  PopWalletClient,
+} from '@'
+
+/**
+ * @description The parameters for the getModule function
+ * @template N - The module name
+ * @template W - The wallet client
+ * @returns The parameters for the getModule function
+ */
 export type GetModuleParams<
   N extends ModuleName,
   W extends PopWalletClient | undefined = undefined,
@@ -17,7 +29,13 @@ export type GetModuleParams<
   self?: Inverter<W>
 }
 
-export type GetModuleReturn<
+/**
+ * @description The return type for the getModule function
+ * @template N - The module name
+ * @template W - The wallet client
+ * @returns The return type for the getModule function
+ */
+export type GetModuleReturnType<
   N extends ModuleName,
   W extends PopWalletClient | undefined = undefined,
 > = {

@@ -1,14 +1,17 @@
-import { ERC20_ABI } from '@/utils/constants'
-
-import type {
-  DecimalsTagReturn,
-  CacheTokenProps,
-  TagProcessorDecimalsParams,
-} from '@/types'
+// external dependencies
 import type { Tag } from '@inverter-network/abis'
 import type { Split } from 'type-fest-4'
 
-const cacheToken = (props: CacheTokenProps) => {
+// sdk dependencies
+import { ERC20_ABI } from '@/utils/constants'
+
+import type {
+  DecimalsTagReturnType,
+  CacheTokenParams,
+  TagProcessorDecimalsParams,
+} from '@/types'
+
+const cacheToken = (props: CacheTokenParams) => {
   const chainId = props.self.publicClient.chain.id
   const key = `${chainId}:${props.moduleAddress}:${props.tag}`
   const value = {
@@ -27,7 +30,7 @@ export default async function decimals({
   contract,
   self,
   tagOverwrites,
-}: TagProcessorDecimalsParams): Promise<DecimalsTagReturn> {
+}: TagProcessorDecimalsParams): Promise<DecimalsTagReturnType> {
   const chainId = self?.publicClient.chain.id
   const { readContract } = publicClient
 

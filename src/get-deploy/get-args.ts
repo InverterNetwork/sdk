@@ -8,7 +8,7 @@ import { encodeAbiParameters, parseUnits } from 'viem'
 import type { PublicClient } from 'viem'
 import type {
   Extras,
-  GetDeploymentInputs,
+  GetModuleDeploymentInputs,
   PopWalletClient,
   ConstructedArgs,
   ModuleArgs,
@@ -28,7 +28,10 @@ const debug = d('inverter:sdk:get-args')
 
 let extras: Extras
 
-export type JointParams = {
+/**
+ * @description The shared parameters for the getArgs function and its utils
+ */
+export type GetDeployGetArgsSharedParams = {
   publicClient: PublicClient
   walletClient: PopWalletClient
   kind: DeployMethodKind
@@ -44,9 +47,9 @@ export const getEncodedArgs = async ({
   userModuleArg,
   ...params
 }: {
-  deploymentInputs: GetDeploymentInputs
+  deploymentInputs: GetModuleDeploymentInputs
   userModuleArg?: UserModuleArg
-} & JointParams): Promise<`0x${string}`> => {
+} & GetDeployGetArgsSharedParams): Promise<`0x${string}`> => {
   // Get the configuration data for the module
   const { configData } = deploymentInputs
   // Itterate through the formatted inputs and get the user provided arguments
@@ -78,7 +81,7 @@ export const assembleModuleArgs = async ({
 }: {
   name: RequestedModule
   userModuleArg?: UserModuleArg
-} & JointParams): Promise<ModuleArgs> => {
+} & GetDeployGetArgsSharedParams): Promise<ModuleArgs> => {
   // Get the deployment inputs for the module
   const { deploymentInputs } = getModuleData(name)
   // Get the encoded arguments for the module = encoded configData
@@ -107,7 +110,7 @@ export const constructArgs = async ({
   factoryType: FactoryType
   requestedModules: RequestedModules
   userArgs: UserArgs
-} & JointParams) => {
+} & GetDeployGetArgsSharedParams) => {
   let orchestrator = userArgs?.orchestrator
   // If orchestrator is not provided, set it to default values
   if (!orchestrator?.independentUpdates)
@@ -237,7 +240,7 @@ export default async function getArgs<
     requestedModules: T
     factoryType: FT
     userArgs: GetUserArgs<T, FT>
-  } & JointParams
+  } & GetDeployGetArgsSharedParams
 ) {
   // Construct the arguments in a object
   const constructed = await constructArgs(params)

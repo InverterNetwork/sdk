@@ -1,11 +1,23 @@
+// sdk types
+import type {
+  FactoryType,
+  GetDeployParams,
+  GetDeployReturnType,
+  RequestedModules,
+} from '@/types'
+
+// get-deploy utils
 import getInputs from './get-inputs'
-import type { FactoryType, GetDeployParams, RequestedModules } from '../types'
 import getMethods from './get-methods'
 
 export default async function getDeploy<
   T extends RequestedModules<FT extends undefined ? 'default' : FT>,
   FT extends FactoryType | undefined = undefined,
->({ requestedModules, factoryType, ...params }: GetDeployParams<T, FT>) {
+>({
+  requestedModules,
+  factoryType,
+  ...params
+}: GetDeployParams<T, FT>): Promise<GetDeployReturnType<T, FT>> {
   const defaultFactoryType = (factoryType ?? 'default') as FT extends undefined
     ? 'default'
     : FT

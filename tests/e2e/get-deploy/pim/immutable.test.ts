@@ -3,8 +3,8 @@ import { expect, describe, it, beforeAll } from 'bun:test'
 import { isAddress, isHash } from 'viem'
 
 import {
-  type GetDeployReturn,
-  type GetModuleReturn,
+  type GetDeployReturnType,
+  type GetModuleReturnType,
   type GetUserArgs,
   type PopWalletClient,
   type RequestedModules,
@@ -45,9 +45,12 @@ describe('#PIM_IMMUTABLE', async () => {
   } as const satisfies GetUserArgs<typeof requestedModules, 'immutable-pim'>
 
   let orchestratorAddress: `0x${string}`
-  let getDeployReturn: GetDeployReturn<typeof requestedModules, 'immutable-pim'>
+  let getDeployReturn: GetDeployReturnType<
+    typeof requestedModules,
+    'immutable-pim'
+  >
   let workflow: Workflow<typeof walletClient, typeof requestedModules>
-  let fundingToken: GetModuleReturn<'ERC20Issuance_v1', PopWalletClient>
+  let fundingToken: GetModuleReturnType<'ERC20Issuance_v1', PopWalletClient>
 
   beforeAll(() => {
     fundingToken = sdk.getModule({

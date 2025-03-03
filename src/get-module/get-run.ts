@@ -6,9 +6,9 @@ import {
 } from '@/utils'
 
 import type {
-  GetMethodArgs,
+  GetMethodParams,
+  GetMethodReturnType,
   MethodKind,
-  GetMethodResponse,
   GetModuleGetRunParams,
   MethodOptions,
 } from '@/types'
@@ -38,9 +38,9 @@ export default function getRun<
    * @returns The response of the method
    */
   async function run(
-    args: GetMethodArgs<typeof extendedInputs>,
+    args: GetMethodParams<typeof extendedInputs>,
     options?: MethodOptions
-  ): Promise<GetMethodResponse<ExtendedOutputs, Kind>> {
+  ): Promise<GetMethodReturnType<ExtendedOutputs, Kind>> {
     // Parse the inputs, from user input to contract input
     const { processedInputs, requiredAllowances } = await processInputs({
       extendedInputs,
