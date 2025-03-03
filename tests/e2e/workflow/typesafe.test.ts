@@ -33,7 +33,7 @@ describe('#WORKFLOW', () => {
     it('1. Should Deploy The Workflow', async () => {
       orchestratorAddress = (
         await (
-          await sdk.getDeploy({
+          await sdk.deployWorkflow({
             requestedModules,
           })
         ).run(args)
@@ -118,7 +118,7 @@ describe('#WORKFLOW', () => {
 
       orchestratorAddress = (
         await (
-          await sdk.getDeploy({
+          await sdk.deployWorkflow({
             requestedModules,
           })
         ).run(args)

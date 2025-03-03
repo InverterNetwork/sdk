@@ -17,7 +17,7 @@ import type {
 
 // sdk utils
 import { getWorkflow } from './get-workflow'
-import { getDeploy } from './get-deploy'
+import { deployWorkflow } from './deploy-workflow'
 import { getDeployOptions } from './get-deploy-options'
 import { deploy } from './deploy'
 import { getModule } from './get-module'
@@ -145,13 +145,13 @@ export class Inverter<W extends PopWalletClient | undefined = undefined> {
   getDeployOptions = getDeployOptions
 
   /**
-   * @description Deploy a workflow
+   * @description Retreive the deploy workflow methods and inputs array
    * @param params - The parameters for the deploy options
    * @param params.requestedModules - The requested modules
    * @param params.factoryType - The factory type
    * @returns The deploy options
    */
-  getDeploy<
+  deployWorkflow<
     T extends RequestedModules<FT extends undefined ? 'default' : FT>,
     FT extends FactoryType | undefined = undefined,
   >({
@@ -164,7 +164,7 @@ export class Inverter<W extends PopWalletClient | undefined = undefined> {
     if (!this.walletClient)
       throw new Error('Wallet client is required for deploy')
 
-    const result = getDeploy({
+    const result = deployWorkflow({
       publicClient: this.publicClient,
       walletClient: this.walletClient,
       requestedModules,

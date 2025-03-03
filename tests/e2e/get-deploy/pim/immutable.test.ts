@@ -3,14 +3,14 @@ import { expect, describe, it, beforeAll } from 'bun:test'
 import { isAddress, isHash } from 'viem'
 
 import {
-  type GetDeployReturnType,
+  type DeployWorkflowReturnType,
   type GetModuleReturnType,
   type GetUserArgs,
   type PopWalletClient,
   type RequestedModules,
   type Workflow,
 } from '@/index'
-import { getDeployModuleSchema } from '@/get-deploy/get-inputs'
+import { getDeployWorkflowModuleInputs } from '@/deploy-workflow/get-inputs'
 
 import {
   sdk,
@@ -45,7 +45,7 @@ describe('#PIM_IMMUTABLE', async () => {
   } as const satisfies GetUserArgs<typeof requestedModules, 'immutable-pim'>
 
   let orchestratorAddress: `0x${string}`
-  let getDeployReturn: GetDeployReturnType<
+  let deployWorkflowReturn: DeployWorkflowReturnType<
     typeof requestedModules,
     'immutable-pim'
   >
@@ -62,28 +62,28 @@ describe('#PIM_IMMUTABLE', async () => {
     })
   })
 
-  it('1. Set getDeployReturn', async () => {
-    getDeployReturn = await sdk.getDeploy({
+  it('1. Set deployWorkflowReturn', async () => {
+    deployWorkflowReturn = await sdk.deployWorkflow({
       requestedModules,
       factoryType: 'immutable-pim',
     })
   })
 
   it('2. Match expected inputs', () => {
-    expect(getDeployReturn.inputs).toEqual({
-      orchestrator: getDeployModuleSchema('OrchestratorFactory_v1'),
-      authorizer: getDeployModuleSchema('AUT_Roles_v1'),
-      fundingManager: getDeployModuleSchema(
+    expect(deployWorkflowReturn.inputs).toEqual({
+      orchestrator: getDeployWorkflowModuleInputs('OrchestratorFactory_v1'),
+      authorizer: getDeployWorkflowModuleInputs('AUT_Roles_v1'),
+      fundingManager: getDeployWorkflowModuleInputs(
         'FM_BC_Bancor_Redeeming_VirtualSupply_v1',
         undefined,
         'immutable-pim'
       ),
-      paymentProcessor: getDeployModuleSchema('PP_Simple_v1'),
-      issuanceToken: getDeployModuleSchema(
+      paymentProcessor: getDeployWorkflowModuleInputs('PP_Simple_v1'),
+      issuanceToken: getDeployWorkflowModuleInputs(
         'Immutable_PIM_Factory_v1',
         'issuanceToken'
       ),
-      initialPurchaseAmount: getDeployModuleSchema(
+      initialPurchaseAmount: getDeployWorkflowModuleInputs(
         'Immutable_PIM_Factory_v1',
         'initialPurchaseAmount'
       ),
@@ -97,12 +97,13 @@ describe('#PIM_IMMUTABLE', async () => {
   })
 
   it('4. Estimates gas for deployment', async () => {
-    const gasEstimate = await getDeployReturn.estimateGas(args)
+    const gasEstimate = await deployWorkflowReturn.estimateGas(args)
     expect(gasEstimate).toContainKeys(['value', 'formatted'])
   })
 
   it('5. Deploy the workflow', async () => {
-    orchestratorAddress = (await getDeployReturn.run(args)).orchestratorAddress
+    orchestratorAddress = (await deployWorkflowReturn.run(args))
+      .orchestratorAddress
     expect(isAddress(orchestratorAddress)).toBeTrue()
   })
 

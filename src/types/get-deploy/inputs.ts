@@ -12,12 +12,12 @@ import type {
 } from '@/types'
 
 /**
- * @description The module schema for a module
+ * @description Retrieve the inputs for a module
  * @template N - The module name
  * @template ON - The optional module name
- * @returns The module schema
+ * @returns The module inputs
  */
-export type GetGetDeployModuleSchema<
+export type GetDeployWorkflowModuleInputs<
   N extends ModuleName = ModuleName,
   ON extends string | undefined = undefined,
 > = {
@@ -44,7 +44,7 @@ export type OptionalModules<T extends RequestedModules['optionalModules']> =
     T extends undefined
       ? never
       : {
-          [K in keyof T]: GetGetDeployModuleSchema<
+          [K in keyof T]: GetDeployWorkflowModuleInputs<
             // @ts-expect-error - TS cant resolve name
             T[K]
           >
@@ -57,37 +57,43 @@ export type OptionalModules<T extends RequestedModules['optionalModules']> =
  * @template FT - The factory type
  * @returns The deployment schema
  */
-export type GetGetDeploySchema<
+export type GetDeployWorkflowSchema<
   T extends RequestedModules = RequestedModules,
   FT extends FactoryType = 'default',
 > = Simplify<
   OmitNever<{
-    orchestrator: GetGetDeployModuleSchema<'OrchestratorFactory_v1'>
-    paymentProcessor: GetGetDeployModuleSchema<T['paymentProcessor']>
-    fundingManager: GetGetDeployModuleSchema<T['fundingManager']>
-    authorizer: GetGetDeployModuleSchema<T['authorizer']>
+    orchestrator: GetDeployWorkflowModuleInputs<'OrchestratorFactory_v1'>
+    paymentProcessor: GetDeployWorkflowModuleInputs<T['paymentProcessor']>
+    fundingManager: GetDeployWorkflowModuleInputs<T['fundingManager']>
+    authorizer: GetDeployWorkflowModuleInputs<T['authorizer']>
     optionalModules: EmptyObjectToNever<OptionalModules<T['optionalModules']>>
     // OTHER FACTORY TYPE INPUTS
     issuanceToken: FT extends
       | 'restricted-pim'
       | 'immutable-pim'
       | 'migrating-pim'
-      ? GetGetDeployModuleSchema<
+      ? GetDeployWorkflowModuleInputs<
           `${FT extends 'restricted-pim' ? 'Restricted' : 'Immutable'}_PIM_Factory_v1`,
           'issuanceToken'
         >
       : never
     initialPurchaseAmount: FT extends 'immutable-pim' | 'migrating-pim'
-      ? GetGetDeployModuleSchema<
+      ? GetDeployWorkflowModuleInputs<
           'Immutable_PIM_Factory_v1',
           'initialPurchaseAmount'
         >
       : never
     beneficiary: FT extends 'restricted-pim'
-      ? GetGetDeployModuleSchema<'Restricted_PIM_Factory_v1', 'beneficiary'>
+      ? GetDeployWorkflowModuleInputs<
+          'Restricted_PIM_Factory_v1',
+          'beneficiary'
+        >
       : never
     migrationConfig: FT extends 'migrating-pim'
-      ? GetGetDeployModuleSchema<'Migrating_PIM_Factory_v1', 'migrationConfig'>
+      ? GetDeployWorkflowModuleInputs<
+          'Migrating_PIM_Factory_v1',
+          'migrationConfig'
+        >
       : never
   }>
 >

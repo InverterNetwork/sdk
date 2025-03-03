@@ -4,10 +4,10 @@ import type { ModuleName } from '@inverter-network/abis'
 
 // sdk types
 import type {
-  GetGetDeploySchema,
+  GetDeployWorkflowSchema,
+  GetDeployWorkflowModuleInputs,
   FactoryType,
   FindStringByPart,
-  GetGetDeployModuleSchema,
   RequestedModule,
   RequestedModules,
 } from '@/types'
@@ -16,20 +16,20 @@ import type {
 import { MANDATORY_MODULES } from './constants'
 
 /**
- * @description Get the module schema for the deployment
+ * @description Get the module inputs for the deployment
  * @param name - The name of the module
  * @param overrideName - The override name of the module
  * @param factoryType - The factory type of the module
- * @returns The module schema
+ * @returns The module inputs
  */
-export function getDeployModuleSchema<
+export function getDeployWorkflowModuleInputs<
   T extends RequestedModule | FindStringByPart<ModuleName, 'Factory'>,
   ON extends string | undefined = undefined,
 >(
   name: T,
   overrideName?: ON,
   factoryType?: FactoryType
-): GetGetDeployModuleSchema<T, ON> {
+): GetDeployWorkflowModuleInputs<T, ON> {
   const moduleData = getModuleData(name)
 
   if (!('deploymentInputs' in moduleData))
@@ -50,7 +50,7 @@ export function getDeployModuleSchema<
   const result = {
     inputs,
     name: overrideName ?? name,
-  } as GetGetDeployModuleSchema<T, ON>
+  } as GetDeployWorkflowModuleInputs<T, ON>
 
   return result
 }
@@ -60,43 +60,43 @@ export function getDeployModuleSchema<
  * @param factoryType - The factory type of the deployment
  * @returns The other factory type inputs
  */
-export const getOtherFactoryTypeInputs = <FT extends FactoryType>(
+export function getOtherFactoryTypeInputs<FT extends FactoryType>(
   factoryType: FT
-) => {
+) {
   switch (factoryType) {
     case 'restricted-pim':
       return {
-        issuanceToken: getDeployModuleSchema(
+        issuanceToken: getDeployWorkflowModuleInputs(
           'Restricted_PIM_Factory_v1',
           'issuanceToken'
         ),
-        beneficiary: getDeployModuleSchema(
+        beneficiary: getDeployWorkflowModuleInputs(
           'Restricted_PIM_Factory_v1',
           'beneficiary'
         ),
       }
     case 'immutable-pim':
       return {
-        issuanceToken: getDeployModuleSchema(
+        issuanceToken: getDeployWorkflowModuleInputs(
           'Immutable_PIM_Factory_v1',
           'issuanceToken'
         ),
-        initialPurchaseAmount: getDeployModuleSchema(
+        initialPurchaseAmount: getDeployWorkflowModuleInputs(
           'Immutable_PIM_Factory_v1',
           'initialPurchaseAmount'
         ),
       }
     case 'migrating-pim':
       return {
-        issuanceToken: getDeployModuleSchema(
+        issuanceToken: getDeployWorkflowModuleInputs(
           'Immutable_PIM_Factory_v1',
           'issuanceToken'
         ),
-        initialPurchaseAmount: getDeployModuleSchema(
+        initialPurchaseAmount: getDeployWorkflowModuleInputs(
           'Immutable_PIM_Factory_v1',
           'initialPurchaseAmount'
         ),
-        migrationConfig: getDeployModuleSchema(
+        migrationConfig: getDeployWorkflowModuleInputs(
           'Migrating_PIM_Factory_v1',
           'migrationConfig'
         ),
@@ -112,13 +112,13 @@ export const getOtherFactoryTypeInputs = <FT extends FactoryType>(
  * @param factoryType - The factory type
  * @returns The inputs
  */
-export default function getInputs<
+export function getDeployWorkflowInputs<
   T extends RequestedModules,
   FT extends FactoryType,
->(requestedModules: T, factoryType: FT): GetGetDeploySchema<T, FT> {
+>(requestedModules: T, factoryType: FT): GetDeployWorkflowSchema<T, FT> {
   const mandatoryResult = MANDATORY_MODULES.reduce(
     (result, moduleType) => {
-      const moduleSchema = getDeployModuleSchema(
+      const moduleSchema = getDeployWorkflowModuleInputs(
         requestedModules[moduleType],
         undefined,
         factoryType
@@ -128,18 +128,18 @@ export default function getInputs<
       return result
     },
     {
-      orchestrator: getDeployModuleSchema('OrchestratorFactory_v1'),
+      orchestrator: getDeployWorkflowModuleInputs('OrchestratorFactory_v1'),
       authorizer: {},
       fundingManager: {},
       paymentProcessor: {},
       ...getOtherFactoryTypeInputs(factoryType),
-    } as unknown as GetGetDeploySchema<Omit<T, 'optionalModules'>, FT>
+    } as unknown as GetDeployWorkflowSchema<Omit<T, 'optionalModules'>, FT>
   )
 
   if (!requestedModules.optionalModules?.length) return mandatoryResult
 
   const optionalModules = requestedModules.optionalModules.map((module) =>
-    getDeployModuleSchema(module)
+    getDeployWorkflowModuleInputs(module)
   )
 
   return {

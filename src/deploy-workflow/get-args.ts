@@ -39,7 +39,7 @@ let tagConfig: TagConfig
 /**
  * @description The shared parameters for the getArgs function and its utils
  */
-export type GetDeployGetArgsSharedParams = {
+export type DeployWorkflowGetArgsSharedParams = {
   publicClient: PublicClient
   walletClient: PopWalletClient
   kind: DeployMethodKind
@@ -57,7 +57,7 @@ export const getEncodedArgs = async ({
 }: {
   deploymentInputs: GetModuleDeploymentInputs
   userModuleArg?: UserModuleArg
-} & GetDeployGetArgsSharedParams): Promise<`0x${string}`> => {
+} & DeployWorkflowGetArgsSharedParams): Promise<`0x${string}`> => {
   // Get the configuration data for the module
   const { configData } = deploymentInputs
   // Itterate through the formatted inputs and get the user provided arguments
@@ -92,7 +92,7 @@ export const assembleModuleArgs = async ({
 }: {
   name: RequestedModule
   userModuleArg?: UserModuleArg
-} & GetDeployGetArgsSharedParams): Promise<ModuleArgs> => {
+} & DeployWorkflowGetArgsSharedParams): Promise<ModuleArgs> => {
   // Get the deployment inputs for the module
   const { deploymentInputs } = getModuleData(name)
   // Get the encoded arguments for the module = encoded configData
@@ -121,7 +121,7 @@ export const constructArgs = async ({
   factoryType: FactoryType
   requestedModules: RequestedModules
   userArgs: UserArgs
-} & GetDeployGetArgsSharedParams) => {
+} & DeployWorkflowGetArgsSharedParams) => {
   let orchestrator = userArgs?.orchestrator
   // If orchestrator is not provided, set it to default values
   if (!orchestrator?.independentUpdates)
@@ -254,7 +254,7 @@ export default async function getArgs<
     requestedModules: T
     factoryType: FT
     userArgs: GetUserArgs<T, FT>
-  } & GetDeployGetArgsSharedParams
+  } & DeployWorkflowGetArgsSharedParams
 ) {
   // Construct the arguments in a object
   const constructed = await constructArgs(params)

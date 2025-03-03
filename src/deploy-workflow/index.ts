@@ -1,13 +1,13 @@
 // sdk types
 import type {
   FactoryType,
-  GetDeployParams,
-  GetDeployReturnType,
+  DeployWorkflowParams,
+  DeployWorkflowReturnType,
   RequestedModules,
 } from '@/types'
 
 // get-deploy utils
-import getInputs from './get-inputs'
+import { getDeployWorkflowInputs } from './get-inputs'
 import getMethods from './get-methods'
 
 /**
@@ -16,19 +16,19 @@ import getMethods from './get-methods'
  * @param params - The parameters for the preperation of the deploy function
  * @returns The result of the deploy function
  */
-export async function getDeploy<
+export async function deployWorkflow<
   T extends RequestedModules<FT extends undefined ? 'default' : FT>,
   FT extends FactoryType | undefined = undefined,
 >({
   requestedModules,
   factoryType,
   ...params
-}: GetDeployParams<T, FT>): Promise<GetDeployReturnType<T, FT>> {
+}: DeployWorkflowParams<T, FT>): Promise<DeployWorkflowReturnType<T, FT>> {
   const defaultFactoryType = (factoryType ?? 'default') as FT extends undefined
     ? 'default'
     : FT
 
-  const inputs = getInputs(requestedModules, defaultFactoryType)
+  const inputs = getDeployWorkflowInputs(requestedModules, defaultFactoryType)
 
   const { publicClient, walletClient } = params
 

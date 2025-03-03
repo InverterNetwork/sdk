@@ -1,15 +1,22 @@
 export * from './types'
 export * from './utils'
 
+// main exports
+export { deploy } from './deploy'
+export { getModule } from './get-module'
+export { getWorkflow } from './get-workflow'
+export { deployWorkflow } from './deploy-workflow'
+export { getDeployOptions } from './get-deploy-options'
+export { Inverter } from './inverter'
+
+// util exports
 export {
   fetchDeployment,
   getVersions,
   getFactoryAddress,
-} from './get-deploy/utils'
+} from './deploy-workflow/utils'
 
-export { deploy } from './deploy'
-export { getModule } from './get-module'
-export { getWorkflow } from './get-workflow'
-export { getDeploy } from './get-deploy'
-export { getDeployOptions } from './get-deploy-options'
-export { Inverter } from './inverter'
+export {
+  getDeployWorkflowInputs,
+  getDeployWorkflowModuleInputs,
+} from './deploy-workflow/get-inputs'

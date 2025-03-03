@@ -3,14 +3,14 @@ import { expect, describe, it, beforeAll } from 'bun:test'
 import { isAddress, isHash, parseAbiItem } from 'viem'
 
 import {
-  type GetDeployReturnType,
+  type DeployWorkflowReturnType,
   type GetModuleReturnType,
   type GetUserArgs,
   type PopWalletClient,
   type RequestedModules,
   type Workflow,
 } from '@/index'
-import { getDeployModuleSchema } from '@/get-deploy/get-inputs'
+import { getDeployWorkflowModuleInputs } from '@/deploy-workflow/get-inputs'
 
 import {
   sdk,
@@ -67,7 +67,7 @@ describe.skipIf(process.env.USE_FORK !== 'true')('#PIM_MIGRATING', async () => {
   )
 
   let orchestratorAddress: `0x${string}`
-  let getDeployReturn: GetDeployReturnType<
+  let deployWorkflowReturn: DeployWorkflowReturnType<
     typeof requestedModules,
     'migrating-pim'
   >
@@ -100,36 +100,38 @@ describe.skipIf(process.env.USE_FORK !== 'true')('#PIM_MIGRATING', async () => {
     expect(isAddress(router)).toBeTrue()
   })
 
-  it('1. Set getDeployReturn', async () => {
-    getDeployReturn = await sdk.getDeploy({
+  it('1. Set deployWorkflowReturn', async () => {
+    deployWorkflowReturn = await sdk.deployWorkflow({
       requestedModules,
       factoryType: 'migrating-pim',
     })
   })
 
   it('2. Match expected inputs', () => {
-    expect(getDeployReturn.inputs).toEqual({
-      orchestrator: getDeployModuleSchema('OrchestratorFactory_v1'),
-      authorizer: getDeployModuleSchema('AUT_Roles_v1'),
-      fundingManager: getDeployModuleSchema(
+    expect(deployWorkflowReturn.inputs).toEqual({
+      orchestrator: getDeployWorkflowModuleInputs('OrchestratorFactory_v1'),
+      authorizer: getDeployWorkflowModuleInputs('AUT_Roles_v1'),
+      fundingManager: getDeployWorkflowModuleInputs(
         'FM_BC_Restricted_Bancor_Redeeming_VirtualSupply_v1',
         undefined,
         'migrating-pim'
       ),
-      paymentProcessor: getDeployModuleSchema('PP_Simple_v1'),
-      issuanceToken: getDeployModuleSchema(
+      paymentProcessor: getDeployWorkflowModuleInputs('PP_Simple_v1'),
+      issuanceToken: getDeployWorkflowModuleInputs(
         'Immutable_PIM_Factory_v1',
         'issuanceToken'
       ),
-      initialPurchaseAmount: getDeployModuleSchema(
+      initialPurchaseAmount: getDeployWorkflowModuleInputs(
         'Immutable_PIM_Factory_v1',
         'initialPurchaseAmount'
       ),
-      migrationConfig: getDeployModuleSchema(
+      migrationConfig: getDeployWorkflowModuleInputs(
         'Migrating_PIM_Factory_v1',
         'migrationConfig'
       ),
-      optionalModules: [getDeployModuleSchema('LM_PC_PaymentRouter_v1')],
+      optionalModules: [
+        getDeployWorkflowModuleInputs('LM_PC_PaymentRouter_v1'),
+      ],
     })
   })
 
@@ -149,7 +151,7 @@ describe.skipIf(process.env.USE_FORK !== 'true')('#PIM_MIGRATING', async () => {
   })
 
   it('4. Estimates gas for deployment', async () => {
-    const gasEstimate = await getDeployReturn.estimateGas(args)
+    const gasEstimate = await deployWorkflowReturn.estimateGas(args)
     expect(gasEstimate).toContainKeys(['value', 'formatted'])
   })
 
@@ -169,7 +171,8 @@ describe.skipIf(process.env.USE_FORK !== 'true')('#PIM_MIGRATING', async () => {
   })
 
   it('5.1. Deploy the workflow', async () => {
-    orchestratorAddress = (await getDeployReturn.run(args)).orchestratorAddress
+    orchestratorAddress = (await deployWorkflowReturn.run(args))
+      .orchestratorAddress
     expect(isAddress(orchestratorAddress)).toBeTrue()
   })
 

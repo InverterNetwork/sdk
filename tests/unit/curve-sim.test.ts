@@ -45,7 +45,7 @@ describe('#CURVE_SIM', () => {
       throw new Error('Issuance token address is undefined')
     }
 
-    const { run } = await sdk.getDeploy({
+    const { run } = await sdk.deployWorkflow({
       requestedModules,
     })
 
