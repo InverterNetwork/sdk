@@ -10,7 +10,9 @@ import type {
   Workflow,
   GetWorkflowParams,
   FlattenObjectValues,
-  GetWorkflowTokenResultReturnType,
+  GetWorkflowTokenReturnType,
+  WorkflowToken,
+  WorkflowIssuanceToken,
 } from '@/types'
 
 // sdk utils
@@ -27,12 +29,16 @@ import getTokenResults from './token'
 export async function getWorkflow<
   O extends RequestedModules | undefined = undefined,
   W extends PopWalletClient | undefined = undefined,
+  FT extends WorkflowToken | undefined = undefined,
+  IT extends WorkflowIssuanceToken | undefined = undefined,
 >({
   publicClient,
   walletClient,
   orchestratorAddress,
   self,
-}: GetWorkflowParams<O, W>): Promise<Workflow<W, O>> {
+  fundingTokenType = 'ERC20' as any,
+  issuanceTokenType = 'ERC20Issuance_v1' as any,
+}: GetWorkflowParams<O, W, FT, IT>): Promise<Workflow<W, O, FT, IT>> {
   if (!publicClient) throw new Error('Public client not initialized')
 
   // 1. initialize orchestrator
@@ -46,20 +52,22 @@ export async function getWorkflow<
 
   const fundingManagerAddress = await orchestrator.read.fundingManager.run()
 
-  const fundingToken = await getTokenResults.getFundingTokenResults({
+  const fundingToken = await getTokenResults.getFundingToken({
+    tokenType: fundingTokenType,
     fundingManagerAddress,
     publicClient,
     walletClient,
     self,
   })
 
-  let issuanceToken: GetWorkflowTokenResultReturnType<
-    'ERC20Issuance_v1',
-    W
-  > | null = null
+  type IssuanceTokenName = IT extends undefined ? 'ERC20Issuance_v1' : IT
+
+  let issuanceToken: GetWorkflowTokenReturnType<IssuanceTokenName, W> | null =
+    null
 
   try {
-    issuanceToken = await getTokenResults.getIssuanceTokenResults({
+    issuanceToken = await getTokenResults.getIssuanceToken({
+      tokenType: issuanceTokenType as IssuanceTokenName,
       fundingManagerAddress,
       publicClient,
       walletClient,

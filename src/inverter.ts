@@ -13,6 +13,8 @@ import type {
   DeployableContracts,
   GetDeployWorkflowModuleArg,
   MethodOptions,
+  WorkflowIssuanceToken,
+  WorkflowToken,
 } from '@/types'
 
 // sdk utils
@@ -99,15 +101,25 @@ export class Inverter<W extends PopWalletClient | undefined = undefined> {
    * @param params - The parameters for the workflow
    * @param params.orchestratorAddress - The address of the orchestrator
    * @param params.requestedModules - The requested modules
+   * @param params.fundingTokenType - The type of funding token default is ERC20
+   * @param params.issuanceTokenType - The type of issuance token default is ERC20Issuance_v1
    * @returns The workflow
    */
-  async getWorkflow<T extends RequestedModules | undefined = undefined>({
+  async getWorkflow<
+    T extends RequestedModules | undefined = undefined,
+    FT extends WorkflowToken | undefined = undefined,
+    IT extends WorkflowIssuanceToken | undefined = undefined,
+  >({
     orchestratorAddress,
     requestedModules,
+    fundingTokenType,
+    issuanceTokenType,
   }: {
     orchestratorAddress: `0x${string}`
     requestedModules?: T
-  }): Promise<Workflow<W, T>> {
+    fundingTokenType?: FT
+    issuanceTokenType?: IT
+  }): Promise<Workflow<W, T, FT, IT>> {
     const chainId = this.publicClient.chain.id
 
     const chainOrchestratorAddress =
@@ -135,6 +147,8 @@ export class Inverter<W extends PopWalletClient | undefined = undefined> {
         walletClient: this.walletClient,
         orchestratorAddress,
         requestedModules,
+        fundingTokenType,
+        issuanceTokenType,
         self: this,
       })
       this.workflows.set(chainOrchestratorAddress, workflow)

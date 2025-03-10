@@ -1,3 +1,6 @@
+import type { ModuleName } from '@inverter-network/abis'
+import type { FindStringByPart } from './utils'
+
 /**
  * @description The configs for getModule, deployWorkflow functions these enable tags to calculate certain values like simulations and number formats and parses
  */
@@ -42,3 +45,16 @@ export type EstimateGasOutput = {
     type: 'uint256'
   }[]
 }[]
+
+/**
+ * @description The available issuance tokens
+ */
+export type WorkflowIssuanceToken = FindStringByPart<
+  ModuleName,
+  'ERC20Issuance'
+>
+
+/**
+ * @description The available workflow tokens
+ */
+export type WorkflowToken = WorkflowIssuanceToken | 'ERC20'

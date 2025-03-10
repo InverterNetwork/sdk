@@ -15,7 +15,7 @@ import type {
 /**
  * @description deployWorkflow functions write return type
  */
-export type GetDeployWriteReturn = {
+export type DeployWorkflowWriteReturnType = {
   transactionHash: `0x${string}`
   orchestratorAddress: `0x${string}`
 }
@@ -23,7 +23,7 @@ export type GetDeployWriteReturn = {
 /**
  * @description deployWorkflow functions simulate return type
  */
-export type GetDeploySimulateReturn = {
+export type DeployWorkflowSimulateReturnType = {
   result: `0x${string}`
   request: SimulateContractReturnType
 }
@@ -31,7 +31,7 @@ export type GetDeploySimulateReturn = {
 /**
  * @description deployWorkflow functions estimate gas return type
  */
-export type GetDeployEstimateGasReturn = {
+export type DeployWorkflowEstimateGasReturnType = {
   value: string
   formatted: string
 }
@@ -61,7 +61,7 @@ export type GetMethodsReturnType<
   run: (
     userArgs: Args,
     options?: MethodOptions
-  ) => Promise<GetDeployWriteReturn>
-  simulate: (userArgs: Args) => Promise<GetDeploySimulateReturn>
-  estimateGas: (userArgs: Args) => Promise<GetDeployEstimateGasReturn>
+  ) => Promise<DeployWorkflowWriteReturnType>
+  simulate: (userArgs: Args) => Promise<DeployWorkflowSimulateReturnType>
+  estimateGas: (userArgs: Args) => Promise<DeployWorkflowEstimateGasReturnType>
 }

@@ -3,9 +3,11 @@ import type { Hex } from 'viem'
 
 // sdk types
 import type {
-  GetWorkflowTokenResultParams,
-  GetWorkflowTokenResultReturnType,
+  GetWorkflowTokenParams,
+  GetWorkflowTokenReturnType,
   PopWalletClient,
+  WorkflowIssuanceToken,
+  WorkflowToken,
 } from '@/types'
 
 import { getModule, ERC20_ABI, FM_BASE } from '@/index'
@@ -16,16 +18,16 @@ import { getModule, ERC20_ABI, FM_BASE } from '@/index'
  * @param params - The parameters for the getFundingTokenResults function
  * @returns The funding token results
  */
-export const getFundingTokenResults = async <
+export const getFundingToken = async <
+  T extends WorkflowToken,
   W extends PopWalletClient | undefined = undefined,
 >({
+  tokenType,
   fundingManagerAddress,
   publicClient,
   walletClient,
   self,
-}: GetWorkflowTokenResultParams<W>): Promise<
-  GetWorkflowTokenResultReturnType<'ERC20', W>
-> => {
+}: GetWorkflowTokenParams<T, W>): Promise<GetWorkflowTokenReturnType<T, W>> => {
   const { readContract } = publicClient
 
   const address = <Hex>await readContract({
@@ -47,7 +49,7 @@ export const getFundingTokenResults = async <
       publicClient,
       walletClient,
       address,
-      name: 'ERC20',
+      name: tokenType,
       tagConfig: {
         decimals,
       },
@@ -68,15 +70,17 @@ export const getFundingTokenResults = async <
  * @param params - The parameters for the getIssuanceTokenResults function
  * @returns The issuance token results
  */
-export const getIssuanceTokenResults = async <
+export const getIssuanceToken = async <
+  IT extends WorkflowIssuanceToken,
   W extends PopWalletClient | undefined = undefined,
 >({
+  tokenType,
   fundingManagerAddress,
   publicClient,
   walletClient,
   self,
-}: GetWorkflowTokenResultParams<W>): Promise<
-  GetWorkflowTokenResultReturnType<'ERC20Issuance_v1', W>
+}: GetWorkflowTokenParams<IT, W>): Promise<
+  GetWorkflowTokenReturnType<IT, W>
 > => {
   const { readContract } = publicClient
 
@@ -99,7 +103,7 @@ export const getIssuanceTokenResults = async <
       publicClient,
       walletClient,
       address,
-      name: 'ERC20Issuance_v1',
+      name: tokenType,
       tagConfig: {
         decimals,
       },
@@ -115,6 +119,6 @@ export const getIssuanceTokenResults = async <
 }
 
 export default {
-  getFundingTokenResults,
-  getIssuanceTokenResults,
+  getFundingToken,
+  getIssuanceToken,
 }

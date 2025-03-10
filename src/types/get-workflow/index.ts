@@ -7,10 +7,12 @@ import type { Hex } from 'viem'
 import { Inverter } from '@/inverter'
 import type {
   GetModuleReturnType,
+  WorkflowIssuanceToken,
   OmitNever,
   PopPublicClient,
   PopWalletClient,
   RequestedModules,
+  WorkflowToken,
 } from '@/types'
 
 // get-workflow types
@@ -27,28 +29,40 @@ export * from './token'
 export type GetWorkflowParams<
   O extends RequestedModules | undefined = undefined,
   W extends PopWalletClient | undefined = undefined,
+  FT extends WorkflowToken | undefined = undefined,
+  IT extends WorkflowIssuanceToken | undefined = undefined,
 > = {
   publicClient: PopPublicClient
   walletClient?: W
   orchestratorAddress: Hex
   requestedModules?: O
+  fundingTokenType?: FT
+  issuanceTokenType?: IT
   self?: Inverter<W>
 }
 
 /**
  * @description The workflow type
  * @template W - The wallet client
- * @template O - The requested modules
+ * @template T - The requested modules
+ * @template FT - The funding token type
+ * @template IT - The issuance token type
  */
 export type Workflow<
   W extends PopWalletClient | undefined,
-  O extends RequestedModules | undefined,
+  T extends RequestedModules | undefined,
+  FT extends WorkflowToken | undefined = undefined,
+  IT extends WorkflowIssuanceToken | undefined = undefined,
 > = Merge<
-  MendatoryAndOptionalWorkflow<W, O>,
+  MendatoryAndOptionalWorkflow<W, T>,
   {
     orchestrator: GetModuleReturnType<'Orchestrator_v1', W>
-    fundingToken: TokenModuleData<W, 'ERC20'>
-    issuanceToken: ConditionalIssuanceToken<W, O, 'ERC20Issuance_v1'>
+    fundingToken: TokenModuleData<W, FT extends undefined ? 'ERC20' : FT>
+    issuanceToken: ConditionalIssuanceToken<
+      W,
+      T,
+      IT extends undefined ? 'ERC20Issuance_v1' : IT
+    >
   }
 >
 

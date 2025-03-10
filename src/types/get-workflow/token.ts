@@ -8,6 +8,8 @@ import type {
   RequestedModules,
   FilterByPrefix,
   PopPublicClient,
+  WorkflowToken,
+  WorkflowIssuanceToken,
 } from '@/types'
 import type { Inverter } from '@/inverter'
 
@@ -18,7 +20,7 @@ import type { Inverter } from '@/inverter'
  */
 export type TokenModuleData<
   W extends PopWalletClient | undefined,
-  A extends 'ERC20' | 'ERC20Issuance_v1',
+  A extends WorkflowToken,
 > = {
   address: Hex
   module: GetModuleReturnType<A, W>
@@ -35,25 +37,27 @@ export type TokenModuleData<
 export type ConditionalIssuanceToken<
   W extends PopWalletClient | undefined,
   O extends RequestedModules | undefined,
-  A extends 'ERC20' | 'ERC20Issuance_v1',
+  IT extends WorkflowIssuanceToken,
 > =
   O extends NonNullable<O>
     ? FilterByPrefix<O['fundingManager'], 'FM_BC'> extends never
-      ? TokenModuleData<W, A> | undefined
-      : TokenModuleData<W, A>
-    : TokenModuleData<W, A> | undefined
+      ? TokenModuleData<W, IT> | undefined
+      : TokenModuleData<W, IT>
+    : TokenModuleData<W, IT> | undefined
 
-export type GetWorkflowTokenResultParams<
+export type GetWorkflowTokenParams<
+  T extends WorkflowToken,
   W extends PopWalletClient | undefined = undefined,
 > = {
+  tokenType: T
   fundingManagerAddress: Hex
   publicClient: PopPublicClient
   walletClient?: W
   self?: Inverter<W>
 }
 
-export type GetWorkflowTokenResultReturnType<
-  T extends 'ERC20' | 'ERC20Issuance_v1',
+export type GetWorkflowTokenReturnType<
+  T extends WorkflowToken,
   W extends PopWalletClient | undefined = undefined,
 > = {
   address: Hex
