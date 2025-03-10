@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.2](https://github.com/InverterNetwork/sdk/compare/v0.4.1...v0.4.2) (2025-03-10)
+
+
+### Features
+
+* **workflow:** add support for custom token types ([2b6e341](https://github.com/InverterNetwork/sdk/commit/2b6e3416d8d22ce917ef48e71b81765fbaf9fadc))
+
 ### [0.4.1](https://github.com/InverterNetwork/sdk/compare/v0.4.0...v0.4.1) (2025-03-03)
 
 ## [0.4.0](https://github.com/InverterNetwork/sdk/compare/v0.4.0-alpha.12...v0.4.0) (2025-03-03)
