@@ -1,10 +1,5 @@
 // external dependencies
-import type {
-  ExtendedAbi,
-  GetModuleData,
-  ModuleName,
-  ModuleType,
-} from '@inverter-network/abis'
+import type { GetModuleData, ModuleName } from '@inverter-network/abis'
 import type { Hex } from 'viem'
 
 // sdk types
@@ -14,14 +9,8 @@ import type {
   TagConfig,
   PopPublicClient,
   PopWalletClient,
+  ModuleData,
 } from '@/index'
-
-export type ModuleData = {
-  name: string
-  moduleType: ModuleType
-  description: string
-  abi: ExtendedAbi
-}
 
 /**
  * @description The parameters for the getModule function
