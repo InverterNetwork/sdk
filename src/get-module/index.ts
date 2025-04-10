@@ -125,25 +125,3 @@ export function getModule<
   // Return the result object
   return result
 }
-
-const a = getModule({
-  address: '0x0000000000000000000000000000000000000000',
-  publicClient: 'publicClient' as any,
-  walletClient: 'walletClient' as any,
-  moduleData: {
-    name: 'Migrating_PIM_Factory_v1',
-    description: 'Factory contract for creating and managing PIM workflows',
-    moduleType: 'factories',
-    abi: [
-      {
-        inputs: [],
-        name: 'withdrawAllProjectCollateralFeesToStaking',
-        outputs: [],
-        stateMutability: 'nonpayable',
-        type: 'function',
-      },
-    ],
-  } as const,
-})
-
-a.name
