@@ -8,6 +8,7 @@ import type {
   FactoryType,
   MendatoryModuleType,
   ModuleType,
+  ModuleData,
 } from '@/types'
 
 /**
@@ -45,3 +46,15 @@ export type RequestedModules<FT extends FactoryType = 'default'> = Simplify<
     optionalModules?: RequestedModule<'optionalModule'>[]
   }
 >
+
+/**
+ * @description The requested modules with optional ABI parameters
+ */
+export type MixedRequestedModules = {
+  [K in MendatoryModuleType]: RequestedModule<K> | ModuleData<K>
+} & {
+  optionalModules?: (
+    | RequestedModule<'optionalModule'>
+    | ModuleData<'optionalModule'>
+  )[]
+}

@@ -67,9 +67,9 @@ export type WorkflowToken = WorkflowIssuanceToken | 'ERC20'
 /**
  * @description The generic type for module data
  */
-export type ModuleData = {
+export type ModuleData<MT extends ModuleType = ModuleType> = {
   name: string
-  moduleType: ModuleType
+  moduleType: MT
   description: string
   abi: ExtendedAbi
   deploymentInputs?: {
