@@ -73,7 +73,7 @@ export type ModuleData<MT extends ModuleType = ModuleType> = {
   description: string
   abi: ExtendedAbi
   deploymentInputs?: {
-    configData?: ExtendedAbiParameter[]
+    configData: ExtendedAbiParameter[]
     bytecode?: `0x${string}` | string
   }
 }
