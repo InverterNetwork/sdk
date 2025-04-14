@@ -3,22 +3,14 @@ import type { IsEmptyObject, Simplify, UnionToTuple } from 'type-fest-4'
 import type { ModuleName } from '@inverter-network/abis'
 
 // sdk types
-import type {
-  BeneficiaryArgs,
-  InitialPurchaseAmountArgs,
-  IssuanceTokenArgs,
-  MigrationConfigArgs,
-  OrchestratorArgs,
-} from './static'
+import type { OrchestratorArgs } from './static'
 
 import type {
   OmitNever,
   GetModuleConfigData,
   EmptyObjectToNever,
   RequestedModules,
-  FactoryType,
   ExtendedParameterToPrimitiveType,
-  FilterByPrefix,
   MixedRequestedModules,
   ModuleData,
 } from '@/types'
@@ -80,48 +72,18 @@ export type GetDeployWorkflowOptionalArgs<
 >
 
 /**
- * @description Get the user funding manager argument for a given module name and factory type
- * @param T - The module name
- * @param FT - The factory type
- * @returns The user funding manager argument
- */
-export type GetDeployWorkflowFundingManagerArg<
-  T extends ModuleName | ModuleData,
-  FT extends FactoryType = 'default',
-> = Simplify<
-  FilterByPrefix<T, 'FM_BC'> extends never
-    ? GetDeployWorkflowModuleArg<T>
-    : FT extends 'default'
-      ? GetDeployWorkflowModuleArg<T>
-      : Omit<GetDeployWorkflowModuleArg<T>, 'issuanceToken'>
->
-
-/**
  * @description Get the user arguments for a given requested modules and factory type
  * @param T - The requested modules
- * @param FT - The factory type
  * @returns The user arguments
  */
 export type GetDeployWorkflowArgs<
   T extends MixedRequestedModules = RequestedModules,
-  FT extends FactoryType = 'default',
 > = Simplify<
   OmitNever<{
     orchestrator?: OrchestratorArgs
-    fundingManager: GetDeployWorkflowFundingManagerArg<T['fundingManager'], FT>
+    fundingManager: GetDeployWorkflowModuleArg<T['fundingManager']>
     authorizer: GetDeployWorkflowModuleArg<T['authorizer']>
     paymentProcessor: GetDeployWorkflowModuleArg<T['paymentProcessor']>
     optionalModules: GetDeployWorkflowOptionalArgs<T['optionalModules']>
-    issuanceToken: FT extends
-      | 'restricted-pim'
-      | 'immutable-pim'
-      | 'migrating-pim'
-      ? IssuanceTokenArgs
-      : never
-    initialPurchaseAmount: FT extends 'immutable-pim' | 'migrating-pim'
-      ? InitialPurchaseAmountArgs
-      : never
-    beneficiary: FT extends 'restricted-pim' ? BeneficiaryArgs : never
-    migrationConfig: FT extends 'migrating-pim' ? MigrationConfigArgs : never
   }>
 >

@@ -7,9 +7,8 @@ import type { Inverter } from '@/inverter'
 import type {
   GetDeployWorkflowArgs,
   MethodOptions,
+  MixedRequestedModules,
   PopWalletClient,
-  RequestedModules,
-  FactoryType,
 } from '@/types'
 
 /**
@@ -39,12 +38,8 @@ export type DeployWorkflowEstimateGasReturnType = {
 /**
  * @description Parameters for the getMothods util of deployWorkflow function
  */
-export type GetMethodsParams<
-  T extends RequestedModules,
-  FT extends FactoryType,
-> = {
+export type GetMethodsParams<T extends MixedRequestedModules> = {
   requestedModules: T
-  factoryType: FT
   publicClient: PublicClient
   walletClient: PopWalletClient
   self?: Inverter
@@ -54,9 +49,8 @@ export type GetMethodsParams<
  * @description Return type for the getMothods util of deployWorkflow function
  */
 export type GetMethodsReturnType<
-  T extends RequestedModules,
-  FT extends FactoryType,
-  Args = GetDeployWorkflowArgs<T, FT>,
+  T extends MixedRequestedModules,
+  Args = GetDeployWorkflowArgs<T>,
 > = {
   run: (
     userArgs: Args,

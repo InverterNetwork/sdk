@@ -8,7 +8,6 @@ import {
 } from 'tests/helpers'
 import type {
   GetDeployWorkflowArgs,
-  GetDeployWorkflowModuleArg,
   MixedRequestedModules,
   ModuleData,
   Workflow,

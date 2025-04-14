@@ -1,9 +1,8 @@
 // sdk types
 import type {
-  FactoryType,
   DeployWorkflowParams,
   DeployWorkflowReturnType,
-  RequestedModules,
+  MixedRequestedModules,
 } from '@/types'
 
 // get-deploy utils
@@ -16,26 +15,17 @@ import getMethods from './get-methods'
  * @param params - The parameters for the preperation of the deploy function
  * @returns The result of the deploy function
  */
-export async function deployWorkflow<
-  T extends RequestedModules<FT extends undefined ? 'default' : FT>,
-  FT extends FactoryType | undefined = undefined,
->({
+export async function deployWorkflow<T extends MixedRequestedModules>({
   requestedModules,
-  factoryType,
   ...params
-}: DeployWorkflowParams<T, FT>): Promise<DeployWorkflowReturnType<T, FT>> {
-  const defaultFactoryType = (factoryType ?? 'default') as FT extends undefined
-    ? 'default'
-    : FT
-
-  const inputs = getDeployWorkflowInputs(requestedModules, defaultFactoryType)
+}: DeployWorkflowParams<T>): Promise<DeployWorkflowReturnType<T>> {
+  const inputs = getDeployWorkflowInputs(requestedModules)
 
   const { publicClient, walletClient } = params
 
   // Get the methods from the Viem handler
   const { run, simulate, estimateGas } = await getMethods({
     requestedModules,
-    factoryType: defaultFactoryType,
     publicClient,
     walletClient,
   })

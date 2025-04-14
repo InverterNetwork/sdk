@@ -5,43 +5,31 @@ import { decodeEventLog, formatEther, parseAbiItem } from 'viem'
 // sdk types
 import type {
   DeployMethodKind,
-  FactoryType,
   GetMethodsParams,
   GetMethodsReturnType,
   GetDeployWorkflowArgs,
   MethodOptions,
-  RequestedModules,
+  MixedRequestedModules,
 } from '@/types'
 
 // sdk utils
 import { handleError, handleOptions } from '@/utils'
 
 // get-deploy utils
-import {
-  getFactoryAddress,
-  getViemMethods,
-  handlePimFactoryApprove,
-} from './utils'
+import { getFactoryAddress, getViemMethods } from './utils'
 import getArgs from './get-args'
 
 /**
  * @description Provides RPC interactions for the requested modules.
  */
-export default async function getMethods<
-  T extends RequestedModules,
-  FT extends FactoryType,
->(params: GetMethodsParams<T, FT>): Promise<GetMethodsReturnType<T, FT>> {
-  const { publicClient, walletClient, requestedModules, factoryType } = params
+export default async function getMethods<T extends MixedRequestedModules>(
+  params: GetMethodsParams<T>
+): Promise<GetMethodsReturnType<T>> {
+  const { publicClient, walletClient, requestedModules } = params
 
-  const abi = {
-    'restricted-pim': () => getModuleData('Restricted_PIM_Factory_v1').abi,
-    'immutable-pim': () => getModuleData('Immutable_PIM_Factory_v1').abi,
-    'migrating-pim': () => getModuleData('Migrating_PIM_Factory_v1').abi,
-    default: () => getModuleData('OrchestratorFactory_v1').abi,
-  }[factoryType]()
+  const abi = getModuleData('OrchestratorFactory_v1').abi
 
   const {
-    factoryAddress,
     write,
     simulateWrite,
     estimateGas: esitmateGasOrg,
@@ -49,11 +37,10 @@ export default async function getMethods<
     abi,
     walletClient,
     publicClient,
-    factoryType,
     version: 'v1.0.0',
   })
 
-  type Args = GetDeployWorkflowArgs<T, FT>
+  type Args = GetDeployWorkflowArgs<T>
 
   async function handleDeployment<K extends DeployMethodKind>(
     kind: K,
@@ -61,16 +48,6 @@ export default async function getMethods<
     options?: MethodOptions
   ) {
     try {
-      const receipts = await handlePimFactoryApprove({
-        factoryType,
-        factoryAddress,
-        publicClient,
-        walletClient,
-        userArgs,
-      })
-
-      if (receipts) options?.onApprove?.(receipts)
-
       const arr = await getArgs({ userArgs, kind, ...params })
 
       const actions = {
@@ -122,7 +99,6 @@ export default async function getMethods<
 
           const defaltFactoryAddress = await getFactoryAddress({
             version: 'v1.0.0',
-            factoryType: 'default',
             chainId: publicClient.chain!.id,
           })
 

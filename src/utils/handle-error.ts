@@ -1,5 +1,5 @@
 import { getModuleData } from '@inverter-network/abis'
-import type { RequestedModules } from '@/types'
+import type { MixedRequestedModules } from '@/types'
 import { decodeErrorResult } from 'viem'
 import type { Abi } from 'viem'
 import { ERC20_ABI } from './constants'
@@ -56,7 +56,7 @@ function extractContractCallBlockAsString(errorMessage: any, errorName: any) {
 export const handleError = (
   params: { error: any } & (
     | {
-        requestedModules: RequestedModules
+        requestedModules: MixedRequestedModules
       }
     | {
         abi: Abi
@@ -99,7 +99,7 @@ export const handleError = (
         ...abis,
         ...Object.values(params.requestedModules)
           .flat()
-          .map((i) => getModuleData(i).abi),
+          .map((i) => (typeof i === 'object' ? i.abi : getModuleData(i).abi)),
       ]
 
     return abis

@@ -4,15 +4,6 @@ import type {
 } from '@inverter-network/abis'
 
 /**
- * @description Factory types for the deployment
- */
-export type FactoryType =
-  | 'default'
-  | 'restricted-pim'
-  | 'immutable-pim'
-  | 'migrating-pim'
-
-/**
  * @description Module types for the deployment
  */
 export type ModuleType = Exclude<UserFacingModuleType, 'orchestrator'>
