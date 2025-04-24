@@ -1,7 +1,7 @@
 {
   "name": "@inverter-network/sdk",
   "description": "INVERTER typescript SDK",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "exports": {
     ".": {
       "types": "./dist/types/index.d.ts",
@@ -60,7 +60,7 @@
     "viem": "^2.21.55"
   },
   "dependencies": {
-    "@inverter-network/abis": "0.3.31",
+    "@inverter-network/abis": "0.3.36",
     "debug": "^4.4.0",
     "type-fest-4": "npm:type-fest@^4.26.0"
   },
