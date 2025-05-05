@@ -11,7 +11,11 @@ export async function pruneFile(file?: Blob | File): Promise<PrunedFile> {
 
   const arrayBuffer = await file.arrayBuffer()
   const buffer = Buffer.from(arrayBuffer)
-  return { string: buffer.toString('base64'), type: file.type, name: file.name }
+  return {
+    string: buffer.toString('base64'),
+    type: file.type,
+    name: 'name' in file ? file.name : 'file',
+  }
 }
 
 /**
