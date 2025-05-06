@@ -1,5 +1,5 @@
 // external dependencies
-import type { UserFacingModuleType } from '@inverter-network/abis'
+import type { ModuleName, UserFacingModuleType } from '@inverter-network/abis'
 import type { Merge } from 'type-fest-4'
 import type { Hex } from 'viem'
 
@@ -13,6 +13,8 @@ import type {
   PopWalletClient,
   RequestedModules,
   WorkflowToken,
+  MixedRequestedModules,
+  ModuleData,
 } from '@/types'
 
 // get-workflow types
@@ -27,7 +29,7 @@ export * from './token'
  * @template W - The wallet client
  */
 export type GetWorkflowParams<
-  O extends RequestedModules | undefined = undefined,
+  O extends MixedRequestedModules | undefined = undefined,
   W extends PopWalletClient | undefined = undefined,
   FT extends WorkflowToken | undefined = undefined,
   IT extends WorkflowIssuanceToken | undefined = undefined,
@@ -50,7 +52,7 @@ export type GetWorkflowParams<
  */
 export type Workflow<
   W extends PopWalletClient | undefined,
-  T extends RequestedModules | undefined,
+  T extends MixedRequestedModules | undefined,
   FT extends WorkflowToken | undefined = undefined,
   IT extends WorkflowIssuanceToken | undefined = undefined,
 > = Merge<
@@ -78,10 +80,14 @@ export type WorkflowModuleType = Exclude<UserFacingModuleType, 'orchestrator'>
  */
 type MandatoryResult<
   W extends PopWalletClient | undefined,
-  O extends RequestedModules | undefined,
+  O extends MixedRequestedModules | undefined,
 > = {
   [K in Exclude<WorkflowModuleType, 'optionalModule'>]: O extends NonNullable<O>
-    ? GetModuleReturnType<O[K], W>
+    ? O[K] extends ModuleData
+      ? GetModuleReturnType<never, W, O[K]>
+      : O[K] extends ModuleName
+        ? GetModuleReturnType<O[K], W>
+        : never
     : GetModuleReturnType<RequestedModules[K], W>
 }
 
@@ -92,12 +98,24 @@ type MandatoryResult<
  */
 type OptionalResult<
   W extends PopWalletClient | undefined,
-  O extends RequestedModules | undefined,
+  O extends MixedRequestedModules | undefined,
 > = OmitNever<{
   optionalModule: O extends NonNullable<O>
     ? O['optionalModules'] extends NonNullable<O['optionalModules']>
       ? {
-          [K in O['optionalModules'][number]]: GetModuleReturnType<K, W>
+          [K in O['optionalModules'][number] extends ModuleName
+            ? O['optionalModules'][number]
+            : never]: GetModuleReturnType<K, W>
+        } & {
+          [K in O['optionalModules'][number] extends ModuleData
+            ? O['optionalModules'][number]['name']
+            : never]: GetModuleReturnType<
+            never,
+            W,
+            K extends ModuleName
+              ? undefined
+              : Extract<O['optionalModules'][number], { name: K }>
+          >
         }
       : never
     : {
@@ -114,5 +132,5 @@ type OptionalResult<
  */
 export type MendatoryAndOptionalWorkflow<
   W extends PopWalletClient | undefined,
-  O extends RequestedModules | undefined,
+  O extends MixedRequestedModules | undefined,
 > = MandatoryResult<W, O> & OptionalResult<W, O>

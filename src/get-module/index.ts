@@ -1,5 +1,5 @@
 // external dependencies
-import type { ModuleName } from '@inverter-network/abis'
+import type { GetModuleData, ModuleName } from '@inverter-network/abis'
 import { getModuleData } from '@inverter-network/abis'
 import { getContract } from 'viem'
 import type { Abi } from 'viem'
@@ -8,6 +8,7 @@ import type { Abi } from 'viem'
 import type {
   GetModuleParams,
   GetModuleReturnType,
+  ModuleData,
   PopWalletClient,
 } from '@/types'
 
@@ -20,21 +21,27 @@ import iterateMethods from './iterate-methods'
  * @returns The module
  */
 export function getModule<
-  N extends ModuleName,
+  N extends MD extends ModuleData ? never : ModuleName,
   W extends PopWalletClient | undefined = undefined,
+  MD extends ModuleData | undefined = undefined,
 >({
-  name,
   address,
   publicClient,
   walletClient,
   tagConfig,
   self,
-}: GetModuleParams<N, W>): GetModuleReturnType<N, W> {
-  const mv = getModuleData(name)
+  moduleData,
+  ...rest
+}: GetModuleParams<N, W, MD>): GetModuleReturnType<N, W, MD> {
+  if (!moduleData && !(rest as any).name)
+    throw new Error('Module name is required when moduleData is not provided')
 
-  if (!mv) throw new Error(`Module ${name} was not found`)
+  const mv = moduleData ?? getModuleData((rest as any).name)
 
-  type MV = typeof mv
+  if (!mv) throw new Error(`Module ${(mv as any).name} was not found`)
+
+  type MV = MD extends undefined ? GetModuleData<N> : NonNullable<MD>
+  const name = mv.name as MV['name']
 
   // If the walletClient is valid add walletAddress to the extras-
   // this is used to simulate transactions with the wallet address
@@ -42,9 +49,9 @@ export function getModule<
     tagConfig = { ...tagConfig, walletAddress: walletClient.account.address }
 
   // Get the moduletype, abi, description, and methodMetas from the module version
-  const moduleType = mv.moduleType as MV['moduleType'],
-    description = mv.description as MV['description'],
-    abi = mv.abi as MV['abi']
+  const moduleType = mv.moduleType as MV['moduleType']
+  const description = mv.description as MV['description']
+  const abi = mv.abi as MV['abi']
 
   const contract = getContract({
     abi: abi as Abi,

@@ -6,15 +6,14 @@ import lodash from 'lodash'
 import type {
   PopPublicClient,
   PopWalletClient,
-  RequestedModules,
   Workflow,
-  FactoryType,
   GetModuleParams,
   DeployableContracts,
   GetDeployWorkflowModuleArg,
   MethodOptions,
   WorkflowIssuanceToken,
   WorkflowToken,
+  MixedRequestedModules,
 } from '@/types'
 
 // sdk utils
@@ -106,7 +105,7 @@ export class Inverter<W extends PopWalletClient | undefined = undefined> {
    * @returns The workflow
    */
   async getWorkflow<
-    T extends RequestedModules | undefined = undefined,
+    T extends MixedRequestedModules | undefined = undefined,
     FT extends WorkflowToken | undefined = undefined,
     IT extends WorkflowIssuanceToken | undefined = undefined,
   >({
@@ -165,15 +164,10 @@ export class Inverter<W extends PopWalletClient | undefined = undefined> {
    * @param params.factoryType - The factory type
    * @returns The deploy options
    */
-  deployWorkflow<
-    T extends RequestedModules<FT extends undefined ? 'default' : FT>,
-    FT extends FactoryType | undefined = undefined,
-  >({
+  deployWorkflow<T extends MixedRequestedModules>({
     requestedModules,
-    factoryType,
   }: {
     requestedModules: T
-    factoryType?: FT
   }) {
     if (!this.walletClient)
       throw new Error('Wallet client is required for deploy')
@@ -184,7 +178,6 @@ export class Inverter<W extends PopWalletClient | undefined = undefined> {
       requestedModules,
       // @ts-ignore
       self: this,
-      factoryType,
     })
 
     return result as W extends undefined ? never : typeof result

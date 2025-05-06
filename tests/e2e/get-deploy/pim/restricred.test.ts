@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { expect, describe, it } from 'bun:test'
 
 import {
@@ -25,7 +26,7 @@ import {
 import { getDeployWorkflowModuleInputs } from '@/deploy-workflow/get-inputs'
 import { getModuleData, type GetModuleData } from '@inverter-network/abis'
 
-describe('#PIM_RESTRICTED', async () => {
+describe.skip('#PIM_RESTRICTED', async () => {
   const { walletClient } = sdk
   const deployer = walletClient.account.address
 

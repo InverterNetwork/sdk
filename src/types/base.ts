@@ -1,4 +1,9 @@
-import type { ModuleName } from '@inverter-network/abis'
+import type {
+  ExtendedAbi,
+  ExtendedAbiParameter,
+  ModuleName,
+  ModuleType,
+} from '@inverter-network/abis'
 import type { FindStringByPart } from './utils'
 
 /**
@@ -58,3 +63,17 @@ export type WorkflowIssuanceToken = FindStringByPart<
  * @description The available workflow tokens
  */
 export type WorkflowToken = WorkflowIssuanceToken | 'ERC20'
+
+/**
+ * @description The generic type for module data
+ */
+export type ModuleData<MT extends ModuleType = ModuleType> = {
+  name: string
+  moduleType: MT
+  description: string
+  abi: ExtendedAbi
+  deploymentInputs?: {
+    configData: ExtendedAbiParameter[]
+    bytecode?: `0x${string}` | string
+  }
+}

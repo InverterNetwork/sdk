@@ -1,18 +1,18 @@
+// dependencies
+
 // @inverter-network/abis
 import { getModuleData } from '@inverter-network/abis'
-import type { GetModuleNameByType } from '@inverter-network/abis'
 
 // sdk types
 import type {
   PopWalletClient,
-  WorkflowModuleType,
-  RequestedModules,
+  MixedRequestedModules,
   Workflow,
   GetWorkflowParams,
-  FlattenObjectValues,
   GetWorkflowTokenReturnType,
   WorkflowToken,
   WorkflowIssuanceToken,
+  ModuleData,
 } from '@/types'
 
 // sdk utils
@@ -27,11 +27,12 @@ import getTokenResults from './token'
  * @returns The result of the workflow
  */
 export async function getWorkflow<
-  O extends RequestedModules | undefined = undefined,
+  O extends MixedRequestedModules | undefined = undefined,
   W extends PopWalletClient | undefined = undefined,
   FT extends WorkflowToken | undefined = undefined,
   IT extends WorkflowIssuanceToken | undefined = undefined,
 >({
+  requestedModules,
   publicClient,
   walletClient,
   orchestratorAddress,
@@ -81,30 +82,46 @@ export async function getWorkflow<
   const modules = await (async () => {
     // 0. Define the source data based on the optional requestedModules
     const source = await (async () => {
-      type Name = O extends RequestedModules
-        ? FlattenObjectValues<O>
-        : GetModuleNameByType<WorkflowModuleType>
-
       // 1. fetch the module addresses
       const moduleAddresses = await orchestrator.read.listModules.run()
+      const moduleAbi = getModuleData('Module_v1').abi
       // 2. fetch flat modules
       return await Promise.all(
         moduleAddresses.map(async (address) => {
-          const name = <Name>await publicClient.readContract({
+          const name: any = await publicClient.readContract({
             address,
-            abi: getModuleData('Module_v1').abi,
+            abi: moduleAbi,
             functionName: 'title',
           })
 
-          return { name, address }
+          const moduleData: ModuleData | undefined = (() => {
+            let found
+
+            Object.values(requestedModules ?? {}).forEach((m) => {
+              if (Array.isArray(m)) {
+                m.forEach((o) => {
+                  if (typeof o === 'object' && o.name === name) {
+                    found = o
+                  }
+                })
+              } else if (typeof m === 'object' && m.name === name) {
+                found = m
+              }
+            })
+
+            return found
+          })()
+
+          return { name, address, moduleData }
         })
       )
     })()
 
     // 4. Map the module array using the source data
-    const modulesArray = source.map(({ name, address }) => {
+    const modulesArray = source.map(({ name, address, moduleData }) => {
+      const md: ModuleData | undefined = moduleData
       return getModule({
-        name,
+        ...((!!md ? { moduleData: md } : { name }) as any),
         address,
         publicClient,
         walletClient,

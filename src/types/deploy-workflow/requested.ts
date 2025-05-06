@@ -3,12 +3,7 @@ import type { GetModuleNameByType } from '@inverter-network/abis'
 import type { Simplify } from 'type-fest-4'
 
 // sdk types
-import type {
-  FilterByPrefix,
-  FactoryType,
-  MendatoryModuleType,
-  ModuleType,
-} from '@/types'
+import type { MendatoryModuleType, ModuleType, ModuleData } from '@/types'
 
 /**
  * @description The requested module options for moduleType and moduleName
@@ -34,14 +29,22 @@ export type RequestedMandatoryModule = RequestedModule<
  * @template FT - The factory type
  * @returns The requested modules options
  */
-export type RequestedModules<FT extends FactoryType = 'default'> = Simplify<
+export type RequestedModules = Simplify<
   {
-    [K in MendatoryModuleType]: K extends 'fundingManager'
-      ? FT extends 'default'
-        ? RequestedModule<K>
-        : FilterByPrefix<GetModuleNameByType<'fundingManager'>, 'FM_BC'>
-      : RequestedModule<K>
+    [K in MendatoryModuleType]: RequestedModule<K>
   } & {
     optionalModules?: RequestedModule<'optionalModule'>[]
   }
 >
+
+/**
+ * @description The requested modules with optional ABI parameters
+ */
+export type MixedRequestedModules = {
+  [K in MendatoryModuleType]: RequestedModule<K> | ModuleData<K>
+} & {
+  optionalModules?: (
+    | RequestedModule<'optionalModule'>
+    | ModuleData<'optionalModule'>
+  )[]
+}

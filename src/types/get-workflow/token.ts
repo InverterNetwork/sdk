@@ -5,11 +5,12 @@ import type { Hex } from 'viem'
 import type {
   GetModuleReturnType,
   PopWalletClient,
-  RequestedModules,
   FilterByPrefix,
   PopPublicClient,
   WorkflowToken,
   WorkflowIssuanceToken,
+  MixedRequestedModules,
+  ModuleData,
 } from '@/types'
 import type { Inverter } from '@/inverter'
 
@@ -36,11 +37,15 @@ export type TokenModuleData<
  */
 export type ConditionalIssuanceToken<
   W extends PopWalletClient | undefined,
-  O extends RequestedModules | undefined,
+  O extends MixedRequestedModules | undefined,
   IT extends WorkflowIssuanceToken,
 > =
   O extends NonNullable<O>
-    ? FilterByPrefix<O['fundingManager'], 'FM_BC'> extends never
+    ? (
+        O['fundingManager'] extends ModuleData
+          ? FilterByPrefix<O['fundingManager']['name'], 'FM_BC'>
+          : FilterByPrefix<O['fundingManager'], 'FM_BC'>
+      ) extends never
       ? TokenModuleData<W, IT> | undefined
       : TokenModuleData<W, IT>
     : TokenModuleData<W, IT> | undefined

@@ -1,14 +1,15 @@
 // external dependencies
 import type { ModuleName } from '@inverter-network/abis'
-import type { Simplify } from 'type-fest-4'
+import type { Simplify, UnionToTuple } from 'type-fest-4'
 
 // sdk types
 import type {
   EmptyObjectToNever,
   OmitNever,
   RequestedModules,
-  FactoryType,
   GetModuleConfigData,
+  MixedRequestedModules,
+  ModuleData,
 } from '@/types'
 
 /**
@@ -18,20 +19,18 @@ import type {
  * @returns The module inputs
  */
 export type GetDeployWorkflowModuleInputs<
-  N extends ModuleName = ModuleName,
+  N extends ModuleName | ModuleData = ModuleName,
   ON extends string | undefined = undefined,
+  T = N extends ModuleData
+    ? N['deploymentInputs'] extends NonNullable<N['deploymentInputs']>
+      ? N['deploymentInputs']['configData']
+      : never
+    : N extends ModuleName
+      ? GetModuleConfigData<N>
+      : never,
 > = {
-  name: ON extends string ? ON : N
-  inputs: ON extends string
-    ? [
-        Extract<
-          GetModuleConfigData<N>[number],
-          {
-            name: ON
-          }
-        >,
-      ]
-    : GetModuleConfigData<N>
+  name: ON extends string ? ON : N extends ModuleData ? N['name'] : N
+  inputs: T
 }
 
 /**
@@ -39,17 +38,19 @@ export type GetDeployWorkflowModuleInputs<
  * @template T - The optional modules
  * @returns The optional modules schema
  */
-export type OptionalModules<T extends RequestedModules['optionalModules']> =
-  Simplify<
-    T extends undefined
-      ? never
-      : {
-          [K in keyof T]: GetDeployWorkflowModuleInputs<
-            // @ts-expect-error - TS cant resolve name
-            T[K]
-          >
-        }
-  >
+export type OptionalModules<
+  T extends MixedRequestedModules['optionalModules'],
+> = Simplify<
+  T extends undefined | []
+    ? never
+    : UnionToTuple<
+          GetDeployWorkflowModuleInputs<NonNullable<T>[number]>
+        > extends infer R extends { name: string }[]
+      ? R extends { name: string }[]
+        ? R
+        : never
+      : never
+>
 
 /**
  * @description The deployment schema for a factory type
@@ -58,8 +59,7 @@ export type OptionalModules<T extends RequestedModules['optionalModules']> =
  * @returns The deployment schema
  */
 export type GetDeployWorkflowInputs<
-  T extends RequestedModules = RequestedModules,
-  FT extends FactoryType = 'default',
+  T extends MixedRequestedModules = RequestedModules,
 > = Simplify<
   OmitNever<{
     orchestrator: GetDeployWorkflowModuleInputs<'OrchestratorFactory_v1'>
@@ -67,33 +67,5 @@ export type GetDeployWorkflowInputs<
     fundingManager: GetDeployWorkflowModuleInputs<T['fundingManager']>
     authorizer: GetDeployWorkflowModuleInputs<T['authorizer']>
     optionalModules: EmptyObjectToNever<OptionalModules<T['optionalModules']>>
-    // OTHER FACTORY TYPE INPUTS
-    issuanceToken: FT extends
-      | 'restricted-pim'
-      | 'immutable-pim'
-      | 'migrating-pim'
-      ? GetDeployWorkflowModuleInputs<
-          `${FT extends 'restricted-pim' ? 'Restricted' : 'Immutable'}_PIM_Factory_v1`,
-          'issuanceToken'
-        >
-      : never
-    initialPurchaseAmount: FT extends 'immutable-pim' | 'migrating-pim'
-      ? GetDeployWorkflowModuleInputs<
-          'Immutable_PIM_Factory_v1',
-          'initialPurchaseAmount'
-        >
-      : never
-    beneficiary: FT extends 'restricted-pim'
-      ? GetDeployWorkflowModuleInputs<
-          'Restricted_PIM_Factory_v1',
-          'beneficiary'
-        >
-      : never
-    migrationConfig: FT extends 'migrating-pim'
-      ? GetDeployWorkflowModuleInputs<
-          'Migrating_PIM_Factory_v1',
-          'migrationConfig'
-        >
-      : never
   }>
 >

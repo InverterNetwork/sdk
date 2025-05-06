@@ -5,10 +5,9 @@ import type { PublicClient } from 'viem'
 import type { Inverter } from '@/inverter'
 import type {
   GetDeployWorkflowInputs,
-  FactoryType,
-  RequestedModules,
   PopWalletClient,
   GetMethodsReturnType,
+  MixedRequestedModules,
 } from '@/types'
 
 // exports
@@ -21,23 +20,16 @@ export * from './get-methods'
 /**
  * @description Parameters for the deployWorkflow function
  */
-export type DeployWorkflowParams<
-  T extends RequestedModules<FT extends undefined ? 'default' : FT>,
-  FT extends FactoryType | undefined = undefined,
-> = {
+export type DeployWorkflowParams<T extends MixedRequestedModules> = {
   publicClient: PublicClient
   walletClient: PopWalletClient
   requestedModules: T
-  factoryType?: FT
   self?: Inverter
 }
 
 /**
  * @description Return type for the deployWorkflow function
  */
-export type DeployWorkflowReturnType<
-  T extends RequestedModules<FT extends undefined ? 'default' : FT>,
-  FT extends FactoryType | undefined = undefined,
-> = {
-  inputs: GetDeployWorkflowInputs<T, FT extends undefined ? 'default' : FT>
-} & GetMethodsReturnType<T, FT extends undefined ? 'default' : FT>
+export type DeployWorkflowReturnType<T extends MixedRequestedModules> = {
+  inputs: GetDeployWorkflowInputs<T>
+} & GetMethodsReturnType<T>
