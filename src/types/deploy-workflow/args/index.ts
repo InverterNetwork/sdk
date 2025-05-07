@@ -54,7 +54,17 @@ export type GetDeployWorkflowOptionalArgsBase<
     ? // if R is an empty array, return never
       R extends []
       ? never
-      : R
+      : NonNullable<T>[number] extends infer N
+        ? {
+            [K in N extends ModuleData
+              ? N['name']
+              : N extends ModuleName
+                ? N
+                : never]: N extends ModuleData | ModuleName
+              ? GetDeployWorkflowModuleArg<N>
+              : never
+          }
+        : never
     : never
 
 /**

@@ -856,6 +856,7 @@ describe('#WORKFLOW', () => {
       authorizer: AUT_Roles_v1,
       fundingManager: 'FM_BC_Bancor_Redeeming_VirtualSupply_v1',
       paymentProcessor: 'PP_Streaming_v1',
+      optionalModules: ['LM_PC_RecurringPayments_v1'],
     } as const satisfies MixedRequestedModules
 
     const args = {
@@ -864,6 +865,11 @@ describe('#WORKFLOW', () => {
       },
       fundingManager: FM_BC_Bancor_VirtualSupply_v1_ARGS,
       orchestrator: GET_ORCHESTRATOR_ARGS(deployer),
+      optionalModules: {
+        LM_PC_RecurringPayments_v1: {
+          epochLength: '604800',
+        },
+      },
     } as const satisfies GetDeployWorkflowArgs<typeof requestedModules>
 
     let orchestratorAddress: `0x${string}`
