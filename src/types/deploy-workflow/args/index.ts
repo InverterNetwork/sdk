@@ -1,5 +1,5 @@
 // external dependencies
-import type { IsEmptyObject, Simplify, UnionToTuple } from 'type-fest-4'
+import type { IsEmptyObject, Simplify } from 'type-fest-4'
 import type { ModuleName } from '@inverter-network/abis'
 
 // sdk types
@@ -40,6 +40,22 @@ export type GetDeployWorkflowModuleArg<
 }>
 
 /**
+ * @description Helper type to get module name from either ModuleName or ModuleData
+ */
+type GetModuleName<T> = T extends ModuleData
+  ? T['name']
+  : T extends ModuleName
+    ? T
+    : never
+
+/**
+ * @description Helper type to get module args from either ModuleName or ModuleData
+ */
+type GetModuleArgs<T> = T extends ModuleData | ModuleName
+  ? GetDeployWorkflowModuleArg<T>
+  : never
+
+/**
  * @description Get the user optional module arguments for a given optional modules
  * @param T - The optional modules
  * @returns The user optional module arguments
@@ -48,23 +64,10 @@ export type GetDeployWorkflowOptionalArgsBase<
   T extends MixedRequestedModules['optionalModules'],
 > = T extends undefined
   ? never
-  : UnionToTuple<
-        GetDeployWorkflowModuleArg<NonNullable<T>[number]>
-      > extends infer R
-    ? // if R is an empty array, return never
-      R extends []
-      ? never
-      : NonNullable<T>[number] extends infer N
-        ? {
-            [K in N extends ModuleData
-              ? N['name']
-              : N extends ModuleName
-                ? N
-                : never]: N extends ModuleData | ModuleName
-              ? GetDeployWorkflowModuleArg<N>
-              : never
-          }
-        : never
+  : NonNullable<T>[number] extends infer N
+    ? {
+        [K in GetModuleName<N>]: GetModuleArgs<N>
+      }
     : never
 
 /**
