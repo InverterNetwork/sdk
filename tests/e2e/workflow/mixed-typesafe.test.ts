@@ -893,6 +893,13 @@ describe('#WORKFLOW', () => {
       })
       expect(workflow).toBeObject()
     })
+    it('2.1 Should get the manual passed authorizer', async () => {
+      const authorizer = sdk.getModule({
+        address: workflow.authorizer.address,
+        moduleData: AUT_Roles_v1,
+      })
+      expect(authorizer).toBeObject()
+    })
     it('3. Should Have: ( fundingToken & issuanceToken: address, module, decimals, symbol )', () => {
       expect(workflow.fundingToken).toContainKeys([
         'address',

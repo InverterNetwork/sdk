@@ -14,6 +14,8 @@ import type {
   WorkflowIssuanceToken,
   WorkflowToken,
   MixedRequestedModules,
+  ModuleData,
+  GetModuleReturnType,
 } from '@/types'
 
 // sdk utils
@@ -219,17 +221,20 @@ export class Inverter<W extends PopWalletClient | undefined = undefined> {
    * @param params - The parameters for the module
    * @returns The module
    */
-  getModule<N extends ModuleName>(
+  getModule<
+    N extends MD extends ModuleData ? never : ModuleName,
+    MD extends ModuleData | undefined = undefined,
+  >(
     params: Omit<
-      GetModuleParams<N, W>,
+      GetModuleParams<N, W, MD>,
       'walletClient' | 'publicClient' | 'self'
     >
-  ) {
+  ): GetModuleReturnType<N, W, MD> {
     return getModule({
       ...params,
       publicClient: this.publicClient,
       walletClient: this.walletClient,
       self: this,
-    })
+    } as any)
   }
 }
