@@ -1,7 +1,7 @@
 {
   "name": "@inverter-network/sdk",
   "description": "INVERTER typescript SDK",
-  "version": "0.5.0-alpha.2",
+  "version": "0.5.0-alpha.3",
   "exports": {
     ".": {
       "types": "./dist/types/index.d.ts",
