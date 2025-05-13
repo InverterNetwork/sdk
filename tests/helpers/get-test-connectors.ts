@@ -1,8 +1,7 @@
 import type { PopPublicClient, PopWalletClient } from '@/index'
+import { getChainById } from '@/index'
 import { http, createPublicClient, createWalletClient } from 'viem'
 import { privateKeyToAccount } from 'viem/accounts'
-
-import { anvil } from 'viem/chains'
 
 const privKey = process.env['TEST_PRIVATE_KEY'] as `0x${string}` | undefined
 
@@ -13,7 +12,7 @@ export const getTestConnectors = (): {
   walletClient: PopWalletClient
 } => {
   // const chain = <Chain>(chainKey ? chains[chainKey] : optimismSepolia)
-  const chain = anvil
+  const chain = getChainById(31_337) // 31_337 is the id of the anvil chain
   // Public Client: This is used to read from the blockchain.
   const publicClient = createPublicClient({
     chain,
