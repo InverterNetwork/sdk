@@ -1,14 +1,12 @@
-import type { Chain, HttpTransport, PublicClientConfig } from 'viem'
-import { createPublicClient, http } from 'viem'
+import type { Chain, HttpTransport } from 'viem'
+import { http } from 'viem'
 import * as chains from 'viem/chains'
-
-const chainsArray = Object.values(chains)
 
 /**
  * Get a chain by its id
  */
 export const getChainById = (chainId: number): Chain => {
-  const chain = chainsArray.find((chain) => chain.id === chainId)
+  const chain = Object.values(chains).find((chain) => chain.id === chainId)
   if (!chain) throw new Error('Chain not found')
   return chain
 }
@@ -16,7 +14,7 @@ export const getChainById = (chainId: number): Chain => {
 /**
  * Get all chain names
  */
-export const chainNames = chainsArray.reduce(
+export const chainNames = Object.values(chains).reduce(
   (acc, chain) => {
     // Only add if we haven't seen this chainId before
     if (!acc.some((item) => item.id === chain.id)) {
@@ -44,26 +42,5 @@ export const getChainName = (chainId: number) => {
 export const getERPCTransport = (chainId: number): HttpTransport => {
   return http(`https://rpc.inverter.network/main/evm/${chainId}`, {
     timeout: 10000,
-  })
-}
-
-/**
- * Creates a public client for a specific chain
- */
-export const getPublicClient = (
-  chainId: number,
-  params: Omit<PublicClientConfig, 'chain' | 'transport'> = {
-    cacheTime: 5000,
-  }
-) => {
-  const chain = getChainById(chainId)
-  const transport = getERPCTransport(chainId)
-
-  if (!chain || !transport) throw new Error('Chain or transport not found')
-
-  return createPublicClient({
-    chain,
-    transport,
-    ...params,
   })
 }

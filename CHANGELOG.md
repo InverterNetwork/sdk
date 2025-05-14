@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.5.1](https://github.com/InverterNetwork/sdk/compare/v0.5.0...v0.5.1) (2025-05-14)
+
+
+### Features
+
+* **scripts:** add new utility scripts for deployment and logging ([aa716ad](https://github.com/InverterNetwork/sdk/commit/aa716ad1fb424c54f15be04f089904468b4f6981))
+
+
+### Bug Fixes
+
+* **scripts:** update script paths for consistency ([7bb2647](https://github.com/InverterNetwork/sdk/commit/7bb26477ff5c841e1e4c19a645f074244e2430f1))
+
 ## [0.5.0](https://github.com/InverterNetwork/sdk/compare/v0.5.0-alpha.4...v0.5.0) (2025-05-13)
 
 ## [0.5.0-alpha.0](https://github.com/InverterNetwork/sdk/compare/v0.4.4...v0.5.0-alpha.0) (2025-05-05)
