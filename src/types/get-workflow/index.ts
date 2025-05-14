@@ -127,7 +127,11 @@ type OptionalResult<
           >
         }
       : never
-    : never
+    : {
+        [K in NonNullable<
+          RequestedModules['optionalModules']
+        >[number]]: GetModuleReturnType<K, TWalletClient>
+      }
 }>
 
 /**
