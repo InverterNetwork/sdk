@@ -4,7 +4,7 @@ async function runPreTest() {
   try {
     // Run the shell script asynchronously and wait for it to complete
     const childProcess = spawn({
-      cmd: ['./tools/protocol-rpc.sh'],
+      cmd: ['./scripts/protocol-rpc.sh'],
       stdio: ['inherit'], // Pass the output to the terminal
     })
 
