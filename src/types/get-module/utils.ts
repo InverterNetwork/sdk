@@ -33,59 +33,59 @@ import type { Inverter } from '@/inverter'
 
 /**
  * The Parameters for the getRun function
- * @template ExtendedInputs - The extended inputs
- * @template ExtendedOutputs - The extended outputs
- * @template Kind - The kind of method
+ * @template TInputs - The extended inputs
+ * @template TOutputs - The extended outputs
+ * @template TMethodKind - The kind of method
  */
 export type GetModuleGetRunParams<
-  ExtendedInputs extends readonly ExtendedAbiParameter[],
-  ExtendedOutputs extends readonly ExtendedAbiParameter[],
-  Kind extends MethodKind,
+  TInputs extends readonly ExtendedAbiParameter[],
+  TOutputs extends readonly ExtendedAbiParameter[],
+  TMethodKind extends MethodKind,
 > = {
   publicClient: PopPublicClient
   name: string
   contract: PopContractReturnType
-  extendedInputs: ExtendedInputs
-  extendedOutputs: ExtendedOutputs
+  extendedInputs: TInputs
+  extendedOutputs: TOutputs
   walletClient?: PopWalletClient
   tagConfig?: TagConfig
-  kind: Kind
+  kind: TMethodKind
   self?: Inverter
 }
 
 /**
  * The return type for the getRun function
- * @template ExtendedInputs - The extended inputs
- * @template ExtendedOutputs - The extended outputs
- * @template Kind - The kind of method
+ * @template TInputs - The extended inputs
+ * @template TOutputs - The extended outputs
+ * @template TMethodKind - The kind of method
  */
 export type GetModuleGetRunReturnType<
-  ExtendedInputs extends readonly ExtendedAbiParameter[],
-  ExtendedOutputs extends readonly ExtendedAbiParameter[],
-  Kind extends MethodKind,
+  TInputs extends readonly ExtendedAbiParameter[],
+  TOutputs extends readonly ExtendedAbiParameter[],
+  TMethodKind extends MethodKind,
 > = (
-  args: GetMethodParams<ExtendedInputs>,
+  args: GetMethodParams<TInputs>,
   options?: MethodOptions
-) => Promise<GetMethodReturnType<ExtendedOutputs, Kind>>
+) => Promise<GetMethodReturnType<TOutputs, TMethodKind>>
 
 // GET ITERATE METHODS
 // ----------------------------------------------------------------------------
 
 /**
  * The Parameters for the iterateMethods function
- * @template A - The extended abi
- * @template T - The state mutability array
- * @template Kind - The kind of method
+ * @template TAbi - The extended abi
+ * @template TAbiStateMutability - The state mutability array
+ * @template TMethodKind - The kind of method
  */
 export type GetModuleItterateMethodsParams<
-  A extends ExtendedAbi,
-  T extends AbiStateMutability[],
-  Kind extends MethodKind,
+  TAbi extends ExtendedAbi,
+  TAbiStateMutability extends AbiStateMutability[],
+  TMethodKind extends MethodKind,
 > = {
-  abi: A
-  type: T
+  abi: TAbi
+  type: TAbiStateMutability
   contract: PopContractReturnType
-  kind: Kind
+  kind: TMethodKind
   publicClient: PopPublicClient
   walletClient?: PopWalletClient
   tagConfig?: TagConfig
@@ -94,19 +94,22 @@ export type GetModuleItterateMethodsParams<
 
 /**
  * The return type for the iterateMethods function
- * @template A - The extended abi
- * @template T - The state mutability array
- * @template Kind - The kind of method
+ * @template TAbi - The extended abi
+ * @template TAbiStateMutability - The state mutability array
+ * @template TMethodKind - The kind of method
  */
 export type GetModuleIterateMethodsReturnType<
-  A extends ExtendedAbi,
-  T extends AbiStateMutability[],
-  Kind extends MethodKind,
+  TAbi extends ExtendedAbi,
+  TAbiStateMutability extends AbiStateMutability[],
+  TMethodKind extends MethodKind,
 > = Simplify<{
   [N in ExtractAbiFunctionNames<
-    A,
-    TupleToUnion<T>
-  >]: GetModuleConstructMethodReturnType<ExtractAbiFunction<A, N>, Kind>
+    TAbi,
+    TupleToUnion<TAbiStateMutability>
+  >]: GetModuleConstructMethodReturnType<
+    ExtractAbiFunction<TAbi, N>,
+    TMethodKind
+  >
 }>
 
 // CONSTRUCT METHOD
@@ -115,42 +118,42 @@ export type GetModuleIterateMethodsReturnType<
 /**
  * The Parameters for the constructMethod function
  * @template TAbiFunction - The extended abi function
- * @template Kind - The kind of method
+ * @template TMethodKind - The kind of method
  */
 export type GetModuleConstructMethodParams<
   TAbiFunction extends ExtendedAbiFunction,
-  Kind extends MethodKind,
+  TMethodKind extends MethodKind,
 > = {
   walletClient?: PopWalletClient
   publicClient: PopPublicClient
   abiFunction: TAbiFunction
   contract: PopContractReturnType
   tagConfig?: TagConfig
-  kind: Kind
+  kind: TMethodKind
   self?: Inverter
 }
 
 /**
  * The return type for the constructMethod function
  * @template TAbiFunction - The extended abi function
- * @template Kind - The kind of method
+ * @template TMethodKind - The kind of method
  */
 export type GetModuleConstructMethodReturnType<
   TAbiFunction extends ExtendedAbiFunction,
-  Kind extends MethodKind,
+  TMethodKind extends MethodKind,
 > = {
   name: TAbiFunction['name']
   description: TAbiFunction['description']
   inputs: TAbiFunction['inputs']
-  outputs: Kind extends 'read' | 'simulate'
+  outputs: TMethodKind extends 'read' | 'simulate'
     ? TAbiFunction['outputs']
-    : Kind extends 'write'
+    : TMethodKind extends 'write'
       ? WriteOutput
       : EstimateGasOutput
 
   run: GetModuleGetRunReturnType<
     TAbiFunction['inputs'],
     TAbiFunction['outputs'],
-    Kind
+    TMethodKind
   >
 }

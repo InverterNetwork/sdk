@@ -27,13 +27,15 @@ import { getModule } from './get-module'
 
 /**
  * @description The Inverter class is the main class for interacting with the Inverter Network
- * @template W - The wallet client
+ * @template TWalletClient - The wallet client
  * @param publicClient - The public client
  * @param walletClient - The wallet client
  */
-export class Inverter<W extends PopWalletClient | undefined = undefined> {
+export class Inverter<
+  TWalletClient extends PopWalletClient | undefined = undefined,
+> {
   publicClient: PopPublicClient
-  walletClient: W
+  walletClient: TWalletClient
   readonly workflows: Map<`${number}:0x${string}`, any>
   tokenCache: Map<string, any>
 
@@ -46,30 +48,35 @@ export class Inverter<W extends PopWalletClient | undefined = undefined> {
     walletClient,
   }: {
     publicClient: PopPublicClient
-    walletClient?: W
+    walletClient?: TWalletClient
   }) {
     this.publicClient = publicClient
-    this.walletClient = walletClient as W
+    this.walletClient = walletClient as TWalletClient
     this.workflows = new Map()
     this.tokenCache = new Map()
   }
 
   /**
    * @description Get the singleton instance of the Inverter
-   * @template W - The wallet client
+   * @template TWalletClient - The wallet client
    * @param publicClient - The public client
    * @param walletClient - The wallet client
    * @returns The singleton instance of the Inverter
    */
-  static getInstance<W extends PopWalletClient | undefined = undefined>({
+  static getInstance<
+    TWalletClient extends PopWalletClient | undefined = undefined,
+  >({
     publicClient,
     walletClient,
   }: {
     publicClient: PopPublicClient
-    walletClient?: W
-  }): Inverter<W> {
+    walletClient?: TWalletClient
+  }): Inverter<TWalletClient> {
     if (!Inverter.instance) {
-      Inverter.instance = new Inverter<W>({ publicClient, walletClient })
+      Inverter.instance = new Inverter<TWalletClient>({
+        publicClient,
+        walletClient,
+      })
     }
 
     if (!lodash.isEqual(Inverter.instance.publicClient, publicClient))
@@ -78,7 +85,7 @@ export class Inverter<W extends PopWalletClient | undefined = undefined> {
     if (!lodash.isEqual(Inverter.instance.walletClient, walletClient))
       Inverter.instance.updateWalletClient(walletClient)
 
-    return Inverter.instance as Inverter<W>
+    return Inverter.instance as Inverter<TWalletClient>
   }
 
   /**
@@ -93,12 +100,15 @@ export class Inverter<W extends PopWalletClient | undefined = undefined> {
    * @description Updates the walletClient safely
    * @param walletClient - The wallet client
    */
-  private updateWalletClient(walletClient: W) {
+  private updateWalletClient(walletClient: TWalletClient) {
     this.walletClient = walletClient
   }
 
   /**
    * @description Get a workflow
+   * @template T - The requested modules
+   * @template TFundingToken - The funding token
+   * @template TIssuanceToken - The issuance token
    * @param params - The parameters for the workflow
    * @param params.orchestratorAddress - The address of the orchestrator
    * @param params.requestedModules - The requested modules
@@ -108,8 +118,8 @@ export class Inverter<W extends PopWalletClient | undefined = undefined> {
    */
   async getWorkflow<
     T extends MixedRequestedModules | undefined = undefined,
-    FT extends WorkflowToken | undefined = undefined,
-    IT extends WorkflowIssuanceToken | undefined = undefined,
+    TFundingToken extends WorkflowToken | undefined = undefined,
+    TIssuanceToken extends WorkflowIssuanceToken | undefined = undefined,
   >({
     orchestratorAddress,
     requestedModules,
@@ -118,9 +128,9 @@ export class Inverter<W extends PopWalletClient | undefined = undefined> {
   }: {
     orchestratorAddress: `0x${string}`
     requestedModules?: T
-    fundingTokenType?: FT
-    issuanceTokenType?: IT
-  }): Promise<Workflow<W, T, FT, IT>> {
+    fundingTokenType?: TFundingToken
+    issuanceTokenType?: TIssuanceToken
+  }): Promise<Workflow<T, TWalletClient, TFundingToken, TIssuanceToken>> {
     const chainId = this.publicClient.chain.id
 
     const chainOrchestratorAddress =
@@ -161,6 +171,7 @@ export class Inverter<W extends PopWalletClient | undefined = undefined> {
 
   /**
    * @description Retreive the deploy workflow methods and inputs array
+   * @template T - The requested modules
    * @param params - The parameters for the deploy options
    * @param params.requestedModules - The requested modules
    * @param params.factoryType - The factory type
@@ -182,11 +193,12 @@ export class Inverter<W extends PopWalletClient | undefined = undefined> {
       self: this,
     })
 
-    return result as W extends undefined ? never : typeof result
+    return result as TWalletClient extends undefined ? never : typeof result
   }
 
   /**
    * @description Deploy a contract
+   * @template T - The deployable contract
    * @param params - The parameters for the deploy
    * @param params.name - The name of the contract
    * @param params.args - The arguments for the deploy
@@ -218,18 +230,20 @@ export class Inverter<W extends PopWalletClient | undefined = undefined> {
 
   /**
    * @description Get a module
+   * @template TModuleName - The module name
+   * @template TModuleData - The module data
    * @param params - The parameters for the module
    * @returns The module
    */
   getModule<
-    N extends MD extends ModuleData ? never : ModuleName,
-    MD extends ModuleData | undefined = undefined,
+    TModuleName extends TModuleData extends ModuleData ? never : ModuleName,
+    TModuleData extends ModuleData | undefined = undefined,
   >(
     params: Omit<
-      GetModuleParams<N, W, MD>,
+      GetModuleParams<TModuleName, TWalletClient, TModuleData>,
       'walletClient' | 'publicClient' | 'self'
     >
-  ): GetModuleReturnType<N, W, MD> {
+  ): GetModuleReturnType<TModuleName, TWalletClient, TModuleData> {
     return getModule({
       ...params,
       publicClient: this.publicClient,

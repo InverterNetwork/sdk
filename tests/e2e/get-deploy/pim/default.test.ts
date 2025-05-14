@@ -35,7 +35,7 @@ describe('#PIM_DEFAULT', async () => {
 
   let orchestratorAddress: `0x${string}`
   let issuanceToken: `0x${string}`
-  let workflow: Workflow<typeof sdk.walletClient, typeof requestedModules>
+  let workflow: Workflow<typeof requestedModules, typeof sdk.walletClient>
 
   const { estimateGas, run, inputs } = await sdk.deployWorkflow({
     requestedModules,

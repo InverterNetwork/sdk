@@ -19,23 +19,25 @@ export * from './static'
 
 /**
  * @description Get the user module argument for a given module name and config data
- * @param N - The module name
- * @param CD - The config data = `GetModuleConfigData<N>[number]`
+ * @param TModuleName - The module name
+ * @param TConfigData - The config data = `GetModuleConfigData<TModuleName>[number]`
  * @returns The user module argument
  */
 export type GetDeployWorkflowModuleArg<
-  N extends ModuleName | ModuleData = ModuleName,
-  CD = N extends ModuleData
-    ? N['deploymentInputs'] extends NonNullable<ModuleData['deploymentInputs']>
-      ? N['deploymentInputs']['configData'][number]
+  TModuleName extends ModuleName | ModuleData = ModuleName,
+  TConfigData = TModuleName extends ModuleData
+    ? TModuleName['deploymentInputs'] extends NonNullable<
+        ModuleData['deploymentInputs']
+      >
+      ? TModuleName['deploymentInputs']['configData'][number]
       : never
-    : N extends ModuleName
-      ? GetModuleConfigData<N>[number]
+    : TModuleName extends ModuleName
+      ? GetModuleConfigData<TModuleName>[number]
       : never,
 > = EmptyObjectToNever<{
   // @ts-expect-error - TS cant resolve name
-  [PN in CD['name']]: ExtendedParameterToPrimitiveType<
-    Extract<CD, { name: PN }>
+  [PN in TConfigData['name']]: ExtendedParameterToPrimitiveType<
+    Extract<TConfigData, { name: PN }>
   >
 }>
 

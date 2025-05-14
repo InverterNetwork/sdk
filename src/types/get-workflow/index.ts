@@ -25,45 +25,50 @@ export * from './token'
 
 /**
  * @description The parameters for the getWorkflow function
- * @template O - The requested modules
- * @template W - The wallet client
+ * @template T - The requested modules
+ * @template TWalletClient - The wallet client
+ * @template TFundingToken - The funding token type
+ * @template TIssuanceToken - The issuance token type
  */
 export type GetWorkflowParams<
-  O extends MixedRequestedModules | undefined = undefined,
-  W extends PopWalletClient | undefined = undefined,
-  FT extends WorkflowToken | undefined = undefined,
-  IT extends WorkflowIssuanceToken | undefined = undefined,
+  T extends MixedRequestedModules | undefined = undefined,
+  TWalletClient extends PopWalletClient | undefined = undefined,
+  TFundingToken extends WorkflowToken | undefined = undefined,
+  TIssuanceToken extends WorkflowIssuanceToken | undefined = undefined,
 > = {
   publicClient: PopPublicClient
-  walletClient?: W
+  walletClient?: TWalletClient
   orchestratorAddress: Hex
-  requestedModules?: O
-  fundingTokenType?: FT
-  issuanceTokenType?: IT
-  self?: Inverter<W>
+  requestedModules?: T
+  fundingTokenType?: TFundingToken
+  issuanceTokenType?: TIssuanceToken
+  self?: Inverter<TWalletClient>
 }
 
 /**
  * @description The workflow type
- * @template W - The wallet client
  * @template T - The requested modules
- * @template FT - The funding token type
- * @template IT - The issuance token type
+ * @template TWalletClient - The wallet client
+ * @template TFundingToken - The funding token type
+ * @template TIssuanceToken - The issuance token type
  */
 export type Workflow<
-  W extends PopWalletClient | undefined,
   T extends MixedRequestedModules | undefined,
-  FT extends WorkflowToken | undefined = undefined,
-  IT extends WorkflowIssuanceToken | undefined = undefined,
+  TWalletClient extends PopWalletClient | undefined,
+  TFundingToken extends WorkflowToken | undefined = undefined,
+  TIssuanceToken extends WorkflowIssuanceToken | undefined = undefined,
 > = Merge<
-  MendatoryAndOptionalWorkflow<W, T>,
+  MendatoryAndOptionalWorkflow<T, TWalletClient>,
   {
-    orchestrator: GetModuleReturnType<'Orchestrator_v1', W>
-    fundingToken: TokenModuleData<W, FT extends undefined ? 'ERC20' : FT>
+    orchestrator: GetModuleReturnType<'Orchestrator_v1', TWalletClient>
+    fundingToken: TokenModuleData<
+      TFundingToken extends undefined ? 'ERC20' : TFundingToken,
+      TWalletClient
+    >
     issuanceToken: ConditionalIssuanceToken<
-      W,
       T,
-      IT extends undefined ? 'ERC20Issuance_v1' : IT
+      TIssuanceToken extends undefined ? 'ERC20Issuance_v1' : TIssuanceToken,
+      TWalletClient
     >
   }
 >
@@ -75,62 +80,62 @@ export type WorkflowModuleType = Exclude<UserFacingModuleType, 'orchestrator'>
 
 /**
  * @description The mandatory result type
- * @template W - The wallet client
- * @template O - The requested modules
+ * @template T - The requested modules
+ * @template TWalletClient - The wallet client
  */
 type MandatoryResult<
-  W extends PopWalletClient | undefined,
-  O extends MixedRequestedModules | undefined,
+  T extends MixedRequestedModules | undefined,
+  TWalletClient extends PopWalletClient | undefined,
 > = {
-  [K in Exclude<WorkflowModuleType, 'optionalModule'>]: O extends NonNullable<O>
-    ? O[K] extends ModuleData
-      ? GetModuleReturnType<never, W, O[K]>
-      : O[K] extends ModuleName
-        ? GetModuleReturnType<O[K], W>
+  [K in Exclude<WorkflowModuleType, 'optionalModule'>]: T extends NonNullable<T>
+    ? T[K] extends ModuleData
+      ? GetModuleReturnType<never, TWalletClient, T[K]>
+      : T[K] extends ModuleName
+        ? GetModuleReturnType<T[K], TWalletClient>
         : never
-    : GetModuleReturnType<RequestedModules[K], W>
+    : GetModuleReturnType<RequestedModules[K], TWalletClient>
 }
 
 /**
  * @description The optional result type
- * @template W - The wallet client
- * @template O - The requested modules
+ * @template T - The requested modules
+ * @template TWalletClient - The wallet client
  */
 type OptionalResult<
-  W extends PopWalletClient | undefined,
-  O extends MixedRequestedModules | undefined,
+  T extends MixedRequestedModules | undefined,
+  TWalletClient extends PopWalletClient | undefined,
 > = OmitNever<{
-  optionalModule: O extends NonNullable<O>
-    ? O['optionalModules'] extends NonNullable<O['optionalModules']>
-      ? {
-          [K in O['optionalModules'][number] extends ModuleName
-            ? O['optionalModules'][number]
-            : never]: GetModuleReturnType<K, W>
+  // 1. Check if the requested modules are non-nullable
+  optionalModule: T extends NonNullable<T>
+    ? // 2. Check if the optional modules are non-nullable
+      T['optionalModules'] extends NonNullable<T['optionalModules']>
+      ? // 3. First part is the module with registered name
+        {
+          [K in T['optionalModules'][number] extends ModuleName
+            ? T['optionalModules'][number]
+            : never]: GetModuleReturnType<K, TWalletClient>
         } & {
-          [K in O['optionalModules'][number] extends ModuleData
-            ? O['optionalModules'][number]['name']
+          // 4. Second part is the module with passed data
+          [K in T['optionalModules'][number] extends ModuleData
+            ? T['optionalModules'][number]['name']
             : never]: GetModuleReturnType<
             never,
-            W,
+            TWalletClient,
             K extends ModuleName
               ? undefined
-              : Extract<O['optionalModules'][number], { name: K }>
+              : Extract<T['optionalModules'][number], { name: K }>
           >
         }
       : never
-    : {
-        [K in NonNullable<
-          RequestedModules['optionalModules']
-        >[number]]: GetModuleReturnType<K, W>
-      }
+    : never
 }>
 
 /**
  * @description The mendatory and optional workflow type
- * @template W - The wallet client
- * @template O - The requested modules
+ * @template T - The requested modules
+ * @template TWalletClient - The wallet client
  */
 export type MendatoryAndOptionalWorkflow<
-  W extends PopWalletClient | undefined,
-  O extends MixedRequestedModules | undefined,
-> = MandatoryResult<W, O> & OptionalResult<W, O>
+  T extends MixedRequestedModules | undefined,
+  TWalletClient extends PopWalletClient | undefined,
+> = MandatoryResult<T, TWalletClient> & OptionalResult<T, TWalletClient>

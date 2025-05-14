@@ -69,17 +69,19 @@ type TuplePrimitive<P> = P extends {
 
 /**
  * @description The main formatter
- * @template P - The parameter
+ * @template TParameter - The parameter
  * @returns The main formatter
  */
-export type ExtendedParameterToPrimitiveType<P> =
-  TuplePrimitive<P> extends never ? SimplePrimitive<P> : TuplePrimitive<P>
+export type ExtendedParameterToPrimitiveType<TParameter> =
+  TuplePrimitive<TParameter> extends never
+    ? SimplePrimitive<TParameter>
+    : TuplePrimitive<TParameter>
 
 /**
  * @description Itterate over the parameters and format them to primitive types
- * @template Parameters - The parameters
+ * @template TParameters - The parameters
  * @returns The parameters formatted to primitive types
  */
-export type ExtendedParametersToPrimitiveType<Parameters> = {
-  [K in keyof Parameters]: ExtendedParameterToPrimitiveType<Parameters[K]>
+export type ExtendedParametersToPrimitiveType<TParameters> = {
+  [K in keyof TParameters]: ExtendedParameterToPrimitiveType<TParameters[K]>
 }

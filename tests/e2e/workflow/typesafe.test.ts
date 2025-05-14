@@ -28,7 +28,7 @@ describe('#WORKFLOW', () => {
     } as const satisfies GetDeployWorkflowArgs<typeof requestedModules>
 
     let orchestratorAddress: `0x${string}`
-    let workflow: Workflow<typeof sdk.walletClient, typeof requestedModules>
+    let workflow: Workflow<typeof requestedModules, typeof sdk.walletClient>
 
     it('1. Should Deploy The Workflow', async () => {
       orchestratorAddress = (
@@ -100,7 +100,7 @@ describe('#WORKFLOW', () => {
     let claimId: string
 
     let orchestratorAddress: `0x${string}`
-    let workflow: Workflow<typeof sdk.walletClient, typeof requestedModules>
+    let workflow: Workflow<typeof requestedModules, typeof sdk.walletClient>
 
     it('1. Should Deploy The Workflow and Mint The Orchestrator Token', async () => {
       const testToken = sdk.getModule({

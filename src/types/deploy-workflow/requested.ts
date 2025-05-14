@@ -7,14 +7,15 @@ import type { MendatoryModuleType, ModuleType, ModuleData } from '@/types'
 
 /**
  * @description The requested module options for moduleType and moduleName
- * @template MT - The module type
- * @template N - The module name
+ * @template TModuleType - The module type
+ * @template TModuleName - The module name
  * @returns The requested module option
  */
 export type RequestedModule<
-  MT extends ModuleType = ModuleType,
-  N extends GetModuleNameByType<MT> = GetModuleNameByType<MT>,
-> = N
+  TModuleType extends ModuleType = ModuleType,
+  TModuleName extends
+    GetModuleNameByType<TModuleType> = GetModuleNameByType<TModuleType>,
+> = TModuleName
 
 /**
  * @description The requested mandatory module options for deployment
@@ -26,7 +27,6 @@ export type RequestedMandatoryModule = RequestedModule<
 
 /**
  * @description The requested modules options for deployment
- * @template FT - The factory type
  * @returns The requested modules options
  */
 export type RequestedModules = Simplify<

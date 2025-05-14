@@ -17,31 +17,42 @@ import iterateMethods from './iterate-methods'
 
 /**
  * @description Constructs a Inverter module
+ * @template TModuleName - The module name
+ * @template TModuleData - The module data
+ * @template TWalletClient - The wallet client
  * @param params - The parameters for the module
  * @returns The module
  */
 export function getModule<
-  N extends MD extends ModuleData ? never : ModuleName,
-  W extends PopWalletClient | undefined = undefined,
-  MD extends ModuleData | undefined = undefined,
+  TModuleName extends TModuleData extends ModuleData ? never : ModuleName,
+  TWalletClient extends PopWalletClient | undefined = undefined,
+  TModuleData extends ModuleData | undefined = undefined,
 >({
   address,
   publicClient,
   walletClient,
   tagConfig,
   self,
-  moduleData,
+  moduleData: mD,
   ...rest
-}: GetModuleParams<N, W, MD>): GetModuleReturnType<N, W, MD> {
-  if (!moduleData && !(rest as any).name)
+}: GetModuleParams<
+  TModuleName,
+  TWalletClient,
+  TModuleData
+>): GetModuleReturnType<TModuleName, TWalletClient, TModuleData> {
+  if (!mD && !(rest as any).name)
     throw new Error('Module name is required when moduleData is not provided')
 
-  const mv = moduleData ?? getModuleData((rest as any).name)
+  const moduleData = mD ?? getModuleData((rest as any).name)
 
-  if (!mv) throw new Error(`Module ${(mv as any).name} was not found`)
+  if (!moduleData)
+    throw new Error(`Module ${(moduleData as any).name} was not found`)
 
-  type MV = MD extends undefined ? GetModuleData<N> : NonNullable<MD>
-  const name = mv.name as MV['name']
+  type MD = TModuleData extends undefined
+    ? GetModuleData<TModuleName>
+    : NonNullable<TModuleData>
+
+  const name = moduleData.name as MD['name']
 
   // If the walletClient is valid add walletAddress to the extras-
   // this is used to simulate transactions with the wallet address
@@ -49,9 +60,9 @@ export function getModule<
     tagConfig = { ...tagConfig, walletAddress: walletClient.account.address }
 
   // Get the moduletype, abi, description, and methodMetas from the module version
-  const moduleType = mv.moduleType as MV['moduleType']
-  const description = mv.description as MV['description']
-  const abi = mv.abi as MV['abi']
+  const moduleType = moduleData.moduleType as MD['moduleType']
+  const description = moduleData.description as MD['description']
+  const abi = moduleData.abi as MD['abi']
 
   const contract = getContract({
     abi: abi as Abi,
@@ -119,7 +130,9 @@ export function getModule<
     read,
     simulate,
     estimateGas,
-    write: write as W extends undefined ? never : NonNullable<typeof write>,
+    write: write as TWalletClient extends undefined
+      ? never
+      : NonNullable<typeof write>,
   }
 
   // Return the result object

@@ -14,22 +14,28 @@ import type {
 
 /**
  * @description Retrieve the inputs for a module
- * @template N - The module name
- * @template ON - The optional module name
+ * @template TModuleName - The module name
+ * @template TOptionalModuleName - The optional module name
  * @returns The module inputs
  */
 export type GetDeployWorkflowModuleInputs<
-  N extends ModuleName | ModuleData = ModuleName,
-  ON extends string | undefined = undefined,
-  T = N extends ModuleData
-    ? N['deploymentInputs'] extends NonNullable<N['deploymentInputs']>
-      ? N['deploymentInputs']['configData']
+  TModuleName extends ModuleName | ModuleData = ModuleName,
+  TOptionalModuleName extends string | undefined = undefined,
+  T = TModuleName extends ModuleData
+    ? TModuleName['deploymentInputs'] extends NonNullable<
+        TModuleName['deploymentInputs']
+      >
+      ? TModuleName['deploymentInputs']['configData']
       : never
-    : N extends ModuleName
-      ? GetModuleConfigData<N>
+    : TModuleName extends ModuleName
+      ? GetModuleConfigData<TModuleName>
       : never,
 > = {
-  name: ON extends string ? ON : N extends ModuleData ? N['name'] : N
+  name: TOptionalModuleName extends string
+    ? TOptionalModuleName
+    : TModuleName extends ModuleData
+      ? TModuleName['name']
+      : TModuleName
   inputs: T
 }
 
@@ -55,7 +61,6 @@ export type OptionalModules<
 /**
  * @description The deployment schema for a factory type
  * @template T - The requested modules
- * @template FT - The factory type
  * @returns The deployment schema
  */
 export type GetDeployWorkflowInputs<

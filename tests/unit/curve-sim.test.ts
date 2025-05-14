@@ -26,7 +26,7 @@ describe('#CURVE_SIM', () => {
     paymentProcessor: 'PP_Simple_v1',
   } as const satisfies RequestedModules
 
-  let workflow: Workflow<PopWalletClient, typeof requestedModules>
+  let workflow: Workflow<typeof requestedModules, PopWalletClient>
   let fundingToken: GetModuleReturnType<'ERC20Issuance_v1', PopWalletClient>
 
   beforeEach(async () => {

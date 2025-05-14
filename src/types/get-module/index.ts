@@ -14,38 +14,40 @@ import type {
 
 /**
  * @description The parameters for the getModule function
- * @template N - The module name
- * @template W - The wallet client
+ * @template TModuleName - The module name
+ * @template TWalletClient - The wallet client
+ * @template TModuleData - The module data
  * @returns The parameters for the getModule function
  */
 export type GetModuleParams<
-  N extends MD extends ModuleData ? never : ModuleName,
-  W extends PopWalletClient | undefined = undefined,
-  MD extends ModuleData | undefined = undefined,
+  TModuleName extends TModuleData extends ModuleData ? never : ModuleName,
+  TWalletClient extends PopWalletClient | undefined = undefined,
+  TModuleData extends ModuleData | undefined = undefined,
 > = {
   address: Hex
   publicClient: PopPublicClient
-  walletClient?: W
+  walletClient?: TWalletClient
   tagConfig?: TagConfig
-  moduleData?: MD
-  self?: Inverter<W>
-} & (MD extends undefined ? { name: N } : {})
+  moduleData?: TModuleData
+  self?: Inverter<TWalletClient>
+} & (TModuleData extends undefined ? { name: TModuleName } : {})
 
 /**
  * @description The return type for the getModule function
- * @template N - The module name
- * @template W - The wallet client
- * @template MD - Optional module data
- * @template R - Inferred data source (MD or GetModuleData<N>)
+ * @template TModuleName - The module name
+ * @template TWalletClient - The wallet client
+ * @template TModuleData - Optional module data
  * @returns The return type for the getModule function
  */
 export type GetModuleReturnType<
-  N extends MD extends ModuleData ? never : ModuleName,
-  W extends PopWalletClient | undefined = undefined,
-  MD extends ModuleData | undefined = undefined,
-  R extends GetModuleData<N> | NonNullable<MD> = MD extends undefined
-    ? GetModuleData<N>
-    : NonNullable<MD>,
+  TModuleName extends TModuleData extends ModuleData ? never : ModuleName,
+  TWalletClient extends PopWalletClient | undefined = undefined,
+  TModuleData extends ModuleData | undefined = undefined,
+  R extends
+    | GetModuleData<TModuleName>
+    | NonNullable<TModuleData> = TModuleData extends undefined
+    ? GetModuleData<TModuleName>
+    : NonNullable<TModuleData>,
 > = {
   name: R['name']
   address: Hex
@@ -62,7 +64,7 @@ export type GetModuleReturnType<
     ['nonpayable', 'payable'],
     'estimateGas'
   >
-  write: W extends undefined
+  write: TWalletClient extends undefined
     ? never
     : GetModuleIterateMethodsReturnType<
         R['abi'],

@@ -55,7 +55,7 @@ describe('#RUN_OPTIONS', () => {
 
   describe('#MODULE', () => {
     let orchestratorAddress: `0x${string}`
-    let workflow: Workflow<typeof sdk.walletClient, typeof requestedModules>
+    let workflow: Workflow<typeof requestedModules, typeof sdk.walletClient>
 
     it('1. Should Deploy The Workflow', async () => {
       orchestratorAddress = (

@@ -16,57 +16,67 @@ import type { Inverter } from '@/inverter'
 
 /**
  * @description The token module data type
- * @template W - The wallet client
- * @template A - The module type
+ * @template TModuleType - The module type
+ * @template TWalletClient - The wallet client
  */
 export type TokenModuleData<
-  W extends PopWalletClient | undefined,
-  A extends WorkflowToken,
+  TModuleName extends WorkflowToken,
+  TWalletClient extends PopWalletClient | undefined,
 > = {
   address: Hex
-  module: GetModuleReturnType<A, W>
+  module: GetModuleReturnType<TModuleName, TWalletClient>
   decimals: number
   symbol: string
 }
 
 /**
  * @description The conditional issuance token type
- * @template W - The wallet client
- * @template O - The requested modules
- * @template A - The module type
+ * @template TRequestedModules - The requested modules
+ * @template TIssuanceToken - The issuance token type
+ * @template TWalletClient - The wallet client
  */
 export type ConditionalIssuanceToken<
-  W extends PopWalletClient | undefined,
-  O extends MixedRequestedModules | undefined,
-  IT extends WorkflowIssuanceToken,
+  T extends MixedRequestedModules | undefined,
+  TIssuanceToken extends WorkflowIssuanceToken,
+  TWalletClient extends PopWalletClient | undefined,
 > =
-  O extends NonNullable<O>
+  T extends NonNullable<T>
     ? (
-        O['fundingManager'] extends ModuleData
-          ? FilterByPrefix<O['fundingManager']['name'], 'FM_BC'>
-          : FilterByPrefix<O['fundingManager'], 'FM_BC'>
+        T['fundingManager'] extends ModuleData
+          ? FilterByPrefix<T['fundingManager']['name'], 'FM_BC'>
+          : FilterByPrefix<T['fundingManager'], 'FM_BC'>
       ) extends never
-      ? TokenModuleData<W, IT> | undefined
-      : TokenModuleData<W, IT>
-    : TokenModuleData<W, IT> | undefined
+      ? TokenModuleData<TIssuanceToken, TWalletClient> | undefined
+      : TokenModuleData<TIssuanceToken, TWalletClient>
+    : TokenModuleData<TIssuanceToken, TWalletClient> | undefined
 
+/**
+ * @description The get workflow token params type
+ * @template T - The workflow token type
+ * @template TWalletClient - The wallet client
+ */
 export type GetWorkflowTokenParams<
-  T extends WorkflowToken,
-  W extends PopWalletClient | undefined = undefined,
+  TModuleName extends WorkflowToken,
+  TWalletClient extends PopWalletClient | undefined,
 > = {
-  tokenType: T
+  tokenType: TModuleName
   fundingManagerAddress: Hex
   publicClient: PopPublicClient
-  walletClient?: W
-  self?: Inverter<W>
+  walletClient?: TWalletClient
+  self?: Inverter<TWalletClient>
 }
 
+/**
+ * @description The get workflow token return type
+ * @template TModuleName - The module name
+ * @template TWalletClient - The wallet client
+ */
 export type GetWorkflowTokenReturnType<
-  T extends WorkflowToken,
-  W extends PopWalletClient | undefined = undefined,
+  TModuleName extends WorkflowToken,
+  TWalletClient extends PopWalletClient | undefined,
 > = {
   address: Hex
-  module: GetModuleReturnType<T, W>
+  module: GetModuleReturnType<TModuleName, TWalletClient>
   decimals: number
   symbol: string
 }

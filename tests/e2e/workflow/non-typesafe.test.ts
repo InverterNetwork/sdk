@@ -6,7 +6,7 @@ import { TEST_ERC20_MOCK_ADDRESS } from '../../helpers/constants'
 import type { Workflow } from '@/index'
 
 describe('#WORKFLOW_NON_TYPESAFE', () => {
-  let workflow: Workflow<typeof sdk.walletClient, undefined>
+  let workflow: Workflow<undefined, typeof sdk.walletClient>
   let orchestratorAddress: `0x${string}`
 
   it('1. Should Deploy The Workflow', async () => {

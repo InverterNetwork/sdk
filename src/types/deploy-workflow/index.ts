@@ -18,6 +18,7 @@ export * from './args'
 export * from './get-methods'
 
 /**
+ * @template T - The requested modules
  * @description Parameters for the deployWorkflow function
  */
 export type DeployWorkflowParams<T extends MixedRequestedModules> = {
@@ -28,6 +29,7 @@ export type DeployWorkflowParams<T extends MixedRequestedModules> = {
 }
 
 /**
+ * @template T - The requested modules
  * @description Return type for the deployWorkflow function
  */
 export type DeployWorkflowReturnType<T extends MixedRequestedModules> = {

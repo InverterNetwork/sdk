@@ -21,16 +21,18 @@ import getTokenResults from './token'
 
 /**
  * @description Get a Inverter workflow
- * @template O - The requested modules
- * @template W - The wallet client
+ * @template T - The requested modules
+ * @template TWalletClient - The wallet client
+ * @template TFundingToken - The funding token
+ * @template TIssuanceToken - The issuance token
  * @param params - The parameters for the gathering of a workflow
  * @returns The result of the workflow
  */
 export async function getWorkflow<
-  O extends MixedRequestedModules | undefined = undefined,
-  W extends PopWalletClient | undefined = undefined,
-  FT extends WorkflowToken | undefined = undefined,
-  IT extends WorkflowIssuanceToken | undefined = undefined,
+  T extends MixedRequestedModules | undefined = undefined,
+  TWalletClient extends PopWalletClient | undefined = undefined,
+  TFundingToken extends WorkflowToken | undefined = undefined,
+  TIssuanceToken extends WorkflowIssuanceToken | undefined = undefined,
 >({
   requestedModules,
   publicClient,
@@ -39,7 +41,9 @@ export async function getWorkflow<
   self,
   fundingTokenType = 'ERC20' as any,
   issuanceTokenType = 'ERC20Issuance_v1' as any,
-}: GetWorkflowParams<O, W, FT, IT>): Promise<Workflow<W, O, FT, IT>> {
+}: GetWorkflowParams<T, TWalletClient, TFundingToken, TIssuanceToken>): Promise<
+  Workflow<T, TWalletClient, TFundingToken, TIssuanceToken>
+> {
   if (!publicClient) throw new Error('Public client not initialized')
 
   // 1. initialize orchestrator
@@ -61,10 +65,14 @@ export async function getWorkflow<
     self,
   })
 
-  type IssuanceTokenName = IT extends undefined ? 'ERC20Issuance_v1' : IT
+  type IssuanceTokenName = TIssuanceToken extends undefined
+    ? 'ERC20Issuance_v1'
+    : TIssuanceToken
 
-  let issuanceToken: GetWorkflowTokenReturnType<IssuanceTokenName, W> | null =
-    null
+  let issuanceToken: GetWorkflowTokenReturnType<
+    IssuanceTokenName,
+    TWalletClient
+  > | null = null
 
   try {
     issuanceToken = await getTokenResults.getIssuanceToken({

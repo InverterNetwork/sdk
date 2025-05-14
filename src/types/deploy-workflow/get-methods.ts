@@ -36,6 +36,7 @@ export type DeployWorkflowEstimateGasReturnType = {
 }
 
 /**
+ * @template T - The requested modules
  * @description Parameters for the getMothods util of deployWorkflow function
  */
 export type GetMethodsParams<T extends MixedRequestedModules> = {
@@ -46,6 +47,7 @@ export type GetMethodsParams<T extends MixedRequestedModules> = {
 }
 
 /**
+ * @template T - The requested modules
  * @description Return type for the getMothods util of deployWorkflow function
  */
 export type GetMethodsReturnType<
