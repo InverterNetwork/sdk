@@ -14,22 +14,40 @@ import type {
 
 /**
  * @description The parameters for the getModule function
- * @template N - The module name
+ * @template T - The module name or module data
  * @template W - The wallet client
  * @returns The parameters for the getModule function
  */
 export type GetModuleParams<
-  N extends MD extends ModuleData ? never : ModuleName,
+  T extends ModuleName | ModuleData,
   W extends PopWalletClient | undefined = undefined,
-  MD extends ModuleData | undefined = undefined,
-> = {
-  address: Hex
-  publicClient: PopPublicClient
-  walletClient?: W
-  tagConfig?: TagConfig
-  moduleData?: MD
-  self?: Inverter<W>
-} & (MD extends undefined ? { name: N } : {})
+> = T extends ModuleName
+  ? {
+      name: T
+      moduleData?: never
+      address: Hex
+      publicClient: PopPublicClient
+      walletClient?: W
+      tagConfig?: TagConfig
+      self?: Inverter<W>
+    }
+  : T extends ModuleData
+    ? {
+        name?: never
+        moduleData: T
+        address: Hex
+        publicClient: PopPublicClient
+        walletClient?: W
+        tagConfig?: TagConfig
+        self?: Inverter<W>
+      }
+    : never
+
+type Data<T extends ModuleName | ModuleData> = T extends ModuleName
+  ? GetModuleData<T>
+  : T extends ModuleData
+    ? T
+    : never
 
 /**
  * @description The return type for the getModule function
@@ -40,32 +58,32 @@ export type GetModuleParams<
  * @returns The return type for the getModule function
  */
 export type GetModuleReturnType<
-  N extends MD extends ModuleData ? never : ModuleName,
+  T extends ModuleName | ModuleData,
   W extends PopWalletClient | undefined = undefined,
-  MD extends ModuleData | undefined = undefined,
-  R extends GetModuleData<N> | NonNullable<MD> = MD extends undefined
-    ? GetModuleData<N>
-    : NonNullable<MD>,
 > = {
-  name: R['name']
+  name: Data<T>['name']
   address: Hex
-  moduleType: R['moduleType']
-  description: R['description']
-  read: GetModuleIterateMethodsReturnType<R['abi'], ['view', 'pure'], 'read'>
+  moduleType: Data<T>['moduleType']
+  description: Data<T>['description']
+  read: GetModuleIterateMethodsReturnType<
+    Data<T>['abi'],
+    ['view', 'pure'],
+    'read'
+  >
   simulate: GetModuleIterateMethodsReturnType<
-    R['abi'],
+    Data<T>['abi'],
     ['nonpayable', 'payable'],
     'simulate'
   >
   estimateGas: GetModuleIterateMethodsReturnType<
-    R['abi'],
+    Data<T>['abi'],
     ['nonpayable', 'payable'],
     'estimateGas'
   >
   write: W extends undefined
     ? never
     : GetModuleIterateMethodsReturnType<
-        R['abi'],
+        Data<T>['abi'],
         ['nonpayable', 'payable'],
         'write'
       >

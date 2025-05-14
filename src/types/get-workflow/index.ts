@@ -84,7 +84,7 @@ type MandatoryResult<
 > = {
   [K in Exclude<WorkflowModuleType, 'optionalModule'>]: O extends NonNullable<O>
     ? O[K] extends ModuleData
-      ? GetModuleReturnType<never, W, O[K]>
+      ? GetModuleReturnType<O[K], W>
       : O[K] extends ModuleName
         ? GetModuleReturnType<O[K], W>
         : never
@@ -102,27 +102,22 @@ type OptionalResult<
 > = OmitNever<{
   optionalModule: O extends NonNullable<O>
     ? O['optionalModules'] extends NonNullable<O['optionalModules']>
-      ? {
+      ? // First, we handle the case where the module is a ModuleName
+        {
           [K in O['optionalModules'][number] extends ModuleName
             ? O['optionalModules'][number]
             : never]: GetModuleReturnType<K, W>
         } & {
+          // Then, we handle the case where the module is a ModuleData
           [K in O['optionalModules'][number] extends ModuleData
             ? O['optionalModules'][number]['name']
             : never]: GetModuleReturnType<
-            never,
-            W,
-            K extends ModuleName
-              ? undefined
-              : Extract<O['optionalModules'][number], { name: K }>
+            Extract<O['optionalModules'][number], { name: K }>,
+            W
           >
         }
       : never
-    : {
-        [K in NonNullable<
-          RequestedModules['optionalModules']
-        >[number]]: GetModuleReturnType<K, W>
-      }
+    : never
 }>
 
 /**

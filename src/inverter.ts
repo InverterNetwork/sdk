@@ -221,15 +221,12 @@ export class Inverter<W extends PopWalletClient | undefined = undefined> {
    * @param params - The parameters for the module
    * @returns The module
    */
-  getModule<
-    N extends MD extends ModuleData ? never : ModuleName,
-    MD extends ModuleData | undefined = undefined,
-  >(
+  getModule<T extends ModuleName | ModuleData>(
     params: Omit<
-      GetModuleParams<N, W, MD>,
+      GetModuleParams<T, W>,
       'walletClient' | 'publicClient' | 'self'
     >
-  ): GetModuleReturnType<N, W, MD> {
+  ): GetModuleReturnType<T, W> {
     return getModule({
       ...params,
       publicClient: this.publicClient,

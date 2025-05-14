@@ -49,7 +49,7 @@ export const getFundingToken = async <
       publicClient,
       walletClient,
       address,
-      name: tokenType,
+      name: tokenType as any,
       tagConfig: {
         decimals,
       },
@@ -103,7 +103,7 @@ export const getIssuanceToken = async <
       publicClient,
       walletClient,
       address,
-      name: tokenType,
+      name: tokenType as any,
       tagConfig: {
         decimals,
       },

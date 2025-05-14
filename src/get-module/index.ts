@@ -1,5 +1,5 @@
 // external dependencies
-import type { GetModuleData, ModuleName } from '@inverter-network/abis'
+import type { ModuleName } from '@inverter-network/abis'
 import { getModuleData } from '@inverter-network/abis'
 import { getContract } from 'viem'
 import type { Abi } from 'viem'
@@ -21,37 +21,29 @@ import iterateMethods from './iterate-methods'
  * @returns The module
  */
 export function getModule<
-  N extends MD extends ModuleData ? never : ModuleName,
+  T extends ModuleName | ModuleData,
   W extends PopWalletClient | undefined = undefined,
-  MD extends ModuleData | undefined = undefined,
 >({
   address,
   publicClient,
   walletClient,
   tagConfig,
   self,
-  moduleData,
-  ...rest
-}: GetModuleParams<N, W, MD>): GetModuleReturnType<N, W, MD> {
-  if (!moduleData && !(rest as any).name)
-    throw new Error('Module name is required when moduleData is not provided')
-
-  const mv = moduleData ?? getModuleData((rest as any).name)
-
-  if (!mv) throw new Error(`Module ${(mv as any).name} was not found`)
-
-  type MV = MD extends undefined ? GetModuleData<N> : NonNullable<MD>
-  const name = mv.name as MV['name']
+  moduleData: md,
+  name,
+}: GetModuleParams<T, W>): GetModuleReturnType<T, W> {
+  const moduleData = (() => {
+    if (typeof name === 'string') return getModuleData(name)
+    if (typeof md === 'object') return md
+    throw new Error('Module name or moduleData is required')
+  })()
 
   // If the walletClient is valid add walletAddress to the extras-
   // this is used to simulate transactions with the wallet address
   if (!!walletClient)
     tagConfig = { ...tagConfig, walletAddress: walletClient.account.address }
 
-  // Get the moduletype, abi, description, and methodMetas from the module version
-  const moduleType = mv.moduleType as MV['moduleType']
-  const description = mv.description as MV['description']
-  const abi = mv.abi as MV['abi']
+  const abi = moduleData.abi
 
   const contract = getContract({
     abi: abi as Abi,
@@ -112,10 +104,10 @@ export function getModule<
 
   // The result object, covers the whole module
   const result = {
-    name,
+    name: name!,
     address,
-    moduleType,
-    description,
+    moduleType: moduleData.moduleType,
+    description: moduleData.description,
     read,
     simulate,
     estimateGas,
@@ -123,5 +115,5 @@ export function getModule<
   }
 
   // Return the result object
-  return result
+  return result as any
 }
