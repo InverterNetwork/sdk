@@ -150,13 +150,15 @@ describe('#MULTICALL', () => {
         purchaseSingleCall,
       ]
 
-      const transactionHash = await sdk.multicall({
+      const result = await sdk.multicall({
         call,
         orchestratorAddress,
       })
 
-      console.log('Transaction hash:', transactionHash)
-      expect(transactionHash).toBeString()
+      console.log('Transaction hash:', result.transactionHash)
+
+      expect(result.statuses).toEqual(['success', 'success', 'success'])
+      expect(result.transactionHash).toBeString()
     })
   })
 })

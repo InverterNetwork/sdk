@@ -17,6 +17,7 @@ import type {
   ModuleData,
   GetModuleReturnType,
   MulticallParams,
+  MulticallReturnType,
 } from '@/types'
 
 // sdk utils
@@ -260,7 +261,9 @@ export class Inverter<
    * @param params.calls - The calls to execute
    * @returns The result of the multicall
    */
-  multicall(params: Omit<MulticallParams, 'publicClient' | 'walletClient'>) {
+  multicall(
+    params: Omit<MulticallParams, 'publicClient' | 'walletClient'>
+  ): Promise<MulticallReturnType> {
     if (!this.walletClient)
       throw new Error('Wallet client is required for multicall')
 

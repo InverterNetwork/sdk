@@ -26,3 +26,11 @@ export type MulticallParams = {
   orchestratorAddress: `0x${string}`
   call: Multicall
 }
+
+/**
+ * @description The result of a multicall operation
+ */
+export type MulticallReturnType = {
+  statuses: Array<'success' | 'fail'>
+  transactionHash: `0x${string}`
+}
