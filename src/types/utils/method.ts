@@ -7,7 +7,12 @@ import type { OmitNever, ExtendedParametersToPrimitiveType } from '@/index'
 /**
  * @description The kind of methods
  */
-export type MethodKind = 'read' | 'write' | 'simulate' | 'estimateGas'
+export type MethodKind =
+  | 'read'
+  | 'write'
+  | 'simulate'
+  | 'estimateGas'
+  | 'bytecode'
 
 /**
  * @description The kind of deploy methods

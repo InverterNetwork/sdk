@@ -1,6 +1,6 @@
 // external dependencies
 import type { ExtendedAbiParameter } from '@inverter-network/abis'
-import { formatEther } from 'viem'
+import { encodeFunctionData, formatEther } from 'viem'
 
 // sdk utils
 import {
@@ -91,6 +91,13 @@ export default function getRun<
         }
         return result
       },
+      // If the kind is bytecode, use the bytecode method
+      bytecode: () =>
+        encodeFunctionData({
+          abi: contract.abi,
+          functionName: name,
+          args: processedInputs,
+        }),
     }
 
     type Actions = typeof actions
@@ -147,6 +154,7 @@ export default function getRun<
         request: (res as AwaitedSimulationRes).request,
       },
       estimateGas: formattedRes,
+      bytecode: formattedRes,
     }[kind]
 
     // Apply options

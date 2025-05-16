@@ -49,6 +49,7 @@ export default function constructMethod<
   const outputsByKind = {
     read: outputs,
     simulate: outputs,
+    bytecode: writeOutputs,
     write: writeOutputs,
     estimateGas: estimateGasOutputs,
   }[kind] as unknown as Kind extends 'read' | 'simulate'

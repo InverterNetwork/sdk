@@ -64,6 +64,11 @@ export type GetModuleReturnType<
     ['nonpayable', 'payable'],
     'estimateGas'
   >
+  bytecode: GetModuleIterateMethodsReturnType<
+    R['abi'],
+    ['nonpayable', 'payable'],
+    'write'
+  >
   write: TWalletClient extends undefined
     ? never
     : GetModuleIterateMethodsReturnType<

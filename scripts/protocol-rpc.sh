@@ -128,6 +128,7 @@ deploy_protocol() {
 
     # Extract OrchestratorFactory and ERC20Mock addresses from deployment output
     ORCHESTRATOR_FACTORY_ADDRESS=$(echo "$deploy_output" | grep -oE 'OrchestratorFactory_v1 InverterBeaconProxy_v1: 0x[0-9a-fA-F]+' | awk '{print $3}')
+    TRANSACTION_FORWARDER_ADDRESS=$(echo "$deploy_output" | grep -oE 'TransactionForwarder_v1 InverterBeaconProxy_v1: 0x[0-9a-fA-F]+' | awk '{print $3}')
     ERC20_MOCK_ADDRESS=$(echo "$deploy_output" | grep -oE 'ERC20Mock iUSD: 0x[0-9a-fA-F]+' | awk '{print $3}')
     BANCOR_FORMULA_ADDRESS=$(echo "$deploy_output" | grep -oE 'BancorFormula Implementation: 0x[0-9a-fA-F]+' | awk '{print $3}')
     RESTRICTED_PIM_FACTORY_ADDRESS=$(echo "$deploy_output" | grep -oE 'Restricted_PIM_Factory_v1: 0x[0-9a-fA-F]+' | awk '{print $2}')
@@ -178,6 +179,7 @@ update_env() {
 
     update_env_var "TEST_PRIVATE_KEY" "$DEPLOYER_PRIVATE_KEY" "$ENV_FILE"
     update_env_var "TEST_ORCHESTRATOR_FACTORY_ADDRESS" "$ORCHESTRATOR_FACTORY_ADDRESS" "$ENV_FILE"
+    update_env_var "TEST_TRANSACTION_FORWARDER_ADDRESS" "$TRANSACTION_FORWARDER_ADDRESS" "$ENV_FILE"
     update_env_var "TEST_ERC20_MOCK_ADDRESS" "$ERC20_MOCK_ADDRESS" "$ENV_FILE"
     update_env_var "TEST_BANCOR_FORMULA_ADDRESS" "$BANCOR_FORMULA_ADDRESS" "$ENV_FILE"
     update_env_var "TEST_IMMUTABLE_PIM_FACTORY_ADDRESS" "$IMMUTABLE_PIM_FACTORY_ADDRESS" "$ENV_FILE"

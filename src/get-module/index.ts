@@ -107,6 +107,17 @@ export function getModule<
       self,
       walletClient,
     }),
+    // Prepare the bytecode functions
+    bytecode = iterateMethods({
+      publicClient,
+      abi,
+      type: ['nonpayable', 'payable'],
+      contract,
+      tagConfig,
+      kind: 'write',
+      self,
+      walletClient,
+    }),
     // Prepare the write functions if the walletClient is valid
     write = !!walletClient
       ? iterateMethods({
@@ -130,6 +141,7 @@ export function getModule<
     read,
     simulate,
     estimateGas,
+    bytecode,
     write: write as TWalletClient extends undefined
       ? never
       : NonNullable<typeof write>,
