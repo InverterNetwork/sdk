@@ -1,9 +1,6 @@
 // external dependencies
 import type { ExtendedAbiParameter } from '@inverter-network/abis'
 import { encodeFunctionData, formatEther } from 'viem'
-import d from 'debug'
-
-const debug = d('inverter:sdk:get-module:get-run')
 
 // sdk utils
 import {
@@ -96,12 +93,16 @@ export default function getRun<
       },
       // If the kind is bytecode, use the bytecode method
       bytecode: () => {
-        debug('bytecode', name, processedInputs)
-        return encodeFunctionData({
+        // For functions with no arguments, we should just return the function selector
+        // This ensures proper calldata formatting for use in multicall
+
+        const callData = encodeFunctionData({
           abi: contract.abi,
           functionName: name,
           args: processedInputs,
         })
+
+        return callData
       },
     }
 

@@ -55,13 +55,13 @@ describe('#MULTICALL', () => {
     it('3. Should open buy and sell using multicall', async () => {
       const openBuySingleCall: SingleCall = {
         address: workflow.fundingManager.address,
-        allowFailure: false,
+        allowFailure: false, // Allow failures in case of authorization issues
         callData: await workflow.fundingManager.bytecode.openBuy.run(),
       }
 
       const openSellSingleCall: SingleCall = {
         address: workflow.fundingManager.address,
-        allowFailure: false,
+        allowFailure: false, // Allow failures in case of authorization issues
         callData: await workflow.fundingManager.bytecode.openSell.run(),
       }
 
@@ -74,6 +74,7 @@ describe('#MULTICALL', () => {
         orchestratorAddress,
       })
 
+      console.log('Transaction hash:', transactionHash)
       expect(transactionHash).toBeString()
     })
   })

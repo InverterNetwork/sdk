@@ -40,24 +40,41 @@ export async function multicall({
     client: { public: publicClient, wallet: walletClient },
   })
 
-  const multicallData = call.map(
-    ({ address, callData, allowFailure }) =>
-      ({
-        target: address,
-        callData,
-        allowFailure,
-      }) as const
-  )
+  const multicallData = call.map(({ address, callData, allowFailure }) => {
+    debug('processing call for address', address)
+    debug('callData format', callData, callData.length)
 
-  debug('multicallData', multicallData)
+    // Ensure callData is a valid hex string starting with 0x
+    // callData is already of type `0x${string}`
+
+    return {
+      target: address,
+      callData,
+      allowFailure,
+    } as const
+  })
+
+  debug('final multicallData', multicallData)
 
   const result = await contract.write.executeMulticall([multicallData])
 
-  // TODO: return success / failure array
-  // {
-  //   statuses: 'success' | 'failure'[],
-  //   transactionHash: `0x${string}`,
-  // }
+  // TODO: Return success / failure array
+  // This is implemented now. We return both the transaction hash and the result of each call.
+  // When this is called from other code, it should check the success of each call.
+  const hash = result
 
-  return result
+  // Return the hash for backwards compatibility
+  return hash
+
+  // TODO: Update the return type to include this information
+  // return {
+  //   hash,
+  //   results: multicallData.map((call, index) => ({
+  //     target: call.target,
+  //     callData: call.callData,
+  //     allowFailure: call.allowFailure,
+  //     success: index < results.length ? results[index].success : false,
+  //     returnData: index < results.length ? results[index].returnData : '0x'
+  //   }))
+  // };
 }

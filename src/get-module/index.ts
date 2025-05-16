@@ -114,7 +114,7 @@ export function getModule<
       type: ['nonpayable', 'payable'],
       contract,
       tagConfig,
-      kind: 'write',
+      kind: 'bytecode',
       self,
       walletClient,
     }),

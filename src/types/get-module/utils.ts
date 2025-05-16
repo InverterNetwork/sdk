@@ -108,7 +108,7 @@ export type GetModuleIterateMethodsReturnType<
     TupleToUnion<TAbiStateMutability>
   >]: GetModuleConstructMethodReturnType<
     ExtractAbiFunction<TAbi, N>,
-    TMethodKind
+    TMethodKind extends 'bytecode' ? 'write' : TMethodKind
   >
 }>
 
