@@ -141,6 +141,14 @@ describe('#MULTICALL', () => {
           purchaseReturn,
         ]),
       }
+      const failedPurchaseSingleCall: SingleWriteCall = {
+        address: workflow.fundingManager.address,
+        allowFailure: true, // Allow failures in case of authorization issues
+        callData: await workflow.fundingManager.bytecode.buy.run([
+          String(Number(PURCHASE_AMOUNT) * 2),
+          '1',
+        ]),
+      }
 
       // Multicall
       // ------------------------------------------------------------------------
@@ -148,6 +156,7 @@ describe('#MULTICALL', () => {
         openBuySingleCall,
         openSellSingleCall,
         purchaseSingleCall,
+        failedPurchaseSingleCall,
       ]
 
       const result = await sdk.writeMulticall({
@@ -157,7 +166,7 @@ describe('#MULTICALL', () => {
 
       console.log('Transaction hash:', result.transactionHash)
 
-      expect(result.statuses).toEqual(['success', 'success', 'success'])
+      expect(result.statuses).toEqual(['success', 'success', 'success', 'fail'])
       expect(result.transactionHash).toBeString()
     })
   })
