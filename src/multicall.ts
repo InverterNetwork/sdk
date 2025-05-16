@@ -1,6 +1,10 @@
-import { getModule } from './get-module'
 import { getModuleData } from '@inverter-network/abis'
 import type { MulticallParams } from './types'
+import { getContract } from 'viem'
+
+import d from 'debug'
+
+const debug = d('inverter:sdk:multicall')
 
 /**
  * @description Make multiple write transactions in a single call;
@@ -24,20 +28,30 @@ export async function multicall({
     functionName: 'trustedForwarder',
   })
 
-  const transactionForwarder = getModule({
+  debug('transactionForwarderAddress', address)
+
+  const transactionForwarderModuleData = getModuleData(
+    'TransactionForwarder_v1'
+  )
+
+  const contract = getContract({
     address,
-    publicClient,
-    walletClient,
-    name: 'TransactionForwarder_v1',
+    abi: transactionForwarderModuleData.abi,
+    client: { public: publicClient, wallet: walletClient },
   })
 
-  const result = await transactionForwarder.write.executeMulticall.run(
-    call.map(({ address, callData, allowFailure }) => ({
-      target: address,
-      callData,
-      allowFailure,
-    }))
+  const multicallData = call.map(
+    ({ address, callData, allowFailure }) =>
+      ({
+        target: address,
+        callData,
+        allowFailure,
+      }) as const
   )
+
+  debug('multicallData', multicallData)
+
+  const result = await contract.write.executeMulticall([multicallData])
 
   // TODO: return success / failure array
   // {

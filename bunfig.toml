@@ -1,3 +1,6 @@
 [test]
 root = "./tests"
 preload = ["./scripts/pre-test.js"]
+env = { DEBUG = "*" }
+[define]
+"process.env.DEBUG" = "'*'"
