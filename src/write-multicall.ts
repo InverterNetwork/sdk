@@ -1,5 +1,5 @@
 import { getModuleData } from '@inverter-network/abis'
-import type { MulticallParams, MulticallReturnType } from './types'
+import type { WriteMulticallParams, WriteMulticallReturnType } from './types'
 import { getContract } from 'viem'
 
 import d from 'debug'
@@ -10,12 +10,12 @@ const debug = d('inverter:sdk:multicall')
  * @description Make multiple write transactions in a single call;
  * Note: The multicall can only be made by contract that implements TrustedForwarder_v1
  */
-export async function multicall({
+export async function writeMulticall({
   publicClient,
   walletClient,
   orchestratorAddress,
   call,
-}: MulticallParams): Promise<MulticallReturnType> {
+}: WriteMulticallParams): Promise<WriteMulticallReturnType> {
   if (call.length === 0) {
     throw new Error('Call array cannot be empty')
   }

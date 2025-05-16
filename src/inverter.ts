@@ -16,8 +16,8 @@ import type {
   MixedRequestedModules,
   ModuleData,
   GetModuleReturnType,
-  MulticallParams,
-  MulticallReturnType,
+  WriteMulticallParams,
+  WriteMulticallReturnType,
 } from '@/types'
 
 // sdk utils
@@ -26,7 +26,7 @@ import { deployWorkflow } from './deploy-workflow'
 import { getDeployWorkflowOptions } from './get-deploy-workflow-options'
 import { deploy } from './deploy'
 import { getModule } from './get-module'
-import { multicall } from './multicall'
+import { writeMulticall } from './write-multicall'
 
 /**
  * @description The Inverter class is the main class for interacting with the Inverter Network
@@ -261,13 +261,13 @@ export class Inverter<
    * @param params.calls - The calls to execute
    * @returns The result of the multicall
    */
-  multicall(
-    params: Omit<MulticallParams, 'publicClient' | 'walletClient'>
-  ): Promise<MulticallReturnType> {
+  writeMulticall(
+    params: Omit<WriteMulticallParams, 'publicClient' | 'walletClient'>
+  ): Promise<WriteMulticallReturnType> {
     if (!this.walletClient)
       throw new Error('Wallet client is required for multicall')
 
-    return multicall({
+    return writeMulticall({
       ...params,
       publicClient: this.publicClient,
       walletClient: this.walletClient,

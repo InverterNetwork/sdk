@@ -6,7 +6,7 @@ import type { PopPublicClient, PopWalletClient } from '..'
  * @param callData The data to call the contract with
  * @param allowFailure Whether the call is allowed to fail
  */
-export type SingleCall = {
+export type SingleWriteCall = {
   address: `0x${string}`
   callData: `0x${string}`
   allowFailure: boolean
@@ -15,22 +15,22 @@ export type SingleCall = {
 /**
  * @description Batch call to be executed
  */
-export type Multicall = SingleCall[]
+export type WriteMulticall = SingleWriteCall[]
 
 /**
  * @description The parameters for the batch call
  */
-export type MulticallParams = {
+export type WriteMulticallParams = {
   walletClient: PopWalletClient
   publicClient: PopPublicClient
   orchestratorAddress: `0x${string}`
-  call: Multicall
+  call: WriteMulticall
 }
 
 /**
  * @description The result of a multicall operation
  */
-export type MulticallReturnType = {
+export type WriteMulticallReturnType = {
   statuses: Array<'success' | 'fail'>
   transactionHash: `0x${string}`
 }

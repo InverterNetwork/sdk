@@ -3,9 +3,9 @@ import { GET_HUMAN_READABLE_UINT_MAX_SUPPLY, type Workflow } from '@/index'
 import type {
   GetDeployWorkflowArgs,
   GetModuleReturnType,
-  Multicall,
   RequestedModules,
-  SingleCall,
+  WriteMulticall,
+  SingleWriteCall,
 } from '@/types'
 import {
   FM_BC_Bancor_VirtualSupply_v1_ARGS,
@@ -113,7 +113,7 @@ describe('#MULTICALL', () => {
     it('4. Should: open buy & open sell & make a purchase using multicall', async () => {
       // Open buy
       // ------------------------------------------------------------------------
-      const openBuySingleCall: SingleCall = {
+      const openBuySingleCall: SingleWriteCall = {
         address: workflow.fundingManager.address,
         allowFailure: false, // Allow failures in case of authorization issues
         callData: await workflow.fundingManager.bytecode.openBuy.run(),
@@ -121,7 +121,7 @@ describe('#MULTICALL', () => {
 
       // Open sell
       // ------------------------------------------------------------------------
-      const openSellSingleCall: SingleCall = {
+      const openSellSingleCall: SingleWriteCall = {
         address: workflow.fundingManager.address,
         allowFailure: false, // Allow failures in case of authorization issues
         callData: await workflow.fundingManager.bytecode.openSell.run(),
@@ -133,7 +133,7 @@ describe('#MULTICALL', () => {
         await workflow.fundingManager.read.calculatePurchaseReturn.run(
           PURCHASE_AMOUNT
         )
-      const purchaseSingleCall: SingleCall = {
+      const purchaseSingleCall: SingleWriteCall = {
         address: workflow.fundingManager.address,
         allowFailure: false, // Allow failures in case of authorization issues
         callData: await workflow.fundingManager.bytecode.buy.run([
@@ -144,13 +144,13 @@ describe('#MULTICALL', () => {
 
       // Multicall
       // ------------------------------------------------------------------------
-      const call: Multicall = [
+      const call: WriteMulticall = [
         openBuySingleCall,
         openSellSingleCall,
         purchaseSingleCall,
       ]
 
-      const result = await sdk.multicall({
+      const result = await sdk.writeMulticall({
         call,
         orchestratorAddress,
       })
