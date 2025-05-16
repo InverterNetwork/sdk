@@ -16,6 +16,7 @@ import type {
   MixedRequestedModules,
   ModuleData,
   GetModuleReturnType,
+  MulticallParams,
 } from '@/types'
 
 // sdk utils
@@ -24,6 +25,7 @@ import { deployWorkflow } from './deploy-workflow'
 import { getDeployWorkflowOptions } from './get-deploy-workflow-options'
 import { deploy } from './deploy'
 import { getModule } from './get-module'
+import { multicall } from './multicall'
 
 /**
  * @description The Inverter class is the main class for interacting with the Inverter Network
@@ -250,5 +252,22 @@ export class Inverter<
       walletClient: this.walletClient,
       self: this,
     } as any)
+  }
+
+  /**
+   * @description Multicall - Execute multiple inverter module write methods in a single transaction
+   * @param params - The parameters for the multicall
+   * @param params.calls - The calls to execute
+   * @returns The result of the multicall
+   */
+  multicall(params: Omit<MulticallParams, 'publicClient' | 'walletClient'>) {
+    if (!this.walletClient)
+      throw new Error('Wallet client is required for multicall')
+
+    return multicall({
+      ...params,
+      publicClient: this.publicClient,
+      walletClient: this.walletClient,
+    })
   }
 }
