@@ -31,11 +31,9 @@ export type WriteMulticallParams = WriteMulticallCallBaseParams &
   (
     | {
         orchestratorAddress: `0x${string}`
-        trustedForwarderAddress?: never
       }
     | {
         trustedForwarderAddress: `0x${string}`
-        orchestratorAddress?: never
       }
   )
 

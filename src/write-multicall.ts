@@ -14,12 +14,11 @@ const debug = d('inverter:sdk:multicall')
 export async function writeMulticall({
   publicClient,
   walletClient,
-  orchestratorAddress,
-  trustedForwarderAddress,
   call,
   options = {
     confirmations: 1,
   },
+  ...rest
 }: WriteMulticallParams): Promise<WriteMulticallReturnType> {
   if (call.length === 0) {
     throw new Error('Call array cannot be empty')
@@ -33,12 +32,13 @@ export async function writeMulticall({
     const moduleData = getModuleData('Module_v1')
 
     const address =
-      trustedForwarderAddress ??
-      (await publicClient.readContract({
-        address: orchestratorAddress,
-        abi: moduleData.abi,
-        functionName: 'trustedForwarder',
-      }))
+      'trustedForwarderAddress' in rest
+        ? rest.trustedForwarderAddress
+        : await publicClient.readContract({
+            address: rest.orchestratorAddress,
+            abi: moduleData.abi,
+            functionName: 'trustedForwarder',
+          })
 
     debug('transactionForwarderAddress', address)
 
