@@ -17,7 +17,7 @@ export type MethodKind =
 /**
  * @description The kind of deploy methods
  */
-export type DeployMethodKind = 'write' | 'simulate' | 'estimateGas'
+export type DeployMethodKind = 'write' | 'simulate' | 'estimateGas' | 'bytecode'
 
 /**
  * @description The return type for the estimateGas method

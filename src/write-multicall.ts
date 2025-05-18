@@ -15,6 +15,7 @@ export async function writeMulticall({
   publicClient,
   walletClient,
   orchestratorAddress,
+  trustedForwarderAddress,
   call,
   options = {
     confirmations: 1,
@@ -31,11 +32,13 @@ export async function writeMulticall({
   try {
     const moduleData = getModuleData('Module_v1')
 
-    const address = await publicClient.readContract({
-      address: orchestratorAddress,
-      abi: moduleData.abi,
-      functionName: 'trustedForwarder',
-    })
+    const address =
+      trustedForwarderAddress ??
+      (await publicClient.readContract({
+        address: orchestratorAddress,
+        abi: moduleData.abi,
+        functionName: 'trustedForwarder',
+      }))
 
     debug('transactionForwarderAddress', address)
 

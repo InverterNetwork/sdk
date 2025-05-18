@@ -28,41 +28,65 @@ describe('#MULTICALL', () => {
     'ERC20Issuance_v1'
   >
 
-  beforeAll(async () => {
-    workflow = await setupWorkflowWithToken({
-      requestedModules,
-      issuanceTokenName: 'ERC20Issuance_v1',
-      issuanceTokenArgs: {
-        name: 'Test Issuance Token',
-        symbol: 'TIT',
-        decimals: 18,
-        maxSupply: GET_HUMAN_READABLE_UINT_MAX_SUPPLY(18),
+  const BASE_ARGS = {
+    requestedModules,
+    issuanceTokenName: 'ERC20Issuance_v1',
+    issuanceTokenArgs: {
+      name: 'Test Issuance Token',
+      symbol: 'TIT',
+      decimals: 18,
+      maxSupply: GET_HUMAN_READABLE_UINT_MAX_SUPPLY(18),
+      initialAdmin: deployer,
+    },
+    workflowArgs: (issuanceTokenAddress: `0x${string}`) => ({
+      authorizer: {
         initialAdmin: deployer,
       },
-      workflowArgs: (issuanceTokenAddress) => ({
-        authorizer: {
-          initialAdmin: deployer,
-        },
-        fundingManager: {
-          ...FM_BC_Bancor_VirtualSupply_v1_ARGS,
-          issuanceToken: issuanceTokenAddress,
-        },
-        orchestrator: GET_ORCHESTRATOR_ARGS(deployer),
-      }),
-    })
+      fundingManager: {
+        ...FM_BC_Bancor_VirtualSupply_v1_ARGS,
+        issuanceToken: issuanceTokenAddress,
+      },
+      orchestrator: GET_ORCHESTRATOR_ARGS(deployer),
+    }),
+  } as const
+
+  beforeAll(async () => {
+    workflow = await setupWorkflowWithToken(BASE_ARGS)
   })
 
   describe('#BONDING_CURVE', () => {
+    it('0. Should deploy a dummy workflow with just bytecode', async () => {
+      const TRUSTED_FORWARDER_ADDRESS = process.env
+        .TEST_TRANSACTION_FORWARDER_ADDRESS as `0x${string}` | undefined
+
+      if (!TRUSTED_FORWARDER_ADDRESS) {
+        throw new Error('TEST_TRANSACTION_FORWARDER_ADDRESS is not set')
+      }
+
+      const { bytecode, factoryAddress } = await setupWorkflowWithToken({
+        justBytecode: true,
+        ...BASE_ARGS,
+      })
+
+      expect(bytecode).toBeString()
+
+      const { transactionHash } = await sdk.writeMulticall({
+        trustedForwarderAddress: TRUSTED_FORWARDER_ADDRESS,
+        call: [
+          {
+            address: factoryAddress,
+            allowFailure: false,
+            callData: bytecode,
+          },
+        ],
+      })
+
+      expect(transactionHash).toBeString()
+    })
     it('1. Should Deploy The Workflow', async () => {
       expect(workflow.orchestrator.address).toContain('0x')
     })
-    it('2. Should Get The Workflow & set minter', async () => {
-      workflow = await sdk.getWorkflow({
-        orchestratorAddress: workflow.orchestrator.address,
-        requestedModules,
-        fundingTokenType: 'ERC20Issuance_v1',
-      })
-
+    it('2. Should set the minter as the funding manager', async () => {
       const transactionHash =
         await workflow.issuanceToken.module.write.setMinter.run([
           workflow.fundingManager.address,

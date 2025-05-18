@@ -36,6 +36,15 @@ export type DeployWorkflowEstimateGasReturnType = {
 }
 
 /**
+ * @description deployWorkflow functions bytecode return type
+ */
+export type DeployWorkflowBytecodeReturnType = {
+  bytecode: `0x${string}`
+  factoryAddress: `0x${string}`
+  orchestratorAddress: `0x${string}`
+}
+
+/**
  * @template T - The requested modules
  * @description Parameters for the getMothods util of deployWorkflow function
  */
@@ -60,4 +69,5 @@ export type GetMethodsReturnType<
   ) => Promise<DeployWorkflowWriteReturnType>
   simulate: (userArgs: Args) => Promise<DeployWorkflowSimulateReturnType>
   estimateGas: (userArgs: Args) => Promise<DeployWorkflowEstimateGasReturnType>
+  bytecode: (userArgs: Args) => Promise<DeployWorkflowBytecodeReturnType>
 }

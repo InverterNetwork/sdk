@@ -24,7 +24,7 @@ export async function deployWorkflow<T extends MixedRequestedModules>({
   const { publicClient, walletClient } = params
 
   // Get the methods from the Viem handler
-  const { run, simulate, estimateGas } = await getMethods({
+  const { run, simulate, estimateGas, bytecode } = await getMethods({
     requestedModules,
     publicClient,
     walletClient,
@@ -35,5 +35,6 @@ export async function deployWorkflow<T extends MixedRequestedModules>({
     run,
     simulate,
     estimateGas,
+    bytecode,
   }
 }

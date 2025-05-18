@@ -1,6 +1,8 @@
 import type {
+  DeployWorkflowBytecodeReturnType,
   GetDeployWorkflowArgs,
   GetDeployWorkflowModuleArg,
+  GetModuleReturnType,
   MixedRequestedModules,
   PopWalletClient,
   Workflow,
@@ -14,6 +16,7 @@ import { sdk } from 'tests/helpers'
 export type SetupWorkflowWithTokenParams<
   T extends MixedRequestedModules,
   IT extends WorkflowIssuanceToken,
+  B extends boolean = false,
 > = {
   issuanceTokenName: IT
   issuanceTokenArgs: GetDeployWorkflowModuleArg<IT>
@@ -21,25 +24,33 @@ export type SetupWorkflowWithTokenParams<
   workflowArgs: (
     issuanceTokenAddress: `0x${string}`
   ) => GetDeployWorkflowArgs<T>
+  justBytecode?: B
 }
 
 export type SetupWorkflowWithTokenReturnType<
   T extends MixedRequestedModules,
   IT extends WorkflowIssuanceToken,
-> = Workflow<T, PopWalletClient, 'ERC20Issuance_v1', IT>
+  B extends boolean = false,
+> = B extends true
+  ? DeployWorkflowBytecodeReturnType & {
+      issuanceToken: GetModuleReturnType<IT, PopWalletClient>
+    }
+  : Workflow<T, PopWalletClient, 'ERC20Issuance_v1', IT>
 
 // HANDLE WORKFLOW WITH ISSUANCE TOKEN DEPLOYMENT
 // -------------------------------------------------------------------------------------------------
 export async function setupWorkflowWithToken<
   T extends MixedRequestedModules,
   IT extends WorkflowIssuanceToken,
+  B extends boolean = false,
 >({
   issuanceTokenName,
   issuanceTokenArgs,
   requestedModules,
   workflowArgs,
-}: SetupWorkflowWithTokenParams<T, IT>): Promise<
-  SetupWorkflowWithTokenReturnType<T, IT>
+  justBytecode = false as B,
+}: SetupWorkflowWithTokenParams<T, IT, B>): Promise<
+  SetupWorkflowWithTokenReturnType<T, IT, B>
 > {
   const { contractAddress: issuanceTokenAddress } = await sdk.deploy({
     name: issuanceTokenName,
@@ -50,18 +61,36 @@ export async function setupWorkflowWithToken<
     throw new Error('Failed to deploy issuance token')
   }
 
-  const { run } = await sdk.deployWorkflow({
+  const { run, bytecode: handleBytecode } = await sdk.deployWorkflow({
     requestedModules,
   })
 
+  if (!!justBytecode) {
+    const bytecodeReturn = await handleBytecode(
+      workflowArgs(issuanceTokenAddress)
+    )
+    return {
+      ...bytecodeReturn,
+      issuanceToken: sdk.getModule({
+        name: issuanceTokenName,
+        address: issuanceTokenAddress,
+        tagConfig: {
+          // @ts-expect-error - ts doesn't know that issuanceTokenArgs is a module data
+          decimals: issuanceTokenArgs.decimals,
+          walletAddress: sdk.walletClient.account.address,
+        },
+      }),
+    } as any
+  }
+
   const { orchestratorAddress } = await run(workflowArgs(issuanceTokenAddress))
 
-  const workflow = await sdk.getWorkflow({
+  const workflow = (await sdk.getWorkflow({
     orchestratorAddress,
     requestedModules,
     issuanceTokenType: issuanceTokenName,
     fundingTokenType: 'ERC20Issuance_v1',
-  })
+  })) as any
 
   return workflow
 }

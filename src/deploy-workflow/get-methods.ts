@@ -1,6 +1,11 @@
 // external dependencies
 import { getModuleData } from '@inverter-network/abis'
-import { decodeEventLog, formatEther, parseAbiItem } from 'viem'
+import {
+  decodeEventLog,
+  encodeFunctionData,
+  formatEther,
+  parseAbiItem,
+} from 'viem'
 
 // sdk types
 import type {
@@ -33,6 +38,7 @@ export default async function getMethods<T extends MixedRequestedModules>(
     write,
     simulateWrite,
     estimateGas: esitmateGasOrg,
+    factoryAddress,
   } = await getViemMethods({
     abi,
     walletClient,
@@ -42,16 +48,16 @@ export default async function getMethods<T extends MixedRequestedModules>(
 
   type Args = GetDeployWorkflowArgs<T>
 
-  async function handleDeployment<K extends DeployMethodKind>(
-    kind: K,
+  async function handleDeployment<TMethodKind extends DeployMethodKind>(
+    kind: TMethodKind,
     userArgs: Args,
     options?: MethodOptions
   ) {
     try {
       const arr = await getArgs({ userArgs, kind, ...params })
 
-      const actions = {
-        simulate: async () => {
+      async function handleSimulate() {
+        {
           const res = await simulateWrite(arr, {
             account: walletClient.account.address,
           })
@@ -60,73 +66,96 @@ export default async function getMethods<T extends MixedRequestedModules>(
             result: orchestratorAddress,
             request: res.request,
           }
-        },
-        estimateGas: async () => {
-          const value = String(
-            await esitmateGasOrg(arr, {
-              account: walletClient.account.address,
-            })
-          )
-          const formatted = formatEther(BigInt(value))
-          return {
-            value,
-            formatted,
-          }
-        },
-        write: async () => {
-          let orchestratorAddress = '' as `0x${string}`
+        }
+      }
 
-          const transactionHash = await write(arr, {
-            ...(options?.nonce ? { nonce: options.nonce } : {}),
-          } as any)
-
-          const eventAbi = parseAbiItem(
-            'event OrchestratorCreated(uint256 indexed orchestratorId, address indexed orchestratorAddress)'
-          )
-
-          const receipt = await handleOptions.receipt({
-            hash: transactionHash,
-            options: {
-              ...options,
-              confirmations: options?.confirmations ?? 1,
-            },
-            publicClient,
+      async function handleEstimateGas() {
+        const value = String(
+          await esitmateGasOrg(arr, {
+            account: walletClient.account.address,
           })
+        )
+        const formatted = formatEther(BigInt(value))
+        return {
+          value,
+          formatted,
+        }
+      }
 
-          if (!receipt) {
-            throw new Error('Transaction receipt not found')
-          }
+      async function handleWrite() {
+        let orchestratorAddress = '' as `0x${string}`
 
-          const defaltFactoryAddress = await getFactoryAddress({
-            version: 'v1.0.0',
-            chainId: publicClient.chain!.id,
+        const transactionHash = await write(arr, {
+          ...(options?.nonce ? { nonce: options.nonce } : {}),
+        } as any)
+
+        const eventAbi = parseAbiItem(
+          'event OrchestratorCreated(uint256 indexed orchestratorId, address indexed orchestratorAddress)'
+        )
+
+        const receipt = await handleOptions.receipt({
+          hash: transactionHash,
+          options: {
+            ...options,
+            confirmations: options?.confirmations ?? 1,
+          },
+          publicClient,
+        })
+
+        if (!receipt) {
+          throw new Error('Transaction receipt not found')
+        }
+
+        const defaltFactoryAddress = await getFactoryAddress({
+          version: 'v1.0.0',
+          chainId: publicClient.chain!.id,
+        })
+
+        if (!defaltFactoryAddress) {
+          throw new Error('Default factory address not found')
+        }
+
+        const log = receipt.logs.find(
+          (log) =>
+            log.address.toLowerCase() === defaltFactoryAddress.toLowerCase()
+        )
+
+        if (log) {
+          const { args } = decodeEventLog({
+            abi: [eventAbi],
+            data: log.data,
+            topics: log.topics,
           })
+          orchestratorAddress = args.orchestratorAddress
+        } else {
+          throw new Error('Expected event not found in transaction receipt')
+        }
 
-          if (!defaltFactoryAddress) {
-            throw new Error('Default factory address not found')
-          }
+        return {
+          orchestratorAddress,
+          transactionHash,
+        }
+      }
 
-          const log = receipt.logs.find(
-            (log) =>
-              log.address.toLowerCase() === defaltFactoryAddress.toLowerCase()
-          )
+      async function handleBytecode() {
+        const { result: orchestratorAddress } = await handleSimulate()
+        const bytecode = encodeFunctionData({
+          abi: abi,
+          functionName: 'createOrchestrator',
+          args: arr as any,
+        })
+        return {
+          bytecode,
+          orchestratorAddress,
+          factoryAddress,
+        }
+      }
 
-          if (log) {
-            const { args } = decodeEventLog({
-              abi: [eventAbi],
-              data: log.data,
-              topics: log.topics,
-            })
-            orchestratorAddress = args.orchestratorAddress
-          } else {
-            throw new Error('Expected event not found in transaction receipt')
-          }
-
-          return {
-            orchestratorAddress,
-            transactionHash,
-          }
-        },
+      const actions = {
+        simulate: handleSimulate,
+        estimateGas: handleEstimateGas,
+        write: handleWrite,
+        bytecode: handleBytecode,
       }
 
       const selected = actions[kind]
@@ -145,5 +174,6 @@ export default async function getMethods<T extends MixedRequestedModules>(
       handleDeployment('write', userArgs, options),
     simulate: (userArgs: Args) => handleDeployment('simulate', userArgs),
     estimateGas: (userArgs: Args) => handleDeployment('estimateGas', userArgs),
+    bytecode: (userArgs: Args) => handleDeployment('bytecode', userArgs),
   }
 }

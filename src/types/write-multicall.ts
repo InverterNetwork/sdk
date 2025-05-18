@@ -17,16 +17,27 @@ export type SingleWriteCall = {
  */
 export type WriteMulticall = SingleWriteCall[]
 
-/**
- * @description The parameters for the batch call
- */
-export type WriteMulticallParams = {
+type WriteMulticallCallBaseParams = {
   walletClient: PopWalletClient
   publicClient: PopPublicClient
-  orchestratorAddress: `0x${string}`
   call: WriteMulticall
   options?: MethodOptions
 }
+
+/**
+ * @description The parameters for the batch call
+ */
+export type WriteMulticallParams = WriteMulticallCallBaseParams &
+  (
+    | {
+        orchestratorAddress: `0x${string}`
+        trustedForwarderAddress?: never
+      }
+    | {
+        trustedForwarderAddress: `0x${string}`
+        orchestratorAddress?: never
+      }
+  )
 
 /**
  * @description The result of a multicall operation

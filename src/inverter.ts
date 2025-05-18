@@ -27,6 +27,7 @@ import { getDeployWorkflowOptions } from './get-deploy-workflow-options'
 import { deploy } from './deploy'
 import { getModule } from './get-module'
 import { writeMulticall } from './write-multicall'
+import type { Except } from 'type-fest-4'
 
 /**
  * @description The Inverter class is the main class for interacting with the Inverter Network
@@ -262,7 +263,7 @@ export class Inverter<
    * @returns The result of the multicall
    */
   writeMulticall(
-    params: Omit<WriteMulticallParams, 'publicClient' | 'walletClient'>
+    params: Except<WriteMulticallParams, 'publicClient' | 'walletClient'>
   ): Promise<WriteMulticallReturnType> {
     if (!this.walletClient)
       throw new Error('Wallet client is required for multicall')
