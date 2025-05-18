@@ -41,10 +41,7 @@ export type ModuleArgs = {
  * @description Constructed arguments type for the deployment
  */
 export type ConstructedArgs = {
-  orchestrator: {
-    independentUpdates: boolean
-    independentUpdateAdmin: `0x${string}`
-  }
+  orchestrator: NonNullable<OrchestratorArgs>
   fundingManager: ModuleArgs
   authorizer: ModuleArgs
   paymentProcessor: ModuleArgs
