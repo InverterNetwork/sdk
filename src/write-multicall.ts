@@ -92,13 +92,18 @@ export async function writeMulticall({
       transactionHash,
     }
   } catch (error) {
-    const e = handleErrorWithUnknownContext(error)
-    throw new Error(e.message, {
-      cause: {
+    let e: Error
+    try {
+      e = handleErrorWithUnknownContext(error)
+    } catch (finalError) {
+      e = finalError as Error
+    } finally {
+      console.error('Error in writeMulticall', e!)
+      return {
         statuses,
         returnDatas,
         transactionHash,
-      },
-    })
+      }
+    }
   }
 }

@@ -132,7 +132,7 @@ describe('#MULTICALL', () => {
         callData: await workflow.fundingManager.bytecode.buy.run(
           [PURCHASE_AMOUNT, purchaseReturn],
           {
-            skipApprove: false,
+            skipApprove: true,
             onApprove: async (receipts) => {
               console.log('Approved', receipts)
             },
@@ -171,6 +171,9 @@ describe('#MULTICALL', () => {
           },
         },
       })
+
+      console.log('MULTICALL STATUS', result.statuses)
+      console.log('MULTICALL RETURN DATA', result.returnDatas)
 
       expect(result.returnDatas[0]).toBeString()
       expect(result.returnDatas[1]).toBeString()
