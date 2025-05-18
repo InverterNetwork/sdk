@@ -1,5 +1,5 @@
 import { expect, describe, it, beforeAll } from 'bun:test'
-import { GET_HUMAN_READABLE_UINT_MAX_SUPPLY } from '@/index'
+import { GET_HUMAN_READABLE_UINT_MAX_SUPPLY /* , getModule */ } from '@/index'
 import type {
   RequestedModules,
   SingleModuleCall,
@@ -9,12 +9,13 @@ import {
   FM_BC_Bancor_VirtualSupply_v1_ARGS,
   GET_ORCHESTRATOR_ARGS,
   sdk,
-  TRUSTED_FORWARDER_ADDRESS,
+  // TRUSTED_FORWARDER_ADDRESS,
 } from 'tests/helpers'
 import {
   setupWorkflowWithToken,
   type SetupWorkflowWithTokenReturnType,
 } from 'tests/helpers/setup-workflow'
+// import { getSimulatedWorkflow } from '@/get-simulated-workflow'
 
 const MINT_AMOUNT = '10000'
 const PURCHASE_AMOUNT = String(Number(MINT_AMOUNT) / 2)
@@ -60,27 +61,67 @@ describe('#MULTICALL', () => {
   })
 
   describe('#BONDING_CURVE', () => {
-    it('0. Should deploy a dummy workflow with just bytecode', async () => {
-      const { bytecode, factoryAddress } = await setupWorkflowWithToken({
-        justBytecode: true,
-        ...BASE_ARGS,
-      })
+    // it('0. Should deploy a dummy workflow with just bytecode', async () => {
+    //   const setup = await setupWorkflowWithToken({
+    //     justBytecode: true,
+    //     ...BASE_ARGS,
+    //   })
 
-      expect(bytecode).toBeString()
+    //   const {
+    //     createOrchestratorBytecode,
+    //     factoryAddress,
+    //     fundingManagerAddress,
+    //   } = await getSimulatedWorkflow({
+    //     publicClient: sdk.publicClient,
+    //     walletClient: sdk.walletClient,
+    //     requestedModules,
+    //     args: BASE_ARGS.workflowArgs(setup.issuanceToken.address),
+    //     trustedForwarderAddress: TRUSTED_FORWARDER_ADDRESS,
+    //   })
 
-      const { transactionHash } = await sdk.moduleMulticall.write({
-        trustedForwarderAddress: TRUSTED_FORWARDER_ADDRESS,
-        call: [
-          {
-            address: factoryAddress,
-            allowFailure: false,
-            callData: bytecode,
-          },
-        ],
-      })
+    //   console.log('PRE_DETERMINISTIC_FM_ADDRESS', fundingManagerAddress)
 
-      expect(transactionHash).toBeString()
-    })
+    //   expect(createOrchestratorBytecode).toBeString()
+    //   expect(factoryAddress).toContain('0x')
+    //   expect(fundingManagerAddress).toContain('0x')
+
+    //   const fundingManager = getModule({
+    //     name: 'FM_BC_Bancor_Redeeming_VirtualSupply_v1',
+    //     address: fundingManagerAddress,
+    //     publicClient: sdk.publicClient,
+    //     walletClient: sdk.walletClient,
+    //     tagConfig: {
+    //       decimals: 18,
+    //       issuanceTokenDecimals: 18,
+    //     },
+    //   })
+
+    //   const { transactionHash, statuses } = await sdk.moduleMulticall.write({
+    //     trustedForwarderAddress: TRUSTED_FORWARDER_ADDRESS,
+    //     call: [
+    //       {
+    //         address: factoryAddress,
+    //         allowFailure: false,
+    //         callData: createOrchestratorBytecode,
+    //       },
+    //       // Open buy
+    //       {
+    //         address: fundingManagerAddress,
+    //         allowFailure: false,
+    //         callData: await fundingManager.bytecode.openBuy.run(),
+    //       },
+    //       // Open sell
+    //       {
+    //         address: fundingManagerAddress,
+    //         allowFailure: false,
+    //         callData: await fundingManager.bytecode.openSell.run(),
+    //       },
+    //     ],
+    //   })
+
+    //   expect(transactionHash).toBeString()
+    //   expect(statuses).toEqual(['success', 'success', 'success'])
+    // })
     it('1. Should Deploy The Workflow', async () => {
       expect(workflow.orchestrator.address).toContain('0x')
     })

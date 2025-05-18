@@ -5,6 +5,7 @@ import type { PublicClient, SimulateContractReturnType } from 'viem'
 import type { Inverter } from '@/inverter'
 
 import type {
+  ConstructedArgsArray,
   GetDeployWorkflowArgs,
   MethodOptions,
   MixedRequestedModules,
@@ -39,6 +40,7 @@ export type DeployWorkflowEstimateGasReturnType = {
  * @description deployWorkflow functions bytecode return type
  */
 export type DeployWorkflowBytecodeReturnType = {
+  rawArgs: ConstructedArgsArray
   bytecode: `0x${string}`
   factoryAddress: `0x${string}`
   orchestratorAddress: `0x${string}`

@@ -4,6 +4,7 @@
 export type Metadata = {
   majorVersion: bigint
   minorVersion: bigint
+  patchVersion: bigint
   url: string
   title: string
 }
@@ -40,12 +41,23 @@ export type ModuleArgs = {
  * @description Constructed arguments type for the deployment
  */
 export type ConstructedArgs = {
-  orchestrator: NonNullable<OrchestratorArgs>
+  orchestrator: {
+    independentUpdates: boolean
+    independentUpdateAdmin: `0x${string}`
+  }
   fundingManager: ModuleArgs
   authorizer: ModuleArgs
   paymentProcessor: ModuleArgs
   optionalModules: ModuleArgs[]
 }
+
+export type ConstructedArgsArray = readonly [
+  NonNullable<OrchestratorArgs>,
+  ModuleArgs,
+  ModuleArgs,
+  ModuleArgs,
+  readonly ModuleArgs[],
+]
 
 /**
  * @description User module argument type for the deployment

@@ -145,6 +145,7 @@ export default async function getMethods<T extends MixedRequestedModules>(
           args: arr as any,
         })
         return {
+          rawArgs: arr,
           bytecode,
           orchestratorAddress,
           factoryAddress,
