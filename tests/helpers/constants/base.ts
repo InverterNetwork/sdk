@@ -21,6 +21,9 @@ export const TEST_BANCOR_FORMULA_ADDRESS = process.env
 // migrator payment router address
 export const TEST_UNISWAP_V2_ADAPTER_ADDRESS = process.env
   .TEST_UNISWAP_V2_ADAPTER_ADDRESS as `0x${string}`
+// trusted forwarder address
+export const TRUSTED_FORWARDER_ADDRESS = process.env
+  .TRUSTED_FORWARDER_ADDRESS as `0x${string}`
 // Uint Max Supply
 export const UINT_MAX_SUPPLY =
   115792089237316195423570985008687907853269984665640564039457584007913129639935n

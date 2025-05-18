@@ -5,6 +5,7 @@ import {
   FM_BC_Bancor_VirtualSupply_v1_ARGS,
   GET_ORCHESTRATOR_ARGS,
   sdk,
+  TRUSTED_FORWARDER_ADDRESS,
 } from 'tests/helpers'
 import {
   setupWorkflowWithToken,
@@ -56,13 +57,6 @@ describe('#MULTICALL', () => {
 
   describe('#BONDING_CURVE', () => {
     it('0. Should deploy a dummy workflow with just bytecode', async () => {
-      const TRUSTED_FORWARDER_ADDRESS = process.env
-        .TEST_TRANSACTION_FORWARDER_ADDRESS as `0x${string}` | undefined
-
-      if (!TRUSTED_FORWARDER_ADDRESS) {
-        throw new Error('TEST_TRANSACTION_FORWARDER_ADDRESS is not set')
-      }
-
       const { bytecode, factoryAddress } = await setupWorkflowWithToken({
         justBytecode: true,
         ...BASE_ARGS,
