@@ -49,6 +49,7 @@ export type GetModuleReturnType<
     ? GetModuleData<TModuleName>
     : NonNullable<TModuleData>,
 > = {
+  abi: R['abi']
   name: R['name']
   address: Hex
   moduleType: R['moduleType']
@@ -66,7 +67,7 @@ export type GetModuleReturnType<
   >
   bytecode: GetModuleIterateMethodsReturnType<
     R['abi'],
-    ['nonpayable', 'payable'],
+    ['nonpayable', 'payable', 'pure', 'view'],
     'write'
   >
   write: TWalletClient extends undefined

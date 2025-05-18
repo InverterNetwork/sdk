@@ -10,7 +10,7 @@ export * from './deploy'
 export * from './format-outputs'
 export * from './process-inputs'
 export * from './tag-processor'
-export * from './write-multicall'
+export * from './module-multicall'
 
 export type {
   ExtendedAbiParameter,

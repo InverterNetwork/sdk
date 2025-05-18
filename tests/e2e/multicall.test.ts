@@ -1,6 +1,10 @@
 import { expect, describe, it, beforeAll } from 'bun:test'
 import { GET_HUMAN_READABLE_UINT_MAX_SUPPLY } from '@/index'
-import type { RequestedModules, WriteMulticall, SingleWriteCall } from '@/types'
+import type {
+  RequestedModules,
+  SingleModuleCall,
+  ModuleMulticallCall,
+} from '@/types'
 import {
   FM_BC_Bancor_VirtualSupply_v1_ARGS,
   GET_ORCHESTRATOR_ARGS,
@@ -64,7 +68,7 @@ describe('#MULTICALL', () => {
 
       expect(bytecode).toBeString()
 
-      const { transactionHash } = await sdk.writeMulticall({
+      const { transactionHash } = await sdk.moduleMulticall.write({
         trustedForwarderAddress: TRUSTED_FORWARDER_ADDRESS,
         call: [
           {
@@ -97,7 +101,7 @@ describe('#MULTICALL', () => {
     it('4. Should: open buy & open sell & make a purchase using multicall', async () => {
       // Open buy
       // ------------------------------------------------------------------------
-      const openBuySingleCall: SingleWriteCall = {
+      const openBuySingleCall: SingleModuleCall = {
         address: workflow.fundingManager.address,
         allowFailure: false, // Allow failures in case of authorization issues
         callData: await workflow.fundingManager.bytecode.openBuy.run(),
@@ -105,7 +109,7 @@ describe('#MULTICALL', () => {
 
       // Open sell
       // ------------------------------------------------------------------------
-      const openSellSingleCall: SingleWriteCall = {
+      const openSellSingleCall: SingleModuleCall = {
         address: workflow.fundingManager.address,
         allowFailure: false, // Allow failures in case of authorization issues
         callData: await workflow.fundingManager.bytecode.openSell.run(),
@@ -117,7 +121,7 @@ describe('#MULTICALL', () => {
         await workflow.fundingManager.read.calculatePurchaseReturn.run(
           PURCHASE_AMOUNT
         )
-      const purchaseSingleCall: SingleWriteCall = {
+      const purchaseSingleCall: SingleModuleCall = {
         address: workflow.fundingManager.address,
         allowFailure: false, // Allow failures in case of authorization issues
         callData: await workflow.fundingManager.bytecode.buy.run(
@@ -130,7 +134,7 @@ describe('#MULTICALL', () => {
           }
         ),
       }
-      const failedPurchaseSingleCall: SingleWriteCall = {
+      const failedPurchaseSingleCall: SingleModuleCall = {
         address: workflow.fundingManager.address,
         allowFailure: true, // Allow failures in case of authorization issues
         callData: await workflow.fundingManager.bytecode.buy.run(
@@ -143,14 +147,14 @@ describe('#MULTICALL', () => {
 
       // Multicall
       // ------------------------------------------------------------------------
-      const call: WriteMulticall = [
+      const call: ModuleMulticallCall = [
         openBuySingleCall,
         openSellSingleCall,
         purchaseSingleCall,
         failedPurchaseSingleCall,
       ]
 
-      const result = await sdk.writeMulticall({
+      const result = await sdk.moduleMulticall.write({
         call,
         orchestratorAddress: workflow.orchestrator.address,
         options: {

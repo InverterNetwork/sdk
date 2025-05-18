@@ -111,7 +111,7 @@ export function getModule<
     bytecode = iterateMethods({
       publicClient,
       abi,
-      type: ['nonpayable', 'payable'],
+      type: ['nonpayable', 'payable', 'pure', 'view'],
       contract,
       tagConfig,
       kind: 'bytecode',
@@ -134,6 +134,7 @@ export function getModule<
 
   // The result object, covers the whole module
   const result = {
+    abi,
     name,
     address,
     moduleType,

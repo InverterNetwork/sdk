@@ -6,7 +6,7 @@ import type { MethodOptions, PopPublicClient, PopWalletClient } from '..'
  * @param callData The data to call the contract with
  * @param allowFailure Whether the call is allowed to fail
  */
-export type SingleWriteCall = {
+export type SingleModuleCall = {
   address: `0x${string}`
   callData: `0x${string}`
   allowFailure: boolean
@@ -15,19 +15,19 @@ export type SingleWriteCall = {
 /**
  * @description Batch call to be executed
  */
-export type WriteMulticall = SingleWriteCall[]
+export type ModuleMulticallCall = SingleModuleCall[]
 
-type WriteMulticallCallBaseParams = {
+type ModuleMulticallCallBaseParams = {
   walletClient: PopWalletClient
   publicClient: PopPublicClient
-  call: WriteMulticall
+  call: ModuleMulticallCall
   options?: MethodOptions
 }
 
 /**
  * @description The parameters for the batch call
  */
-export type WriteMulticallParams = WriteMulticallCallBaseParams &
+export type ModuleMulticallParams = ModuleMulticallCallBaseParams &
   (
     | {
         orchestratorAddress: `0x${string}`
@@ -43,8 +43,22 @@ export type WriteMulticallParams = WriteMulticallCallBaseParams &
  * @param returnDatas - The return data of the calls
  * @param transactionHash - The hash of the transaction
  */
-export type WriteMulticallReturnType = {
+export type ModuleMulticallWriteReturnType = {
   statuses: Array<'success' | 'fail'>
   returnDatas: `0x${string}`[]
   transactionHash: `0x${string}`
+}
+
+export type ModuleMulticallSimulateReturnType = {
+  statuses: Array<'success' | 'fail'>
+  returnDatas: `0x${string}`[]
+}
+
+export type ModuleMulticall = {
+  write: (
+    params: ModuleMulticallParams
+  ) => Promise<ModuleMulticallWriteReturnType>
+  simulate: (
+    params: ModuleMulticallParams
+  ) => Promise<ModuleMulticallSimulateReturnType>
 }

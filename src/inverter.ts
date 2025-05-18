@@ -16,8 +16,9 @@ import type {
   MixedRequestedModules,
   ModuleData,
   GetModuleReturnType,
-  WriteMulticallParams,
-  WriteMulticallReturnType,
+  ModuleMulticallParams,
+  ModuleMulticallWriteReturnType,
+  ModuleMulticallSimulateReturnType,
 } from '@/types'
 
 // sdk utils
@@ -26,7 +27,7 @@ import { deployWorkflow } from './deploy-workflow'
 import { getDeployWorkflowOptions } from './get-deploy-workflow-options'
 import { deploy } from './deploy'
 import { getModule } from './get-module'
-import { writeMulticall } from './write-multicall'
+import { moduleMulticall } from './module-multicall'
 import type { Except } from 'type-fest-4'
 
 /**
@@ -262,16 +263,33 @@ export class Inverter<
    * @param params.calls - The calls to execute
    * @returns The result of the multicall
    */
-  writeMulticall(
-    params: Except<WriteMulticallParams, 'publicClient' | 'walletClient'>
-  ): Promise<WriteMulticallReturnType> {
-    if (!this.walletClient)
-      throw new Error('Wallet client is required for multicall')
+  moduleMulticall: {
+    write: (
+      params: Except<ModuleMulticallParams, 'publicClient' | 'walletClient'>
+    ) => Promise<ModuleMulticallWriteReturnType>
+    simulate: (
+      params: Except<ModuleMulticallParams, 'publicClient' | 'walletClient'>
+    ) => Promise<ModuleMulticallSimulateReturnType>
+  } = {
+    write: async (params) => {
+      if (!this.walletClient)
+        throw new Error('Wallet client is required for multicall')
 
-    return writeMulticall({
-      ...params,
-      publicClient: this.publicClient,
-      walletClient: this.walletClient,
-    })
+      return await moduleMulticall.write({
+        ...params,
+        publicClient: this.publicClient,
+        walletClient: this.walletClient!,
+      })
+    },
+    simulate: async (params) => {
+      if (!this.walletClient)
+        throw new Error('Wallet client is required for multicall')
+
+      return await moduleMulticall.simulate({
+        ...params,
+        publicClient: this.publicClient,
+        walletClient: this.walletClient!,
+      })
+    },
   }
 }
