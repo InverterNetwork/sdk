@@ -132,7 +132,7 @@ describe('#MULTICALL', () => {
         callData: await workflow.fundingManager.bytecode.buy.run(
           [PURCHASE_AMOUNT, purchaseReturn],
           {
-            skipApprove: true,
+            skipApprove: false,
             onApprove: async (receipts) => {
               console.log('Approved', receipts)
             },
