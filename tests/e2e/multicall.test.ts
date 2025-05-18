@@ -97,18 +97,11 @@ describe('#MULTICALL', () => {
       ])
       expect(transactionHash).toBeString()
     })
-    it('3. Should mint & approve funding token to the deployer', async () => {
+    it('3. Should mint MINT_AMOUNT to funding token to the deployer', async () => {
       const transactionHash = await workflow.fundingToken.module.write.mint.run(
         [deployer, MINT_AMOUNT]
       )
       expect(transactionHash).toBeString()
-
-      const approveTransactionHash =
-        await workflow.fundingToken.module.write.approve.run([
-          workflow.fundingManager.address,
-          PURCHASE_AMOUNT,
-        ])
-      expect(approveTransactionHash).toBeString()
     })
     it('4. Should: open buy & open sell & make a purchase using multicall', async () => {
       // Open buy
@@ -136,18 +129,25 @@ describe('#MULTICALL', () => {
       const purchaseSingleCall: SingleWriteCall = {
         address: workflow.fundingManager.address,
         allowFailure: false, // Allow failures in case of authorization issues
-        callData: await workflow.fundingManager.bytecode.buy.run([
-          PURCHASE_AMOUNT,
-          purchaseReturn,
-        ]),
+        callData: await workflow.fundingManager.bytecode.buy.run(
+          [PURCHASE_AMOUNT, purchaseReturn],
+          {
+            skipApprove: false,
+            onApprove: async (receipts) => {
+              console.log('Approved', receipts)
+            },
+          }
+        ),
       }
       const failedPurchaseSingleCall: SingleWriteCall = {
         address: workflow.fundingManager.address,
         allowFailure: true, // Allow failures in case of authorization issues
-        callData: await workflow.fundingManager.bytecode.buy.run([
-          String(Number(PURCHASE_AMOUNT) * 2),
-          '1',
-        ]),
+        callData: await workflow.fundingManager.bytecode.buy.run(
+          [String(Number(PURCHASE_AMOUNT) * 2), '1'],
+          {
+            skipApprove: true,
+          }
+        ),
       }
 
       // Multicall
@@ -162,10 +162,20 @@ describe('#MULTICALL', () => {
       const result = await sdk.writeMulticall({
         call,
         orchestratorAddress,
+        options: {
+          onConfirmation: (receipt) => {
+            console.log('MULTICALL CONFIRMATION STATUS', receipt.status)
+          },
+          onHash: (hash) => {
+            console.log('MULTICALL TX_HASH', hash)
+          },
+        },
       })
 
-      console.log('Transaction hash:', result.transactionHash)
-
+      expect(result.returnDatas[0]).toBeString()
+      expect(result.returnDatas[1]).toBeString()
+      expect(result.returnDatas[2]).toBeString()
+      expect(result.returnDatas[3]).toBeString()
       expect(result.statuses).toEqual(['success', 'success', 'success', 'fail'])
       expect(result.transactionHash).toBeString()
     })

@@ -20,6 +20,10 @@ import type {
   MethodOptions,
 } from '@/types'
 
+import d from 'debug'
+
+const debug = d('inverter:get-module:get-run')
+
 /**
  * @description Constructs the run function for a given method
  * @param params - The parameters for the run function
@@ -28,7 +32,7 @@ import type {
 export default function getRun<
   ExtendedInputs extends readonly ExtendedAbiParameter[],
   ExtendedOutputs extends readonly ExtendedAbiParameter[],
-  Kind extends MethodKind,
+  TMethodKind extends MethodKind,
 >({
   publicClient,
   walletClient,
@@ -39,7 +43,7 @@ export default function getRun<
   tagConfig,
   kind,
   self,
-}: GetModuleGetRunParams<ExtendedInputs, ExtendedOutputs, Kind>) {
+}: GetModuleGetRunParams<ExtendedInputs, ExtendedOutputs, TMethodKind>) {
   /**
    * The run function of a kind of method
    * @param args The arguments of the method
@@ -48,7 +52,7 @@ export default function getRun<
   async function run(
     args: GetMethodParams<typeof extendedInputs>,
     options?: MethodOptions
-  ): Promise<GetMethodReturnType<ExtendedOutputs, Kind>> {
+  ): Promise<GetMethodReturnType<ExtendedOutputs, TMethodKind>> {
     // Parse the inputs, from user input to contract input
     const { processedInputs, requiredAllowances } = await processInputs({
       extendedInputs,
@@ -113,15 +117,19 @@ export default function getRun<
      * Resposne data based on the kind of method
      * catch and try decode the error
      */
-    const res: Awaited<ReturnType<Actions[Kind]>> = await (async () => {
+    const res: Awaited<ReturnType<Actions[TMethodKind]>> = await (async () => {
       try {
         // If the kind is not read, approve the required allowances
-        if (kind !== 'read') {
+        if (kind !== 'read' && options?.skipApprove !== true) {
+          debug('Approving required allowances', requiredAllowances)
+
           const transactionReceipts = await tagProcessor.approve({
             requiredAllowances,
             publicClient,
             walletClient,
           })
+
+          debug('Approve handler transaction receipts', transactionReceipts)
 
           if (transactionReceipts) options?.onApprove?.(transactionReceipts)
         }

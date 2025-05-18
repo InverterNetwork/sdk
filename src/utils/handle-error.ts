@@ -1,4 +1,4 @@
-import { getModuleData } from '@inverter-network/abis'
+import { getModuleData, data } from '@inverter-network/abis'
 import type { MixedRequestedModules } from '@/types'
 import { decodeErrorResult } from 'viem'
 import type { Abi } from 'viem'
@@ -115,6 +115,33 @@ export const handleError = (
 
     if (value.errorName) {
       errorName = value.errorName
+    }
+  } catch (e) {
+    // do nothing
+  }
+
+  if (!errorName) return error as Error
+
+  return new Error(extractContractCallBlockAsString(error?.message, errorName))
+}
+
+export const handleErrorWithUnknownContext = (error: any) => {
+  const allAbis = data.map((i) => i.abi)
+
+  let errorName: string | undefined
+
+  try {
+    for (const abi of allAbis) {
+      const errors = abi.filter((i) => i.type === 'error')
+
+      const value = decodeErrorResult({
+        abi: errors,
+        data: error.cause.signature,
+      })
+
+      if (value.errorName) {
+        errorName = value.errorName
+      }
     }
   } catch (e) {
     // do nothing

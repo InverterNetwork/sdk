@@ -25,7 +25,7 @@ import getRun from './get-run'
  */
 export default function constructMethod<
   TAbiFunction extends ExtendedAbiFunction,
-  Kind extends MethodKind,
+  TMethodKind extends MethodKind,
 >({
   abiFunction,
   contract,
@@ -36,8 +36,8 @@ export default function constructMethod<
   walletClient,
 }: GetModuleConstructMethodParams<
   TAbiFunction,
-  Kind
->): GetModuleConstructMethodReturnType<TAbiFunction, Kind> {
+  TMethodKind
+>): GetModuleConstructMethodReturnType<TAbiFunction, TMethodKind> {
   // Construct the data preserving the type properties of the abiFunction
   const {
     description,
@@ -52,9 +52,9 @@ export default function constructMethod<
     bytecode: writeOutputs,
     write: writeOutputs,
     estimateGas: estimateGasOutputs,
-  }[kind] as unknown as Kind extends 'read' | 'simulate'
+  }[kind] as unknown as TMethodKind extends 'read' | 'simulate'
     ? TAbiFunction['outputs']
-    : Kind extends 'write'
+    : TMethodKind extends 'write'
       ? WriteOutput
       : EstimateGasOutput
 

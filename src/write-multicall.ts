@@ -3,6 +3,7 @@ import type { WriteMulticallParams, WriteMulticallReturnType } from './types'
 import { getContract } from 'viem'
 
 import d from 'debug'
+import { handleErrorWithUnknownContext, handleOptions } from './utils'
 
 const debug = d('inverter:sdk:multicall')
 
@@ -15,10 +16,18 @@ export async function writeMulticall({
   walletClient,
   orchestratorAddress,
   call,
+  options = {
+    confirmations: 1,
+  },
 }: WriteMulticallParams): Promise<WriteMulticallReturnType> {
   if (call.length === 0) {
     throw new Error('Call array cannot be empty')
   }
+
+  let transactionHash: `0x${string}` = '0x'
+  let statuses = Array(call.length).fill('fail' as 'fail' | 'success')
+  let returnDatas = Array(call.length).fill('0x')
+
   try {
     const moduleData = getModuleData('Module_v1')
 
@@ -63,26 +72,33 @@ export async function writeMulticall({
       }
     )
 
-    const transactionHash = await contract.write.executeMulticall([
-      multicallData,
-    ])
+    transactionHash = await contract.write.executeMulticall([multicallData])
 
-    await publicClient.waitForTransactionReceipt({
+    await handleOptions.receipt({
       hash: transactionHash,
+      options,
+      publicClient,
     })
+
+    const flatResult = result.flat()
+
+    statuses = flatResult.map(({ success }) => (success ? 'success' : 'fail'))
+    returnDatas = flatResult.map(({ returnData }) => returnData)
 
     // Return the hash for backwards compatibility
     return {
-      statuses: result
-        .flat()
-        .map(({ success }) => (success ? 'success' : 'fail')),
+      statuses,
+      returnDatas,
       transactionHash,
     }
   } catch (error) {
-    console.error('Error in multicall', error)
-    return {
-      statuses: Array(call.length).fill('fail' as 'fail' | 'success'),
-      transactionHash: '0x',
-    }
+    const e = handleErrorWithUnknownContext(error)
+    throw new Error(e.message, {
+      cause: {
+        statuses,
+        returnDatas,
+        transactionHash,
+      },
+    })
   }
 }
