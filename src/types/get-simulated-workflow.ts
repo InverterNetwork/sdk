@@ -33,6 +33,7 @@ export type GetSimulatedWorkflowParams<
  * @param params.paymentProcessorAddress - The address of the payment processor
  */
 export type GetSimulatedWorkflowReturnType = {
+  trustedForwarderAddress: `0x${string}`
   orchestratorAddress: `0x${string}`
   logicModulesAddresses: `0x${string}`[]
   fundingManagerAddress: `0x${string}`

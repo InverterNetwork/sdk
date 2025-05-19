@@ -9,7 +9,6 @@ import {
   FM_BC_Bancor_VirtualSupply_v1_ARGS,
   GET_ORCHESTRATOR_ARGS,
   sdk,
-  // TRUSTED_FORWARDER_ADDRESS,
 } from 'tests/helpers'
 import {
   setupWorkflowWithToken,
@@ -136,7 +135,7 @@ describe('#MULTICALL', () => {
       const result = await sdk.moduleMulticall.write(
         {
           call,
-          orchestratorAddress: workflow.orchestrator.address,
+          trustedForwarderAddress: workflow.orchestrator.address,
         },
         {
           onConfirmation: (receipt) => {

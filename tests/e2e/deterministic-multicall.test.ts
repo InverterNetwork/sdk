@@ -9,7 +9,6 @@ import {
   FM_BC_Bancor_VirtualSupply_v1_ARGS,
   GET_ORCHESTRATOR_ARGS,
   sdk,
-  TRUSTED_FORWARDER_ADDRESS,
 } from 'tests/helpers'
 import {
   setupWorkflowWithToken,
@@ -69,7 +68,7 @@ describe('#DETERMINISTIC_MULTICALL', () => {
         ])
       expect(transactionHash).toBeString()
     })
-    it('3. Should mint MINT_AMOUNT to funding token to the deployer & approve the funding manager', async () => {
+    it('3. Should mint MINT_AMOUNT to funding token to the deployer', async () => {
       const transactionHash =
         await workflowBytecode.fundingToken.write.mint.run([
           deployer,
@@ -153,7 +152,7 @@ describe('#DETERMINISTIC_MULTICALL', () => {
       const result = await sdk.moduleMulticall.write(
         {
           call,
-          trustedForwarderAddress: TRUSTED_FORWARDER_ADDRESS,
+          trustedForwarderAddress: workflowBytecode.trustedForwarderAddress,
         },
         {
           onConfirmation: (receipt) => {

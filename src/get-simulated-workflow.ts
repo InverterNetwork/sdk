@@ -47,7 +47,6 @@ export async function getSimulatedWorkflow<
   T,
   TDeployWorkflowArgs
 >): Promise<GetSimulatedWorkflowReturnType> {
-  // TODO: Get trusted forwarder address from the orchestrator factory
   const { bytecode } = await deployWorkflow({
     requestedModules,
     publicClient,
@@ -145,6 +144,7 @@ export async function getSimulatedWorkflow<
   )
 
   const result = {
+    trustedForwarderAddress,
     orchestratorAddress: deployBytecode.orchestratorAddress,
     logicModulesAddresses: logicModules,
     fundingManagerAddress: fundingManager,
