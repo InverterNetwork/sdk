@@ -75,13 +75,7 @@ describe('#MULTICALL', () => {
           deployer,
           MINT_AMOUNT,
         ])
-      const approveTransactionHash =
-        await workflowBytecode.fundingToken.write.approve.run([
-          workflowBytecode.fundingManagerAddress,
-          MINT_AMOUNT,
-        ])
       expect(transactionHash).toBeString()
-      expect(approveTransactionHash).toBeString()
     })
     it('4. Should: open buy & open sell & make a purchase using multicall', async () => {
       const fundingManager = sdk.getModule({
@@ -128,7 +122,7 @@ describe('#MULTICALL', () => {
         callData: await fundingManager.bytecode.buy.run(
           [PURCHASE_AMOUNT, '1'],
           {
-            skipApprove: true,
+            skipApprove: false,
             onApprove: async (receipts) => {
               console.log('Approved', receipts)
             },
