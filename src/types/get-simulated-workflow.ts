@@ -35,7 +35,7 @@ export type GetSimulatedWorkflowParams<
 export type GetSimulatedWorkflowReturnType = {
   trustedForwarderAddress: `0x${string}`
   orchestratorAddress: `0x${string}`
-  logicModulesAddresses: `0x${string}`[]
+  logicModuleAddresses: `0x${string}`[]
   fundingManagerAddress: `0x${string}`
   authorizerAddress: `0x${string}`
   paymentProcessorAddress: `0x${string}`

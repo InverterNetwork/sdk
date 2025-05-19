@@ -30,7 +30,7 @@ describe('#SIMULATE_MULTICALL_WORKFLOW', () => {
     console.log(result)
 
     expect(result.orchestratorAddress).toBeDefined()
-    expect(result.logicModulesAddresses).toBeDefined()
+    expect(result.logicModuleAddresses).toBeDefined()
     expect(result.fundingManagerAddress).toBeDefined()
     expect(result.authorizerAddress).toBeDefined()
     expect(result.paymentProcessorAddress).toBeDefined()

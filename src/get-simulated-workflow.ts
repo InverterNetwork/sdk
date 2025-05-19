@@ -146,7 +146,7 @@ export async function getSimulatedWorkflow<
   const result = {
     trustedForwarderAddress,
     orchestratorAddress: deployBytecode.orchestratorAddress,
-    logicModulesAddresses: logicModules,
+    logicModuleAddresses: logicModules,
     fundingManagerAddress: fundingManager,
     authorizerAddress: authorizer,
     paymentProcessorAddress: paymentProcessor,
