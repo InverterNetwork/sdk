@@ -1,99 +1,127 @@
-// import { decodeFunctionResult } from 'viem'
-// import { deployWorkflow } from './deploy-workflow'
-// import { getModule } from './get-module'
-// import { moduleMulticall } from './module-multicall'
-// import type {
-//   GetDeployWorkflowArgs,
-//   MixedRequestedModules,
-//   PopWalletClient,
-//   PopPublicClient,
-// } from './types'
-// import { getModuleData } from '@inverter-network/abis'
+import { decodeFunctionResult } from 'viem'
+import { deployWorkflow } from '@/deploy-workflow'
+import { getModule } from '@/get-module'
+import { moduleMulticall } from '@/module-multicall'
+import type {
+  GetDeployWorkflowArgs,
+  MixedRequestedModules,
+  PopWalletClient,
+  PopPublicClient,
+} from '@/types'
 
-// export async function getSimulatedWorkflow<
-//   T extends MixedRequestedModules,
-//   TDeployWorkflowArgs extends GetDeployWorkflowArgs<T>,
-// >({
-//   trustedForwarderAddress,
-//   requestedModules,
-//   args,
-//   publicClient,
-//   walletClient,
-// }: {
-//   trustedForwarderAddress: `0x${string}`
-//   requestedModules: T
-//   args: TDeployWorkflowArgs
-//   publicClient: PopPublicClient
-//   walletClient: PopWalletClient
-// }) {
-//   const { bytecode } = await deployWorkflow({
-//     requestedModules,
-//     publicClient,
-//     walletClient,
-//   })
+export async function getSimulatedWorkflow<
+  T extends MixedRequestedModules,
+  TDeployWorkflowArgs extends GetDeployWorkflowArgs<T>,
+>({
+  trustedForwarderAddress,
+  requestedModules,
+  args,
+  publicClient,
+  walletClient,
+}: {
+  trustedForwarderAddress: `0x${string}`
+  requestedModules: T
+  args: TDeployWorkflowArgs
+  publicClient: PopPublicClient
+  walletClient: PopWalletClient
+}) {
+  const { bytecode } = await deployWorkflow({
+    requestedModules,
+    publicClient,
+    walletClient,
+  })
 
-//   const deployBytecode = await bytecode(args)
+  const deployBytecode = await bytecode(args)
 
-//   const orchestrator = getModule({
-//     name: 'Orchestrator_v1',
-//     address: deployBytecode.orchestratorAddress,
-//     publicClient,
-//     walletClient,
-//   })
+  const orchestrator = getModule({
+    name: 'Orchestrator_v1',
+    address: deployBytecode.orchestratorAddress,
+    publicClient,
+    walletClient,
+  })
 
-//   const multicallData = await publicClient.multicall({
-//     contracts: [
-//       {
-//         abi: getModuleData('OrchestratorFactory_v1').abi,
-//         address: deployBytecode.factoryAddress,
-//         functionName: 'createOrchestrator',
-//         args: deployBytecode.rawArgs,
-//       },
-//       {
-//         abi: orchestrator.abi,
-//         address: deployBytecode.orchestratorAddress,
-//         functionName: 'listModules',
-//       },
-//       {
-//         abi: orchestrator.abi,
-//         address: deployBytecode.orchestratorAddress,
-//         functionName: 'fundingManager',
-//       },
-//       {
-//         abi: orchestrator.abi,
-//         address: deployBytecode.orchestratorAddress,
-//         functionName: 'authorizer',
-//       },
-//       {
-//         abi: orchestrator.abi,
-//         address: deployBytecode.orchestratorAddress,
-//         functionName: 'paymentProcessor',
-//       },
-//     ],
-//   })
+  const listModulesBytecode = await orchestrator.bytecode.listModules.run()
+  const fundingManagerBytecode =
+    await orchestrator.bytecode.fundingManager.run()
+  const authorizerBytecode = await orchestrator.bytecode.authorizer.run()
+  const paymentProcessorBytecode =
+    await orchestrator.bytecode.paymentProcessor.run()
 
-//   console.log('MULTICALL_DATA', multicallData)
+  const {
+    returnDatas: [
+      ,
+      listModulesReturnData,
+      readFundingManagerReturnData,
+      readAuthorizerReturnData,
+      readPaymentProcessorReturnData,
+    ],
+  } = await moduleMulticall.simulate({
+    trustedForwarderAddress,
+    call: [
+      {
+        allowFailure: false,
+        address: deployBytecode.factoryAddress,
+        callData: deployBytecode.bytecode,
+      },
+      {
+        allowFailure: false,
+        address: deployBytecode.orchestratorAddress,
+        callData: listModulesBytecode,
+      },
+      {
+        allowFailure: false,
+        address: deployBytecode.orchestratorAddress,
+        callData: fundingManagerBytecode,
+      },
+      {
+        allowFailure: false,
+        address: deployBytecode.orchestratorAddress,
+        callData: authorizerBytecode,
+      },
+      {
+        allowFailure: false,
+        address: deployBytecode.orchestratorAddress,
+        callData: paymentProcessorBytecode,
+      },
+    ],
+    walletClient,
+    publicClient,
+  })
 
-//   const logicModules = multicallData[1].result?.filter(
-//     (module) =>
-//       ![
-//         multicallData[2].result,
-//         multicallData[3].result,
-//         multicallData[4].result,
-//       ].includes(module)
-//   )
+  const [listedModules, fundingManager, authorizer, paymentProcessor] = [
+    decodeFunctionResult({
+      abi: orchestrator.abi,
+      data: listModulesReturnData,
+      functionName: 'listModules',
+    }),
+    decodeFunctionResult({
+      abi: orchestrator.abi,
+      data: readFundingManagerReturnData,
+      functionName: 'fundingManager',
+    }),
+    decodeFunctionResult({
+      abi: orchestrator.abi,
+      data: readAuthorizerReturnData,
+      functionName: 'authorizer',
+    }),
+    decodeFunctionResult({
+      abi: orchestrator.abi,
+      data: readPaymentProcessorReturnData,
+      functionName: 'paymentProcessor',
+    }),
+  ]
 
-//   const result = {
-//     factoryAddress: deployBytecode.factoryAddress,
-//     createOrchestratorBytecode: deployBytecode.bytecode,
-//     orchestratorAddress: deployBytecode.orchestratorAddress,
-//     logicModuleAddresses: logicModules,
-//     fundingManagerAddress: multicallData[2].result,
-//     authorizerAddress: multicallData[3].result,
-//     paymentProcessorAddress: multicallData[4].result,
-//   }
+  const logicModules = listedModules.filter(
+    (module) => ![fundingManager, authorizer, paymentProcessor].includes(module)
+  )
 
-//   console.log('RESULT', result)
+  const result = {
+    orchestratorAddress: deployBytecode.orchestratorAddress,
+    logicModulesAddresses: logicModules,
+    fundingManagerAddress: fundingManager,
+    authorizerAddress: authorizer,
+    paymentProcessorAddress: paymentProcessor,
+  }
 
-//   return result
-// }
+  return result
+}

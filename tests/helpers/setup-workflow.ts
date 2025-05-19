@@ -1,3 +1,4 @@
+import { getSimulatedWorkflow } from '@/get-simulated-workflow'
 import type {
   DeployWorkflowBytecodeReturnType,
   GetDeployWorkflowArgs,
@@ -9,7 +10,11 @@ import type {
   WorkflowIssuanceToken,
 } from '@/types'
 
-import { sdk } from 'tests/helpers'
+import {
+  sdk,
+  TEST_ERC20_MOCK_ADDRESS,
+  TRUSTED_FORWARDER_ADDRESS,
+} from 'tests/helpers'
 
 // WORKFLOW WITH ISSUANCE TOKEN
 // -------------------------------------------------------------------------------------------------
@@ -32,9 +37,11 @@ export type SetupWorkflowWithTokenReturnType<
   IT extends WorkflowIssuanceToken,
   B extends boolean = false,
 > = B extends true
-  ? DeployWorkflowBytecodeReturnType & {
-      issuanceToken: GetModuleReturnType<IT, PopWalletClient>
-    }
+  ? DeployWorkflowBytecodeReturnType &
+      Awaited<ReturnType<typeof getSimulatedWorkflow>> & {
+        issuanceToken: GetModuleReturnType<IT, PopWalletClient>
+        fundingToken: GetModuleReturnType<'ERC20Issuance_v1', PopWalletClient>
+      }
   : Workflow<T, PopWalletClient, 'ERC20Issuance_v1', IT>
 
 // HANDLE WORKFLOW WITH ISSUANCE TOKEN DEPLOYMENT
@@ -69,14 +76,30 @@ export async function setupWorkflowWithToken<
     const bytecodeReturn = await handleBytecode(
       workflowArgs(issuanceTokenAddress)
     )
+    const simulatedWorkflow = await getSimulatedWorkflow({
+      requestedModules,
+      args: workflowArgs(issuanceTokenAddress),
+      publicClient: sdk.publicClient,
+      walletClient: sdk.walletClient,
+      trustedForwarderAddress: TRUSTED_FORWARDER_ADDRESS,
+    })
     return {
       ...bytecodeReturn,
+      ...simulatedWorkflow,
       issuanceToken: sdk.getModule({
         name: issuanceTokenName,
         address: issuanceTokenAddress,
         tagConfig: {
           // @ts-expect-error - ts doesn't know that issuanceTokenArgs is a module data
           decimals: issuanceTokenArgs.decimals,
+          walletAddress: sdk.walletClient.account.address,
+        },
+      }),
+      fundingToken: sdk.getModule({
+        name: 'ERC20Issuance_v1',
+        address: TEST_ERC20_MOCK_ADDRESS,
+        tagConfig: {
+          decimals: 18,
           walletAddress: sdk.walletClient.account.address,
         },
       }),

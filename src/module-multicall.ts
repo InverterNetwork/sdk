@@ -123,6 +123,8 @@ async function writeMulticallFnComponent({
       }
     )
 
+    debug('Multicall simulation result', simulateResult)
+
     // Execute the actual write transaction
     transactionHash = await contract.write.executeMulticall([multicallData], {
       account: walletClient?.account.address,
