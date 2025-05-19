@@ -8,6 +8,7 @@ import type { Inverter } from '@/inverter'
 // sdk types
 import type {
   EstimateGasOutput,
+  FormatGetTagCallbackParams,
   GetMethodParams,
   GetMethodReturnType,
   MethodKind,
@@ -153,4 +154,20 @@ export type GetModuleConstructMethodReturnType<
     TAbiFunction['outputs'],
     TMethodKind
   >
+  // If the method kind is bytecode, add the formatOutputs function
+  decodeResult: TMethodKind extends 'bytecode'
+    ? (res: any) => FormatBytecodeOutputsReturnType<TAbiFunction['outputs']>
+    : never
 }
+
+// FORMAT BYTECODE OUTPUTS
+// ----------------------------------------------------------------------------
+
+export type FormatBytecodeOutputsParams = FormatGetTagCallbackParams & {
+  res: `0x${string}`
+  functionName: string
+}
+
+export type FormatBytecodeOutputsReturnType<
+  TExtendedOutputs extends readonly ExtendedAbiParameter[],
+> = Promise<GetMethodReturnType<TExtendedOutputs, 'read'>>

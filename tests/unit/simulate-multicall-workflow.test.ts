@@ -12,7 +12,6 @@ import {
   sdk,
   TEST_ERC20_MOCK_ADDRESS,
 } from 'tests/helpers'
-import { decodeFunctionResult, formatUnits } from 'viem'
 
 describe('#SIMULATE_MULTICALL_WORKFLOW', () => {
   const deployer = sdk.walletClient.account.address
@@ -75,8 +74,6 @@ describe('#SIMULATE_MULTICALL_WORKFLOW', () => {
       args: args(issuanceToken.address),
     })
 
-    console.log('simulatedWorkflow', simulatedWorkflow)
-
     expect(simulatedWorkflow.orchestratorAddress).toBeDefined()
     expect(simulatedWorkflow.logicModuleAddresses).toBeDefined()
     expect(simulatedWorkflow.fundingManagerAddress).toBeDefined()
@@ -125,14 +122,10 @@ describe('#SIMULATE_MULTICALL_WORKFLOW', () => {
       ],
     })
 
-    purchaseReturn = formatUnits(
-      decodeFunctionResult({
-        abi: fundingManager.abi,
-        data: purchaseReturnReturnData,
-        functionName: 'calculatePurchaseReturn',
-      }),
-      18
-    )
+    purchaseReturn =
+      await fundingManager.bytecode.calculatePurchaseReturn.decodeResult(
+        purchaseReturnReturnData
+      )
 
     expect(Number(purchaseReturn)).toBeGreaterThanOrEqual(0)
   })

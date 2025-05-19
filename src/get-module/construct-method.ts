@@ -11,6 +11,7 @@ import type {
 // sdk utils
 import { estimateGasOutputs, writeOutputs } from '@/utils'
 
+import decodeBytecodeResult from './decode-bytecode-result'
 // get-module utils
 import getRun from './get-run'
 
@@ -69,11 +70,31 @@ export default function constructMethod<
     self,
   })
 
-  return {
+  const decodeResult = (res: any) =>
+    decodeBytecodeResult({
+      extendedOutputs: outputs,
+      res,
+      tagConfig,
+      publicClient,
+      contract,
+      self,
+      functionName: name,
+    })
+
+  const baseReturn = {
     name,
     description,
     inputs,
     outputs: outputsByKind,
     run,
   }
+
+  if (kind === 'bytecode') {
+    Object.assign(baseReturn, { decodeResult })
+  }
+
+  return baseReturn as GetModuleConstructMethodReturnType<
+    TAbiFunction,
+    TMethodKind
+  >
 }

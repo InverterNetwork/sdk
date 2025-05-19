@@ -1,10 +1,10 @@
-import { expect, describe, it } from 'bun:test'
 import { GET_HUMAN_READABLE_UINT_MAX_SUPPLY } from '@/index'
 import type {
+  ModuleMulticallCall,
   RequestedModules,
   SingleModuleCall,
-  ModuleMulticallCall,
 } from '@/types'
+import { describe, expect, it } from 'bun:test'
 import {
   FM_BC_Bancor_VirtualSupply_v1_ARGS,
   GET_ORCHESTRATOR_ARGS,
@@ -163,9 +163,6 @@ describe('#DETERMINISTIC_MULTICALL', () => {
           },
         }
       )
-
-      console.log('MULTICALL STATUS', result.statuses)
-      console.log('MULTICALL RETURN DATA', result.returnDatas)
 
       expect(result.returnDatas[0]).toBeString()
       expect(result.returnDatas[1]).toBeString()

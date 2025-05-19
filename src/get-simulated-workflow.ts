@@ -8,7 +8,6 @@ import type {
   GetSimulatedWorkflowReturnType,
   MixedRequestedModules,
 } from '@/types'
-import { decodeFunctionResult } from 'viem'
 
 /**
  * @description Simulates the workflow deployment process and returns the plemenary modules addresses
@@ -117,26 +116,16 @@ export async function getSimulatedWorkflow<
   })
 
   const [listedModules, fundingManager, authorizer, paymentProcessor] = [
-    decodeFunctionResult({
-      abi: orchestrator.abi,
-      data: listModulesReturnData,
-      functionName: 'listModules',
-    }),
-    decodeFunctionResult({
-      abi: orchestrator.abi,
-      data: readFundingManagerReturnData,
-      functionName: 'fundingManager',
-    }),
-    decodeFunctionResult({
-      abi: orchestrator.abi,
-      data: readAuthorizerReturnData,
-      functionName: 'authorizer',
-    }),
-    decodeFunctionResult({
-      abi: orchestrator.abi,
-      data: readPaymentProcessorReturnData,
-      functionName: 'paymentProcessor',
-    }),
+    await orchestrator.bytecode.listModules.decodeResult(listModulesReturnData),
+    await orchestrator.bytecode.fundingManager.decodeResult(
+      readFundingManagerReturnData
+    ),
+    await orchestrator.bytecode.authorizer.decodeResult(
+      readAuthorizerReturnData
+    ),
+    await orchestrator.bytecode.paymentProcessor.decodeResult(
+      readPaymentProcessorReturnData
+    ),
   ]
 
   const logicModules = listedModules.filter(
