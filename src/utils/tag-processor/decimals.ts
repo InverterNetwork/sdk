@@ -107,16 +107,24 @@ export default async function decimals({
     // -------------------------------------------------------------------
     if (source === 'contract') {
       if (location === 'indirect') {
-        tokenAddress = <`0x${string}` | undefined>await contract?.read?.[name]()
+        tokenAddress = <`0x${string}` | undefined>await (() => {
+          if (name === 'getIssuanceToken' && tagConfig?.issuanceToken)
+            return tagConfig.issuanceToken
+          return contract?.read?.[name]()
+        })()
 
         if (!tokenAddress)
           throw new Error(`No token address found @ contract:indirect:${name}`)
 
-        decimals = <number>await readContract({
-          address: tokenAddress,
-          abi: ERC20_ABI,
-          functionName: 'decimals',
-        })
+        decimals = <number>await (() => {
+          if (name === 'getIssuanceToken' && tagConfig?.issuanceTokenDecimals)
+            return tagConfig.issuanceTokenDecimals
+          return readContract({
+            address: tokenAddress,
+            abi: ERC20_ABI,
+            functionName: 'decimals',
+          })
+        })()
       }
 
       if (location === 'exact') {

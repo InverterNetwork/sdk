@@ -18,7 +18,7 @@ import {
 } from 'tests/helpers/setup-workflow'
 
 const MINT_AMOUNT = '10000'
-// const PURCHASE_AMOUNT = String(Number(MINT_AMOUNT) / 2)
+const PURCHASE_AMOUNT = String(Number(MINT_AMOUNT) / 2)
 
 describe('#MULTICALL', () => {
   const deployer = sdk.walletClient.account.address
@@ -126,31 +126,31 @@ describe('#MULTICALL', () => {
         callData: await fundingManager.bytecode.openSell.run(),
       }
 
-      // // Purchase
-      // // ------------------------------------------------------------------------
-      // const purchaseSingleCall: SingleModuleCall = {
-      //   address: workflowBytecode.fundingManagerAddress,
-      //   allowFailure: false, // Allow failures in case of authorization issues
-      //   callData: await fundingManager.bytecode.buy.run(
-      //     [PURCHASE_AMOUNT, '1'],
-      //     {
-      //       skipApprove: true,
-      //       onApprove: async (receipts) => {
-      //         console.log('Approved', receipts)
-      //       },
-      //     }
-      //   ),
-      // }
-      // const failedPurchaseSingleCall: SingleModuleCall = {
-      //   address: workflowBytecode.fundingManagerAddress,
-      //   allowFailure: true, // Allow failures in case of authorization issues
-      //   callData: await fundingManager.bytecode.buy.run(
-      //     [String(Number(PURCHASE_AMOUNT) * 2), '1'],
-      //     {
-      //       skipApprove: true,
-      //     }
-      //   ),
-      // }
+      // Purchase
+      // ------------------------------------------------------------------------
+      const purchaseSingleCall: SingleModuleCall = {
+        address: workflowBytecode.fundingManagerAddress,
+        allowFailure: false, // Allow failures in case of authorization issues
+        callData: await fundingManager.bytecode.buy.run(
+          [PURCHASE_AMOUNT, '1'],
+          {
+            skipApprove: true,
+            onApprove: async (receipts) => {
+              console.log('Approved', receipts)
+            },
+          }
+        ),
+      }
+      const failedPurchaseSingleCall: SingleModuleCall = {
+        address: workflowBytecode.fundingManagerAddress,
+        allowFailure: true, // Allow failures in case of authorization issues
+        callData: await fundingManager.bytecode.buy.run(
+          [String(Number(PURCHASE_AMOUNT) * 2), '1'],
+          {
+            skipApprove: true,
+          }
+        ),
+      }
 
       // Multicall
       // ------------------------------------------------------------------------
@@ -158,6 +158,8 @@ describe('#MULTICALL', () => {
         deployWorkflowSingleCall,
         openBuySingleCall,
         openSellSingleCall,
+        purchaseSingleCall,
+        failedPurchaseSingleCall,
       ]
 
       const result = await sdk.moduleMulticall.write({
@@ -179,8 +181,25 @@ describe('#MULTICALL', () => {
       expect(result.returnDatas[0]).toBeString()
       expect(result.returnDatas[1]).toBeString()
       expect(result.returnDatas[2]).toBeString()
-      expect(result.statuses).toEqual(['success', 'success', 'success'])
+      expect(result.returnDatas[3]).toBeString()
+      expect(result.returnDatas[4]).toBeString()
+      expect(result.statuses).toEqual([
+        'success',
+        'success',
+        'success',
+        'success',
+        'fail',
+      ])
       expect(result.transactionHash).toBeString()
+
+      // Check issuance token balance
+      // ------------------------------------------------------------------------
+      const issuanceTokenBalance =
+        await workflowBytecode.issuanceToken.read.balanceOf.run(deployer)
+
+      console.log('ISSUANCE TOKEN BALANCE', issuanceTokenBalance)
+
+      expect(Number(issuanceTokenBalance)).toBeGreaterThan(0)
     })
   })
 })
