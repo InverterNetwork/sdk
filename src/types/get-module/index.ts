@@ -16,12 +16,14 @@ import type { Hex } from 'viem'
  * @template TModuleName - The module name
  * @template TWalletClient - The wallet client
  * @template TModuleData - The module data
+ * @template TUseTags - Whether auto parse inputs, outputs and approve allowances using tag configs
  * @returns The parameters for the getModule function
  */
 export type GetModuleParams<
   TModuleName extends TModuleData extends ModuleData ? never : ModuleName,
   TWalletClient extends PopWalletClient | undefined = undefined,
   TModuleData extends ModuleData | undefined = undefined,
+  TUseTags extends boolean = true,
 > = {
   address: Hex
   publicClient: PopPublicClient
@@ -29,6 +31,7 @@ export type GetModuleParams<
   tagConfig?: TagConfig
   moduleData?: TModuleData
   self?: Inverter<TWalletClient>
+  useTags?: TUseTags
 } & (TModuleData extends undefined ? { name: TModuleName } : {})
 
 /**
@@ -36,12 +39,14 @@ export type GetModuleParams<
  * @template TModuleName - The module name
  * @template TWalletClient - The wallet client
  * @template TModuleData - Optional module data
+ * @template TUseTags - Whether auto parse inputs, outputs and approve allowances using tag configs
  * @returns The return type for the getModule function
  */
 export type GetModuleReturnType<
   TModuleName extends TModuleData extends ModuleData ? never : ModuleName,
   TWalletClient extends PopWalletClient | undefined = undefined,
   TModuleData extends ModuleData | undefined = undefined,
+  TUseTags extends boolean = true,
   R extends
     | GetModuleData<TModuleName>
     | NonNullable<TModuleData> = TModuleData extends undefined
@@ -53,28 +58,37 @@ export type GetModuleReturnType<
   address: Hex
   moduleType: R['moduleType']
   description: R['description']
-  read: GetModuleIterateMethodsReturnType<R['abi'], ['view', 'pure'], 'read'>
+  read: GetModuleIterateMethodsReturnType<
+    R['abi'],
+    ['view', 'pure'],
+    'read',
+    TUseTags
+  >
   simulate: GetModuleIterateMethodsReturnType<
     R['abi'],
     ['nonpayable', 'payable'],
-    'simulate'
+    'simulate',
+    TUseTags
   >
   estimateGas: GetModuleIterateMethodsReturnType<
     R['abi'],
     ['nonpayable', 'payable'],
-    'estimateGas'
+    'estimateGas',
+    TUseTags
   >
   bytecode: GetModuleIterateMethodsReturnType<
     R['abi'],
     ['nonpayable', 'payable', 'pure', 'view'],
-    'bytecode'
+    'bytecode',
+    TUseTags
   >
   write: TWalletClient extends undefined
     ? never
     : GetModuleIterateMethodsReturnType<
         R['abi'],
         ['nonpayable', 'payable'],
-        'write'
+        'write',
+        TUseTags
       >
 }
 

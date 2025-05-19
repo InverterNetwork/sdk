@@ -7,6 +7,7 @@ import type {
   GetModuleGetRunParams,
   MethodKind,
   MethodOptions,
+  RequiredAllowances,
 } from '@/types'
 // sdk utils
 import {
@@ -30,6 +31,7 @@ export default function getRun<
   ExtendedInputs extends readonly ExtendedAbiParameter[],
   ExtendedOutputs extends readonly ExtendedAbiParameter[],
   TMethodKind extends MethodKind,
+  TUseTags extends boolean = true,
 >({
   publicClient,
   walletClient,
@@ -40,7 +42,13 @@ export default function getRun<
   tagConfig,
   kind,
   self,
-}: GetModuleGetRunParams<ExtendedInputs, ExtendedOutputs, TMethodKind>) {
+  useTags = true as TUseTags,
+}: GetModuleGetRunParams<
+  ExtendedInputs,
+  ExtendedOutputs,
+  TMethodKind,
+  TUseTags
+>) {
   /**
    * The run function of a kind of method
    * @param args The arguments of the method
@@ -49,18 +57,26 @@ export default function getRun<
   async function run(
     args: GetMethodParams<typeof extendedInputs>,
     options?: MethodOptions
-  ): Promise<GetMethodReturnType<ExtendedOutputs, TMethodKind>> {
+  ): Promise<GetMethodReturnType<ExtendedOutputs, TMethodKind, TUseTags>> {
     // Parse the inputs, from user input to contract input
-    const { processedInputs, requiredAllowances } = await processInputs({
-      extendedInputs,
-      args,
-      tagConfig,
-      publicClient,
-      walletClient,
-      contract,
-      self,
-      kind,
-    })
+    let processedInputs = args as unknown as any[]
+    let requiredAllowances: RequiredAllowances[] = []
+
+    if (useTags) {
+      const result = await processInputs({
+        extendedInputs,
+        args,
+        tagConfig,
+        publicClient,
+        walletClient,
+        contract,
+        self,
+        kind,
+      })
+
+      processedInputs = result.processedInputs
+      requiredAllowances = result.requiredAllowances
+    }
 
     const actions = {
       // If the kind is simulate, use the simulate method
@@ -117,7 +133,7 @@ export default function getRun<
     const res: Awaited<ReturnType<Actions[TMethodKind]>> = await (async () => {
       try {
         // If the kind is not read, approve the required allowances
-        if (kind !== 'read' && options?.skipApprove !== true) {
+        if (useTags && kind !== 'read' && options?.skipApprove !== true) {
           debug('Approving required allowances', requiredAllowances)
 
           const transactionReceipts = await tagProcessor.approve({
@@ -147,14 +163,16 @@ export default function getRun<
 
     // Format the outputs, from contract output to user output-
     // and pass the return type to type param
-    const formattedRes = await formatOutputs({
-      extendedOutputs,
-      res: resByKind,
-      tagConfig,
-      publicClient,
-      contract,
-      self,
-    })
+    const formattedRes = useTags
+      ? await formatOutputs({
+          extendedOutputs,
+          res: resByKind,
+          tagConfig,
+          publicClient,
+          contract,
+          self,
+        })
+      : resByKind
 
     // Assign the response based on the kind
     const result = {

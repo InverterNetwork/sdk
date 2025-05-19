@@ -20,6 +20,7 @@ export default function iterateMethods<
   TAbi extends ExtendedAbi,
   TAbiStateMutability extends AbiStateMutability[],
   TMethodKind extends MethodKind,
+  TUseTags extends boolean = true,
 >({
   publicClient,
   abi,
@@ -29,11 +30,18 @@ export default function iterateMethods<
   tagConfig,
   self,
   walletClient,
+  useTags = true as TUseTags,
 }: GetModuleItterateMethodsParams<
   TAbi,
   TAbiStateMutability,
-  TMethodKind
->): GetModuleIterateMethodsReturnType<TAbi, TAbiStateMutability, TMethodKind> {
+  TMethodKind,
+  TUseTags
+>): GetModuleIterateMethodsReturnType<
+  TAbi,
+  TAbiStateMutability,
+  TMethodKind,
+  TUseTags
+> {
   // Itterate over the abi functions
   const iterated = abi
     // Filter the functions by their stateMutability
@@ -51,6 +59,7 @@ export default function iterateMethods<
         tagConfig,
         kind,
         self,
+        useTags,
       })
     )
     // Reduce the array to an object with the function name as key

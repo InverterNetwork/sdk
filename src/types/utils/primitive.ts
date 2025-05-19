@@ -80,8 +80,18 @@ export type ExtendedParameterToPrimitiveType<TParameter> =
 /**
  * @description Itterate over the parameters and format them to primitive types
  * @template TParameters - The parameters
+ * @template TUseTags - Whether to use tags
  * @returns The parameters formatted to primitive types
  */
-export type ExtendedParametersToPrimitiveType<TParameters> = {
-  [K in keyof TParameters]: ExtendedParameterToPrimitiveType<TParameters[K]>
-}
+export type ExtendedParametersToPrimitiveType<
+  TParameters,
+  TUseTags extends boolean = true,
+> = TUseTags extends true
+  ? {
+      [K in keyof TParameters]: ExtendedParameterToPrimitiveType<TParameters[K]>
+    }
+  : {
+      [K in keyof TParameters]: TParameters[K] extends AbiParameter
+        ? AbiParameterToPrimitiveType<TParameters[K]>
+        : never
+    }
