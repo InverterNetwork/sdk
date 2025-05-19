@@ -19,6 +19,9 @@ import type {
   ModuleMulticallParams,
   ModuleMulticallWriteReturnType,
   ModuleMulticallSimulateReturnType,
+  GetSimulatedWorkflowParams,
+  GetSimulatedWorkflowReturnType,
+  GetDeployWorkflowArgs,
 } from '@/types'
 
 // sdk utils
@@ -29,6 +32,7 @@ import { deploy } from './deploy'
 import { getModule } from './get-module'
 import { moduleMulticall } from './module-multicall'
 import type { Except } from 'type-fest-4'
+import { getSimulatedWorkflow } from './get-simulated-workflow'
 
 /**
  * @description The Inverter class is the main class for interacting with the Inverter Network
@@ -291,5 +295,26 @@ export class Inverter<
         walletClient: this.walletClient!,
       })
     },
+  }
+
+  /**
+   * @description Get the simulated workflow
+   * @param params - The parameters for the simulated workflow
+   * @returns The simulated workflow
+   */
+  async getSimulatedWorkflow<
+    T extends MixedRequestedModules,
+    TDeployWorkflowArgs extends GetDeployWorkflowArgs<T>,
+  >(
+    params: Omit<
+      GetSimulatedWorkflowParams<T, TDeployWorkflowArgs>,
+      'publicClient' | 'walletClient'
+    >
+  ): Promise<GetSimulatedWorkflowReturnType> {
+    return getSimulatedWorkflow({
+      ...params,
+      publicClient: this.publicClient,
+      walletClient: this.walletClient!,
+    })
   }
 }

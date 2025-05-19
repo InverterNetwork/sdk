@@ -5,10 +5,29 @@ import { moduleMulticall } from '@/module-multicall'
 import type {
   GetDeployWorkflowArgs,
   MixedRequestedModules,
-  PopWalletClient,
-  PopPublicClient,
+  GetSimulatedWorkflowParams,
+  GetSimulatedWorkflowReturnType,
 } from '@/types'
 
+/**
+ * @description Simulates the workflow deployment process and returns the plemenary modules addresses
+ * @example
+ * ```ts
+ * const { orchestratorAddress, logicModulesAddresses, fundingManagerAddress, authorizerAddress, paymentProcessorAddress } = await getSimulatedWorkflow({
+ *   trustedForwarderAddress,
+ *   requestedModules,
+ *   args,
+ *   publicClient,
+ *   walletClient,
+ * })
+ * ```
+ * @param params.trustedForwarderAddress - The address of the trusted forwarder
+ * @param params.requestedModules - The requested modules
+ * @param params.args - The arguments for the workflow deployment
+ * @param params.publicClient - The public client
+ * @param params.walletClient - The wallet client
+ * @returns The simulated workflow
+ */
 export async function getSimulatedWorkflow<
   T extends MixedRequestedModules,
   TDeployWorkflowArgs extends GetDeployWorkflowArgs<T>,
@@ -18,13 +37,10 @@ export async function getSimulatedWorkflow<
   args,
   publicClient,
   walletClient,
-}: {
-  trustedForwarderAddress: `0x${string}`
-  requestedModules: T
-  args: TDeployWorkflowArgs
-  publicClient: PopPublicClient
-  walletClient: PopWalletClient
-}) {
+}: GetSimulatedWorkflowParams<
+  T,
+  TDeployWorkflowArgs
+>): Promise<GetSimulatedWorkflowReturnType> {
   const { bytecode } = await deployWorkflow({
     requestedModules,
     publicClient,

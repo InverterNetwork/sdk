@@ -1,9 +1,9 @@
-import { getSimulatedWorkflow } from '@/get-simulated-workflow'
 import type {
   DeployWorkflowBytecodeReturnType,
   GetDeployWorkflowArgs,
   GetDeployWorkflowModuleArg,
   GetModuleReturnType,
+  GetSimulatedWorkflowReturnType,
   MixedRequestedModules,
   PopWalletClient,
   Workflow,
@@ -38,7 +38,7 @@ export type SetupWorkflowWithTokenReturnType<
   B extends boolean = false,
 > = B extends true
   ? DeployWorkflowBytecodeReturnType &
-      Awaited<ReturnType<typeof getSimulatedWorkflow>> & {
+      GetSimulatedWorkflowReturnType & {
         issuanceToken: GetModuleReturnType<IT, PopWalletClient>
         fundingToken: GetModuleReturnType<'ERC20Issuance_v1', PopWalletClient>
       }
@@ -76,11 +76,9 @@ export async function setupWorkflowWithToken<
     const bytecodeReturn = await handleBytecode(
       workflowArgs(issuanceTokenAddress)
     )
-    const simulatedWorkflow = await getSimulatedWorkflow({
+    const simulatedWorkflow = await sdk.getSimulatedWorkflow({
       requestedModules,
       args: workflowArgs(issuanceTokenAddress),
-      publicClient: sdk.publicClient,
-      walletClient: sdk.walletClient,
       trustedForwarderAddress: TRUSTED_FORWARDER_ADDRESS,
     })
     return {

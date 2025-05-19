@@ -8,6 +8,7 @@ export { getWorkflow } from './get-workflow'
 export { deployWorkflow } from './deploy-workflow'
 export { getDeployWorkflowOptions } from './get-deploy-workflow-options'
 export { moduleMulticall } from './module-multicall'
+export { getSimulatedWorkflow } from './get-simulated-workflow'
 export { Inverter } from './inverter'
 
 // util exports

@@ -11,6 +11,7 @@ export * from './format-outputs'
 export * from './process-inputs'
 export * from './tag-processor'
 export * from './module-multicall'
+export * from './get-simulated-workflow'
 
 export type {
   ExtendedAbiParameter,
