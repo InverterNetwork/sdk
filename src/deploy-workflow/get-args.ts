@@ -1,36 +1,32 @@
 // external dependencies
 import { getModuleData } from '@inverter-network/abis'
-import { encodeAbiParameters, zeroAddress } from 'viem'
-import type { PublicClient } from 'viem'
-
 // sdk types
 import type { Inverter } from '@/inverter'
 import type {
-  TagConfig,
-  GetModuleDeploymentInputs,
-  PopWalletClient,
   ConstructedArgs,
-  ModuleArgs,
-  RequestedModule,
-  GetDeployWorkflowArgs,
-  UserModuleArg,
-  UserArgs,
   DeployMethodKind,
-  TagOverwrites,
+  GetDeployWorkflowArgs,
+  GetModuleDeploymentInputs,
   MixedRequestedModules,
+  ModuleArgs,
   ModuleData,
+  PopWalletClient,
+  RequestedModule,
+  TagConfig,
+  TagOverwrites,
+  UserArgs,
+  UserModuleArg,
 } from '@/types'
-
 // sdk utils
 import { processInputs } from '@/utils'
+import d from 'debug'
+import { encodeAbiParameters, zeroAddress } from 'viem'
+import type { PublicClient } from 'viem'
 
 // get-deploy constants
 import { MANDATORY_MODULES } from './constants'
-
 // get-deploy utils
 import { assembleMetadata, getDefaultToken } from './utils'
-
-import d from 'debug'
 
 const debug = d('inverter:sdk:get-args')
 

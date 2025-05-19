@@ -1,14 +1,14 @@
 // external dependencies
-import type { PublicClient } from 'viem'
 
 // sdk types
 import type { Inverter } from '@/inverter'
 import type {
   GetDeployWorkflowInputs,
-  PopWalletClient,
   GetMethodsReturnType,
   MixedRequestedModules,
+  PopWalletClient,
 } from '@/types'
+import type { PublicClient } from 'viem'
 
 // exports
 export * from './static'

@@ -1,24 +1,23 @@
 // external dependencies
 import type { ModuleName, UserFacingModuleType } from '@inverter-network/abis'
-import type { Merge } from 'type-fest-4'
-import type { Hex } from 'viem'
-
 // sdk types
 import { Inverter } from '@/inverter'
 import type {
   GetModuleReturnType,
-  WorkflowIssuanceToken,
+  MixedRequestedModules,
+  ModuleData,
   OmitNever,
   PopPublicClient,
   PopWalletClient,
   RequestedModules,
+  WorkflowIssuanceToken,
   WorkflowToken,
-  MixedRequestedModules,
-  ModuleData,
 } from '@/types'
+import type { Merge } from 'type-fest-4'
+import type { Hex } from 'viem'
 
 // get-workflow types
-import type { TokenModuleData, ConditionalIssuanceToken } from './token'
+import type { ConditionalIssuanceToken, TokenModuleData } from './token'
 
 // exports
 export * from './token'

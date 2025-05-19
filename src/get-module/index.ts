@@ -1,9 +1,6 @@
 // external dependencies
 import type { GetModuleData, ModuleName } from '@inverter-network/abis'
 import { getModuleData } from '@inverter-network/abis'
-import { getContract } from 'viem'
-import type { Abi } from 'viem'
-
 // sdk types
 import type {
   GetModuleParams,
@@ -11,6 +8,8 @@ import type {
   ModuleData,
   PopWalletClient,
 } from '@/types'
+import { getContract } from 'viem'
+import type { Abi } from 'viem'
 
 // get-module utils
 import iterateMethods from './iterate-methods'

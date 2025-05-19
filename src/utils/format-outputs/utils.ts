@@ -1,6 +1,7 @@
-import { formatUnits, hexToString } from 'viem'
-import format from './format'
 import type { FormatOutputTupleCaseParams } from '@/types'
+import { formatUnits, hexToString } from 'viem'
+
+import format from './format'
 
 // The case for tuple outputs
 export const tuple = async ({

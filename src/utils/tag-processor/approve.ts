@@ -1,4 +1,5 @@
 import type { TagProcessorApproveParams } from '@/types'
+
 import { ERC20_ABI } from '../constants'
 
 export default async function approve({

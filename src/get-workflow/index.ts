@@ -2,21 +2,20 @@
 
 // @inverter-network/abis
 import { getModuleData } from '@inverter-network/abis'
-
-// sdk types
-import type {
-  PopWalletClient,
-  MixedRequestedModules,
-  Workflow,
-  GetWorkflowParams,
-  GetWorkflowTokenReturnType,
-  WorkflowToken,
-  WorkflowIssuanceToken,
-  ModuleData,
-} from '@/types'
-
 // sdk utils
 import { getModule } from '@/get-module'
+// sdk types
+import type {
+  GetWorkflowParams,
+  GetWorkflowTokenReturnType,
+  MixedRequestedModules,
+  ModuleData,
+  PopWalletClient,
+  Workflow,
+  WorkflowIssuanceToken,
+  WorkflowToken,
+} from '@/types'
+
 import getTokenResults from './token'
 
 /**

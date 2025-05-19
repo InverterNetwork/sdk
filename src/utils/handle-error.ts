@@ -1,7 +1,8 @@
-import { getModuleData, data } from '@inverter-network/abis'
+import { data, getModuleData } from '@inverter-network/abis'
 import type { MixedRequestedModules } from '@/types'
 import { decodeErrorResult } from 'viem'
 import type { Abi } from 'viem'
+
 import { ERC20_ABI } from './constants'
 
 function extractContractCallBlockAsString(errorMessage: any, errorName: any) {

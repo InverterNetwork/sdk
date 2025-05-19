@@ -1,14 +1,14 @@
-import { decodeFunctionResult } from 'viem'
+import { getModuleData } from '@inverter-network/abis'
 import { deployWorkflow } from '@/deploy-workflow'
 import { getModule } from '@/get-module'
 import { moduleMulticall } from '@/module-multicall'
 import type {
   GetDeployWorkflowArgs,
-  MixedRequestedModules,
   GetSimulatedWorkflowParams,
   GetSimulatedWorkflowReturnType,
+  MixedRequestedModules,
 } from '@/types'
-import { getModuleData } from '@inverter-network/abis'
+import { decodeFunctionResult } from 'viem'
 
 /**
  * @description Simulates the workflow deployment process and returns the plemenary modules addresses

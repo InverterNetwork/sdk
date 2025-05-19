@@ -1,9 +1,7 @@
 // external dependencies
-import type { PublicClient, SimulateContractReturnType } from 'viem'
 
 // sdk types
 import type { Inverter } from '@/inverter'
-
 import type {
   ConstructedArgsArray,
   GetDeployWorkflowArgs,
@@ -11,6 +9,7 @@ import type {
   MixedRequestedModules,
   PopWalletClient,
 } from '@/types'
+import type { PublicClient, SimulateContractReturnType } from 'viem'
 
 /**
  * @description deployWorkflow functions write return type

@@ -1,17 +1,16 @@
 // external dependencies
-import type { PublicClient, WalletClient } from 'viem'
-
+import type { Inverter } from '@/index'
 // sdk types
 import type {
+  ExtendedAbiParameter,
   MethodKind,
   RequiredAllowances,
-  TagConfig,
-  ExtendedAbiParameter,
   TagCallback,
+  TagConfig,
   TagOverwrites,
   TupleExtendedAbiParameter,
 } from '@/types'
-import type { Inverter } from '@/index'
+import type { PublicClient, WalletClient } from 'viem'
 
 /**
  * @description The base parameters for the processInputs function

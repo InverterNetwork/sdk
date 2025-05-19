@@ -1,14 +1,13 @@
 // external dependencies
-import type { PublicClient } from 'viem'
-
+import type { Inverter } from '@/index'
 // sdk types
 import type {
-  TupleExtendedAbiParameter,
-  TagConfig,
-  TagCallback,
   ExtendedAbiParameter,
+  TagCallback,
+  TagConfig,
+  TupleExtendedAbiParameter,
 } from '@/types'
-import type { Inverter } from '@/index'
+import type { PublicClient } from 'viem'
 
 /**
  * @description The parameters for the formatOutputs function

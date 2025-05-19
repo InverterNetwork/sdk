@@ -1,7 +1,7 @@
-import { getJsType } from '@/utils'
-import { tuple, tupleArray, formatAny } from './utils'
-
 import type { FormatOutputsParams } from '@/types'
+import { getJsType } from '@/utils'
+
+import { formatAny, tuple, tupleArray } from './utils'
 
 export default async function format({
   output,

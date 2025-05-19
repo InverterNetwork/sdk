@@ -1,11 +1,11 @@
-import tagProcessor from '../tag-processor'
-import { formatDecimals } from './utils'
-
 import type {
   DecimalsTagReturnType,
   FormatGetTagCallbackParams,
   TagCallback,
 } from '@/types'
+
+import tagProcessor from '../tag-processor'
+import { formatDecimals } from './utils'
 
 export default function getTagCallback({
   publicClient,

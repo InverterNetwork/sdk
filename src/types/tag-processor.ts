@@ -1,16 +1,15 @@
 // external dependencies
 import type { ExtendedAbiParameter, Tag } from '@inverter-network/abis'
-import type { PublicClient } from 'viem'
-
 // sdk types
 import type { Inverter } from '@/inverter'
 import type {
-  TagConfig,
   PopPublicClient,
   PopWalletClient,
   RequiredAllowances,
+  TagConfig,
   TagOverwrites,
 } from '@/types'
+import type { PublicClient } from 'viem'
 
 /**
  * @description The parameters for the tagProcessorDecimals function

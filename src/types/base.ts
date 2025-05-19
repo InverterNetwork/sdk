@@ -4,6 +4,7 @@ import type {
   ModuleName,
   ModuleType,
 } from '@inverter-network/abis'
+
 import type { FindStringByPart } from './utils'
 
 /**

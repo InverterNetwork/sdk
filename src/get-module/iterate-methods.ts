@@ -1,13 +1,12 @@
 // external dependencies
-import type { AbiStateMutability } from 'abitype'
 import type { ExtendedAbi, ExtendedAbiFunction } from '@inverter-network/abis'
-
 // sdk types
 import type {
   GetModuleIterateMethodsReturnType,
   GetModuleItterateMethodsParams,
   MethodKind,
 } from '@/types'
+import type { AbiStateMutability } from 'abitype'
 
 // get-module utils
 import constructMethod from './construct-method'

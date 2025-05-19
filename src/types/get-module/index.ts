@@ -1,16 +1,15 @@
 // external dependencies
 import type { GetModuleData, ModuleName } from '@inverter-network/abis'
-import type { Hex } from 'viem'
-
-// sdk types
-import type { Inverter } from '@/inverter'
 import type {
   GetModuleIterateMethodsReturnType,
-  TagConfig,
+  ModuleData,
   PopPublicClient,
   PopWalletClient,
-  ModuleData,
+  TagConfig,
 } from '@/index'
+// sdk types
+import type { Inverter } from '@/inverter'
+import type { Hex } from 'viem'
 
 /**
  * @description The parameters for the getModule function

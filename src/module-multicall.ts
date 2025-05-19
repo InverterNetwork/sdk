@@ -1,14 +1,14 @@
 import { getModuleData } from '@inverter-network/abis'
-import type {
-  ModuleMulticallParams,
-  ModuleMulticall,
-  ModuleMulticallSimulateReturnType,
-  ModuleMulticallWriteReturnType,
-  MethodOptions,
-} from './types'
+import d from 'debug'
 import { getContract } from 'viem'
 
-import d from 'debug'
+import type {
+  MethodOptions,
+  ModuleMulticall,
+  ModuleMulticallParams,
+  ModuleMulticallSimulateReturnType,
+  ModuleMulticallWriteReturnType,
+} from './types'
 import { handleErrorWithUnknownContext, handleOptions } from './utils'
 
 const debug = d('inverter:sdk:multicall')

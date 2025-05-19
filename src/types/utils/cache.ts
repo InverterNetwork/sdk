@@ -1,5 +1,5 @@
-import type { Inverter } from '@/index'
 import type { Tag } from '@inverter-network/abis'
+import type { Inverter } from '@/index'
 
 /**
  * @description The parameters for the cacheToken function

@@ -1,11 +1,12 @@
-import tagProcessor from '@/utils/tag-processor'
-import { parseDecimals } from './parse'
-
 import type {
   DecimalsTagReturnType,
   ParseGetTagCallbackParams,
   TagCallback,
 } from '@/types'
+
+import tagProcessor from '@/utils/tag-processor'
+
+import { parseDecimals } from './parse'
 
 export default function getTagCallback({
   requiredAllowances,

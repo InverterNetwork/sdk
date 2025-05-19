@@ -1,6 +1,6 @@
-import type { AbiParameter, AbiParameterToPrimitiveType } from 'abitype'
-import type { Simplify, Includes } from 'type-fest-4'
 import type { Tag } from '@inverter-network/abis'
+import type { AbiParameter, AbiParameterToPrimitiveType } from 'abitype'
+import type { Includes, Simplify } from 'type-fest-4'
 
 /**
  * @description The tag to primitive type

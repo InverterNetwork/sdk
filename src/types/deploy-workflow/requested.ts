@@ -1,9 +1,8 @@
 // external dependencies
 import type { GetModuleNameByType } from '@inverter-network/abis'
-import type { Simplify } from 'type-fest-4'
-
 // sdk types
-import type { MendatoryModuleType, ModuleType, ModuleData } from '@/types'
+import type { MendatoryModuleType, ModuleData, ModuleType } from '@/types'
+import type { Simplify } from 'type-fest-4'
 
 /**
  * @description The requested module options for moduleType and moduleName

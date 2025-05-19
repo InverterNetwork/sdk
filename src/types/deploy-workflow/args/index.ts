@@ -1,19 +1,18 @@
 // external dependencies
-import type { IsEmptyObject, Simplify } from 'type-fest-4'
 import type { ModuleName } from '@inverter-network/abis'
+import type {
+  EmptyObjectToNever,
+  ExtendedParameterToPrimitiveType,
+  GetModuleConfigData,
+  MixedRequestedModules,
+  ModuleData,
+  OmitNever,
+  RequestedModules,
+} from '@/types'
+import type { IsEmptyObject, Simplify } from 'type-fest-4'
 
 // sdk types
 import type { OrchestratorArgs } from './static'
-
-import type {
-  OmitNever,
-  GetModuleConfigData,
-  EmptyObjectToNever,
-  RequestedModules,
-  ExtendedParameterToPrimitiveType,
-  MixedRequestedModules,
-  ModuleData,
-} from '@/types'
 
 export * from './static'
 

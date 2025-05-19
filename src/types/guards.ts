@@ -1,7 +1,7 @@
 import type {
-  TupleExtendedAbiParameter,
-  NonTupleExtendedAbiParameter,
   ExtendedAbiParameter,
+  NonTupleExtendedAbiParameter,
+  TupleExtendedAbiParameter,
 } from '@/types'
 
 /**

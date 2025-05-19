@@ -1,5 +1,5 @@
-import type { JsType } from '@/types'
 import type { ExtendedAbiParameter } from '@inverter-network/abis'
+import type { JsType } from '@/types'
 
 export const getJsType = (
   parameter: ExtendedAbiParameter

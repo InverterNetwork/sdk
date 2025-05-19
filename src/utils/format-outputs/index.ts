@@ -1,7 +1,7 @@
-import format from './format'
-
 import { isDefinedExtendedAbiMemberArray } from '@/types'
 import type { FormatGetTagCallbackParams } from '@/types'
+
+import format from './format'
 import getTagCallback from './get-tag-callback'
 
 export async function formatOutputs(props: FormatGetTagCallbackParams) {

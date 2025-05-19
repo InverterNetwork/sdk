@@ -1,12 +1,11 @@
 // external dependencies
 import { getModuleData } from '@inverter-network/abis'
 import type { ModuleName } from '@inverter-network/abis'
-
 // sdk types
 import type {
+  FindStringByPart,
   GetDeployWorkflowInputs,
   GetDeployWorkflowModuleInputs,
-  FindStringByPart,
   MixedRequestedModules,
   ModuleData,
   RequestedModule,

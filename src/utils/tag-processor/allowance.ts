@@ -1,4 +1,5 @@
 import type { TagProcessorAllowancesParams } from '@/index'
+
 import { ERC20_ABI } from '../constants'
 
 export default async function allowance({

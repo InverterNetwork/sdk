@@ -1,15 +1,14 @@
 // external dependencies
 import type { Tag } from '@inverter-network/abis'
+import type {
+  CacheTokenParams,
+  DecimalsTagReturnType,
+  TagProcessorDecimalsParams,
+} from '@/types'
 import type { Split } from 'type-fest-4'
 
 // sdk dependencies
 import { ERC20_ABI } from '@/utils/constants'
-
-import type {
-  DecimalsTagReturnType,
-  CacheTokenParams,
-  TagProcessorDecimalsParams,
-} from '@/types'
 
 const cacheToken = (props: CacheTokenParams) => {
   const chainId = props.self.publicClient.chain.id

@@ -1,18 +1,17 @@
 // external dependencies
-import type { Hex } from 'viem'
-
+import type { Inverter } from '@/inverter'
 // sdk types
 import type {
-  GetModuleReturnType,
-  PopWalletClient,
   FilterByPrefix,
-  PopPublicClient,
-  WorkflowToken,
-  WorkflowIssuanceToken,
+  GetModuleReturnType,
   MixedRequestedModules,
   ModuleData,
+  PopPublicClient,
+  PopWalletClient,
+  WorkflowIssuanceToken,
+  WorkflowToken,
 } from '@/types'
-import type { Inverter } from '@/inverter'
+import type { Hex } from 'viem'
 
 /**
  * @description The token module data type

@@ -1,26 +1,23 @@
 // external dependencies
 import type { ExtendedAbiParameter } from '@inverter-network/abis'
-import { encodeFunctionData, formatEther } from 'viem'
-
-// sdk utils
-import {
-  processInputs,
-  formatOutputs,
-  tagProcessor,
-  handleOptions,
-  handleError,
-} from '@/utils'
-
 // sdk types
 import type {
   GetMethodParams,
   GetMethodReturnType,
-  MethodKind,
   GetModuleGetRunParams,
+  MethodKind,
   MethodOptions,
 } from '@/types'
-
+// sdk utils
+import {
+  formatOutputs,
+  handleError,
+  handleOptions,
+  processInputs,
+  tagProcessor,
+} from '@/utils'
 import d from 'debug'
+import { encodeFunctionData, formatEther } from 'viem'
 
 const debug = d('inverter:get-module:get-run')
 

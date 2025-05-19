@@ -1,16 +1,15 @@
 // external dependencies
 import type { ModuleName } from '@inverter-network/abis'
-import type { Simplify, UnionToTuple } from 'type-fest-4'
-
 // sdk types
 import type {
   EmptyObjectToNever,
-  OmitNever,
-  RequestedModules,
   GetModuleConfigData,
   MixedRequestedModules,
   ModuleData,
+  OmitNever,
+  RequestedModules,
 } from '@/types'
+import type { Simplify, UnionToTuple } from 'type-fest-4'
 
 /**
  * @description Retrieve the inputs for a module

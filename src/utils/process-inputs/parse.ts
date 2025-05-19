@@ -1,8 +1,8 @@
-import { parseAny, tuple, tupleArray } from './utils'
+import type { ParseInputsParams } from '@/types'
 import { parseUnits } from 'viem'
 
-import type { ParseInputsParams } from '@/types'
 import { getJsType } from '..'
+import { parseAny, tuple, tupleArray } from './utils'
 
 export const parseDecimals = (arg: any, decimals: number) =>
   parseUnits(arg, decimals)

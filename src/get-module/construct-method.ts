@@ -1,6 +1,5 @@
 // external dependencies
 import type { ExtendedAbiFunction } from '@inverter-network/abis'
-
 // sdk types
 import type {
   EstimateGasOutput,
@@ -9,7 +8,6 @@ import type {
   MethodKind,
   WriteOutput,
 } from '@/types'
-
 // sdk utils
 import { estimateGasOutputs, writeOutputs } from '@/utils'
 

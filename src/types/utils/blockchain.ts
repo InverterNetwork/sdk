@@ -1,13 +1,13 @@
 import type { Abi } from 'abitype'
 import type {
+  Account,
+  Address,
+  Chain,
+  Client,
+  GetContractReturnType,
   PublicClient,
   Transport,
-  Chain,
   WalletClient,
-  Account,
-  GetContractReturnType,
-  Client,
-  Address,
 } from 'viem'
 
 export type PopPublicClient = PublicClient<Transport, Chain>

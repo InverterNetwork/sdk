@@ -1,24 +1,22 @@
 // external dependencies
 import type { ModuleName } from '@inverter-network/abis'
-import type { PublicClient, WalletClient } from 'viem'
-import { getContract } from 'viem'
-import type { Abi } from 'abitype'
-import { anvil } from 'viem/chains'
-
 // sdk types
 import type {
   DeploymentVersion,
-  TagConfig,
   FetchDeploymentReturnType,
-  UserModuleArg,
   ModuleData,
+  TagConfig,
+  UserModuleArg,
 } from '@/types'
-
-// get-deploy constants
-import { METADATA_URL, DEPLOYMENTS_URL } from './constants'
-
 // sdk utils
 import { ERC20_ABI } from '@/utils'
+import type { Abi } from 'abitype'
+import type { PublicClient, WalletClient } from 'viem'
+import { getContract } from 'viem'
+import { anvil } from 'viem/chains'
+
+// get-deploy constants
+import { DEPLOYMENTS_URL, METADATA_URL } from './constants'
 
 /**
  * @description Fetches the deployment for a given version

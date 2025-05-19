@@ -1,6 +1,7 @@
-import { stringToHex } from 'viem'
-import parse from './parse'
 import type { ParseInputTupleCaseParams } from '@/types'
+import { stringToHex } from 'viem'
+
+import parse from './parse'
 
 /**
  * @description The case for tuple arguments

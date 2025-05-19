@@ -1,6 +1,5 @@
 // external dependencies
 import { getModuleData } from '@inverter-network/abis'
-
 // sdk types
 import type {
   DeployableContracts,
@@ -9,7 +8,6 @@ import type {
   PopPublicClient,
   PopWalletClient,
 } from '@/types'
-
 // sdk utils
 import { processInputs } from '@/utils'
 

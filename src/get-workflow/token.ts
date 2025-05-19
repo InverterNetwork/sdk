@@ -1,6 +1,5 @@
 // external dependencies
-import type { Hex } from 'viem'
-
+import { ERC20_ABI, FM_BASE, getModule } from '@/index'
 // sdk types
 import type {
   GetWorkflowTokenParams,
@@ -9,8 +8,7 @@ import type {
   WorkflowIssuanceToken,
   WorkflowToken,
 } from '@/types'
-
-import { getModule, ERC20_ABI, FM_BASE } from '@/index'
+import type { Hex } from 'viem'
 
 /**
  * @description Get the funding token results

@@ -1,38 +1,37 @@
 // external dependencies
 import type { ModuleName } from '@inverter-network/abis'
-import lodash from 'lodash'
-
 // sdk types
 import type {
+  DeployableContracts,
+  GetDeployWorkflowArgs,
+  GetDeployWorkflowModuleArg,
+  GetModuleParams,
+  GetModuleReturnType,
+  GetSimulatedWorkflowParams,
+  GetSimulatedWorkflowReturnType,
+  MethodOptions,
+  MixedRequestedModules,
+  ModuleData,
+  ModuleMulticallParams,
+  ModuleMulticallSimulateReturnType,
+  ModuleMulticallWriteReturnType,
   PopPublicClient,
   PopWalletClient,
   Workflow,
-  GetModuleParams,
-  DeployableContracts,
-  GetDeployWorkflowModuleArg,
-  MethodOptions,
   WorkflowIssuanceToken,
   WorkflowToken,
-  MixedRequestedModules,
-  ModuleData,
-  GetModuleReturnType,
-  ModuleMulticallParams,
-  ModuleMulticallWriteReturnType,
-  ModuleMulticallSimulateReturnType,
-  GetSimulatedWorkflowParams,
-  GetSimulatedWorkflowReturnType,
-  GetDeployWorkflowArgs,
 } from '@/types'
+import lodash from 'lodash'
+import type { Except } from 'type-fest-4'
 
-// sdk utils
-import { getWorkflow } from './get-workflow'
+import { deploy } from './deploy'
 import { deployWorkflow } from './deploy-workflow'
 import { getDeployWorkflowOptions } from './get-deploy-workflow-options'
-import { deploy } from './deploy'
 import { getModule } from './get-module'
-import { moduleMulticall } from './module-multicall'
-import type { Except } from 'type-fest-4'
 import { getSimulatedWorkflow } from './get-simulated-workflow'
+// sdk utils
+import { getWorkflow } from './get-workflow'
+import { moduleMulticall } from './module-multicall'
 
 /**
  * @description The Inverter class is the main class for interacting with the Inverter Network

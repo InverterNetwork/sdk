@@ -1,8 +1,8 @@
 // external dependencies
-import type { SimulateContractReturnType, TransactionReceipt } from 'viem'
 
 // sdk types
 import type { ExtendedParametersToPrimitiveType } from '@/index'
+import type { SimulateContractReturnType, TransactionReceipt } from 'viem'
 
 /**
  * @description The kind of methods
