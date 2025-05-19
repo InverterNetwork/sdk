@@ -9,7 +9,6 @@ import type {
   Workflow,
   WorkflowIssuanceToken,
 } from '@/types'
-
 import { sdk, TEST_ERC20_MOCK_ADDRESS } from 'tests/helpers'
 
 // WORKFLOW WITH ISSUANCE TOKEN
@@ -59,10 +58,6 @@ export async function setupWorkflowWithToken<
     name: issuanceTokenName,
     args: issuanceTokenArgs,
   })
-
-  if (!issuanceTokenAddress) {
-    throw new Error('Failed to deploy issuance token')
-  }
 
   const { run, bytecode: handleBytecode } = await sdk.deployWorkflow({
     requestedModules,

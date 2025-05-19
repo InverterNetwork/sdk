@@ -67,7 +67,7 @@ export type GetModuleReturnType<
   bytecode: GetModuleIterateMethodsReturnType<
     R['abi'],
     ['nonpayable', 'payable', 'pure', 'view'],
-    'write'
+    'bytecode'
   >
   write: TWalletClient extends undefined
     ? never

@@ -1,10 +1,10 @@
-import { expect, describe, it, beforeAll } from 'bun:test'
 import { GET_HUMAN_READABLE_UINT_MAX_SUPPLY } from '@/index'
 import type {
+  ModuleMulticallCall,
   RequestedModules,
   SingleModuleCall,
-  ModuleMulticallCall,
 } from '@/types'
+import { beforeAll, describe, expect, it } from 'bun:test'
 import {
   FM_BC_Bancor_VirtualSupply_v1_ARGS,
   GET_ORCHESTRATOR_ARGS,
@@ -135,7 +135,7 @@ describe('#MULTICALL', () => {
       const result = await sdk.moduleMulticall.write(
         {
           call,
-          trustedForwarderAddress: workflow.orchestrator.address,
+          orchestratorAddress: workflow.orchestrator.address,
         },
         {
           onConfirmation: (receipt) => {
@@ -146,9 +146,6 @@ describe('#MULTICALL', () => {
           },
         }
       )
-
-      console.log('MULTICALL STATUS', result.statuses)
-      console.log('MULTICALL RETURN DATA', result.returnDatas)
 
       expect(result.returnDatas[0]).toBeString()
       expect(result.returnDatas[1]).toBeString()

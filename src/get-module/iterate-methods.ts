@@ -17,9 +17,9 @@ import constructMethod from './construct-method'
  * @returns The methods
  */
 export default function iterateMethods<
-  A extends ExtendedAbi,
-  T extends AbiStateMutability[],
-  Kind extends MethodKind,
+  TAbi extends ExtendedAbi,
+  TAbiStateMutability extends AbiStateMutability[],
+  TMethodKind extends MethodKind,
 >({
   publicClient,
   abi,
@@ -30,10 +30,10 @@ export default function iterateMethods<
   self,
   walletClient,
 }: GetModuleItterateMethodsParams<
-  A,
-  T,
-  Kind
->): GetModuleIterateMethodsReturnType<A, T, Kind> {
+  TAbi,
+  TAbiStateMutability,
+  TMethodKind
+>): GetModuleIterateMethodsReturnType<TAbi, TAbiStateMutability, TMethodKind> {
   // Itterate over the abi functions
   const iterated = abi
     // Filter the functions by their stateMutability

@@ -81,6 +81,6 @@ export type GetMethodReturnType<
   ? EstimateGasReturnType
   : T extends 'simulate'
     ? { result: InferReturn<O>; request: SimulateContractReturnType['request'] }
-    : T extends 'write'
+    : T extends 'write' | 'bytecode'
       ? `0x${string}`
       : InferReturn<O>

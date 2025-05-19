@@ -86,6 +86,12 @@ export async function deploy<T extends DeployableContracts>(
 
   const { contractAddress } = receipt
 
+  if (!contractAddress) {
+    throw new Error(
+      `Contract address has returned undefined @ ${name} deployment`
+    )
+  }
+
   const result = {
     contractAddress,
     transactionHash,

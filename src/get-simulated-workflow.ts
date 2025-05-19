@@ -150,6 +150,8 @@ export async function getSimulatedWorkflow<
     fundingManagerAddress: fundingManager,
     authorizerAddress: authorizer,
     paymentProcessorAddress: paymentProcessor,
+    bytecode: deployBytecode.bytecode,
+    factoryAddress: deployBytecode.factoryAddress,
   }
 
   return result

@@ -50,8 +50,6 @@ async function multicallCore({
           functionName: 'trustedForwarder',
         })
 
-  debug('transactionForwarderAddress', address)
-
   const transactionForwarderModuleData = getModuleData(
     'TransactionForwarder_v1'
   )
@@ -64,7 +62,6 @@ async function multicallCore({
 
   const multicallData = call.map(({ address, callData, allowFailure }) => {
     debug('processing call for address', address)
-    debug('callData format', callData, callData.length)
 
     return {
       target: address,
