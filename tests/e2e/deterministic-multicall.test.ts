@@ -19,7 +19,7 @@ import {
 const MINT_AMOUNT = '10000'
 const PURCHASE_AMOUNT = String(Number(MINT_AMOUNT) / 2)
 
-describe('#MULTICALL', () => {
+describe('#DETERMINISTIC_MULTICALL', () => {
   const deployer = sdk.walletClient.account.address
 
   const requestedModules = {

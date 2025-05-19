@@ -1,5 +1,5 @@
 import { getSimulatedWorkflow } from '@/get-simulated-workflow'
-import { GET_ORCHESTRATOR_ARGS, TRUSTED_FORWARDER_ADDRESS } from 'tests/helpers'
+import { GET_ORCHESTRATOR_ARGS } from 'tests/helpers'
 import { FM_BC_Bancor_VirtualSupply_v1_ARGS } from 'tests/helpers'
 import type { RequestedModules } from '@/types'
 import { expect, describe, it } from 'bun:test'
@@ -25,7 +25,6 @@ describe('#SIMULATE_MULTICALL_WORKFLOW', () => {
       },
       publicClient: sdk.publicClient,
       walletClient: sdk.walletClient,
-      trustedForwarderAddress: TRUSTED_FORWARDER_ADDRESS,
     })
 
     console.log(result)

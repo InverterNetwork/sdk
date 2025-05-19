@@ -18,7 +18,6 @@ export type GetSimulatedWorkflowParams<
   T extends MixedRequestedModules,
   TDeployWorkflowArgs extends GetDeployWorkflowArgs<T>,
 > = {
-  trustedForwarderAddress: `0x${string}`
   requestedModules: T
   args: TDeployWorkflowArgs
   publicClient: PopPublicClient

@@ -10,11 +10,7 @@ import type {
   WorkflowIssuanceToken,
 } from '@/types'
 
-import {
-  sdk,
-  TEST_ERC20_MOCK_ADDRESS,
-  TRUSTED_FORWARDER_ADDRESS,
-} from 'tests/helpers'
+import { sdk, TEST_ERC20_MOCK_ADDRESS } from 'tests/helpers'
 
 // WORKFLOW WITH ISSUANCE TOKEN
 // -------------------------------------------------------------------------------------------------
@@ -79,7 +75,6 @@ export async function setupWorkflowWithToken<
     const simulatedWorkflow = await sdk.getSimulatedWorkflow({
       requestedModules,
       args: workflowArgs(issuanceTokenAddress),
-      trustedForwarderAddress: TRUSTED_FORWARDER_ADDRESS,
     })
     return {
       ...bytecodeReturn,

@@ -8,6 +8,7 @@ import type {
   GetSimulatedWorkflowParams,
   GetSimulatedWorkflowReturnType,
 } from '@/types'
+import { getModuleData } from '@inverter-network/abis'
 
 /**
  * @description Simulates the workflow deployment process and returns the plemenary modules addresses
@@ -38,7 +39,6 @@ export async function getSimulatedWorkflow<
   T extends MixedRequestedModules,
   TDeployWorkflowArgs extends GetDeployWorkflowArgs<T>,
 >({
-  trustedForwarderAddress,
   requestedModules,
   args,
   publicClient,
@@ -47,6 +47,7 @@ export async function getSimulatedWorkflow<
   T,
   TDeployWorkflowArgs
 >): Promise<GetSimulatedWorkflowReturnType> {
+  // TODO: Get trusted forwarder address from the orchestrator factory
   const { bytecode } = await deployWorkflow({
     requestedModules,
     publicClient,
@@ -54,6 +55,12 @@ export async function getSimulatedWorkflow<
   })
 
   const deployBytecode = await bytecode(args)
+
+  const trustedForwarderAddress = await publicClient.readContract({
+    address: deployBytecode.factoryAddress,
+    abi: getModuleData('OrchestratorFactory_v1').abi,
+    functionName: 'trustedForwarder',
+  })
 
   const orchestrator = getModule({
     name: 'Orchestrator_v1',
