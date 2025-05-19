@@ -10,7 +10,6 @@ import {
   GET_ORCHESTRATOR_ARGS,
   sdk,
   TRUSTED_FORWARDER_ADDRESS,
-  // TRUSTED_FORWARDER_ADDRESS,
 } from 'tests/helpers'
 import {
   setupWorkflowWithToken,
@@ -34,11 +33,6 @@ describe('#MULTICALL', () => {
     'ERC20Issuance_v1',
     true
   >
-
-  // let workflow: SetupWorkflowWithTokenReturnType<
-  //   typeof requestedModules,
-  //   'ERC20Issuance_v1'
-  // >
 
   const BASE_ARGS = {
     justBytecode: true,

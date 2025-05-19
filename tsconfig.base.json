@@ -2,6 +2,8 @@
   "include": [],
   "exclude": ["**/bak/*"],
   "compilerOptions": {
+    "tsBuildInfoFile": "./tsconfig.tsbuildinfo",
+
     // Type checking
     "strict": true,
     "useDefineForClassFields": true, // Not enabled by default in `strict` mode unless we bump `target` to ES2022.
