@@ -7,6 +7,10 @@ import { data } from '@inverter-network/abis'
  * @template FT - The factory type
  * @param factoryType - The factory type
  * @returns The available modules for workflow deployment
+ * @example
+ * ```ts
+ * const { fundingManager, paymentProcessor, authorizer, optionalModules } = getDeployWorkflowOptions()
+ * ```
  */
 export function getDeployWorkflowOptions() {
   // Initialize empty arrays for each module type

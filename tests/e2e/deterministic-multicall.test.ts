@@ -162,18 +162,20 @@ describe('#MULTICALL', () => {
         failedPurchaseSingleCall,
       ]
 
-      const result = await sdk.moduleMulticall.write({
-        call,
-        trustedForwarderAddress: TRUSTED_FORWARDER_ADDRESS,
-        options: {
+      const result = await sdk.moduleMulticall.write(
+        {
+          call,
+          trustedForwarderAddress: TRUSTED_FORWARDER_ADDRESS,
+        },
+        {
           onConfirmation: (receipt) => {
             console.log('MULTICALL CONFIRMATION STATUS', receipt.status)
           },
           onHash: (hash) => {
             console.log('MULTICALL TX_HASH', hash)
           },
-        },
-      })
+        }
+      )
 
       console.log('MULTICALL STATUS', result.statuses)
       console.log('MULTICALL RETURN DATA', result.returnDatas)

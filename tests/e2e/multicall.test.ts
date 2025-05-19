@@ -133,18 +133,20 @@ describe('#MULTICALL', () => {
         failedPurchaseSingleCall,
       ]
 
-      const result = await sdk.moduleMulticall.write({
-        call,
-        orchestratorAddress: workflow.orchestrator.address,
-        options: {
+      const result = await sdk.moduleMulticall.write(
+        {
+          call,
+          orchestratorAddress: workflow.orchestrator.address,
+        },
+        {
           onConfirmation: (receipt) => {
             console.log('MULTICALL CONFIRMATION STATUS', receipt.status)
           },
           onHash: (hash) => {
             console.log('MULTICALL TX_HASH', hash)
           },
-        },
-      })
+        }
+      )
 
       console.log('MULTICALL STATUS', result.statuses)
       console.log('MULTICALL RETURN DATA', result.returnDatas)

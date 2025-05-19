@@ -26,7 +26,34 @@ import getTokenResults from './token'
  * @template TFundingToken - The funding token
  * @template TIssuanceToken - The issuance token
  * @param params - The parameters for the gathering of a workflow
+ * @param params.requestedModules - The requested modules
+ * @param params.publicClient - The public client
+ * @param params.walletClient - The wallet client
+ * @param params.orchestratorAddress - The orchestrator address
+ * @param params.self - The inverter sdk instance
+ * @param params.fundingTokenType - The funding token type
+ * @param params.issuanceTokenType - The issuance token type
  * @returns The result of the workflow
+ * @example
+ * ```ts
+ * const {
+ *   orchestrator,
+ *   authorizer,
+ *   fundingManager,
+ *   paymentProcessor,
+ *   optionalModule,
+ *   fundingToken,
+ *   issuanceToken,
+ * } = await getWorkflow({
+ *   requestedModules,
+ *   publicClient,
+ *   walletClient,
+ *   orchestratorAddress,
+ *   self,
+ *   fundingTokenType,
+ *   issuanceTokenType,
+ * })
+ * ```
  */
 export async function getWorkflow<
   T extends MixedRequestedModules | undefined = undefined,

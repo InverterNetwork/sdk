@@ -21,7 +21,23 @@ import iterateMethods from './iterate-methods'
  * @template TModuleData - The module data
  * @template TWalletClient - The wallet client
  * @param params - The parameters for the module
+ * @param params.address - The address of the module
+ * @param params.publicClient - The public client
+ * @param params.walletClient - The wallet client
+ * @param params.tagConfig - The tag config
+ * @param params.self - The self
+ * @param params.moduleData - The module data (optional)
  * @returns The module
+ * @example
+ * ```ts
+ * const module = getModule({
+ *   name: '<module_name>',
+ *   address,
+ *   publicClient,
+ *   walletClient,
+ *   tagConfig,
+ * })
+ * ```
  */
 export function getModule<
   TModuleName extends TModuleData extends ModuleData ? never : ModuleName,

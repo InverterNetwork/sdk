@@ -11,9 +11,21 @@ import type {
 
 /**
  * @description Simulates the workflow deployment process and returns the plemenary modules addresses
- * @example
+ * @param params.trustedForwarderAddress - The address of the trusted forwarder
+ * @param params.requestedModules - The requested modules
+ * @param params.args - The arguments for the workflow deployment
+ * @param params.publicClient - The public client
+ * @param params.walletClient - The wallet client
+ * @returns The simulated workflow
+ * * @example
  * ```ts
- * const { orchestratorAddress, logicModulesAddresses, fundingManagerAddress, authorizerAddress, paymentProcessorAddress } = await getSimulatedWorkflow({
+ * const {
+ *   orchestratorAddress,
+ *   logicModulesAddresses,
+ *   fundingManagerAddress,
+ *   authorizerAddress,
+ *   paymentProcessorAddress
+ * } = await getSimulatedWorkflow({
  *   trustedForwarderAddress,
  *   requestedModules,
  *   args,
@@ -21,12 +33,6 @@ import type {
  *   walletClient,
  * })
  * ```
- * @param params.trustedForwarderAddress - The address of the trusted forwarder
- * @param params.requestedModules - The requested modules
- * @param params.args - The arguments for the workflow deployment
- * @param params.publicClient - The public client
- * @param params.walletClient - The wallet client
- * @returns The simulated workflow
  */
 export async function getSimulatedWorkflow<
   T extends MixedRequestedModules,

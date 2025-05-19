@@ -10,10 +10,18 @@ import { getDeployWorkflowInputs } from './get-inputs'
 import getMethods from './get-methods'
 
 /**
- * @description Get the deploy function for workflow deployment
+ * @description Get the deploy functions for workflow deployment
  * @template T - The requested modules to deploy
  * @param params - The parameters for the preperation of the deploy function
  * @returns The result of the deploy function
+ * @example
+ * ```ts
+ * const { run, simulate, estimateGas, bytecode } = await deployWorkflow({
+ *   requestedModules,
+ * })
+ *
+ * const result = await run(args)
+ * ```
  */
 export async function deployWorkflow<T extends MixedRequestedModules>({
   requestedModules,

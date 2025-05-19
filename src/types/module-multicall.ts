@@ -21,7 +21,6 @@ type ModuleMulticallCallBaseParams = {
   walletClient: PopWalletClient
   publicClient: PopPublicClient
   call: ModuleMulticallCall
-  options?: MethodOptions
 }
 
 /**
@@ -56,7 +55,8 @@ export type ModuleMulticallSimulateReturnType = {
 
 export type ModuleMulticall = {
   write: (
-    params: ModuleMulticallParams
+    params: ModuleMulticallParams,
+    options?: MethodOptions
   ) => Promise<ModuleMulticallWriteReturnType>
   simulate: (
     params: ModuleMulticallParams

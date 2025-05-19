@@ -4,6 +4,7 @@ import type {
   ModuleMulticall,
   ModuleMulticallSimulateReturnType,
   ModuleMulticallWriteReturnType,
+  MethodOptions,
 } from './types'
 import { getContract } from 'viem'
 
@@ -85,15 +86,12 @@ async function multicallCore({
 /**
  * @description Component function for making multiple write transactions in a single call.
  */
-async function writeMulticallFnComponent({
-  publicClient,
-  walletClient,
-  call,
-  options = {
+async function writeMulticallFnComponent(
+  { publicClient, walletClient, call, ...rest }: ModuleMulticallParams,
+  options: MethodOptions = {
     confirmations: 1,
-  },
-  ...rest
-}: ModuleMulticallParams): Promise<ModuleMulticallWriteReturnType> {
+  }
+): Promise<ModuleMulticallWriteReturnType> {
   let transactionHash: `0x${string}` = '0x'
   let statuses: ('fail' | 'success')[] = []
   let returnDatas: `0x${string}`[] = []
@@ -108,7 +106,6 @@ async function writeMulticallFnComponent({
       publicClient,
       walletClient,
       call,
-      options,
       ...rest,
     })
 
@@ -173,7 +170,6 @@ async function simulateMulticallFnComponent({
   publicClient,
   walletClient,
   call,
-  options,
   ...rest
 }: ModuleMulticallParams): Promise<ModuleMulticallSimulateReturnType> {
   let statuses: ('fail' | 'success')[] = []
@@ -189,7 +185,7 @@ async function simulateMulticallFnComponent({
       publicClient,
       walletClient,
       call,
-      options,
+
       ...rest,
     })
 
@@ -230,7 +226,21 @@ async function simulateMulticallFnComponent({
   }
 }
 
-// Export an object with write and simulate methods
+/**
+ * @description The module multicall object
+ * @param params.call - The call to be made
+ * @param params.options - The options for the call
+ * @param params.rest - The rest of the parameters
+ * @returns The statuses, return datas, and transaction hash
+ *  * @example
+ * ```ts
+ * const { statuses, returnDatas, transactionHash } = await moduleMulticall.write({
+ *   call,
+ *   options,
+ *   ...rest,
+ * })
+ * ```
+ */
 export const moduleMulticall: ModuleMulticall = {
   write: writeMulticallFnComponent,
   simulate: simulateMulticallFnComponent,

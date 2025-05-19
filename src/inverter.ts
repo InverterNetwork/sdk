@@ -39,6 +39,13 @@ import { getSimulatedWorkflow } from './get-simulated-workflow'
  * @template TWalletClient - The wallet client
  * @param publicClient - The public client
  * @param walletClient - The wallet client
+ * @example
+ * ```ts
+ * const inverter = Inverter.getInstance({
+ *   publicClient,
+ *   walletClient,
+ * })
+ * ```
  */
 export class Inverter<
   TWalletClient extends PopWalletClient | undefined = undefined,
@@ -114,16 +121,7 @@ export class Inverter<
   }
 
   /**
-   * @description Get a workflow
-   * @template T - The requested modules
-   * @template TFundingToken - The funding token
-   * @template TIssuanceToken - The issuance token
-   * @param params - The parameters for the workflow
-   * @param params.orchestratorAddress - The address of the orchestrator
-   * @param params.requestedModules - The requested modules
-   * @param params.fundingTokenType - The type of funding token default is ERC20
-   * @param params.issuanceTokenType - The type of issuance token default is ERC20Issuance_v1
-   * @returns The workflow
+   * @see {@link getWorkflow}
    */
   async getWorkflow<
     T extends MixedRequestedModules | undefined = undefined,
@@ -179,12 +177,7 @@ export class Inverter<
   getDeployWorkflowOptions = getDeployWorkflowOptions
 
   /**
-   * @description Retreive the deploy workflow methods and inputs array
-   * @template T - The requested modules
-   * @param params - The parameters for the deploy options
-   * @param params.requestedModules - The requested modules
-   * @param params.factoryType - The factory type
-   * @returns The deploy options
+   * @see {@link deployWorkflow}
    */
   deployWorkflow<T extends MixedRequestedModules>({
     requestedModules,
@@ -206,12 +199,7 @@ export class Inverter<
   }
 
   /**
-   * @description Deploy a contract
-   * @template T - The deployable contract
-   * @param params - The parameters for the deploy
-   * @param params.name - The name of the contract
-   * @param params.args - The arguments for the deploy
-   * @returns The result of the deploy
+   * @see {@link deploy}
    */
   deploy<T extends DeployableContracts>(
     {
@@ -238,11 +226,7 @@ export class Inverter<
   }
 
   /**
-   * @description Get a module
-   * @template TModuleName - The module name
-   * @template TModuleData - The module data
-   * @param params - The parameters for the module
-   * @returns The module
+   * @see {@link getModule}
    */
   getModule<
     TModuleName extends TModuleData extends ModuleData ? never : ModuleName,
@@ -262,28 +246,29 @@ export class Inverter<
   }
 
   /**
-   * @description Multicall - Execute multiple inverter module write methods in a single transaction
-   * @param params - The parameters for the multicall
-   * @param params.calls - The calls to execute
-   * @returns The result of the multicall
+   * @see {@link moduleMulticall}
    */
   moduleMulticall: {
     write: (
-      params: Except<ModuleMulticallParams, 'publicClient' | 'walletClient'>
+      params: Except<ModuleMulticallParams, 'publicClient' | 'walletClient'>,
+      options?: MethodOptions
     ) => Promise<ModuleMulticallWriteReturnType>
     simulate: (
       params: Except<ModuleMulticallParams, 'publicClient' | 'walletClient'>
     ) => Promise<ModuleMulticallSimulateReturnType>
   } = {
-    write: async (params) => {
+    write: async (params, options) => {
       if (!this.walletClient)
         throw new Error('Wallet client is required for multicall')
 
-      return await moduleMulticall.write({
-        ...params,
-        publicClient: this.publicClient,
-        walletClient: this.walletClient!,
-      })
+      return await moduleMulticall.write(
+        {
+          ...params,
+          publicClient: this.publicClient,
+          walletClient: this.walletClient!,
+        },
+        options
+      )
     },
     simulate: async (params) => {
       if (!this.walletClient)
@@ -298,9 +283,7 @@ export class Inverter<
   }
 
   /**
-   * @description Get the simulated workflow
-   * @param params - The parameters for the simulated workflow
-   * @returns The simulated workflow
+   * @see {@link getSimulatedWorkflow}
    */
   async getSimulatedWorkflow<
     T extends MixedRequestedModules,

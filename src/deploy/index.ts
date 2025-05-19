@@ -19,6 +19,15 @@ import { processInputs } from '@/utils'
  * @param params - The parameters for the deploy function
  * @param options - The options for the deploy function
  * @returns The result of the deploy function
+ * @example
+ * ```ts
+ * const result = await deploy({
+ *   name: 'ERC20_IssuanceToken_v1',
+ *   walletClient,
+ *   publicClient,
+ *   args,
+ * })
+ * ```
  */
 export async function deploy<T extends DeployableContracts>(
   {
