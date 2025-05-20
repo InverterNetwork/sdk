@@ -166,11 +166,13 @@ export async function getSimulatedWorkflow<
     const tokenDeployment = await deploy.bytecode({
       publicClient,
       ...token,
-      args: token.args as any,
     })
 
     Object.assign(result, {
-      tokenBytecode: tokenDeployment.bytecode,
+      tokenBytecode: await tokenDeployment.run({
+        args: token.args,
+        calls: token.calls,
+      }),
       tokenAddress: tokenDeployment.contractAddress,
     })
   }

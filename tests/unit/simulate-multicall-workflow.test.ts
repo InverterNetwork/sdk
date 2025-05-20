@@ -1,13 +1,14 @@
 import type {
+  DeployBytecodeReturnType,
   GetModuleReturnType,
   GetSimulatedWorkflowReturnType,
   PopWalletClient,
   RequestedModules,
 } from '@/types'
-import { GET_HUMAN_READABLE_UINT_MAX_SUPPLY } from '@/utils'
 import { beforeAll, describe, expect, it } from 'bun:test'
 import {
   FM_BC_Bancor_VirtualSupply_v1_ARGS,
+  GET_HUMAN_READABLE_UINT_MAX_SUPPLY,
   GET_ORCHESTRATOR_ARGS,
   sdk,
   TEST_ERC20_MOCK_ADDRESS,
@@ -36,19 +37,13 @@ describe('#SIMULATE_MULTICALL_WORKFLOW', () => {
 
   let fundingToken: GetModuleReturnType<'ERC20Issuance_v1', PopWalletClient>
   let issuanceToken: GetModuleReturnType<'ERC20Issuance_v1', PopWalletClient>
+  let issuanceTokenBytecode: DeployBytecodeReturnType<'ERC20Issuance_v1'>
   let simulatedWorkflow: GetSimulatedWorkflowReturnType
 
   beforeAll(async () => {
     // Deploy the issuance token
-    const { contractAddress } = await sdk.deploy.write({
+    issuanceTokenBytecode = await sdk.deploy.bytecode({
       name: 'ERC20Issuance_v1',
-      args: {
-        name: 'Test Issuance Token',
-        symbol: 'TIT',
-        decimals: 18,
-        maxSupply: GET_HUMAN_READABLE_UINT_MAX_SUPPLY(18),
-        initialAdmin: deployer,
-      },
     })
 
     fundingToken = sdk.getModule({
@@ -61,7 +56,7 @@ describe('#SIMULATE_MULTICALL_WORKFLOW', () => {
 
     issuanceToken = sdk.getModule({
       name: 'ERC20Issuance_v1',
-      address: contractAddress,
+      address: issuanceTokenBytecode.contractAddress,
       tagConfig: {
         decimals: 18,
       },
@@ -134,13 +129,29 @@ describe('#SIMULATE_MULTICALL_WORKFLOW', () => {
     // 1. Mint collateral token to the deployer
     await fundingToken.write.mint.run([deployer, PURCHASE_AMOUNT])
 
-    // 2. Set the funding manager as minter of the issuance token
-    await issuanceToken.write.setMinter.run([fundingManager.address, true])
-
-    // 3. Make deploy and purchase in batch
+    // 2. Make deploy and purchase in batch
     await sdk.moduleMulticall.write({
       trustedForwarderAddress: simulatedWorkflow.trustedForwarderAddress,
       call: [
+        {
+          address: issuanceTokenBytecode.contractAddress,
+          allowFailure: false,
+          callData: await issuanceTokenBytecode.run({
+            args: {
+              decimals: 18,
+              initialAdmin: deployer,
+              name: 'Test',
+              symbol: 'TEST',
+              maxSupply: GET_HUMAN_READABLE_UINT_MAX_SUPPLY(18),
+            },
+            calls: [
+              await issuanceToken.bytecode.setMinter.run([
+                fundingManager.address,
+                true,
+              ]),
+            ],
+          }),
+        },
         {
           address: simulatedWorkflow.factoryAddress,
           allowFailure: false,

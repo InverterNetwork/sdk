@@ -5,7 +5,7 @@ import type {
   DeployableContracts,
   DeployBytecodeParams,
   DeployBytecodeReturnType,
-  DeployParams,
+  DeployWriteParams,
   GetDeployWorkflowArgs,
   GetModuleParams,
   GetModuleReturnType,
@@ -205,7 +205,7 @@ export class Inverter<
    */
   deploy = {
     write: <T extends DeployableContracts>(
-      params: Omit<DeployParams<T>, 'walletClient' | 'publicClient'>,
+      params: Omit<DeployWriteParams<T>, 'walletClient' | 'publicClient'>,
       options?: MethodOptions
     ) => {
       if (!this.walletClient)
@@ -222,7 +222,7 @@ export class Inverter<
     },
     bytecode: <T extends DeployableContracts>(
       params: Omit<DeployBytecodeParams<T>, 'publicClient'>
-    ): Promise<DeployBytecodeReturnType> => {
+    ): Promise<DeployBytecodeReturnType<T>> => {
       return deploy.bytecode({
         ...params,
         publicClient: this.publicClient,

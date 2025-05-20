@@ -6,38 +6,15 @@ import { getModule } from '@/get-module'
 import type {
   Deploy,
   DeployableContracts,
-  DeployParams,
+  DeployBytecodeParams,
+  DeployBytecodeRunParams,
+  DeployWriteParams,
   MethodOptions,
 } from '@/types'
 // sdk utils
 import { processInputs } from '@/utils'
 import { encodeDeployData, getContractAddress } from 'viem'
 import type { Address } from 'viem'
-
-async function deployBase<T extends DeployableContracts>({
-  name,
-  publicClient,
-  args,
-}: Omit<DeployParams<T>, 'walletClient'>) {
-  const moduleData = getModuleData<T>(name)
-
-  if (!('deploymentInputs' in moduleData)) {
-    throw new Error('Invalid module data')
-  }
-
-  const handledArgs = moduleData.deploymentInputs.configData.map(
-    (input) => (args as any)?.[input.name]
-  )
-
-  const processedArgs = await processInputs({
-    args: handledArgs,
-    extendedInputs: moduleData.deploymentInputs.configData,
-    publicClient,
-    kind: 'write',
-  })
-
-  return { processedArgs, moduleData }
-}
 
 /**
  * @description Deploy a contract
@@ -49,13 +26,23 @@ async function deployBase<T extends DeployableContracts>({
  * @returns The result of the deployment
  */
 export async function deployWrite<T extends DeployableContracts>(
-  { name, walletClient, publicClient, args }: DeployParams<T>,
+  { name, walletClient, publicClient, args }: DeployWriteParams<T>,
   options?: MethodOptions
 ) {
-  const { processedArgs, moduleData } = await deployBase({
-    name,
+  // Get the module data
+  const moduleData = getModuleData<T>(name)
+  if (!('deploymentInputs' in moduleData)) {
+    throw new Error('Invalid module data')
+  }
+  // Process the arguments
+  const handledArgs = moduleData.deploymentInputs.configData.map(
+    (input) => (args as any)?.[input.name]
+  )
+  const processedArgs = await processInputs({
+    args: handledArgs,
+    extendedInputs: moduleData.deploymentInputs.configData,
     publicClient,
-    args,
+    kind: 'write',
   })
   // Deploy the contract
   const transactionHash = await walletClient.deployContract({
@@ -96,13 +83,11 @@ export async function deployWrite<T extends DeployableContracts>(
 export async function deployBytecode<T extends DeployableContracts>({
   name,
   publicClient,
-  args,
-}: Omit<DeployParams<T>, 'walletClient'>) {
-  const { processedArgs, moduleData } = await deployBase({
-    name,
-    publicClient,
-    args,
-  })
+}: DeployBytecodeParams<T>) {
+  const moduleData = getModuleData<T>(name)
+  if (!('deploymentInputs' in moduleData)) {
+    throw new Error('Invalid module data')
+  }
   // Get the factory address
   const chainId = publicClient.chain.id
   const factoryAddress = await getFactoryAddress({
@@ -118,17 +103,32 @@ export async function deployBytecode<T extends DeployableContracts>({
     publicClient,
     address: factoryAddress,
   })
-  // Encoding constructor arguments with the bytecode
-  const encodedBytecode = encodeDeployData({
-    abi: moduleData.abi,
-    bytecode: moduleData.deploymentInputs.bytecode,
-    args: processedArgs.processedInputs as any,
-  })
-  // Get the factory bytecode
-  const deployBytecode = await factory.bytecode.deployExternalContract.run([
-    encodedBytecode,
-    ['0x'],
-  ])
+  // Define the run function / which will generate the bytecode
+  const run = async (params: DeployBytecodeRunParams<T>) => {
+    // Process the arguments
+    const handledArgs = moduleData.deploymentInputs.configData.map(
+      (input) => (params.args as any)?.[input.name]
+    )
+    const processedArgs = await processInputs({
+      args: handledArgs,
+      extendedInputs: moduleData.deploymentInputs.configData,
+      publicClient,
+      kind: 'write',
+    })
+
+    // Encoding constructor arguments with the bytecode
+    const encodedBytecode = encodeDeployData({
+      abi: moduleData.abi,
+      bytecode: moduleData.deploymentInputs.bytecode,
+      args: processedArgs.processedInputs as any,
+    })
+    // Get the factory bytecode
+    const deployBytecode = await factory.bytecode.deployExternalContract.run([
+      encodedBytecode,
+      params.calls ?? ['0x'],
+    ])
+    return deployBytecode
+  }
   // Simulate the contract address
   const factoryNonce = await publicClient.getTransactionCount({
     address: factoryAddress as Address,
@@ -140,7 +140,7 @@ export async function deployBytecode<T extends DeployableContracts>({
   })
   // Return the result with proper typing
   return {
-    bytecode: deployBytecode,
+    run,
     factoryAddress,
     contractAddress,
   }
