@@ -66,17 +66,18 @@ export default async function decimals({
     }
   }
   // OVERWRITE CASES
-  else if (
-    tag === 'decimals' &&
-    tagConfig?.decimals &&
-    tagConfig?.defaultToken
-  ) {
+  else if (tag === 'decimals' && tagConfig?.decimals) {
     decimals = tagConfig.decimals
-    tokenAddress = tagConfig.defaultToken
   } else if (
     ['issuanceToken', 'getIssuanceToken'].some((t) => tag.includes(t)) &&
-    tagConfig?.issuanceTokenDecimals &&
-    tagConfig?.issuanceToken
+    !tag.includes('approval') &&
+    tagConfig?.issuanceTokenDecimals
+  ) {
+    decimals = tagConfig.issuanceTokenDecimals
+  } else if (
+    ['issuanceToken', 'getIssuanceToken'].some((t) => tag.includes(t)) &&
+    tagConfig?.issuanceToken &&
+    tagConfig?.issuanceTokenDecimals
   ) {
     decimals = tagConfig.issuanceTokenDecimals
     tokenAddress = tagConfig.issuanceToken

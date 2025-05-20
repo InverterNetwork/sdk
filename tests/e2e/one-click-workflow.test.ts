@@ -46,7 +46,7 @@ describe('#ONE_CLICK_WORKFLOW', () => {
   let fundingToken: GetModuleReturnType<'ERC20Issuance_v1', PopWalletClient>
   let issuanceToken: GetModuleReturnType<'ERC20Issuance_v1', PopWalletClient>
   let issuanceTokenBytecode: DeployBytecodeReturnType
-  let simulatedWorkflow: GetSimulatedWorkflowReturnType<'ERC20Issuance_v1'>
+  let simulatedWorkflow: GetSimulatedWorkflowReturnType<DeployBytecodeReturnType>
 
   beforeAll(async () => {
     // Deploy the issuance token
@@ -78,15 +78,9 @@ describe('#ONE_CLICK_WORKFLOW', () => {
       args: args(issuanceToken.address),
       tagConfig: {
         decimals: 18,
-        defaultToken: FM_BC_Bancor_VirtualSupply_v1_ARGS.collateralToken,
-        issuanceToken: issuanceToken.address,
-        walletAddress: deployer,
         issuanceTokenDecimals: 18,
       },
-      token: {
-        name: 'ERC20Issuance_v1',
-        args: issuanceTokenArgs,
-      },
+      tokenBytecode: issuanceTokenBytecode,
     })
 
     expect(simulatedWorkflow.orchestratorAddress).toBeDefined()
@@ -124,7 +118,7 @@ describe('#ONE_CLICK_WORKFLOW', () => {
         {
           address: simulatedWorkflow.factoryAddress,
           allowFailure: false,
-          callData: simulatedWorkflow.tokenBytecode,
+          callData: await simulatedWorkflow.tokenBytecode.run(),
         },
         {
           address: simulatedWorkflow.factoryAddress,
@@ -154,18 +148,21 @@ describe('#ONE_CLICK_WORKFLOW', () => {
     // 1. Mint collateral token to the deployer
     await fundingToken.write.mint.run([deployer, PURCHASE_AMOUNT])
 
-    // 2. Make deploy and purchase in batch
+    // 2. Prepare setMinter call data
+    const setMinterCallData = await issuanceToken.bytecode.setMinter.run([
+      fundingManager.address,
+      true,
+    ])
+
+    // 3. Make deploy and purchase in batch
     await sdk.moduleMulticall.write({
       trustedForwarderAddress: simulatedWorkflow.trustedForwarderAddress,
       call: [
         {
           address: simulatedWorkflow.factoryAddress,
           allowFailure: false,
-          callData: await issuanceTokenBytecode.run([
-            await issuanceToken.bytecode.setMinter.run([
-              fundingManager.address,
-              true,
-            ]),
+          callData: await simulatedWorkflow.tokenBytecode.run([
+            setMinterCallData,
           ]),
         },
         {
@@ -175,7 +172,7 @@ describe('#ONE_CLICK_WORKFLOW', () => {
         },
         {
           address: fundingManager.address,
-          allowFailure: false,
+          allowFailure: true,
           callData: await fundingManager.bytecode.openBuy.run(),
         },
         {

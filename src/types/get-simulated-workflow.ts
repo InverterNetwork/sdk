@@ -1,6 +1,6 @@
 import type {
   DeployableContracts,
-  DeployBytecodeParams,
+  DeployBytecodeReturnType,
   GetDeployWorkflowArgs,
   MixedRequestedModules,
   PopPublicClient,
@@ -24,17 +24,14 @@ export type SimulatedWorkflowToken =
 export type GetSimulatedWorkflowParams<
   T extends MixedRequestedModules,
   TDeployWorkflowArgs extends GetDeployWorkflowArgs<T>,
-  TToken extends SimulatedWorkflowToken = undefined,
+  TTokenBytecode extends DeployBytecodeReturnType | undefined = undefined,
 > = {
   requestedModules: T
   args: TDeployWorkflowArgs
   publicClient: PopPublicClient
   walletClient: PopWalletClient
-  token?: Omit<
-    DeployBytecodeParams<NonNullable<TToken>>,
-    'publicClient' | 'walletClient'
-  >
   tagConfig?: TagConfig
+  tokenBytecode?: TTokenBytecode
 }
 
 /**
@@ -51,7 +48,7 @@ export type GetSimulatedWorkflowParams<
  * @param params.tokenAddress - The address of the token
  */
 export type GetSimulatedWorkflowReturnType<
-  TToken extends SimulatedWorkflowToken = undefined,
+  TTokenBytecode extends DeployBytecodeReturnType | undefined = undefined,
 > = {
   orchestratorAddress: `0x${string}`
   authorizerAddress: `0x${string}`
@@ -62,6 +59,5 @@ export type GetSimulatedWorkflowReturnType<
   bytecode: `0x${string}`
   trustedForwarderAddress: `0x${string}`
   factoryAddress: `0x${string}`
-  tokenBytecode: TToken extends undefined ? never : `0x${string}`
-  tokenAddress: TToken extends undefined ? never : `0x${string}`
+  tokenBytecode: TTokenBytecode extends undefined ? never : TTokenBytecode
 }

@@ -70,7 +70,13 @@ async function multicallCore({
     } as const
   })
 
-  debug('final multicallData', multicallData)
+  debug(
+    'FINAL_MULTICALL_DATA',
+    multicallData.map((i) => ({
+      ...i,
+      callData: i.callData.slice(0, 100),
+    }))
+  )
 
   return {
     statuses,

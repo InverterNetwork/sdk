@@ -19,7 +19,6 @@ import type {
   ModuleMulticallWriteReturnType,
   PopPublicClient,
   PopWalletClient,
-  SimulatedWorkflowToken,
   Workflow,
   WorkflowIssuanceToken,
   WorkflowToken,
@@ -297,13 +296,13 @@ export class Inverter<
   async getSimulatedWorkflow<
     T extends MixedRequestedModules,
     TDeployWorkflowArgs extends GetDeployWorkflowArgs<T>,
-    TToken extends SimulatedWorkflowToken | undefined = undefined,
+    TTokenBytecode extends DeployBytecodeReturnType | undefined = undefined,
   >(
     params: Omit<
-      GetSimulatedWorkflowParams<T, TDeployWorkflowArgs, TToken>,
+      GetSimulatedWorkflowParams<T, TDeployWorkflowArgs, TTokenBytecode>,
       'publicClient' | 'walletClient'
     >
-  ): Promise<GetSimulatedWorkflowReturnType<TToken>> {
+  ): Promise<GetSimulatedWorkflowReturnType<TTokenBytecode>> {
     return getSimulatedWorkflow({
       ...params,
       publicClient: this.publicClient,

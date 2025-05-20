@@ -2,16 +2,14 @@ import { deployWorkflow } from '@/deploy-workflow'
 import { getModule } from '@/get-module'
 import { moduleMulticall } from '@/module-multicall'
 import type {
+  DeployBytecodeReturnType,
   GetDeployWorkflowArgs,
   GetSimulatedWorkflowParams,
   GetSimulatedWorkflowReturnType,
   MixedRequestedModules,
   ModuleMulticallCall,
-  SimulatedWorkflowToken,
 } from '@/types'
 import d from 'debug'
-
-import { deploy } from './deploy'
 
 const debug = d('inverter:get-simulated-workflow')
 
@@ -43,16 +41,16 @@ const debug = d('inverter:get-simulated-workflow')
 export async function getSimulatedWorkflow<
   T extends MixedRequestedModules,
   TDeployWorkflowArgs extends GetDeployWorkflowArgs<T>,
-  TToken extends SimulatedWorkflowToken = undefined,
+  TTokenBytecode extends DeployBytecodeReturnType | undefined = undefined,
 >({
   requestedModules,
   args,
   publicClient,
   walletClient,
-  token,
+  tokenBytecode,
   tagConfig,
-}: GetSimulatedWorkflowParams<T, TDeployWorkflowArgs, TToken>): Promise<
-  GetSimulatedWorkflowReturnType<TToken>
+}: GetSimulatedWorkflowParams<T, TDeployWorkflowArgs, TTokenBytecode>): Promise<
+  GetSimulatedWorkflowReturnType<TTokenBytecode>
 > {
   debug('BEFORE_DEPLOY_WORKFLOW')
   // Get the bytecode method of the deployWorkflow function
@@ -79,31 +77,17 @@ export async function getSimulatedWorkflow<
   const trustedForwarderAddress = await factory.read.trustedForwarder.run()
   debug('TRUSTED_FORWARDER_ADDRESS', trustedForwarderAddress)
 
-  let tokenBytecode: `0x${string}` | null = null
-  let tokenAddress: `0x${string}` | null = null
-
-  // If a token is provided, add the token bytecode and address to the result
-  if (token) {
-    const tokenDeployment = await deploy.bytecode({
-      publicClient,
-      walletClient,
-      name: token.name,
-      args: token.args as any,
-    })
-    tokenBytecode = await tokenDeployment.run()
-    tokenAddress = tokenDeployment.contractAddress
-    debug('GOT_TOKEN_BYTECODE_AND_ADDRESS', tokenAddress)
-  }
+  const tokenBytecodeData = await tokenBytecode?.run()
 
   const orchestratorAddress = await (async () => {
-    if (tokenBytecode) {
+    if (tokenBytecodeData) {
       const multicall = await moduleMulticall.simulate({
         trustedForwarderAddress,
         call: [
           {
             allowFailure: false,
             address: deployBytecode.factoryAddress,
-            callData: tokenBytecode,
+            callData: tokenBytecodeData,
           },
           {
             allowFailure: false,
@@ -171,12 +155,12 @@ export async function getSimulatedWorkflow<
     },
   ]
 
-  if (tokenBytecode) {
+  if (tokenBytecodeData) {
     call = [
       {
         address: deployBytecode.factoryAddress,
         allowFailure: false,
-        callData: tokenBytecode,
+        callData: tokenBytecodeData,
       },
       ...call,
     ]
@@ -225,14 +209,8 @@ export async function getSimulatedWorkflow<
     paymentProcessorAddress: paymentProcessor,
     bytecode: deployBytecode.bytecode,
     factoryAddress: deployBytecode.factoryAddress,
+    tokenBytecode,
   }
 
-  if (tokenBytecode && tokenAddress) {
-    Object.assign(result, {
-      tokenAddress,
-      tokenBytecode,
-    })
-  }
-
-  return result as GetSimulatedWorkflowReturnType<TToken>
+  return result as GetSimulatedWorkflowReturnType<TTokenBytecode>
 }
