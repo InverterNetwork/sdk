@@ -27,8 +27,10 @@ describe('#DEPLOY_EXTERNAL_CONTRACT', () => {
       },
     })
 
+    const trustedForwarderAddress = await factory.read.trustedForwarder.run()
+
     const result = await sdk.moduleMulticall.write({
-      trustedForwarderAddress: await factory.read.trustedForwarder.run(),
+      trustedForwarderAddress,
       call: [
         {
           address: factory.address,
