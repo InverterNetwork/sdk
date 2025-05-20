@@ -3,10 +3,13 @@ import type {
   ParseGetTagCallbackParams,
   TagCallback,
 } from '@/types'
+import d from 'debug'
 
 import tagProcessor from '@/utils/tag-processor'
 
 import { parseDecimals } from './parse'
+
+const debug = d('inverter:process-inputs:get-tag-callback')
 
 export default function getTagCallback({
   requiredAllowances,
@@ -33,6 +36,8 @@ export default function getTagCallback({
         contract,
         self,
       })
+
+      debug('ARG_DECIMALS_RES', { arg, decimalsRes })
 
       parsedAmount = parseDecimals(arg, decimalsRes.decimals)
 

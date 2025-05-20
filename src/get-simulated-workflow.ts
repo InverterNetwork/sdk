@@ -86,12 +86,11 @@ export async function getSimulatedWorkflow<
   if (token) {
     const tokenDeployment = await deploy.bytecode({
       publicClient,
+      walletClient,
       name: token.name,
+      args: token.args as any,
     })
-    tokenBytecode = await tokenDeployment.run({
-      args: token.args,
-      calls: token.calls,
-    })
+    tokenBytecode = await tokenDeployment.run()
     tokenAddress = tokenDeployment.contractAddress
     debug('GOT_TOKEN_BYTECODE_AND_ADDRESS', tokenAddress)
   }

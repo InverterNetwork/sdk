@@ -117,8 +117,12 @@ export default function getRun<
     const res: Awaited<ReturnType<Actions[TMethodKind]>> = await (async () => {
       try {
         // If the kind is not read, approve the required allowances
-        if (kind !== 'read' && options?.skipApprove !== true) {
-          debug('Approving required allowances', requiredAllowances)
+        if (
+          !!requiredAllowances.length &&
+          kind !== 'read' &&
+          options?.skipApprove !== true
+        ) {
+          debug('Approving:', requiredAllowances)
 
           const transactionReceipts = await tagProcessor.approve({
             requiredAllowances,
@@ -126,7 +130,15 @@ export default function getRun<
             walletClient,
           })
 
-          debug('Approve handler transaction receipts', transactionReceipts)
+          debug(
+            'Approve receipts:',
+            transactionReceipts?.map(({ status, gasUsed }) => {
+              return {
+                status,
+                gasUsed,
+              }
+            })
+          )
 
           if (transactionReceipts) options?.onApprove?.(transactionReceipts)
         }

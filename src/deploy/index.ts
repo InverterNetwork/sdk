@@ -7,14 +7,12 @@ import type {
   Deploy,
   DeployableContracts,
   DeployBytecodeParams,
-  DeployBytecodeRunParams,
   DeployWriteParams,
   MethodOptions,
 } from '@/types'
 // sdk utils
 import { processInputs } from '@/utils'
-import { encodeDeployData, getContractAddress } from 'viem'
-import type { Address } from 'viem'
+import { encodeDeployData } from 'viem'
 
 /**
  * @description Deploy a contract
@@ -82,7 +80,9 @@ export async function deployWrite<T extends DeployableContracts>(
 
 export async function deployBytecode<T extends DeployableContracts>({
   name,
+  args,
   publicClient,
+  walletClient,
 }: DeployBytecodeParams<T>) {
   const moduleData = getModuleData<T>(name)
   if (!('deploymentInputs' in moduleData)) {
@@ -102,20 +102,21 @@ export async function deployBytecode<T extends DeployableContracts>({
     name: 'OrchestratorFactory_v1',
     publicClient,
     address: factoryAddress,
+    walletClient,
   })
-  // Define the run function / which will generate the bytecode
-  const run = async (params: DeployBytecodeRunParams<T>) => {
-    // Process the arguments
-    const handledArgs = moduleData.deploymentInputs.configData.map(
-      (input) => (params.args as any)?.[input.name]
-    )
-    const processedArgs = await processInputs({
-      args: handledArgs,
-      extendedInputs: moduleData.deploymentInputs.configData,
-      publicClient,
-      kind: 'write',
-    })
+  // Process the arguments
+  const handledArgs = moduleData.deploymentInputs.configData.map(
+    (input) => (args as any)?.[input.name]
+  )
+  const processedArgs = await processInputs({
+    args: handledArgs,
+    extendedInputs: moduleData.deploymentInputs.configData,
+    publicClient,
+    kind: 'write',
+  })
 
+  // Define the run function / which will generate the bytecode
+  const run = async (call?: `0x${string}`[]) => {
     // Encoding constructor arguments with the bytecode
     const encodedBytecode = encodeDeployData({
       abi: moduleData.abi,
@@ -125,19 +126,24 @@ export async function deployBytecode<T extends DeployableContracts>({
     // Get the factory bytecode
     const deployBytecode = await factory.bytecode.deployExternalContract.run([
       encodedBytecode,
-      params.calls ?? [],
+      call ?? [],
     ])
     return deployBytecode
   }
   // Simulate the contract address
-  const factoryNonce = await publicClient.getTransactionCount({
-    address: factoryAddress as Address,
+  const mockDeploymentBytecode = encodeDeployData({
+    abi: moduleData.abi,
+    bytecode: moduleData.deploymentInputs.bytecode,
+    args: processedArgs.processedInputs as any,
   })
-  // Calculate the predicted contract address
-  const contractAddress = getContractAddress({
-    from: factoryAddress as Address,
-    nonce: BigInt(factoryNonce),
-  })
+
+  const contractAddress = (
+    await factory.simulate.deployExternalContract.run([
+      mockDeploymentBytecode,
+      [],
+    ])
+  ).result
+
   // Return the result with proper typing
   return {
     run,

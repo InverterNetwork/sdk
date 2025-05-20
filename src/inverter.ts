@@ -221,11 +221,15 @@ export class Inverter<
       )
     },
     bytecode: <T extends DeployableContracts>(
-      params: Omit<DeployBytecodeParams<T>, 'publicClient'>
-    ): Promise<DeployBytecodeReturnType<T>> => {
+      params: Omit<DeployBytecodeParams<T>, 'publicClient' | 'walletClient'>
+    ): Promise<DeployBytecodeReturnType> => {
+      if (!this.walletClient)
+        throw new Error('Wallet client is required for deploy')
+
       return deploy.bytecode({
         ...params,
         publicClient: this.publicClient,
+        walletClient: this.walletClient,
       })
     },
   }

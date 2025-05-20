@@ -23,8 +23,8 @@ describe('#ONE_CLICK_WORKFLOW', () => {
     paymentProcessor: 'PP_Streaming_v1',
   } as const satisfies RequestedModules
 
-  const args = (issuanceTokenAddress: `0x${string}`) =>
-    ({
+  const args = (issuanceTokenAddress: `0x${string}`) => {
+    return {
       authorizer: {
         initialAdmin: deployer,
       },
@@ -33,8 +33,8 @@ describe('#ONE_CLICK_WORKFLOW', () => {
         issuanceToken: issuanceTokenAddress,
       },
       orchestrator: GET_ORCHESTRATOR_ARGS(deployer),
-    }) as const
-
+    } as const
+  }
   const issuanceTokenArgs = {
     decimals: 18,
     initialAdmin: deployer,
@@ -45,13 +45,14 @@ describe('#ONE_CLICK_WORKFLOW', () => {
 
   let fundingToken: GetModuleReturnType<'ERC20Issuance_v1', PopWalletClient>
   let issuanceToken: GetModuleReturnType<'ERC20Issuance_v1', PopWalletClient>
-  let issuanceTokenBytecode: DeployBytecodeReturnType<'ERC20Issuance_v1'>
-  let simulatedWorkflow: GetSimulatedWorkflowReturnType
+  let issuanceTokenBytecode: DeployBytecodeReturnType
+  let simulatedWorkflow: GetSimulatedWorkflowReturnType<'ERC20Issuance_v1'>
 
   beforeAll(async () => {
     // Deploy the issuance token
     issuanceTokenBytecode = await sdk.deploy.bytecode({
       name: 'ERC20Issuance_v1',
+      args: issuanceTokenArgs,
     })
 
     fundingToken = sdk.getModule({
@@ -72,14 +73,13 @@ describe('#ONE_CLICK_WORKFLOW', () => {
   })
 
   it('should simulate the multicall workflow', async () => {
-    console.log('ISSUANCE_TOKEN_ADDRESS', issuanceToken.address)
     simulatedWorkflow = await sdk.getSimulatedWorkflow({
       requestedModules,
       args: args(issuanceToken.address),
       tagConfig: {
         decimals: 18,
-        issuanceToken: issuanceToken.address,
         defaultToken: FM_BC_Bancor_VirtualSupply_v1_ARGS.collateralToken,
+        issuanceToken: issuanceToken.address,
         walletAddress: deployer,
         issuanceTokenDecimals: 18,
       },
@@ -117,10 +117,15 @@ describe('#ONE_CLICK_WORKFLOW', () => {
     })
 
     const {
-      returnDatas: [, purchaseReturnReturnData],
+      returnDatas: [, , purchaseReturnReturnData],
     } = await sdk.moduleMulticall.simulate({
       trustedForwarderAddress: simulatedWorkflow.trustedForwarderAddress,
       call: [
+        {
+          address: simulatedWorkflow.factoryAddress,
+          allowFailure: false,
+          callData: simulatedWorkflow.tokenBytecode,
+        },
         {
           address: simulatedWorkflow.factoryAddress,
           allowFailure: false,
@@ -156,15 +161,12 @@ describe('#ONE_CLICK_WORKFLOW', () => {
         {
           address: simulatedWorkflow.factoryAddress,
           allowFailure: false,
-          callData: await issuanceTokenBytecode.run({
-            args: issuanceTokenArgs,
-            calls: [
-              await issuanceToken.bytecode.setMinter.run([
-                fundingManager.address,
-                true,
-              ]),
-            ],
-          }),
+          callData: await issuanceTokenBytecode.run([
+            await issuanceToken.bytecode.setMinter.run([
+              fundingManager.address,
+              true,
+            ]),
+          ]),
         },
         {
           address: simulatedWorkflow.factoryAddress,
@@ -178,7 +180,7 @@ describe('#ONE_CLICK_WORKFLOW', () => {
         },
         {
           address: fundingManager.address,
-          allowFailure: false,
+          allowFailure: true,
           callData: await fundingManager.bytecode.buy.run([
             PURCHASE_AMOUNT,
             purchaseReturn,

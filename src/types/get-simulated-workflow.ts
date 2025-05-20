@@ -1,7 +1,6 @@
 import type {
   DeployableContracts,
   DeployBytecodeParams,
-  DeployBytecodeRunParams,
   GetDeployWorkflowArgs,
   MixedRequestedModules,
   PopPublicClient,
@@ -31,8 +30,10 @@ export type GetSimulatedWorkflowParams<
   args: TDeployWorkflowArgs
   publicClient: PopPublicClient
   walletClient: PopWalletClient
-  token?: Omit<DeployBytecodeParams<NonNullable<TToken>>, 'publicClient'> &
-    DeployBytecodeRunParams<NonNullable<TToken>>
+  token?: Omit<
+    DeployBytecodeParams<NonNullable<TToken>>,
+    'publicClient' | 'walletClient'
+  >
   tagConfig?: TagConfig
 }
 

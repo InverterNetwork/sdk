@@ -5,10 +5,13 @@ import type {
   DecimalsTagReturnType,
   TagProcessorDecimalsParams,
 } from '@/types'
+import d from 'debug'
 import type { Split } from 'type-fest-4'
 
 // sdk dependencies
 import { ERC20_ABI } from '@/utils/constants'
+
+const debug = d('inverter:tag-processor:decimals')
 
 const cacheToken = (props: CacheTokenParams) => {
   const chainId = props.self.publicClient.chain.id
@@ -37,14 +40,20 @@ export default async function decimals({
 
   if (!tag) throw new Error('No decimals tag provided')
 
+  debug('TAG', tag)
+
   const [, source, location, name] = tag?.split(':') as Split<Tag, ':'>
   const cachedToken = self?.tokenCache.get(
     `${chainId}:${contract?.address}:${tag}`
   )
 
+  if (!!cachedToken) {
+    decimals = cachedToken.decimals
+    tokenAddress = cachedToken.address
+  }
   // INTERNAL CASE (NO SOURCE)
   // -------------------------------------------------------------------
-  if (!source) {
+  else if (!source) {
     decimals = tagConfig?.decimals
     tokenAddress = tagConfig?.defaultToken
   }
@@ -58,22 +67,19 @@ export default async function decimals({
   }
   // OVERWRITE CASES
   else if (
-    tag.includes('issuanceToken') &&
+    tag === 'decimals' &&
+    tagConfig?.decimals &&
+    tagConfig?.defaultToken
+  ) {
+    decimals = tagConfig.decimals
+    tokenAddress = tagConfig.defaultToken
+  } else if (
+    ['issuanceToken', 'getIssuanceToken'].some((t) => tag.includes(t)) &&
     tagConfig?.issuanceTokenDecimals &&
     tagConfig?.issuanceToken
   ) {
-    decimals = tagConfig?.issuanceTokenDecimals
-    tokenAddress = tagConfig?.issuanceToken
-  } else if (
-    name === 'getIssuanceToken' &&
-    tagConfig?.issuanceToken &&
-    tagConfig?.issuanceTokenDecimals
-  ) {
-    decimals = tagConfig?.issuanceTokenDecimals
-    tokenAddress = tagConfig?.issuanceToken
-  } else if (!!cachedToken) {
-    decimals = cachedToken.decimals
-    tokenAddress = cachedToken.address
+    decimals = tagConfig.issuanceTokenDecimals
+    tokenAddress = tagConfig.issuanceToken
   } else {
     // SOURCE PARAMS
     // -------------------------------------------------------------------

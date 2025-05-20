@@ -28,10 +28,8 @@ export type DeployWriteParams<T extends DeployableContracts> = {
   args: GetDeployWorkflowModuleArg<T>
 }
 
-export type DeployBytecodeParams<T extends DeployableContracts> = Omit<
-  Omit<DeployWriteParams<T>, 'args'>,
-  'walletClient'
->
+export type DeployBytecodeParams<T extends DeployableContracts> =
+  DeployWriteParams<T>
 
 /**
  * @description The return type for the contract deployment's write function
@@ -42,18 +40,10 @@ export type DeployWriteReturnType = {
 }
 
 /**
- * @description The parameters for the contract deployment's bytecode runner function
- */
-export type DeployBytecodeRunParams<T extends DeployableContracts> = {
-  args: GetDeployWorkflowModuleArg<T>
-  calls?: `0x${string}`[]
-}
-
-/**
  * @description The return type for the contract deployment's bytecode function
  */
-export type DeployBytecodeReturnType<T extends DeployableContracts> = {
-  run: (params: DeployBytecodeRunParams<T>) => Promise<`0x${string}`>
+export type DeployBytecodeReturnType = {
+  run: (call?: `0x${string}`[]) => Promise<`0x${string}`>
   factoryAddress: `0x${string}`
   contractAddress: `0x${string}`
 }
@@ -65,5 +55,5 @@ export type Deploy = {
   ) => Promise<DeployWriteReturnType>
   bytecode: <T extends DeployableContracts>(
     params: DeployBytecodeParams<T>
-  ) => Promise<DeployBytecodeReturnType<T>>
+  ) => Promise<DeployBytecodeReturnType>
 }
