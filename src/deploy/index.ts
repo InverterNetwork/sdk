@@ -125,7 +125,7 @@ export async function deployBytecode<T extends DeployableContracts>({
     // Get the factory bytecode
     const deployBytecode = await factory.bytecode.deployExternalContract.run([
       encodedBytecode,
-      params.calls ?? ['0x'],
+      params.calls ?? [],
     ])
     return deployBytecode
   }

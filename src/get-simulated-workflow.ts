@@ -93,9 +93,8 @@ export async function getSimulatedWorkflow<
       calls: token.calls,
     })
     tokenAddress = tokenDeployment.contractAddress
+    debug('GOT_TOKEN_BYTECODE_AND_ADDRESS')
   }
-
-  debug('GOT_TOKEN_BYTECODE_AND_ADDRESS')
 
   const orchestratorAddress = await (async () => {
     if (tokenBytecode) {
