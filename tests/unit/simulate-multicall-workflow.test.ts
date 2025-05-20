@@ -54,6 +54,8 @@ describe('#SIMULATE_MULTICALL_WORKFLOW', () => {
       },
     })
 
+    console.log('ISSUANCE_TOKEN_ADDRESS', issuanceTokenBytecode.contractAddress)
+
     issuanceToken = sdk.getModule({
       name: 'ERC20Issuance_v1',
       address: issuanceTokenBytecode.contractAddress,
@@ -74,7 +76,19 @@ describe('#SIMULATE_MULTICALL_WORKFLOW', () => {
         walletAddress: deployer,
         issuanceTokenDecimals: 18,
       },
+      token: {
+        name: 'ERC20Issuance_v1',
+        args: {
+          decimals: 18,
+          initialAdmin: deployer,
+          name: 'Test',
+          symbol: 'TEST',
+          maxSupply: GET_HUMAN_READABLE_UINT_MAX_SUPPLY(18),
+        },
+      },
     })
+
+    console.log('SIMULATED_WORKFLOW', simulatedWorkflow)
 
     expect(simulatedWorkflow.orchestratorAddress).toBeDefined()
     expect(simulatedWorkflow.logicModuleAddresses).toBeDefined()
@@ -141,7 +155,7 @@ describe('#SIMULATE_MULTICALL_WORKFLOW', () => {
       trustedForwarderAddress: simulatedWorkflow.trustedForwarderAddress,
       call: [
         {
-          address: issuanceTokenBytecode.contractAddress,
+          address: simulatedWorkflow.factoryAddress,
           allowFailure: false,
           callData: await issuanceTokenBytecode.run({
             args: {

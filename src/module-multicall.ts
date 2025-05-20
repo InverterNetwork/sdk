@@ -182,7 +182,6 @@ async function simulateMulticallFnComponent({
       publicClient,
       walletClient,
       call,
-
       ...rest,
     })
 
@@ -203,6 +202,8 @@ async function simulateMulticallFnComponent({
     returnDatas = flatResult.map(
       ({ returnData }: SimulationResultItem) => returnData
     )
+
+    debug('Multicall simulation result', { statuses, returnDatas })
 
     return {
       statuses,

@@ -43,7 +43,6 @@ export type DeployWorkflowBytecodeReturnType = {
   rawArgs: ConstructedArgsArray
   bytecode: `0x${string}`
   factoryAddress: `0x${string}`
-  orchestratorAddress: `0x${string}`
 }
 
 /**

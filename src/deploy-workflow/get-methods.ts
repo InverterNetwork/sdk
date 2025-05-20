@@ -51,15 +51,14 @@ export default async function getMethods<T extends MixedRequestedModules>(
       const arr = await getArgs({ userArgs, kind, ...params })
 
       async function handleSimulate() {
-        {
-          const res = await simulateWrite(arr, {
-            account: walletClient.account.address,
-          })
-          const orchestratorAddress = res.result as `0x${string}`
-          return {
-            result: orchestratorAddress,
-            request: res.request,
-          }
+        console.log('CALLER_ADDRESS', walletClient.account.address)
+        const res = await simulateWrite(arr, {
+          account: walletClient.account.address,
+        })
+        const orchestratorAddress = res.result as `0x${string}`
+        return {
+          result: orchestratorAddress,
+          request: res.request,
         }
       }
 
@@ -132,7 +131,6 @@ export default async function getMethods<T extends MixedRequestedModules>(
       }
 
       async function handleBytecode() {
-        const { result: orchestratorAddress } = await handleSimulate()
         const bytecode = encodeFunctionData({
           abi,
           functionName: 'createOrchestrator',
@@ -141,7 +139,6 @@ export default async function getMethods<T extends MixedRequestedModules>(
         return {
           rawArgs: arr,
           bytecode,
-          orchestratorAddress,
           factoryAddress,
         }
       }
@@ -172,3 +169,29 @@ export default async function getMethods<T extends MixedRequestedModules>(
     bytecode: (userArgs: Args) => handleDeployment('bytecode', userArgs),
   }
 }
+
+// const getNextOrchestratorAddress = async (
+//   publicClient: PublicClient,
+//   walletClient: PopWalletClient
+// ) => {
+//   const methods = await getMethods({
+//     publicClient,
+//     walletClient,
+//     requestedModules: {
+//       authorizer: 'AUT_Roles_v1',
+//       fundingManager: 'FM_DepositVault_v1',
+//       paymentProcessor: 'PP_Simple_v1',
+//     },
+//   })
+//   // replace the last digit with 1
+//   const mockAddress = (zeroAddress.slice(0, -1) + '1') as `0x${string}`
+//   const { result: orchestratorAddress } = await methods.simulate({
+//     authorizer: {
+//       initialAdmin: mockAddress,
+//     },
+//     fundingManager: {
+//       orchestratorTokenAddress: mockAddress,
+//     },
+//   })
+//   return orchestratorAddress
+// }
