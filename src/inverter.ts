@@ -3,8 +3,10 @@ import type { ModuleName } from '@inverter-network/abis'
 // sdk types
 import type {
   DeployableContracts,
+  DeployBytecodeParams,
+  DeployBytecodeReturnType,
+  DeployParams,
   GetDeployWorkflowArgs,
-  GetDeployWorkflowModuleArg,
   GetModuleParams,
   GetModuleReturnType,
   GetSimulatedWorkflowParams,
@@ -17,6 +19,7 @@ import type {
   ModuleMulticallWriteReturnType,
   PopPublicClient,
   PopWalletClient,
+  SimulatedWorkflowToken,
   Workflow,
   WorkflowIssuanceToken,
   WorkflowToken,
@@ -200,28 +203,31 @@ export class Inverter<
   /**
    * @see {@link deploy}
    */
-  deploy<T extends DeployableContracts>(
-    {
-      name,
-      args,
-    }: {
-      name: T
-      args: GetDeployWorkflowModuleArg<T>
-    },
-    options?: MethodOptions
-  ) {
-    if (!this.walletClient)
-      throw new Error('Wallet client is required for deploy')
+  deploy = {
+    write: <T extends DeployableContracts>(
+      params: Omit<DeployParams<T>, 'walletClient' | 'publicClient'>,
+      options?: MethodOptions
+    ) => {
+      if (!this.walletClient)
+        throw new Error('Wallet client is required for deploy')
 
-    return deploy(
-      {
-        name,
-        walletClient: this.walletClient,
+      return deploy.write(
+        {
+          ...params,
+          publicClient: this.publicClient,
+          walletClient: this.walletClient,
+        },
+        options
+      )
+    },
+    bytecode: <T extends DeployableContracts>(
+      params: Omit<DeployBytecodeParams<T>, 'publicClient'>
+    ): Promise<DeployBytecodeReturnType> => {
+      return deploy.bytecode({
+        ...params,
         publicClient: this.publicClient,
-        args,
-      },
-      options
-    )
+      })
+    },
   }
 
   /**
@@ -287,12 +293,13 @@ export class Inverter<
   async getSimulatedWorkflow<
     T extends MixedRequestedModules,
     TDeployWorkflowArgs extends GetDeployWorkflowArgs<T>,
+    TToken extends SimulatedWorkflowToken | undefined = undefined,
   >(
     params: Omit<
-      GetSimulatedWorkflowParams<T, TDeployWorkflowArgs>,
+      GetSimulatedWorkflowParams<T, TDeployWorkflowArgs, TToken>,
       'publicClient' | 'walletClient'
     >
-  ): Promise<GetSimulatedWorkflowReturnType> {
+  ): Promise<GetSimulatedWorkflowReturnType<TToken>> {
     return getSimulatedWorkflow({
       ...params,
       publicClient: this.publicClient,

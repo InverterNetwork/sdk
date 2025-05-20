@@ -1,9 +1,15 @@
 import type {
+  DeployableContracts,
+  DeployBytecodeParams,
   GetDeployWorkflowArgs,
   MixedRequestedModules,
   PopPublicClient,
   PopWalletClient,
 } from '@/types'
+
+export type SimulatedWorkflowToken =
+  | Exclude<DeployableContracts, 'UniswapV2Adapter'>
+  | undefined
 
 /**
  * @description The parameters for the getSimulatedWorkflow function
@@ -17,11 +23,13 @@ import type {
 export type GetSimulatedWorkflowParams<
   T extends MixedRequestedModules,
   TDeployWorkflowArgs extends GetDeployWorkflowArgs<T>,
+  TToken extends SimulatedWorkflowToken = undefined,
 > = {
   requestedModules: T
   args: TDeployWorkflowArgs
   publicClient: PopPublicClient
   walletClient: PopWalletClient
+  token?: Omit<DeployBytecodeParams<NonNullable<TToken>>, 'publicClient'>
 }
 
 /**
@@ -34,14 +42,21 @@ export type GetSimulatedWorkflowParams<
  * @param params.bytecode - The bytecode of the workflow
  * @param params.trustedForwarderAddress - The address of the trusted forwarder
  * @param params.factoryAddress - The address of the factory
+ * @param params.tokenBytecode - The bytecode of the token
+ * @param params.tokenAddress - The address of the token
  */
-export type GetSimulatedWorkflowReturnType = {
+export type GetSimulatedWorkflowReturnType<
+  TToken extends SimulatedWorkflowToken = undefined,
+> = {
   orchestratorAddress: `0x${string}`
   authorizerAddress: `0x${string}`
   fundingManagerAddress: `0x${string}`
-  logicModuleAddresses: `0x${string}`[]
   paymentProcessorAddress: `0x${string}`
+  logicModuleAddresses: `0x${string}`[]
+
   bytecode: `0x${string}`
   trustedForwarderAddress: `0x${string}`
   factoryAddress: `0x${string}`
+  tokenBytecode: TToken extends undefined ? never : `0x${string}`
+  tokenAddress: TToken extends undefined ? never : `0x${string}`
 }

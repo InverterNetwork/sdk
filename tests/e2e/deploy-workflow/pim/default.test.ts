@@ -1,19 +1,18 @@
-import { expect, describe, it } from 'bun:test'
-
+import { getModuleData } from '@inverter-network/abis'
+import { getDeployWorkflowModuleInputs } from '@/deploy-workflow/get-inputs'
 import {
   type GetDeployWorkflowArgs,
   type RequestedModules,
   type Workflow,
 } from '@/index'
-import { getDeployWorkflowModuleInputs } from '@/deploy-workflow/get-inputs'
-import { getContract, isAddress, isHash, parseUnits } from 'viem'
+import { describe, expect, it } from 'bun:test'
 import {
   FM_BC_Bancor_VirtualSupply_v1_ARGS,
   GET_HUMAN_READABLE_UINT_MAX_SUPPLY,
   GET_ORCHESTRATOR_ARGS,
   sdk,
 } from 'tests/helpers'
-import { getModuleData } from '@inverter-network/abis'
+import { getContract, isAddress, isHash, parseUnits } from 'viem'
 
 describe('#PIM_DEFAULT', async () => {
   const { walletClient } = sdk
@@ -61,7 +60,7 @@ describe('#PIM_DEFAULT', async () => {
   })
 
   it('3. deploying an issuance token', async () => {
-    const data = await sdk.deploy({
+    const data = await sdk.deploy.write({
       name: 'ERC20Issuance_v1',
       args: {
         name: 'My Token',

@@ -1,5 +1,4 @@
-import { expect, describe, it } from 'bun:test'
-
+import { describe, expect, it } from 'bun:test'
 import { sdk } from 'tests/helpers'
 
 describe('#DEPLOY_ERC20_ISSUANCE', async () => {
@@ -7,7 +6,7 @@ describe('#DEPLOY_ERC20_ISSUANCE', async () => {
   let tokenAddress: `0x${string}`
 
   it('1. Should Deploy The ERC20 Issuance Contract', async () => {
-    const data = await sdk.deploy({
+    const data = await sdk.deploy.write({
       name: 'ERC20Issuance_v1',
       args: {
         name: 'My Token',

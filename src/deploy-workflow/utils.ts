@@ -1,4 +1,5 @@
 // external dependencies
+import { getModuleData } from '@inverter-network/abis'
 import type { ModuleName } from '@inverter-network/abis'
 // sdk types
 import type {
@@ -10,7 +11,6 @@ import type {
 } from '@/types'
 // sdk utils
 import { ERC20_ABI } from '@/utils'
-import type { Abi } from 'abitype'
 import type { PublicClient, WalletClient } from 'viem'
 import { getContract } from 'viem'
 import { anvil } from 'viem/chains'
@@ -46,10 +46,10 @@ export const getFactoryAddress = async ({
 }) => {
   if (!chainId) throw new Error('Chain ID not found')
 
-  const deployment = await fetchDeployment(version)
-
   if (chainId === anvil.id)
     return process.env.TEST_ORCHESTRATOR_FACTORY_ADDRESS as `0x${string}`
+
+  const deployment = await fetchDeployment(version)
 
   return deployment.orchestratorFactory?.[chainId]
 }
@@ -66,13 +66,12 @@ export const getViemMethods = async ({
   walletClient,
   publicClient,
   version,
-  abi,
 }: {
-  abi: Abi
   walletClient: WalletClient
   publicClient: PublicClient
   version: DeploymentVersion
 }) => {
+  const abi = getModuleData('OrchestratorFactory_v1').abi
   const chainId = publicClient.chain?.id
 
   const address = await getFactoryAddress({
@@ -94,6 +93,7 @@ export const getViemMethods = async ({
   })
 
   return {
+    abi,
     factoryAddress: address,
     simulateWrite: simulate.createOrchestrator,
     write: write.createOrchestrator,

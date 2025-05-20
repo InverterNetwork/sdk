@@ -40,7 +40,7 @@ describe('#SIMULATE_MULTICALL_WORKFLOW', () => {
 
   beforeAll(async () => {
     // Deploy the issuance token
-    const { contractAddress } = await sdk.deploy({
+    const { contractAddress } = await sdk.deploy.write({
       name: 'ERC20Issuance_v1',
       args: {
         name: 'Test Issuance Token',

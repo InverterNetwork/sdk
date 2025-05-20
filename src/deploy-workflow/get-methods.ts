@@ -1,5 +1,3 @@
-// external dependencies
-import { getModuleData } from '@inverter-network/abis'
 // sdk types
 import type {
   DeployMethodKind,
@@ -30,15 +28,13 @@ export default async function getMethods<T extends MixedRequestedModules>(
 ): Promise<GetMethodsReturnType<T>> {
   const { publicClient, walletClient, requestedModules } = params
 
-  const abi = getModuleData('OrchestratorFactory_v1').abi
-
   const {
     write,
     simulateWrite,
     estimateGas: esitmateGasOrg,
     factoryAddress,
-  } = await getViemMethods({
     abi,
+  } = await getViemMethods({
     walletClient,
     publicClient,
     version: 'v1.0.0',
@@ -138,7 +134,7 @@ export default async function getMethods<T extends MixedRequestedModules>(
       async function handleBytecode() {
         const { result: orchestratorAddress } = await handleSimulate()
         const bytecode = encodeFunctionData({
-          abi: abi,
+          abi,
           functionName: 'createOrchestrator',
           args: arr as any,
         })

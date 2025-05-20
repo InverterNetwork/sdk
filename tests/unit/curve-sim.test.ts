@@ -1,11 +1,3 @@
-import { expect, describe, it, beforeEach } from 'bun:test'
-import chalk from 'chalk'
-
-import {
-  sdk,
-  TEST_BANCOR_FORMULA_ADDRESS,
-  TEST_ERC20_MOCK_ADDRESS,
-} from 'tests/helpers'
 import {
   toCompactNumber,
   type GetModuleReturnType,
@@ -13,6 +5,13 @@ import {
   type RequestedModules,
   type Workflow,
 } from '@/index'
+import { beforeEach, describe, expect, it } from 'bun:test'
+import chalk from 'chalk'
+import {
+  sdk,
+  TEST_BANCOR_FORMULA_ADDRESS,
+  TEST_ERC20_MOCK_ADDRESS,
+} from 'tests/helpers'
 
 describe('#CURVE_SIM', () => {
   const deployer = sdk.walletClient.account.address
@@ -30,7 +29,7 @@ describe('#CURVE_SIM', () => {
   let fundingToken: GetModuleReturnType<'ERC20Issuance_v1', PopWalletClient>
 
   beforeEach(async () => {
-    const { contractAddress: issuanceTokenAddress } = await sdk.deploy({
+    const { contractAddress: issuanceTokenAddress } = await sdk.deploy.write({
       name: 'ERC20Issuance_v1',
       args: {
         initialAdmin: deployer,

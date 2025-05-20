@@ -54,7 +54,7 @@ export async function setupWorkflowWithToken<
 }: SetupWorkflowWithTokenParams<T, IT, B>): Promise<
   SetupWorkflowWithTokenReturnType<T, IT, B>
 > {
-  const { contractAddress: issuanceTokenAddress } = await sdk.deploy({
+  const { contractAddress: issuanceTokenAddress } = await sdk.deploy.write({
     name: issuanceTokenName,
     args: issuanceTokenArgs,
   })
