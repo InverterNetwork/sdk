@@ -67,6 +67,13 @@ describe('#SIMULATE_MULTICALL_WORKFLOW', () => {
     simulatedWorkflow = await sdk.getSimulatedWorkflow({
       requestedModules,
       args: args(issuanceToken.address),
+      tagConfig: {
+        decimals: 18,
+        issuanceToken: issuanceToken.address,
+        defaultToken: FM_BC_Bancor_VirtualSupply_v1_ARGS.collateralToken,
+        walletAddress: deployer,
+        issuanceTokenDecimals: 18,
+      },
     })
 
     expect(simulatedWorkflow.orchestratorAddress).toBeDefined()

@@ -44,10 +44,3 @@ export type TagCallback<T extends TagCallbackType = TagCallbackType> = (
   tags: readonly Tag[],
   argOrRes: any
 ) => Promise<TagCallbackReturnType<T>>
-
-/**
- * @description The tag overwrites type
- */
-export type TagOverwrites = {
-  issuanceTokenDecimals?: number
-}

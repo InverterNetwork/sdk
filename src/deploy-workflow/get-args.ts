@@ -13,7 +13,6 @@ import type {
   PopWalletClient,
   RequestedModule,
   TagConfig,
-  TagOverwrites,
   UserArgs,
   UserModuleArg,
 } from '@/types'
@@ -40,7 +39,7 @@ export type DeployWorkflowGetArgsSharedParams = {
   walletClient: PopWalletClient
   kind: DeployMethodKind
   self?: Inverter
-  tagOverwrites?: TagOverwrites
+  tagConfig?: TagConfig
 }
 
 /**
@@ -61,9 +60,6 @@ export const getEncodedArgs = async ({
     ? configData.map((input) => userModuleArg?.[input.name])
     : '0x00'
   // Process the inputs
-
-  debug('pre processInputs args', args)
-
   const { processedInputs } = <any>await processInputs({
     extendedInputs: configData,
     args,
@@ -138,11 +134,23 @@ export const constructArgs = async ({
   } as unknown as ConstructedArgs
 
   // Get the default token if the funding manager is provided
-  if (userArgs.fundingManager)
-    tagConfig = await getDefaultToken(
-      rest.publicClient,
-      userArgs.fundingManager
-    )
+  if (
+    userArgs.fundingManager &&
+    !tagConfig?.defaultToken &&
+    !tagConfig?.decimals
+  ) {
+    try {
+      const { defaultToken, decimals } = await getDefaultToken(
+        rest.publicClient,
+        userArgs.fundingManager
+      )
+      tagConfig = {
+        ...tagConfig,
+        defaultToken,
+        decimals,
+      }
+    } catch {}
+  }
 
   // Get the arguments for the mandatory modules
   let mendatoryModuleIdx = 0
@@ -150,6 +158,7 @@ export const constructArgs = async ({
     const argObj = await assembleModuleArgs({
       requestedModule: requestedModules[moduleType],
       userModuleArg: userArgs[moduleType],
+      tagConfig,
       ...rest,
     })
     args[MANDATORY_MODULES[mendatoryModuleIdx]] = argObj
@@ -190,6 +199,8 @@ export default async function getArgs<T extends MixedRequestedModules>(
     userArgs: GetDeployWorkflowArgs<T>
   } & DeployWorkflowGetArgsSharedParams
 ) {
+  // If tagConfig is provided, set it
+  if (params.tagConfig) tagConfig = params.tagConfig
   // Construct the arguments in a object
   const constructed = await constructArgs(params)
   // Return the arguments as an array

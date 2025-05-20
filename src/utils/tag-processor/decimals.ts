@@ -28,7 +28,6 @@ export default async function decimals({
   publicClient,
   contract,
   self,
-  tagOverwrites,
 }: TagProcessorDecimalsParams): Promise<DecimalsTagReturnType> {
   const chainId = self?.publicClient.chain.id
   const { readContract } = publicClient
@@ -59,10 +58,19 @@ export default async function decimals({
   }
   // OVERWRITE CASES
   else if (
-    tagOverwrites?.issuanceTokenDecimals &&
-    tag.includes('issuanceToken')
+    tag.includes('issuanceToken') &&
+    tagConfig?.issuanceTokenDecimals &&
+    tagConfig?.issuanceToken
   ) {
-    decimals = tagOverwrites.issuanceTokenDecimals
+    decimals = tagConfig?.issuanceTokenDecimals
+    tokenAddress = tagConfig?.issuanceToken
+  } else if (
+    name === 'getIssuanceToken' &&
+    tagConfig?.issuanceToken &&
+    tagConfig?.issuanceTokenDecimals
+  ) {
+    decimals = tagConfig?.issuanceTokenDecimals
+    tokenAddress = tagConfig?.issuanceToken
   } else if (!!cachedToken) {
     decimals = cachedToken.decimals
     tokenAddress = cachedToken.address
@@ -106,29 +114,20 @@ export default async function decimals({
     // -------------------------------------------------------------------
     if (source === 'contract') {
       if (location === 'indirect') {
-        tokenAddress = <`0x${string}` | undefined>await (() => {
-          if (name === 'getIssuanceToken' && tagConfig?.issuanceToken)
-            return tagConfig.issuanceToken
-          return contract?.read?.[name]()
-        })()
+        tokenAddress = contract?.read?.[name]()
 
         if (!tokenAddress)
           throw new Error(`No token address found @ contract:indirect:${name}`)
 
-        decimals = <number>await (() => {
-          if (name === 'getIssuanceToken' && tagConfig?.issuanceTokenDecimals)
-            return tagConfig.issuanceTokenDecimals
-          return readContract({
-            address: tokenAddress,
-            abi: ERC20_ABI,
-            functionName: 'decimals',
-          })
-        })()
+        decimals = <number>await readContract({
+          address: tokenAddress,
+          abi: ERC20_ABI,
+          functionName: 'decimals',
+        })
       }
 
       if (location === 'exact') {
         tokenAddress = contract?.address
-
         if (!tokenAddress) throw new Error('No token address found')
 
         decimals = <number>await readContract({

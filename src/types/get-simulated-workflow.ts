@@ -6,6 +6,7 @@ import type {
   MixedRequestedModules,
   PopPublicClient,
   PopWalletClient,
+  TagConfig,
 } from '@/types'
 
 export type SimulatedWorkflowToken =
@@ -32,6 +33,7 @@ export type GetSimulatedWorkflowParams<
   walletClient: PopWalletClient
   token?: Omit<DeployBytecodeParams<NonNullable<TToken>>, 'publicClient'> &
     DeployBytecodeRunParams<NonNullable<TToken>>
+  tagConfig?: TagConfig
 }
 
 /**

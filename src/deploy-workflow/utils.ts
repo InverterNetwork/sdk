@@ -148,7 +148,7 @@ export const assembleMetadata = (requestedModule: ModuleName | ModuleData) => {
 export const getDefaultToken = async (
   publicClient: PublicClient,
   fundingManager: UserModuleArg
-): Promise<TagConfig> => {
+): Promise<Pick<TagConfig, 'defaultToken' | 'decimals'>> => {
   try {
     const { readContract } = publicClient
 

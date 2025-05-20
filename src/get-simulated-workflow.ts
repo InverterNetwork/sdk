@@ -46,6 +46,7 @@ export async function getSimulatedWorkflow<
   publicClient,
   walletClient,
   token,
+  tagConfig,
 }: GetSimulatedWorkflowParams<T, TDeployWorkflowArgs, TToken>): Promise<
   GetSimulatedWorkflowReturnType<TToken>
 > {
@@ -54,6 +55,7 @@ export async function getSimulatedWorkflow<
     requestedModules,
     publicClient,
     walletClient,
+    tagConfig,
   })
 
   // Get the result of the deployWorkflow.bytecode method

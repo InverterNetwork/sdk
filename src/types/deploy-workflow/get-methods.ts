@@ -8,6 +8,7 @@ import type {
   MethodOptions,
   MixedRequestedModules,
   PopWalletClient,
+  TagConfig,
 } from '@/types'
 import type { PublicClient, SimulateContractReturnType } from 'viem'
 
@@ -49,18 +50,19 @@ export type DeployWorkflowBytecodeReturnType = {
  * @template T - The requested modules
  * @description Parameters for the getMothods util of deployWorkflow function
  */
-export type GetMethodsParams<T extends MixedRequestedModules> = {
+export type GetDeployWorkflowMethodsParams<T extends MixedRequestedModules> = {
   requestedModules: T
   publicClient: PublicClient
   walletClient: PopWalletClient
   self?: Inverter
+  tagConfig?: TagConfig
 }
 
 /**
  * @template T - The requested modules
  * @description Return type for the getMothods util of deployWorkflow function
  */
-export type GetMethodsReturnType<
+export type GetDeployWorkflowMethodsReturnType<
   T extends MixedRequestedModules,
   Args = GetDeployWorkflowArgs<T>,
 > = {

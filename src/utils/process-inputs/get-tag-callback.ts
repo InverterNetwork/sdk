@@ -18,7 +18,6 @@ export default function getTagCallback({
   tagConfig,
   args,
   kind,
-  tagOverwrites,
 }: ParseGetTagCallbackParams) {
   const tagCallback: TagCallback = async (type, tags, arg) => {
     let decimalsRes: DecimalsTagReturnType
@@ -33,7 +32,6 @@ export default function getTagCallback({
         publicClient,
         contract,
         self,
-        tagOverwrites,
       })
 
       parsedAmount = parseDecimals(arg, decimalsRes.decimals)

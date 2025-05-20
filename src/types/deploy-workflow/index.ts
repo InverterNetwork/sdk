@@ -4,9 +4,10 @@
 import type { Inverter } from '@/inverter'
 import type {
   GetDeployWorkflowInputs,
-  GetMethodsReturnType,
+  GetDeployWorkflowMethodsReturnType,
   MixedRequestedModules,
   PopWalletClient,
+  TagConfig,
 } from '@/types'
 import type { PublicClient } from 'viem'
 
@@ -26,6 +27,7 @@ export type DeployWorkflowParams<T extends MixedRequestedModules> = {
   walletClient: PopWalletClient
   requestedModules: T
   self?: Inverter
+  tagConfig?: TagConfig
 }
 
 /**
@@ -34,4 +36,4 @@ export type DeployWorkflowParams<T extends MixedRequestedModules> = {
  */
 export type DeployWorkflowReturnType<T extends MixedRequestedModules> = {
   inputs: GetDeployWorkflowInputs<T>
-} & GetMethodsReturnType<T>
+} & GetDeployWorkflowMethodsReturnType<T>

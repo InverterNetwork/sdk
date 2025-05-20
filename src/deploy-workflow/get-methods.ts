@@ -2,8 +2,8 @@
 import type {
   DeployMethodKind,
   GetDeployWorkflowArgs,
-  GetMethodsParams,
-  GetMethodsReturnType,
+  GetDeployWorkflowMethodsParams,
+  GetDeployWorkflowMethodsReturnType,
   MethodOptions,
   MixedRequestedModules,
 } from '@/types'
@@ -24,8 +24,8 @@ import { getFactoryAddress, getViemMethods } from './utils'
  * @description Provides RPC interactions for the requested modules.
  */
 export default async function getMethods<T extends MixedRequestedModules>(
-  params: GetMethodsParams<T>
-): Promise<GetMethodsReturnType<T>> {
+  params: GetDeployWorkflowMethodsParams<T>
+): Promise<GetDeployWorkflowMethodsReturnType<T>> {
   const { publicClient, walletClient, requestedModules } = params
 
   const {

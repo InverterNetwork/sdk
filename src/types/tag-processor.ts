@@ -7,7 +7,6 @@ import type {
   PopWalletClient,
   RequiredAllowances,
   TagConfig,
-  TagOverwrites,
 } from '@/types'
 import type { PublicClient } from 'viem'
 
@@ -22,7 +21,6 @@ export type TagProcessorDecimalsParams = {
   publicClient: PublicClient
   contract?: any
   self?: Inverter
-  tagOverwrites?: TagOverwrites
 }
 
 /**

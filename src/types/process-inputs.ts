@@ -7,7 +7,6 @@ import type {
   RequiredAllowances,
   TagCallback,
   TagConfig,
-  TagOverwrites,
   TupleExtendedAbiParameter,
 } from '@/types'
 import type { PublicClient, WalletClient } from 'viem'
@@ -20,7 +19,6 @@ export type ProcessInputsBaseParams = {
   extendedInputs: readonly ExtendedAbiParameter[]
   args: any
   kind: MethodKind
-  tagOverwrites?: TagOverwrites
 }
 
 /**
