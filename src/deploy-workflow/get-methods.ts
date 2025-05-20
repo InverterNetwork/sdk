@@ -22,10 +22,13 @@ import { getFactoryAddress, getViemMethods } from './utils'
 
 /**
  * @description Provides RPC interactions for the requested modules.
+ * @template TRequestedModules - The requested modules
  */
-export default async function getMethods<T extends MixedRequestedModules>(
-  params: GetDeployWorkflowMethodsParams<T>
-): Promise<GetDeployWorkflowMethodsReturnType<T>> {
+export default async function getMethods<
+  TRequestedModules extends MixedRequestedModules,
+>(
+  params: GetDeployWorkflowMethodsParams<TRequestedModules>
+): Promise<GetDeployWorkflowMethodsReturnType<TRequestedModules>> {
   const { publicClient, walletClient, requestedModules } = params
 
   const {
@@ -40,7 +43,7 @@ export default async function getMethods<T extends MixedRequestedModules>(
     version: 'v1.0.0',
   })
 
-  type Args = GetDeployWorkflowArgs<T>
+  type Args = GetDeployWorkflowArgs<TRequestedModules>
 
   async function handleDeployment<TMethodKind extends DeployMethodKind>(
     kind: TMethodKind,
@@ -169,29 +172,3 @@ export default async function getMethods<T extends MixedRequestedModules>(
     bytecode: (userArgs: Args) => handleDeployment('bytecode', userArgs),
   }
 }
-
-// const getNextOrchestratorAddress = async (
-//   publicClient: PublicClient,
-//   walletClient: PopWalletClient
-// ) => {
-//   const methods = await getMethods({
-//     publicClient,
-//     walletClient,
-//     requestedModules: {
-//       authorizer: 'AUT_Roles_v1',
-//       fundingManager: 'FM_DepositVault_v1',
-//       paymentProcessor: 'PP_Simple_v1',
-//     },
-//   })
-//   // replace the last digit with 1
-//   const mockAddress = (zeroAddress.slice(0, -1) + '1') as `0x${string}`
-//   const { result: orchestratorAddress } = await methods.simulate({
-//     authorizer: {
-//       initialAdmin: mockAddress,
-//     },
-//     fundingManager: {
-//       orchestratorTokenAddress: mockAddress,
-//     },
-//   })
-//   return orchestratorAddress
-// }

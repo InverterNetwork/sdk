@@ -193,10 +193,12 @@ export const constructArgs = async ({
 /**
  * @description Retrieves the arguments required for the requested modules.
  */
-export default async function getArgs<T extends MixedRequestedModules>(
+export default async function getArgs<
+  TRequestedModules extends MixedRequestedModules,
+>(
   params: {
-    requestedModules: T
-    userArgs: GetDeployWorkflowArgs<T>
+    requestedModules: TRequestedModules
+    userArgs: GetDeployWorkflowArgs<TRequestedModules>
   } & DeployWorkflowGetArgsSharedParams
 ) {
   // If tagConfig is provided, set it

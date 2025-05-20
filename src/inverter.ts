@@ -6,6 +6,7 @@ import type {
   DeployBytecodeParams,
   DeployBytecodeReturnType,
   DeployWriteParams,
+  DeployWriteReturnType,
   GetDeployWorkflowArgs,
   GetModuleParams,
   GetModuleReturnType,
@@ -125,7 +126,7 @@ export class Inverter<
    * @see {@link getWorkflow}
    */
   async getWorkflow<
-    T extends MixedRequestedModules | undefined = undefined,
+    TRequestedModules extends MixedRequestedModules | undefined = undefined,
     TFundingToken extends WorkflowToken | undefined = undefined,
     TIssuanceToken extends WorkflowIssuanceToken | undefined = undefined,
   >({
@@ -135,10 +136,12 @@ export class Inverter<
     issuanceTokenType,
   }: {
     orchestratorAddress: `0x${string}`
-    requestedModules?: T
+    requestedModules?: TRequestedModules
     fundingTokenType?: TFundingToken
     issuanceTokenType?: TIssuanceToken
-  }): Promise<Workflow<T, TWalletClient, TFundingToken, TIssuanceToken>> {
+  }): Promise<
+    Workflow<TRequestedModules, TWalletClient, TFundingToken, TIssuanceToken>
+  > {
     const chainId = this.publicClient.chain.id
 
     const chainOrchestratorAddress =
@@ -180,10 +183,10 @@ export class Inverter<
   /**
    * @see {@link deployWorkflow}
    */
-  deployWorkflow<T extends MixedRequestedModules>({
+  deployWorkflow<TRequestedModules extends MixedRequestedModules>({
     requestedModules,
   }: {
-    requestedModules: T
+    requestedModules: TRequestedModules
   }) {
     if (!this.walletClient)
       throw new Error('Wallet client is required for deploy')
@@ -202,11 +205,16 @@ export class Inverter<
   /**
    * @see {@link deploy}
    */
-  deploy = {
+  deploy: {
     write: <T extends DeployableContracts>(
       params: Omit<DeployWriteParams<T>, 'walletClient' | 'publicClient'>,
       options?: MethodOptions
-    ) => {
+    ) => Promise<DeployWriteReturnType>
+    bytecode: <T extends DeployableContracts>(
+      params: Omit<DeployBytecodeParams<T>, 'publicClient' | 'walletClient'>
+    ) => Promise<DeployBytecodeReturnType>
+  } = {
+    write: (params, options) => {
       if (!this.walletClient)
         throw new Error('Wallet client is required for deploy')
 
@@ -219,9 +227,7 @@ export class Inverter<
         options
       )
     },
-    bytecode: <T extends DeployableContracts>(
-      params: Omit<DeployBytecodeParams<T>, 'publicClient' | 'walletClient'>
-    ): Promise<DeployBytecodeReturnType> => {
+    bytecode: (params) => {
       if (!this.walletClient)
         throw new Error('Wallet client is required for deploy')
 
@@ -294,12 +300,16 @@ export class Inverter<
    * @see {@link getSimulatedWorkflow}
    */
   async getSimulatedWorkflow<
-    T extends MixedRequestedModules,
-    TDeployWorkflowArgs extends GetDeployWorkflowArgs<T>,
+    TRequestedModules extends MixedRequestedModules,
+    TDeployWorkflowArgs extends GetDeployWorkflowArgs<TRequestedModules>,
     TTokenBytecode extends DeployBytecodeReturnType | undefined = undefined,
   >(
     params: Omit<
-      GetSimulatedWorkflowParams<T, TDeployWorkflowArgs, TTokenBytecode>,
+      GetSimulatedWorkflowParams<
+        TRequestedModules,
+        TDeployWorkflowArgs,
+        TTokenBytecode
+      >,
       'publicClient' | 'walletClient'
     >
   ): Promise<GetSimulatedWorkflowReturnType<TTokenBytecode>> {

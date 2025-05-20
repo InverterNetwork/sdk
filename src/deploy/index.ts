@@ -8,6 +8,7 @@ import type {
   DeployableContracts,
   DeployBytecodeParams,
   DeployWriteParams,
+  DeployWriteReturnType,
   MethodOptions,
 } from '@/types'
 // sdk utils
@@ -16,19 +17,36 @@ import { encodeDeployData } from 'viem'
 
 /**
  * @description Deploy a contract
+ * @template TDeployableContracts - Name of the contract
  * @param params.name - The name of the contract
  * @param params.walletClient - The wallet client
  * @param params.publicClient - The public client
  * @param params.args - The arguments for the contract
  * @param options - The options for the deployment call
  * @returns The result of the deployment
+ * * @example
+ * ```ts
+ * const { contractAddress, transactionHash } = await deployWrite({
+ *   name: 'ERC20Issuance_v1',
+ *   walletClient,
+ *   publicClient,
+ *   args: [],
+ * })
+ * ```
  */
-export async function deployWrite<T extends DeployableContracts>(
-  { name, walletClient, publicClient, args }: DeployWriteParams<T>,
+export async function deployWrite<
+  TDeployableContracts extends DeployableContracts,
+>(
+  {
+    name,
+    walletClient,
+    publicClient,
+    args,
+  }: DeployWriteParams<TDeployableContracts>,
   options?: MethodOptions
-) {
+): Promise<DeployWriteReturnType> {
   // Get the module data
-  const moduleData = getModuleData<T>(name)
+  const moduleData = getModuleData<TDeployableContracts>(name)
   if (!('deploymentInputs' in moduleData)) {
     throw new Error('Invalid module data')
   }
@@ -78,13 +96,33 @@ export async function deployWrite<T extends DeployableContracts>(
   }
 }
 
-export async function deployBytecode<T extends DeployableContracts>({
+/**
+ * @description Deploy a contract bytecode
+ * @template TDeployableContracts - Name of the contract
+ * @param params.name - The name of the contract
+ * @param params.args - The arguments for the contract
+ * @param params.publicClient - The public client
+ * @param params.walletClient - The wallet client
+ * @returns The result of the deployment
+ * * @example
+ * ```ts
+ * const { run, factoryAddress, contractAddress } = await deployBytecode({
+ *   name: 'ERC20Issuance_v1',
+ *   args: [],
+ *   publicClient,
+ *   walletClient,
+ * })
+ * ```
+ */
+export async function deployBytecode<
+  TDeployableContracts extends DeployableContracts,
+>({
   name,
   args,
   publicClient,
   walletClient,
-}: DeployBytecodeParams<T>) {
-  const moduleData = getModuleData<T>(name)
+}: DeployBytecodeParams<TDeployableContracts>) {
+  const moduleData = getModuleData<TDeployableContracts>(name)
   if (!('deploymentInputs' in moduleData)) {
     throw new Error('Invalid module data')
   }
@@ -115,33 +153,26 @@ export async function deployBytecode<T extends DeployableContracts>({
     kind: 'write',
   })
 
-  // Define the run function / which will generate the bytecode
-  const run = async (call?: `0x${string}`[]) => {
-    // Encoding constructor arguments with the bytecode
-    const encodedBytecode = encodeDeployData({
-      abi: moduleData.abi,
-      bytecode: moduleData.deploymentInputs.bytecode,
-      args: processedArgs.processedInputs as any,
-    })
-    // Get the factory bytecode
-    const deployBytecode = await factory.bytecode.deployExternalContract.run([
-      encodedBytecode,
-      call ?? [],
-    ])
-    return deployBytecode
-  }
-  // Simulate the contract address
-  const mockDeploymentBytecode = encodeDeployData({
+  // Encoding constructor arguments with the bytecode
+  const encodedBytecode = encodeDeployData({
     abi: moduleData.abi,
     bytecode: moduleData.deploymentInputs.bytecode,
     args: processedArgs.processedInputs as any,
   })
 
-  const contractAddress = (
-    await factory.simulate.deployExternalContract.run([
-      mockDeploymentBytecode,
-      [],
+  // Define the run function / which will generate the bytecode
+  const run = async (call?: `0x${string}`[]) => {
+    // Get the factory bytecode
+    const deployBytecode = await factory.bytecode.deployExternalContract.run([
+      encodedBytecode,
+      call ?? [],
     ])
+
+    return deployBytecode
+  }
+
+  const contractAddress = (
+    await factory.simulate.deployExternalContract.run([encodedBytecode, []])
   ).result
 
   // Return the result with proper typing
@@ -152,6 +183,9 @@ export async function deployBytecode<T extends DeployableContracts>({
   }
 }
 
+/**
+ * @description The deploy object
+ */
 export const deploy: Deploy = {
   write: deployWrite,
   bytecode: deployBytecode,

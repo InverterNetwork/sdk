@@ -103,6 +103,8 @@ export default function getRun<
           args: processedInputs,
         })
 
+        debug('BYTECODE CALL DATA', callData.slice(0, 100))
+
         return callData
       },
     }

@@ -14,35 +14,43 @@ import { sdk, TEST_ERC20_MOCK_ADDRESS } from 'tests/helpers'
 // WORKFLOW WITH ISSUANCE TOKEN
 // -------------------------------------------------------------------------------------------------
 export type SetupWorkflowWithTokenParams<
-  T extends MixedRequestedModules,
-  IT extends WorkflowIssuanceToken,
-  B extends boolean = false,
+  TRequestedModules extends MixedRequestedModules,
+  TWorkflowIssuanceToken extends WorkflowIssuanceToken,
+  TBytecodeOnly extends boolean = false,
 > = {
-  issuanceTokenName: IT
-  issuanceTokenArgs: GetDeployWorkflowModuleArg<IT>
-  requestedModules: T
+  issuanceTokenName: TWorkflowIssuanceToken
+  issuanceTokenArgs: GetDeployWorkflowModuleArg<TWorkflowIssuanceToken>
+  requestedModules: TRequestedModules
   workflowArgs: (
     issuanceTokenAddress: `0x${string}`
-  ) => GetDeployWorkflowArgs<T>
-  justBytecode?: B
+  ) => GetDeployWorkflowArgs<TRequestedModules>
+  justBytecode?: TBytecodeOnly
 }
 
 export type SetupWorkflowWithTokenReturnType<
-  T extends MixedRequestedModules,
-  IT extends WorkflowIssuanceToken,
-  B extends boolean = false,
-> = B extends true
+  TRequestedModules extends MixedRequestedModules,
+  TWorkflowIssuanceToken extends WorkflowIssuanceToken,
+  TBytecodeOnly extends boolean = false,
+> = TBytecodeOnly extends true
   ? DeployWorkflowBytecodeReturnType &
       GetSimulatedWorkflowReturnType & {
-        issuanceToken: GetModuleReturnType<IT, PopWalletClient>
+        issuanceToken: GetModuleReturnType<
+          TWorkflowIssuanceToken,
+          PopWalletClient
+        >
         fundingToken: GetModuleReturnType<'ERC20Issuance_v1', PopWalletClient>
       }
-  : Workflow<T, PopWalletClient, 'ERC20Issuance_v1', IT>
+  : Workflow<
+      TRequestedModules,
+      PopWalletClient,
+      'ERC20Issuance_v1',
+      TWorkflowIssuanceToken
+    >
 
 // HANDLE WORKFLOW WITH ISSUANCE TOKEN DEPLOYMENT
 // -------------------------------------------------------------------------------------------------
 export async function setupWorkflowWithToken<
-  T extends MixedRequestedModules,
+  TRequestedModules extends MixedRequestedModules,
   IT extends WorkflowIssuanceToken,
   B extends boolean = false,
 >({
@@ -51,8 +59,8 @@ export async function setupWorkflowWithToken<
   requestedModules,
   workflowArgs,
   justBytecode = false as B,
-}: SetupWorkflowWithTokenParams<T, IT, B>): Promise<
-  SetupWorkflowWithTokenReturnType<T, IT, B>
+}: SetupWorkflowWithTokenParams<TRequestedModules, IT, B>): Promise<
+  SetupWorkflowWithTokenReturnType<TRequestedModules, IT, B>
 > {
   const { contractAddress: issuanceTokenAddress } = await sdk.deploy.write({
     name: issuanceTokenName,
@@ -108,24 +116,26 @@ export async function setupWorkflowWithToken<
 
 // WORKFLOW WITHOUT ISSUANCE TOKEN
 // -------------------------------------------------------------------------------------------------
-export type SetupWorkflowWithoutTokenParams<T extends MixedRequestedModules> = {
-  requestedModules: T
-  workflowArgs: GetDeployWorkflowArgs<T>
+export type SetupWorkflowWithoutTokenParams<
+  TRequestedModules extends MixedRequestedModules,
+> = {
+  requestedModules: TRequestedModules
+  workflowArgs: GetDeployWorkflowArgs<TRequestedModules>
 }
 
 export type SetupWorkflowWithoutTokenReturnType<
-  T extends MixedRequestedModules,
-> = Workflow<T, PopWalletClient>
+  TRequestedModules extends MixedRequestedModules,
+> = Workflow<TRequestedModules, PopWalletClient>
 
 // HANDLE WORKFLOW WITHOUT ISSUANCE TOKEN DEPLOYMENT
 // -------------------------------------------------------------------------------------------------
 export async function setupWorkflowWithoutToken<
-  T extends MixedRequestedModules,
+  TRequestedModules extends MixedRequestedModules,
 >({
   requestedModules,
   workflowArgs,
-}: SetupWorkflowWithoutTokenParams<T>): Promise<
-  SetupWorkflowWithoutTokenReturnType<T>
+}: SetupWorkflowWithoutTokenParams<TRequestedModules>): Promise<
+  SetupWorkflowWithoutTokenReturnType<TRequestedModules>
 > {
   const { run } = await sdk.deployWorkflow({
     requestedModules,

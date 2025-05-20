@@ -35,15 +35,15 @@ export type TokenModuleData<
  * @template TWalletClient - The wallet client
  */
 export type ConditionalIssuanceToken<
-  T extends MixedRequestedModules | undefined,
+  TRequestedModules extends MixedRequestedModules | undefined,
   TIssuanceToken extends WorkflowIssuanceToken,
   TWalletClient extends PopWalletClient | undefined,
 > =
-  T extends NonNullable<T>
+  TRequestedModules extends NonNullable<TRequestedModules>
     ? (
-        T['fundingManager'] extends ModuleData
-          ? FilterByPrefix<T['fundingManager']['name'], 'FM_BC'>
-          : FilterByPrefix<T['fundingManager'], 'FM_BC'>
+        TRequestedModules['fundingManager'] extends ModuleData
+          ? FilterByPrefix<TRequestedModules['fundingManager']['name'], 'FM_BC'>
+          : FilterByPrefix<TRequestedModules['fundingManager'], 'FM_BC'>
       ) extends never
       ? TokenModuleData<TIssuanceToken, TWalletClient> | undefined
       : TokenModuleData<TIssuanceToken, TWalletClient>

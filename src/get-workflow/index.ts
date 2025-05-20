@@ -20,7 +20,7 @@ import getTokenResults from './token'
 
 /**
  * @description Get a Inverter workflow
- * @template T - The requested modules
+ * @template TRequestedModules - The requested modules
  * @template TWalletClient - The wallet client
  * @template TFundingToken - The funding token
  * @template TIssuanceToken - The issuance token
@@ -55,7 +55,7 @@ import getTokenResults from './token'
  * ```
  */
 export async function getWorkflow<
-  T extends MixedRequestedModules | undefined = undefined,
+  TRequestedModules extends MixedRequestedModules | undefined = undefined,
   TWalletClient extends PopWalletClient | undefined = undefined,
   TFundingToken extends WorkflowToken | undefined = undefined,
   TIssuanceToken extends WorkflowIssuanceToken | undefined = undefined,
@@ -67,8 +67,13 @@ export async function getWorkflow<
   self,
   fundingTokenType = 'ERC20' as any,
   issuanceTokenType = 'ERC20Issuance_v1' as any,
-}: GetWorkflowParams<T, TWalletClient, TFundingToken, TIssuanceToken>): Promise<
-  Workflow<T, TWalletClient, TFundingToken, TIssuanceToken>
+}: GetWorkflowParams<
+  TRequestedModules,
+  TWalletClient,
+  TFundingToken,
+  TIssuanceToken
+>): Promise<
+  Workflow<TRequestedModules, TWalletClient, TFundingToken, TIssuanceToken>
 > {
   if (!publicClient) throw new Error('Public client not initialized')
 

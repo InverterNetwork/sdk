@@ -15,7 +15,7 @@ const debug = d('inverter:get-simulated-workflow')
 
 /**
  * @description Simulates the workflow deployment process and returns the plemenary modules addresses
- * @template T - The requested modules
+ * @template TRequestedModules - The requested modules
  * @template TDeployWorkflowArgs - The arguments for the workflow deployment
  * @template TTokenBytecode - The bytecode of the token
  * @param params.trustedForwarderAddress - The address of the trusted forwarder
@@ -47,8 +47,8 @@ const debug = d('inverter:get-simulated-workflow')
  * ```
  */
 export async function getSimulatedWorkflow<
-  T extends MixedRequestedModules,
-  TDeployWorkflowArgs extends GetDeployWorkflowArgs<T>,
+  TRequestedModules extends MixedRequestedModules,
+  TDeployWorkflowArgs extends GetDeployWorkflowArgs<TRequestedModules>,
   TTokenBytecode extends DeployBytecodeReturnType | undefined = undefined,
 >({
   requestedModules,
@@ -57,9 +57,11 @@ export async function getSimulatedWorkflow<
   walletClient,
   tokenBytecode,
   tagConfig,
-}: GetSimulatedWorkflowParams<T, TDeployWorkflowArgs, TTokenBytecode>): Promise<
-  GetSimulatedWorkflowReturnType<TTokenBytecode>
-> {
+}: GetSimulatedWorkflowParams<
+  TRequestedModules,
+  TDeployWorkflowArgs,
+  TTokenBytecode
+>): Promise<GetSimulatedWorkflowReturnType<TTokenBytecode>> {
   // Get the bytecode method of the deployWorkflow function
   const { bytecode, simulate } = await deployWorkflow({
     requestedModules,

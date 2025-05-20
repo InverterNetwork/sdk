@@ -48,6 +48,9 @@ export type DeployBytecodeReturnType = {
   contractAddress: `0x${string}`
 }
 
+/**
+ * @description The deploy object
+ */
 export type Deploy = {
   write: <T extends DeployableContracts>(
     params: DeployWriteParams<T>,

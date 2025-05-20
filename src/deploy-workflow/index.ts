@@ -11,7 +11,7 @@ import getMethods from './get-methods'
 
 /**
  * @description Get the deploy functions for workflow deployment
- * @template T - The requested modules to deploy
+ * @template TRequestedModules - The requested modules to deploy
  * @param params - The parameters for the preperation of the deploy function
  * @returns The result of the deploy function
  * @example
@@ -23,10 +23,14 @@ import getMethods from './get-methods'
  * const result = await run(args)
  * ```
  */
-export async function deployWorkflow<T extends MixedRequestedModules>({
+export async function deployWorkflow<
+  TRequestedModules extends MixedRequestedModules,
+>({
   requestedModules,
   ...params
-}: DeployWorkflowParams<T>): Promise<DeployWorkflowReturnType<T>> {
+}: DeployWorkflowParams<TRequestedModules>): Promise<
+  DeployWorkflowReturnType<TRequestedModules>
+> {
   const inputs = getDeployWorkflowInputs(requestedModules)
 
   const { publicClient, walletClient, tagConfig } = params

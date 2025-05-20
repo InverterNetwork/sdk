@@ -46,11 +46,13 @@ export type DeployWorkflowBytecodeReturnType = {
 }
 
 /**
- * @template T - The requested modules
+ * @template TRequestedModules - The requested modules
  * @description Parameters for the getMothods util of deployWorkflow function
  */
-export type GetDeployWorkflowMethodsParams<T extends MixedRequestedModules> = {
-  requestedModules: T
+export type GetDeployWorkflowMethodsParams<
+  TRequestedModules extends MixedRequestedModules,
+> = {
+  requestedModules: TRequestedModules
   publicClient: PublicClient
   walletClient: PopWalletClient
   self?: Inverter
@@ -58,12 +60,12 @@ export type GetDeployWorkflowMethodsParams<T extends MixedRequestedModules> = {
 }
 
 /**
- * @template T - The requested modules
+ * @template TRequestedModules - The requested modules
  * @description Return type for the getMothods util of deployWorkflow function
  */
 export type GetDeployWorkflowMethodsReturnType<
-  T extends MixedRequestedModules,
-  Args = GetDeployWorkflowArgs<T>,
+  TRequestedModules extends MixedRequestedModules,
+  Args = GetDeployWorkflowArgs<TRequestedModules>,
 > = {
   run: (
     userArgs: Args,

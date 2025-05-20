@@ -44,12 +44,12 @@ export type GetDeployWorkflowModuleInputs<
  * @returns The optional modules schema
  */
 export type OptionalModules<
-  T extends MixedRequestedModules['optionalModules'],
+  TRequestedModules extends MixedRequestedModules['optionalModules'],
 > = Simplify<
-  T extends undefined | []
+  TRequestedModules extends undefined | []
     ? never
     : UnionToTuple<
-          GetDeployWorkflowModuleInputs<NonNullable<T>[number]>
+          GetDeployWorkflowModuleInputs<NonNullable<TRequestedModules>[number]>
         > extends infer R extends { name: string }[]
       ? R extends { name: string }[]
         ? R
@@ -59,17 +59,23 @@ export type OptionalModules<
 
 /**
  * @description The deployment schema for a factory type
- * @template T - The requested modules
+ * @template TRequestedModules - The requested modules
  * @returns The deployment schema
  */
 export type GetDeployWorkflowInputs<
-  T extends MixedRequestedModules = RequestedModules,
+  TRequestedModules extends MixedRequestedModules = RequestedModules,
 > = Simplify<
   OmitNever<{
     orchestrator: GetDeployWorkflowModuleInputs<'OrchestratorFactory_v1'>
-    paymentProcessor: GetDeployWorkflowModuleInputs<T['paymentProcessor']>
-    fundingManager: GetDeployWorkflowModuleInputs<T['fundingManager']>
-    authorizer: GetDeployWorkflowModuleInputs<T['authorizer']>
-    optionalModules: EmptyObjectToNever<OptionalModules<T['optionalModules']>>
+    paymentProcessor: GetDeployWorkflowModuleInputs<
+      TRequestedModules['paymentProcessor']
+    >
+    fundingManager: GetDeployWorkflowModuleInputs<
+      TRequestedModules['fundingManager']
+    >
+    authorizer: GetDeployWorkflowModuleInputs<TRequestedModules['authorizer']>
+    optionalModules: EmptyObjectToNever<
+      OptionalModules<TRequestedModules['optionalModules']>
+    >
   }>
 >

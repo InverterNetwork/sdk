@@ -62,10 +62,10 @@ type GetModuleArgs<T> = T extends ModuleData | ModuleName
  * @returns The user optional module arguments
  */
 export type GetDeployWorkflowOptionalArgsBase<
-  T extends MixedRequestedModules['optionalModules'],
-> = T extends undefined
+  TRequestedModules extends MixedRequestedModules['optionalModules'],
+> = TRequestedModules extends undefined
   ? never
-  : NonNullable<T>[number] extends infer N
+  : NonNullable<TRequestedModules>[number] extends infer N
     ? {
         [K in GetModuleName<N>]: GetModuleArgs<N>
       }
@@ -77,8 +77,8 @@ export type GetDeployWorkflowOptionalArgsBase<
  * @returns The user optional module arguments
  */
 export type GetDeployWorkflowOptionalArgs<
-  T extends MixedRequestedModules['optionalModules'],
-  R = GetDeployWorkflowOptionalArgsBase<T>,
+  TRequestedModules extends MixedRequestedModules['optionalModules'],
+  R = GetDeployWorkflowOptionalArgsBase<TRequestedModules>,
 > = EmptyObjectToNever<
   OmitNever<{
     [K in keyof R]: IsEmptyObject<R[K]> extends true ? never : R[K]
@@ -87,17 +87,23 @@ export type GetDeployWorkflowOptionalArgs<
 
 /**
  * @description Get the user arguments for a given requested modules and factory type
- * @param T - The requested modules
+ * @param TRequestedModules - The requested modules
  * @returns The user arguments
  */
 export type GetDeployWorkflowArgs<
-  T extends MixedRequestedModules = RequestedModules,
+  TRequestedModules extends MixedRequestedModules = RequestedModules,
 > = Simplify<
   OmitNever<{
     orchestrator?: OrchestratorArgs
-    fundingManager: GetDeployWorkflowModuleArg<T['fundingManager']>
-    authorizer: GetDeployWorkflowModuleArg<T['authorizer']>
-    paymentProcessor: GetDeployWorkflowModuleArg<T['paymentProcessor']>
-    optionalModules: GetDeployWorkflowOptionalArgs<T['optionalModules']>
+    fundingManager: GetDeployWorkflowModuleArg<
+      TRequestedModules['fundingManager']
+    >
+    authorizer: GetDeployWorkflowModuleArg<TRequestedModules['authorizer']>
+    paymentProcessor: GetDeployWorkflowModuleArg<
+      TRequestedModules['paymentProcessor']
+    >
+    optionalModules: GetDeployWorkflowOptionalArgs<
+      TRequestedModules['optionalModules']
+    >
   }>
 >

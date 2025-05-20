@@ -19,21 +19,25 @@ export * from './args'
 export * from './get-methods'
 
 /**
- * @template T - The requested modules
+ * @template TRequestedModules - The requested modules
  * @description Parameters for the deployWorkflow function
  */
-export type DeployWorkflowParams<T extends MixedRequestedModules> = {
+export type DeployWorkflowParams<
+  TRequestedModules extends MixedRequestedModules,
+> = {
   publicClient: PublicClient
   walletClient: PopWalletClient
-  requestedModules: T
+  requestedModules: TRequestedModules
   self?: Inverter
   tagConfig?: TagConfig
 }
 
 /**
- * @template T - The requested modules
+ * @template TRequestedModules - The requested modules
  * @description Return type for the deployWorkflow function
  */
-export type DeployWorkflowReturnType<T extends MixedRequestedModules> = {
-  inputs: GetDeployWorkflowInputs<T>
-} & GetDeployWorkflowMethodsReturnType<T>
+export type DeployWorkflowReturnType<
+  TRequestedModules extends MixedRequestedModules,
+> = {
+  inputs: GetDeployWorkflowInputs<TRequestedModules>
+} & GetDeployWorkflowMethodsReturnType<TRequestedModules>

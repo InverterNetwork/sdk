@@ -14,6 +14,9 @@ export type SimulatedWorkflowToken =
 
 /**
  * @description The parameters for the getSimulatedWorkflow function
+ * @template TRequestedModules - The requested modules
+ * @template TDeployWorkflowArgs - The deploy workflow arguments
+ * @template TTokenBytecode - The bytecode of the token
  * @param params.trustedForwarderAddress - The address of the trusted forwarder
  * @param params.requestedModules - The requested modules
  * @param params.args - The arguments for the workflow deployment
@@ -22,11 +25,11 @@ export type SimulatedWorkflowToken =
  * @returns The simulated workflow
  */
 export type GetSimulatedWorkflowParams<
-  T extends MixedRequestedModules,
-  TDeployWorkflowArgs extends GetDeployWorkflowArgs<T>,
+  TRequestedModules extends MixedRequestedModules,
+  TDeployWorkflowArgs extends GetDeployWorkflowArgs<TRequestedModules>,
   TTokenBytecode extends DeployBytecodeReturnType | undefined = undefined,
 > = {
-  requestedModules: T
+  requestedModules: TRequestedModules
   args: TDeployWorkflowArgs
   publicClient: PopPublicClient
   walletClient: PopWalletClient
@@ -36,6 +39,7 @@ export type GetSimulatedWorkflowParams<
 
 /**
  * @description The return type for the getSimulatedWorkflow function
+ * @template TTokenBytecode - The bytecode of the token
  * @param params.orchestratorAddress - The address of the orchestrator
  * @param params.authorizerAddress - The address of the authorizer
  * @param params.fundingManagerAddress - The address of the funding manager
