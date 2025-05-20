@@ -172,7 +172,7 @@ describe('#ONE_CLICK_WORKFLOW', () => {
         },
         {
           address: fundingManager.address,
-          allowFailure: true,
+          allowFailure: false,
           callData: await fundingManager.bytecode.openBuy.run(),
         },
         {

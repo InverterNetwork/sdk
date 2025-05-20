@@ -61,8 +61,6 @@ async function multicallCore({
   })
 
   const multicallData = call.map(({ address, callData, allowFailure }) => {
-    debug('processing call for address', address)
-
     return {
       target: address,
       callData,
@@ -71,10 +69,10 @@ async function multicallCore({
   })
 
   debug(
-    'FINAL_MULTICALL_DATA',
+    'MULTICALL CALL_DATA',
     multicallData.map((i) => ({
       ...i,
-      callData: i.callData.slice(0, 100),
+      callData: i.callData.slice(0, 100) + '...',
     }))
   )
 
@@ -144,11 +142,15 @@ async function writeMulticallFnComponent(
       ({ returnData }: SimulationResultItem) => returnData
     )
 
-    return {
+    const result = {
       statuses,
       returnDatas,
       transactionHash,
     }
+
+    debug('MULTICALL WRITE_RESULT', result)
+
+    return result
   } catch (error) {
     let e: Error
     try {
@@ -209,7 +211,7 @@ async function simulateMulticallFnComponent({
       ({ returnData }: SimulationResultItem) => returnData
     )
 
-    debug('Multicall simulation result', { statuses, returnDatas })
+    debug('MULTICALL SIMULATION_RESULT', { statuses, returnDatas })
 
     return {
       statuses,

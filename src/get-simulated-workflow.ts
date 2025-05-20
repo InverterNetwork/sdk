@@ -15,11 +15,15 @@ const debug = d('inverter:get-simulated-workflow')
 
 /**
  * @description Simulates the workflow deployment process and returns the plemenary modules addresses
+ * @template T - The requested modules
+ * @template TDeployWorkflowArgs - The arguments for the workflow deployment
+ * @template TTokenBytecode - The bytecode of the token
  * @param params.trustedForwarderAddress - The address of the trusted forwarder
  * @param params.requestedModules - The requested modules
  * @param params.args - The arguments for the workflow deployment
  * @param params.publicClient - The public client
  * @param params.walletClient - The wallet client
+ * @param params.tokenBytecode - The bytecode of the token
  * @returns The simulated workflow
  * * @example
  * ```ts
@@ -29,12 +33,16 @@ const debug = d('inverter:get-simulated-workflow')
  *   fundingManagerAddress,
  *   authorizerAddress,
  *   paymentProcessorAddress
+ *   bytecode,
+ *   factoryAddress,
+ *   tokenBytecode
  * } = await getSimulatedWorkflow({
  *   trustedForwarderAddress,
  *   requestedModules,
  *   args,
  *   publicClient,
  *   walletClient,
+ *   tokenBytecode,
  * })
  * ```
  */
@@ -52,7 +60,6 @@ export async function getSimulatedWorkflow<
 }: GetSimulatedWorkflowParams<T, TDeployWorkflowArgs, TTokenBytecode>): Promise<
   GetSimulatedWorkflowReturnType<TTokenBytecode>
 > {
-  debug('BEFORE_DEPLOY_WORKFLOW')
   // Get the bytecode method of the deployWorkflow function
   const { bytecode, simulate } = await deployWorkflow({
     requestedModules,
@@ -60,11 +67,9 @@ export async function getSimulatedWorkflow<
     walletClient,
     tagConfig,
   })
-  debug('AFTER_DEPLOY_WORKFLOW')
 
   // Get the result of the deployWorkflow.bytecode method
   const deployBytecode = await bytecode(args)
-  debug('AFTER_DEPLOY_WORKFLOW_BYTECODE')
   // Get the factory module
   const factory = getModule({
     name: 'OrchestratorFactory_v1',
@@ -125,7 +130,6 @@ export async function getSimulatedWorkflow<
   // Get the bytecode of the paymentProcessor method
   const paymentProcessorBytecode =
     await orchestrator.bytecode.paymentProcessor.run()
-  debug('GOT_ALL_WORKFLOW_BYTECODES')
 
   let call: ModuleMulticallCall = [
     {
