@@ -6,8 +6,7 @@ import { getModule } from '@/get-module'
 import type {
   Deploy,
   DeployableContracts,
-  DeployBytecodeParams,
-  DeployWriteParams,
+  DeployParams,
   DeployWriteReturnType,
   MethodOptions,
 } from '@/types'
@@ -42,7 +41,7 @@ export async function deployWrite<
     walletClient,
     publicClient,
     args,
-  }: DeployWriteParams<TDeployableContracts>,
+  }: DeployParams<TDeployableContracts>,
   options?: MethodOptions
 ): Promise<DeployWriteReturnType> {
   // Get the module data
@@ -121,7 +120,7 @@ export async function deployBytecode<
   args,
   publicClient,
   walletClient,
-}: DeployBytecodeParams<TDeployableContracts>) {
+}: DeployParams<TDeployableContracts>) {
   const moduleData = getModuleData<TDeployableContracts>(name)
   if (!('deploymentInputs' in moduleData)) {
     throw new Error('Invalid module data')

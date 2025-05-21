@@ -61,7 +61,7 @@ export async function getSimulatedWorkflow<
   TRequestedModules,
   TDeployWorkflowArgs,
   TTokenBytecode
->): Promise<GetSimulatedWorkflowReturnType<TTokenBytecode>> {
+>): Promise<GetSimulatedWorkflowReturnType> {
   // Get the bytecode method of the deployWorkflow function
   const { bytecode, simulate } = await deployWorkflow({
     requestedModules,
@@ -215,8 +215,7 @@ export async function getSimulatedWorkflow<
     paymentProcessorAddress: paymentProcessor,
     bytecode: deployBytecode.bytecode,
     factoryAddress: deployBytecode.factoryAddress,
-    tokenBytecode,
   }
 
-  return result as GetSimulatedWorkflowReturnType<TTokenBytecode>
+  return result
 }

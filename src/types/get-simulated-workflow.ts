@@ -39,7 +39,6 @@ export type GetSimulatedWorkflowParams<
 
 /**
  * @description The return type for the getSimulatedWorkflow function
- * @template TTokenBytecode - The bytecode of the token
  * @param params.orchestratorAddress - The address of the orchestrator
  * @param params.authorizerAddress - The address of the authorizer
  * @param params.fundingManagerAddress - The address of the funding manager
@@ -51,9 +50,7 @@ export type GetSimulatedWorkflowParams<
  * @param params.tokenBytecode - The bytecode of the token
  * @param params.tokenAddress - The address of the token
  */
-export type GetSimulatedWorkflowReturnType<
-  TTokenBytecode extends DeployBytecodeReturnType | undefined = undefined,
-> = {
+export type GetSimulatedWorkflowReturnType = {
   orchestratorAddress: `0x${string}`
   authorizerAddress: `0x${string}`
   fundingManagerAddress: `0x${string}`
@@ -63,5 +60,4 @@ export type GetSimulatedWorkflowReturnType<
   bytecode: `0x${string}`
   trustedForwarderAddress: `0x${string}`
   factoryAddress: `0x${string}`
-  tokenBytecode: TTokenBytecode extends undefined ? never : TTokenBytecode
 }

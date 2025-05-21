@@ -3,9 +3,8 @@ import type { ModuleName } from '@inverter-network/abis'
 // sdk types
 import type {
   DeployableContracts,
-  DeployBytecodeParams,
   DeployBytecodeReturnType,
-  DeployWriteParams,
+  DeployParams,
   DeployWriteReturnType,
   GetDeployWorkflowArgs,
   GetModuleParams,
@@ -207,11 +206,11 @@ export class Inverter<
    */
   deploy: {
     write: <T extends DeployableContracts>(
-      params: Omit<DeployWriteParams<T>, 'walletClient' | 'publicClient'>,
+      params: Omit<DeployParams<T>, 'walletClient' | 'publicClient'>,
       options?: MethodOptions
     ) => Promise<DeployWriteReturnType>
     bytecode: <T extends DeployableContracts>(
-      params: Omit<DeployBytecodeParams<T>, 'publicClient' | 'walletClient'>
+      params: Omit<DeployParams<T>, 'publicClient' | 'walletClient'>
     ) => Promise<DeployBytecodeReturnType>
   } = {
     write: (params, options) => {
@@ -312,7 +311,7 @@ export class Inverter<
       >,
       'publicClient' | 'walletClient'
     >
-  ): Promise<GetSimulatedWorkflowReturnType<TTokenBytecode>> {
+  ): Promise<GetSimulatedWorkflowReturnType> {
     return getSimulatedWorkflow({
       ...params,
       publicClient: this.publicClient,

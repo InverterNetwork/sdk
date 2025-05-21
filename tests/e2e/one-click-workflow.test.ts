@@ -46,7 +46,7 @@ describe('#ONE_CLICK_WORKFLOW', () => {
   let fundingToken: GetModuleReturnType<'ERC20Issuance_v1', PopWalletClient>
   let issuanceToken: GetModuleReturnType<'ERC20Issuance_v1', PopWalletClient>
   let issuanceTokenBytecode: DeployBytecodeReturnType
-  let simulatedWorkflow: GetSimulatedWorkflowReturnType<DeployBytecodeReturnType>
+  let simulatedWorkflow: GetSimulatedWorkflowReturnType
 
   beforeAll(async () => {
     // Deploy the issuance token
@@ -118,7 +118,7 @@ describe('#ONE_CLICK_WORKFLOW', () => {
         {
           address: simulatedWorkflow.factoryAddress,
           allowFailure: false,
-          callData: await simulatedWorkflow.tokenBytecode.run(),
+          callData: await issuanceTokenBytecode.run(),
         },
         {
           address: simulatedWorkflow.factoryAddress,
@@ -161,9 +161,7 @@ describe('#ONE_CLICK_WORKFLOW', () => {
         {
           address: simulatedWorkflow.factoryAddress,
           allowFailure: false,
-          callData: await simulatedWorkflow.tokenBytecode.run([
-            setMinterCallData,
-          ]),
+          callData: await issuanceTokenBytecode.run([setMinterCallData]),
         },
         {
           address: simulatedWorkflow.factoryAddress,
