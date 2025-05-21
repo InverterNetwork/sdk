@@ -51,7 +51,12 @@ export const getFactoryAddress = async ({
 
   const deployment = await fetchDeployment(version)
 
-  return deployment.orchestratorFactory?.[chainId]
+  const factoryAddress = deployment.orchestratorFactory?.[chainId]
+
+  if (!factoryAddress)
+    throw new Error('Factory address not found @ deployment factory address')
+
+  return factoryAddress
 }
 
 /**
@@ -79,9 +84,6 @@ export const getViemMethods = async ({
 
     chainId,
   })
-
-  if (!address)
-    throw new Error('Chain ID is not supported @ deployment factory address')
 
   const { write, simulate, estimateGas } = getContract({
     address,

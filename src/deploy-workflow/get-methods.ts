@@ -122,10 +122,6 @@ export default async function getMethods<
           chainId: publicClient.chain!.id,
         })
 
-        if (!defaltFactoryAddress) {
-          throw new Error('Default factory address not found')
-        }
-
         const log = receipt.logs.find(
           (log) =>
             log.address.toLowerCase() === defaltFactoryAddress.toLowerCase()

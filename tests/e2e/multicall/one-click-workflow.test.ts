@@ -1,3 +1,4 @@
+import { getFactoryAddress } from '@/index'
 import type {
   DeployBytecodeReturnType,
   GetModuleReturnType,
@@ -15,14 +16,20 @@ import {
 } from 'tests/helpers'
 
 describe('#ONE_CLICK_WORKFLOW', () => {
+  // CONSTANTS
+  // --------------------------------------------------------------------------
+
+  // The deployer is the account that will deploy the workflow
   const deployer = sdk.walletClient.account.address
 
+  // The requested modules are the modules that will be deployed
   const requestedModules = {
     authorizer: 'AUT_Roles_v1',
     fundingManager: 'FM_BC_Bancor_Redeeming_VirtualSupply_v1',
     paymentProcessor: 'PP_Streaming_v1',
   } as const satisfies RequestedModules
 
+  // The args are the arguments for the modules deployed in the workflow
   const args = (issuanceTokenAddress: `0x${string}`) => {
     return {
       authorizer: {
@@ -35,26 +42,48 @@ describe('#ONE_CLICK_WORKFLOW', () => {
       orchestrator: GET_ORCHESTRATOR_ARGS(deployer),
     } as const
   }
-  const issuanceTokenArgs = {
-    decimals: 18,
-    initialAdmin: deployer,
-    name: 'Test',
-    symbol: 'TEST',
-    maxSupply: GET_HUMAN_READABLE_UINT_MAX_SUPPLY(18),
-  } as const
 
+  // The issuance token args are the arguments for the issuance token
+  const issuanceTokenArgs = (initialAdmin: `0x${string}`) =>
+    ({
+      decimals: 18,
+      initialAdmin,
+      name: 'Test',
+      symbol: 'TEST',
+      maxSupply: GET_HUMAN_READABLE_UINT_MAX_SUPPLY(18),
+    }) as const
+
+  // The purchase amount is the amount of collateral tokens to purchase with
+  const PURCHASE_AMOUNT = '1000'
+
+  // VARIABLES
+  // --------------------------------------------------------------------------
+  let factoryAddress: `0x${string}`
+  let issuanceTokenBytecode: DeployBytecodeReturnType
   let fundingToken: GetModuleReturnType<'ERC20Issuance_v1', PopWalletClient>
   let issuanceToken: GetModuleReturnType<'ERC20Issuance_v1', PopWalletClient>
-  let issuanceTokenBytecode: DeployBytecodeReturnType
   let simulatedWorkflow: GetSimulatedWorkflowReturnType
+  let fundingManager: GetModuleReturnType<
+    'FM_BC_Bancor_Redeeming_VirtualSupply_v1',
+    PopWalletClient
+  >
+
+  let purchaseReturn: string
 
   beforeAll(async () => {
+    // Get the factory address
+    factoryAddress = await getFactoryAddress({
+      version: 'v1.0.0',
+      chainId: sdk.publicClient.chain.id,
+    })
+
     // Deploy the issuance token
     issuanceTokenBytecode = await sdk.deploy.bytecode({
       name: 'ERC20Issuance_v1',
-      args: issuanceTokenArgs,
+      args: issuanceTokenArgs(factoryAddress),
     })
 
+    // Set the funding token instance
     fundingToken = sdk.getModule({
       name: 'ERC20Issuance_v1',
       address: TEST_ERC20_MOCK_ADDRESS,
@@ -63,6 +92,7 @@ describe('#ONE_CLICK_WORKFLOW', () => {
       },
     })
 
+    // Set the issuance token instance
     issuanceToken = sdk.getModule({
       name: 'ERC20Issuance_v1',
       address: issuanceTokenBytecode.contractAddress,
@@ -70,9 +100,12 @@ describe('#ONE_CLICK_WORKFLOW', () => {
         decimals: 18,
       },
     })
+
+    // Mint collateral token to the deployer
+    await fundingToken.write.mint.run([deployer, PURCHASE_AMOUNT])
   })
 
-  it('should simulate the multicall workflow', async () => {
+  it('Should simulate the multicall workflow', async () => {
     simulatedWorkflow = await sdk.getSimulatedWorkflow({
       requestedModules,
       args: args(issuanceToken.address),
@@ -88,16 +121,11 @@ describe('#ONE_CLICK_WORKFLOW', () => {
     expect(simulatedWorkflow.fundingManagerAddress).toBeDefined()
     expect(simulatedWorkflow.authorizerAddress).toBeDefined()
     expect(simulatedWorkflow.paymentProcessorAddress).toBeDefined()
+    expect(simulatedWorkflow.trustedForwarderAddress).toBeDefined()
+    expect(simulatedWorkflow.factoryAddress).toBeDefined()
   })
 
-  const PURCHASE_AMOUNT = '1000'
-  let fundingManager: GetModuleReturnType<
-    'FM_BC_Bancor_Redeeming_VirtualSupply_v1',
-    PopWalletClient
-  >
-  let purchaseReturn: string
-
-  it('should re-simulate the workflow, and this time it should also calculate purchase return from the funding manager', async () => {
+  it('Should re-simulate the workflow, and this time it should also calculate purchase return from the funding manager', async () => {
     fundingManager = sdk.getModule({
       name: 'FM_BC_Bancor_Redeeming_VirtualSupply_v1',
       address: simulatedWorkflow.fundingManagerAddress,
@@ -144,51 +172,58 @@ describe('#ONE_CLICK_WORKFLOW', () => {
     expect(Number(purchaseReturn)).toBeGreaterThanOrEqual(0)
   })
 
-  it('should deploy the workflow and make a purchase in batch', async () => {
-    // 1. Mint collateral token to the deployer
-    await fundingToken.write.mint.run([deployer, PURCHASE_AMOUNT])
-
-    // 2. Prepare setMinter call data
-    const setMinterCallData = await issuanceToken.bytecode.setMinter.run([
-      fundingManager.address,
-      true,
-    ])
-
-    // 3. Make deploy and purchase in batch
-    await sdk.moduleMulticall.write({
-      trustedForwarderAddress: simulatedWorkflow.trustedForwarderAddress,
-      call: [
+  it(
+    'Should deploy the workflow with the token and make a purchase in batch',
+    async () => {
+      await sdk.moduleMulticall.write(
         {
-          address: simulatedWorkflow.factoryAddress,
-          allowFailure: false,
-          callData: await issuanceTokenBytecode.run([setMinterCallData]),
+          trustedForwarderAddress: simulatedWorkflow.trustedForwarderAddress,
+          call: [
+            {
+              address: simulatedWorkflow.factoryAddress,
+              allowFailure: false,
+              callData: await issuanceTokenBytecode.run([
+                await issuanceToken.bytecode.setMinter.run([
+                  fundingManager.address,
+                  true,
+                ]),
+                await issuanceToken.bytecode.transferOwnership.run(deployer),
+              ]),
+            },
+            {
+              address: simulatedWorkflow.factoryAddress,
+              allowFailure: false,
+              callData: simulatedWorkflow.bytecode,
+            },
+            {
+              address: fundingManager.address,
+              allowFailure: false,
+              callData: await fundingManager.bytecode.openBuy.run(),
+            },
+            {
+              address: fundingManager.address,
+              allowFailure: false,
+              callData: await fundingManager.bytecode.buy.run([
+                PURCHASE_AMOUNT,
+                purchaseReturn,
+              ]),
+            },
+          ],
         },
         {
-          address: simulatedWorkflow.factoryAddress,
-          allowFailure: false,
-          callData: simulatedWorkflow.bytecode,
-        },
-        {
-          address: fundingManager.address,
-          allowFailure: false,
-          callData: await fundingManager.bytecode.openBuy.run(),
-        },
-        {
-          address: fundingManager.address,
-          allowFailure: true,
-          callData: await fundingManager.bytecode.buy.run([
-            PURCHASE_AMOUNT,
-            purchaseReturn,
-          ]),
-        },
-      ],
-    })
+          confirmations: 1,
+        }
+      )
 
-    const currentIssuanceTokenBalance =
-      await issuanceToken.read.balanceOf.run(deployer)
+      const currentIssuanceTokenBalance =
+        await issuanceToken.read.balanceOf.run(deployer)
 
-    expect(Number(currentIssuanceTokenBalance)).toBeGreaterThanOrEqual(
-      Number(PURCHASE_AMOUNT)
-    )
-  })
+      expect(Number(currentIssuanceTokenBalance)).toBeGreaterThanOrEqual(
+        Number(PURCHASE_AMOUNT)
+      )
+    },
+    {
+      timeout: 10000, // 10 seconds
+    }
+  )
 })

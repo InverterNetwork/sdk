@@ -135,9 +135,6 @@ export async function deployBytecode<
     version: 'v1.0.0',
     chainId,
   })
-  if (!factoryAddress) {
-    throw new Error(`Factory address not found for chainId ${chainId}`)
-  }
   // Get the factory module
   const factory = getModule({
     name: 'OrchestratorFactory_v1',

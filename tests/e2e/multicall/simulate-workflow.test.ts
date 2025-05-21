@@ -68,7 +68,7 @@ describe('#SIMULATE_MULTICALL_WORKFLOW', () => {
     })
   })
 
-  it('should simulate the multicall workflow', async () => {
+  it('Should simulate the multicall workflow', async () => {
     simulatedWorkflow = await sdk.getSimulatedWorkflow({
       requestedModules,
       args: args(issuanceToken.address),
@@ -88,7 +88,7 @@ describe('#SIMULATE_MULTICALL_WORKFLOW', () => {
   >
   let purchaseReturn: string
 
-  it('should re-simulate the workflow, and this time it should also calculate purchase return from the funding manager', async () => {
+  it('Should re-simulate the workflow, and this time it should also calculate purchase return from the funding manager', async () => {
     fundingManager = sdk.getModule({
       name: 'FM_BC_Bancor_Redeeming_VirtualSupply_v1',
       address: simulatedWorkflow.fundingManagerAddress,
@@ -130,43 +130,49 @@ describe('#SIMULATE_MULTICALL_WORKFLOW', () => {
     expect(Number(purchaseReturn)).toBeGreaterThanOrEqual(0)
   })
 
-  it('should deploy the workflow and make a purchase in batch', async () => {
-    // 1. Mint collateral token to the deployer
-    await fundingToken.write.mint.run([deployer, PURCHASE_AMOUNT])
+  it(
+    'Should deploy the workflow and make a purchase in batch',
+    async () => {
+      // 1. Mint collateral token to the deployer
+      await fundingToken.write.mint.run([deployer, PURCHASE_AMOUNT])
 
-    // 2. Set the funding manager as minter of the issuance token
-    await issuanceToken.write.setMinter.run([fundingManager.address, true])
+      // 2. Set the funding manager as minter of the issuance token
+      await issuanceToken.write.setMinter.run([fundingManager.address, true])
 
-    // 3. Make deploy and purchase in batch
-    await sdk.moduleMulticall.write({
-      trustedForwarderAddress: simulatedWorkflow.trustedForwarderAddress,
-      call: [
-        {
-          address: simulatedWorkflow.factoryAddress,
-          allowFailure: false,
-          callData: simulatedWorkflow.bytecode,
-        },
-        {
-          address: fundingManager.address,
-          allowFailure: false,
-          callData: await fundingManager.bytecode.openBuy.run(),
-        },
-        {
-          address: fundingManager.address,
-          allowFailure: false,
-          callData: await fundingManager.bytecode.buy.run([
-            PURCHASE_AMOUNT,
-            purchaseReturn,
-          ]),
-        },
-      ],
-    })
+      // 3. Make deploy and purchase in batch
+      await sdk.moduleMulticall.write({
+        trustedForwarderAddress: simulatedWorkflow.trustedForwarderAddress,
+        call: [
+          {
+            address: simulatedWorkflow.factoryAddress,
+            allowFailure: false,
+            callData: simulatedWorkflow.bytecode,
+          },
+          {
+            address: fundingManager.address,
+            allowFailure: false,
+            callData: await fundingManager.bytecode.openBuy.run(),
+          },
+          {
+            address: fundingManager.address,
+            allowFailure: false,
+            callData: await fundingManager.bytecode.buy.run([
+              PURCHASE_AMOUNT,
+              purchaseReturn,
+            ]),
+          },
+        ],
+      })
 
-    const currentIssuanceTokenBalance =
-      await issuanceToken.read.balanceOf.run(deployer)
+      const currentIssuanceTokenBalance =
+        await issuanceToken.read.balanceOf.run(deployer)
 
-    expect(Number(currentIssuanceTokenBalance)).toBeGreaterThanOrEqual(
-      Number(PURCHASE_AMOUNT)
-    )
-  })
+      expect(Number(currentIssuanceTokenBalance)).toBeGreaterThanOrEqual(
+        Number(PURCHASE_AMOUNT)
+      )
+    },
+    {
+      timeout: 10000, // 10 seconds
+    }
+  )
 })
