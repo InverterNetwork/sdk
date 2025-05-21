@@ -40,7 +40,7 @@ export default async function decimals({
 
   if (!tag) throw new Error('No decimals tag provided')
 
-  debug('TAG', tag)
+  debug('TAG:', tag)
 
   const [, source, location, name] = tag?.split(':') as Split<Tag, ':'>
   const cachedToken = self?.tokenCache.get(

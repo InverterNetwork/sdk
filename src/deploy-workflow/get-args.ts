@@ -18,7 +18,6 @@ import type {
 } from '@/types'
 // sdk utils
 import { processInputs } from '@/utils'
-import d from 'debug'
 import { encodeAbiParameters, zeroAddress } from 'viem'
 import type { PublicClient } from 'viem'
 
@@ -26,8 +25,6 @@ import type { PublicClient } from 'viem'
 import { MANDATORY_MODULES } from './constants'
 // get-deploy utils
 import { assembleMetadata, getDefaultToken } from './utils'
-
-const debug = d('inverter:sdk:get-args')
 
 let tagConfig: TagConfig
 
@@ -66,8 +63,6 @@ export const getEncodedArgs = async ({
     tagConfig,
     ...params,
   })
-
-  debug('PROCESSED INPUTS:', processedInputs)
 
   // Encode the processed inputs
   const encodedArgs = encodeAbiParameters(configData, processedInputs)

@@ -1,7 +1,11 @@
 import type { ProcessInputsParams, RequiredAllowances } from '@/types'
+import d from 'debug'
 
+import { bigIntReplacer } from '..'
 import getTagCallback from './get-tag-callback'
 import parse from './parse'
+
+const debug = d('inverter:sdk:process-inputs')
 
 export async function processInputs(params: ProcessInputsParams) {
   const requiredAllowances: RequiredAllowances[] = []
@@ -22,6 +26,18 @@ export async function processInputs(params: ProcessInputsParams) {
       })
     })
   )
+
+  if (!!extendedInputs.length) {
+    debug(
+      `PROCESSED INPUTS for - ${extendedInputs.map((i) => i.name).join(',')}:`,
+      JSON.parse(
+        JSON.stringify(processedInputs, bigIntReplacer).replace(
+          /"[^"]{100,}"/g,
+          (match) => `"${match.slice(1, 101)}..."`
+        )
+      )
+    )
+  }
 
   return { processedInputs, requiredAllowances }
 }

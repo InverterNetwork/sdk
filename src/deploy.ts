@@ -12,7 +12,10 @@ import type {
 } from '@/types'
 // sdk utils
 import { processInputs } from '@/utils'
+import d from 'debug'
 import { encodeDeployData } from 'viem'
+
+const debug = d('inverter:sdk:deploy')
 
 /**
  * @description Deploy a contract
@@ -50,6 +53,7 @@ export async function deployWrite<
     throw new Error('Invalid module data')
   }
   // Process the arguments
+  debug('DEPLOYING CONTRACT:', name)
   const handledArgs = moduleData.deploymentInputs.configData.map(
     (input) => (args as any)?.[input.name]
   )
@@ -142,6 +146,7 @@ export async function deployBytecode<
     walletClient,
   })
   // Process the arguments
+  debug('GENERATING BYTECODE:', name)
   const handledArgs = moduleData.deploymentInputs.configData.map(
     (input) => (args as any)?.[input.name]
   )

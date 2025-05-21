@@ -9,6 +9,7 @@ import type {
 } from '@/types'
 // sdk utils
 import { handleError, handleOptions } from '@/utils'
+import d from 'debug'
 import {
   decodeEventLog,
   encodeFunctionData,
@@ -19,6 +20,8 @@ import {
 import getArgs from './get-args'
 // get-deploy utils
 import { getFactoryAddress, getViemMethods } from './utils'
+
+const debug = d('inverter:sdk:deploy-workflow:get-methods')
 
 /**
  * @description Provides RPC interactions for the requested modules.
@@ -54,7 +57,10 @@ export default async function getMethods<
       const arr = await getArgs({ userArgs, kind, ...params })
 
       async function handleSimulate() {
-        console.log('CALLER_ADDRESS', walletClient.account.address)
+        debug(
+          'SIMULATING WORKFLOW DEPLOYMENT:',
+          getRequestedModulesString(requestedModules)
+        )
         const res = await simulateWrite(arr, {
           account: walletClient.account.address,
         })
@@ -66,6 +72,10 @@ export default async function getMethods<
       }
 
       async function handleEstimateGas() {
+        debug(
+          'ESTIMATING GAS FOR WORKFLOW DEPLOYMENT:',
+          getRequestedModulesString(requestedModules)
+        )
         const value = String(
           await esitmateGasOrg(arr, {
             account: walletClient.account.address,
@@ -79,6 +89,11 @@ export default async function getMethods<
       }
 
       async function handleWrite() {
+        debug(
+          'WRITING WORKFLOW DEPLOYMENT:',
+          getRequestedModulesString(requestedModules)
+        )
+
         let orchestratorAddress = '' as `0x${string}`
 
         const transactionHash = await write(arr, {
@@ -134,6 +149,11 @@ export default async function getMethods<
       }
 
       async function handleBytecode() {
+        debug(
+          'GENERATING BYTECODE FOR WORKFLOW DEPLOYMENT:',
+          getRequestedModulesString(requestedModules)
+        )
+
         const bytecode = encodeFunctionData({
           abi,
           functionName: 'createOrchestrator',
@@ -171,4 +191,27 @@ export default async function getMethods<
     estimateGas: (userArgs: Args) => handleDeployment('estimateGas', userArgs),
     bytecode: (userArgs: Args) => handleDeployment('bytecode', userArgs),
   }
+}
+
+const getRequestedModulesString = (requestedModules: MixedRequestedModules) => {
+  const result: string[] = []
+
+  Object.keys(requestedModules).map((key) => {
+    const value = requestedModules[key as keyof MixedRequestedModules]
+    if (typeof value === 'string') {
+      result.push(value)
+    } else if (Array.isArray(value)) {
+      value.forEach((v) => {
+        if (typeof v === 'object') {
+          result.push(v.name)
+        } else {
+          result.push(v)
+        }
+      })
+    } else if (typeof value === 'object') {
+      result.push(value.name)
+    }
+  })
+
+  return result.join(',')
 }

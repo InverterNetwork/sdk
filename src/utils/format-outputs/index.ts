@@ -1,8 +1,12 @@
 import { isDefinedExtendedAbiMemberArray } from '@/types'
 import type { FormatGetTagCallbackParams } from '@/types'
+import d from 'debug'
 
+import { bigIntReplacer } from '..'
 import format from './format'
 import getTagCallback from './get-tag-callback'
+
+const debug = d('inverter:sdk:format-outputs')
 
 export async function formatOutputs(props: FormatGetTagCallbackParams) {
   const { extendedOutputs, res, tagConfig } = props
@@ -34,6 +38,18 @@ export async function formatOutputs(props: FormatGetTagCallbackParams) {
       return formatted
     })
   )
+
+  if (!!extendedOutputs.length) {
+    debug(
+      `FORMATTED OUTPUTS for - ${extendedOutputs.map((o) => o.name).join(',')}:`,
+      JSON.parse(
+        JSON.stringify(mapped, bigIntReplacer).replace(
+          /"[^"]{100,}"/g,
+          (match) => `"${match.slice(1, 101)}..."`
+        )
+      )
+    )
+  }
 
   // return the formatted outputs, selecting the first one if there is only one
   return mapped.length === 1 ? mapped[0] : mapped
