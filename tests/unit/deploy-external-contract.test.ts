@@ -26,7 +26,20 @@ describe('#DEPLOY_EXTERNAL_CONTRACT', () => {
       },
     })
 
-    const tokenBytecode = await tokenDeployment.run()
+    const token = sdk.getModule({
+      name: 'ERC20Issuance_v1',
+      address: tokenDeployment.contractAddress,
+      tagConfig: {
+        decimals: 18,
+      },
+    })
+
+    const tokenBytecode = await tokenDeployment.run([
+      await token.bytecode.setMinter.run([
+        sdk.walletClient.account.address,
+        true,
+      ]),
+    ])
 
     const trustedForwarderAddress = await factory.read.trustedForwarder.run()
 

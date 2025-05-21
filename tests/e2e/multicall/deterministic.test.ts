@@ -122,9 +122,6 @@ describe('#DETERMINISTIC_MULTICALL', () => {
           [PURCHASE_AMOUNT, '1'],
           {
             skipApprove: false,
-            onApprove: async (receipts) => {
-              console.log('Approved', receipts)
-            },
           }
         ),
       }

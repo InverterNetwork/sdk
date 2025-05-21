@@ -106,9 +106,6 @@ describe('#MULTICALL', () => {
           [PURCHASE_AMOUNT, purchaseReturn],
           {
             skipApprove: false,
-            onApprove: async (receipts) => {
-              console.log('Approved', receipts)
-            },
           }
         ),
       }

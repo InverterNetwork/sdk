@@ -82,7 +82,7 @@ export async function getSimulatedWorkflow<
 
   // Retreive the trusted forwarder address from the factory module
   const trustedForwarderAddress = await factory.read.trustedForwarder.run()
-  debug('TRUSTED_FORWARDER_ADDRESS', trustedForwarderAddress)
+  debug('TRUSTED_FORWARDER ADDRESS:', trustedForwarderAddress)
 
   const tokenBytecodeData = await tokenBytecode?.run()
 

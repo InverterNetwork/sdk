@@ -37,9 +37,11 @@ export default function getTagCallback({
         self,
       })
 
-      debug('ARG_DECIMALS_RES', { arg, decimalsRes })
+      debug('ARG & DECIMALS_RES:', { arg, decimalsRes })
 
       parsedAmount = parseDecimals(arg, decimalsRes.decimals)
+
+      debug('PARSED_AMOUNT:', parsedAmount)
 
       if (
         (kind === 'write' || kind === 'bytecode') &&

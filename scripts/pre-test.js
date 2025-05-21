@@ -5,7 +5,7 @@ async function runPreTest() {
     // Run the shell script asynchronously and wait for it to complete
     const childProcess = spawn({
       cmd: ['./scripts/protocol-rpc.sh'],
-      stdio: ['inherit'], // Pass the output to the terminal
+      stdio: ['inherit', 'inherit', 'inherit'], // Explicitly set all stdio streams
     })
 
     // Await the child process completion before continuing
@@ -16,7 +16,7 @@ async function runPreTest() {
       console.error(`Script failed with exit code: ${exitCode}`)
       process.exit(exitCode) // Exit if the script fails
     } else {
-      console.log('Shell script completed successfully.')
+      console.log('Pre test ran successfully 🚀')
     }
   } catch (error) {
     console.error(`Error running preTest script: ${error}`)

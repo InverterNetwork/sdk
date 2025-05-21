@@ -148,7 +148,5 @@ export const handleErrorWithUnknownContext = (error: any) => {
     // do nothing
   }
 
-  if (!errorName) return error as Error
-
   return new Error(extractContractCallBlockAsString(error?.message, errorName))
 }

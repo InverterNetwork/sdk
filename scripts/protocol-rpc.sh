@@ -75,21 +75,20 @@ install_dependency() {
         return 1
         ;;
     esac
-    printf "$dep installation completed 🚀\n"
+    printf "$dep installation completed ✅\n"
 }
 
 # Function to run anvil
 start_anvil() {
-    printf "Starting Anvil blockchain simulator 🔥\n"
     pkill anvil
 
     if [[ "$USE_FORK" == "true" ]]; then
         printf "Starting Anvil in fork mode from Sepolia testnet 🔄\n"
-        anvil --fork-url https://inverter.web3no.de/main/evm/11155111 --chain-id 31337 &
+        anvil --fork-url https://rpc.inverter.network/main/evm/11155111 --chain-id 31337 >/dev/null 2>&1 &
         ANVIL_PID=$!
     else
         printf "Starting Anvil in standard mode ⚡\n"
-        anvil --chain-id 31337 &
+        anvil --chain-id 31337 >/dev/null 2>&1 &
         ANVIL_PID=$!
     fi
 
@@ -106,12 +105,12 @@ install_contracts() {
         printf "Contract installation failed ❌\n" >&2
         return 1
     fi
-    printf "Inverter Protocol Installation Complete 🚀\n"
+    printf "Inverter Protocol Installation Complete ✅\n"
 }
 
 # Function to deploy the protocol
 deploy_protocol() {
-    printf "Starting Protocol Deployment 🚀\n"
+    printf "Starting Protocol Deployment ⚙️\n"
     source dev.env || {
         printf "Failed to source dev.env ❌\n" >&2
         return 1
@@ -119,30 +118,29 @@ deploy_protocol() {
 
     # Capture deployment output and log to console
     local deploy_output
-    if ! deploy_output=$(DEPLOYER_PRIVATE_KEY="$DEPLOYER_PRIVATE_KEY" forge script "$DEPLOY_SCRIPT" --rpc-url "$RPC_URL" --broadcast -v 2>&1 | tee /dev/tty); then
+    if ! deploy_output=$(DEPLOYER_PRIVATE_KEY="$DEPLOYER_PRIVATE_KEY" forge script "$DEPLOY_SCRIPT" --rpc-url "$RPC_URL" --broadcast -v 2>&1); then
         printf "Deployment failed ❌\n" >&2
         return 1
     fi
 
-    printf "Deployment successful 🚀\n"
+    printf "Deployment successful ✅\n" >/dev/tty
 
     # Extract OrchestratorFactory and ERC20Mock addresses from deployment output
     ORCHESTRATOR_FACTORY_ADDRESS=$(echo "$deploy_output" | grep -oE 'OrchestratorFactory_v1 InverterBeaconProxy_v1: 0x[0-9a-fA-F]+' | awk '{print $3}')
     TRANSACTION_FORWARDER_ADDRESS=$(echo "$deploy_output" | grep -oE 'TransactionForwarder_v1 InverterBeaconProxy_v1: 0x[0-9a-fA-F]+' | awk '{print $3}')
     ERC20_MOCK_ADDRESS=$(echo "$deploy_output" | grep -oE 'ERC20Mock iUSD: 0x[0-9a-fA-F]+' | awk '{print $3}')
     BANCOR_FORMULA_ADDRESS=$(echo "$deploy_output" | grep -oE 'BancorFormula Implementation: 0x[0-9a-fA-F]+' | awk '{print $3}')
-    RESTRICTED_PIM_FACTORY_ADDRESS=$(echo "$deploy_output" | grep -oE 'Restricted_PIM_Factory_v1: 0x[0-9a-fA-F]+' | awk '{print $2}')
-    IMMUTABLE_PIM_FACTORY_ADDRESS=$(echo "$deploy_output" | grep -oE 'Immutable_PIM_Factory_v1: 0x[0-9a-fA-F]+' | awk '{print $2}')
-    MIGRATING_PIM_FACTORY_ADDRESS=$(echo "$deploy_output" | grep -oE 'Migrating_PIM_Factory_v1: 0x[0-9a-fA-F]+' | awk '{print $2}')
-    UNISWAP_V2_ADAPTER_ADDRESS=$(echo "$deploy_output" | grep -oE 'UniswapV2Adapter: 0x[0-9a-fA-F]+' | awk '{print $2}')
 
-    if [[ -z "$ORCHESTRATOR_FACTORY_ADDRESS" || -z "$ERC20_MOCK_ADDRESS" || -z "$BANCOR_FORMULA_ADDRESS" || -z "RESTRICTED_PIM_FACTORY_ADDRESS" || -z "IMMUTABLE_PIM_FACTORY_ADDRESS" ]]; then
+    if [[ -z "$ORCHESTRATOR_FACTORY_ADDRESS" || -z "$ERC20_MOCK_ADDRESS" || -z "$BANCOR_FORMULA_ADDRESS" || -z "$TRANSACTION_FORWARDER_ADDRESS" ]]; then
         printf "Failed to extract contract addresses ❌\n" >&2
         return 1
     fi
 
-    printf "OrchestratorFactory Address: $ORCHESTRATOR_FACTORY_ADDRESS ✅\n"
-    printf "ERC20Mock Address: $ERC20_MOCK_ADDRESS ✅\n"
+    printf "Private Key: $DEPLOYER_PRIVATE_KEY ✅\n" >/dev/tty
+    printf "OrchestratorFactory Address: $ORCHESTRATOR_FACTORY_ADDRESS ✅\n" >/dev/tty
+    printf "TransactionForwarder Address: $TRANSACTION_FORWARDER_ADDRESS ✅\n" >/dev/tty
+    printf "ERC20Mock Address: $ERC20_MOCK_ADDRESS ✅\n" >/dev/tty
+    printf "BancorFormula Address: $BANCOR_FORMULA_ADDRESS ✅\n" >/dev/tty
 
     if [[ "$USE_FORK" == "true" ]]; then
         printf "Sleeping for 1 seconds to allow for fork to sync 🔄\n"
@@ -157,11 +155,9 @@ update_env_var() {
     local file="$3"
 
     if grep -q "^$var_name=" "$file"; then
-        printf "Updating existing %s value in .env 🔄\n" "$var_name"
         sed -i.bak -e "s/^$var_name=.*/$var_name=$var_value/" "$file"
         printf "%s updated in .env ✅\n" "$var_name"
     else
-        printf "Adding %s to .env 🆕\n" "$var_name"
         echo "$var_name=$var_value" >>"$file"
         printf "%s added to .env ✅\n" "$var_name"
     fi
@@ -182,10 +178,6 @@ update_env() {
     update_env_var "TEST_TRANSACTION_FORWARDER_ADDRESS" "$TRANSACTION_FORWARDER_ADDRESS" "$ENV_FILE"
     update_env_var "TEST_ERC20_MOCK_ADDRESS" "$ERC20_MOCK_ADDRESS" "$ENV_FILE"
     update_env_var "TEST_BANCOR_FORMULA_ADDRESS" "$BANCOR_FORMULA_ADDRESS" "$ENV_FILE"
-    update_env_var "TEST_IMMUTABLE_PIM_FACTORY_ADDRESS" "$IMMUTABLE_PIM_FACTORY_ADDRESS" "$ENV_FILE"
-    update_env_var "TEST_RESTRICTED_PIM_FACTORY_ADDRESS" "$RESTRICTED_PIM_FACTORY_ADDRESS" "$ENV_FILE"
-    update_env_var "TEST_MIGRATING_PIM_FACTORY_ADDRESS" "$MIGRATING_PIM_FACTORY_ADDRESS" "$ENV_FILE"
-    update_env_var "TEST_UNISWAP_V2_ADAPTER_ADDRESS" "$UNISWAP_V2_ADAPTER_ADDRESS" "$ENV_FILE"
 
     rm -f .env.bak
 }
@@ -214,6 +206,8 @@ main() {
         printf "OS detection failed ❌\n"
         exit 1
     }
+
+    printf "\n----------------------------------------\n"
     check_dependencies || {
         printf "Dependency check failed ❌\n"
         exit 1
@@ -224,6 +218,7 @@ main() {
         exit 1
     }
 
+    printf "\n----------------------------------------\n"
     printf "Entering contracts directory 📂\n"
     cd ./contracts || {
         printf "Failed to enter ./contracts ❌\n" >&2
@@ -235,6 +230,7 @@ main() {
         exit 1
     }
 
+    printf "\n----------------------------------------\n"
     deploy_protocol || {
         printf "Protocol deployment failed ❌\n"
         exit 1
@@ -246,16 +242,18 @@ main() {
         return 1
     }
 
+    printf "\n----------------------------------------\n"
     update_env || {
         printf "Failed to update .env ❌\n"
         exit 1
     }
 
+    printf "\n----------------------------------------\n"
     if [[ "$WAIT" == true ]]; then
-        printf "Testnet protocol deployment is done 🚀. Press CTRL+C to end the session! 🖱️\n"
+        printf "Testnet protocol deployment is done ✅. Press CTRL+C to end the session! 🖱️\n"
         wait $ANVIL_PID
     else
-        printf "Testnet protocol deployment is done 🚀\n"
+        printf "Testnet protocol deployment is done ✅\n"
     fi
 }
 

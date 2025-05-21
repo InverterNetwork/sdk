@@ -67,7 +67,7 @@ export const getEncodedArgs = async ({
     ...params,
   })
 
-  debug('processedInputs', processedInputs)
+  debug('PROCESSED INPUTS:', processedInputs)
 
   // Encode the processed inputs
   const encodedArgs = encodeAbiParameters(configData, processedInputs)

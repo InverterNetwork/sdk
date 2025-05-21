@@ -103,7 +103,7 @@ export default function getRun<
           args: processedInputs,
         })
 
-        debug('BYTECODE CALL DATA', callData.slice(0, 100))
+        debug('BYTECODE CALL_DATA:', callData.slice(0, 100) + '...')
 
         return callData
       },
@@ -124,7 +124,7 @@ export default function getRun<
           kind !== 'read' &&
           options?.skipApprove !== true
         ) {
-          debug('Approving:', requiredAllowances)
+          debug('APPROVING REQUIRED_ALLOWANCES:', requiredAllowances)
 
           const transactionReceipts = await tagProcessor.approve({
             requiredAllowances,
@@ -133,7 +133,7 @@ export default function getRun<
           })
 
           debug(
-            'Approve receipts:',
+            'APPROVE RECEIPTS:',
             transactionReceipts?.map(({ status, gasUsed }) => {
               return {
                 status,

@@ -43,8 +43,7 @@
     "release:alpha": "standard-version -a --prerelease alpha --skip.changelog",
     "release:beta": "standard-version -a --prerelease beta --skip.changelog",
     "release:pub": "git push --follow-tags origin $(git rev-parse --abbrev-ref HEAD)",
-    "protocol-rpc": "scripts/protocol-rpc.sh --wait",
-    "copy:dist": "bun run build && bun scripts/copy-dist.js"
+    "protocol-rpc": "scripts/protocol-rpc.sh --wait"
   },
   "lint-staged": {
     "src/**/*.{ts,tsx}": [
