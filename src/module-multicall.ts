@@ -49,7 +49,7 @@ export const moduleMulticall: ModuleMulticall = {
  * @description Component function for making multiple write transactions in a single call.
  */
 async function writeMulticallFnComponent(
-  { publicClient, walletClient, call, ...rest }: ModuleMulticallParams,
+  { publicClient, walletClient, calls, ...rest }: ModuleMulticallParams,
   options: MethodOptions = {
     confirmations: 1,
   }
@@ -69,7 +69,7 @@ async function writeMulticallFnComponent(
     } = await multicallCore({
       publicClient,
       walletClient,
-      call,
+      calls,
       ...rest,
     })
     // Set the statuses and return datas to the initial values
@@ -116,7 +116,7 @@ async function writeMulticallFnComponent(
 async function simulateMulticallFnComponent({
   publicClient,
   walletClient,
-  call,
+  calls,
   ...rest
 }: ModuleMulticallParams): Promise<ModuleMulticallSimulateReturnType> {
   // Initialize the statuses and return datas - so they can be returned if an error occurs
@@ -128,7 +128,7 @@ async function simulateMulticallFnComponent({
     ;({ statuses, returnDatas } = await multicallCore({
       publicClient,
       walletClient,
-      call,
+      calls,
       ...rest,
     }))
     // Return the statuses and return datas
@@ -160,7 +160,7 @@ async function simulateMulticallFnComponent({
 async function multicallCore({
   publicClient,
   walletClient,
-  call,
+  calls,
   ...rest
 }: ModuleMulticallParams): Promise<{
   statuses: ('fail' | 'success')[]
@@ -170,12 +170,12 @@ async function multicallCore({
 }> {
   // Check if the call array is empty - if so, throw an error
   // This is to prevent accidental calls to the transaction forwarder
-  if (call.length === 0) {
+  if (calls.length === 0) {
     throw new Error('Call array cannot be empty')
   }
   // Initialize the statuses and return datas
-  let statuses = Array(call.length).fill('fail' as 'fail' | 'success')
-  let returnDatas = Array(call.length).fill('0x')
+  let statuses = Array(calls.length).fill('fail' as 'fail' | 'success')
+  let returnDatas = Array(calls.length).fill('0x')
   // Get the address of the transaction forwarder
   const moduleData = getModuleData('Module_v1')
   const address =
@@ -197,7 +197,7 @@ async function multicallCore({
     client: { public: publicClient, wallet: walletClient },
   })
   // Map the call data to be compatible with the transaction forwarder
-  const multicallData = call.map(({ address, callData, allowFailure }) => {
+  const multicallData = calls.map(({ address, callData, allowFailure }) => {
     return {
       target: address,
       callData,

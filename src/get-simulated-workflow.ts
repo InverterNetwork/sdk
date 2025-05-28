@@ -7,7 +7,7 @@ import type {
   GetSimulatedWorkflowParams,
   GetSimulatedWorkflowReturnType,
   MixedRequestedModules,
-  ModuleMulticallCall,
+  SingleModuleCall,
 } from '@/types'
 import d from 'debug'
 
@@ -90,7 +90,7 @@ export async function getSimulatedWorkflow<
     if (tokenBytecodeData) {
       const multicall = await moduleMulticall.simulate({
         trustedForwarderAddress,
-        call: [
+        calls: [
           {
             allowFailure: false,
             address: deployBytecode.factoryAddress,
@@ -133,7 +133,7 @@ export async function getSimulatedWorkflow<
   const paymentProcessorBytecode =
     await orchestrator.bytecode.paymentProcessor.run()
 
-  let call: ModuleMulticallCall = [
+  let calls: SingleModuleCall[] = [
     {
       allowFailure: false,
       address: deployBytecode.factoryAddress,
@@ -162,20 +162,20 @@ export async function getSimulatedWorkflow<
   ]
 
   if (tokenBytecodeData) {
-    call = [
+    calls = [
       {
         address: deployBytecode.factoryAddress,
         allowFailure: false,
         callData: tokenBytecodeData,
       },
-      ...call,
+      ...calls,
     ]
   }
 
   // Simulate the multicall
   const { returnDatas } = await moduleMulticall.simulate({
     trustedForwarderAddress,
-    call,
+    calls,
     walletClient,
     publicClient,
   })

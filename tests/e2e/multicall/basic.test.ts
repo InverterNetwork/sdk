@@ -1,9 +1,5 @@
 import { GET_HUMAN_READABLE_UINT_MAX_SUPPLY } from '@/index'
-import type {
-  ModuleMulticallCall,
-  RequestedModules,
-  SingleModuleCall,
-} from '@/types'
+import type { RequestedModules, SingleModuleCall } from '@/types'
 import { beforeAll, describe, expect, it } from 'bun:test'
 import {
   FM_BC_Bancor_VirtualSupply_v1_ARGS,
@@ -122,7 +118,7 @@ describe('#MULTICALL', () => {
 
       // Multicall
       // ------------------------------------------------------------------------
-      const call: ModuleMulticallCall = [
+      const calls: SingleModuleCall[] = [
         openBuySingleCall,
         openSellSingleCall,
         purchaseSingleCall,
@@ -131,7 +127,7 @@ describe('#MULTICALL', () => {
 
       const result = await sdk.moduleMulticall.write(
         {
-          call,
+          calls,
           orchestratorAddress: workflow.orchestrator.address,
         },
         {

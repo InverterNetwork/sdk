@@ -142,7 +142,7 @@ describe('#ONE_CLICK_WORKFLOW', () => {
       returnDatas: [, , purchaseReturnReturnData],
     } = await sdk.moduleMulticall.simulate({
       trustedForwarderAddress: simulatedWorkflow.trustedForwarderAddress,
-      call: [
+      calls: [
         {
           address: simulatedWorkflow.factoryAddress,
           allowFailure: false,
@@ -178,7 +178,7 @@ describe('#ONE_CLICK_WORKFLOW', () => {
       await sdk.moduleMulticall.write(
         {
           trustedForwarderAddress: simulatedWorkflow.trustedForwarderAddress,
-          call: [
+          calls: [
             {
               address: simulatedWorkflow.factoryAddress,
               allowFailure: false,

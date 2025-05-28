@@ -57,7 +57,7 @@ describe('#DEPLOY_EXTERNAL_CONTRACT', () => {
 
     const result = await sdk.moduleMulticall.write({
       trustedForwarderAddress,
-      call: [
+      calls: [
         {
           address: factory.address,
           allowFailure: false,

@@ -105,7 +105,7 @@ describe('#SIMULATE_MULTICALL_WORKFLOW', () => {
       returnDatas: [_, purchaseReturnReturnData],
     } = await sdk.moduleMulticall.simulate({
       trustedForwarderAddress: simulatedWorkflow.trustedForwarderAddress,
-      call: [
+      calls: [
         {
           address: simulatedWorkflow.factoryAddress,
           allowFailure: false,
@@ -142,7 +142,7 @@ describe('#SIMULATE_MULTICALL_WORKFLOW', () => {
       // 3. Make deploy and purchase in batch
       await sdk.moduleMulticall.write({
         trustedForwarderAddress: simulatedWorkflow.trustedForwarderAddress,
-        call: [
+        calls: [
           {
             address: simulatedWorkflow.factoryAddress,
             allowFailure: false,

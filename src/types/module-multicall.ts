@@ -12,15 +12,10 @@ export type SingleModuleCall = {
   allowFailure: boolean
 }
 
-/**
- * @description Batch call to be executed
- */
-export type ModuleMulticallCall = SingleModuleCall[]
-
 type ModuleMulticallCallBaseParams = {
   walletClient: PopWalletClient
   publicClient: PopPublicClient
-  call: ModuleMulticallCall
+  calls: SingleModuleCall[]
 }
 
 /**
