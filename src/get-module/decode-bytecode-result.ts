@@ -8,19 +8,28 @@ import { decodeFunctionResult } from 'viem'
 
 export default function decodeBytecodeResult<
   TExtendedOutputs extends ExtendedAbiParameter[],
+  TUseTags extends boolean = true,
 >({
   res,
   functionName,
+  useTags = true as TUseTags,
   ...params
-}: FormatBytecodeOutputsParams): FormatBytecodeOutputsReturnType<TExtendedOutputs> {
+}: FormatBytecodeOutputsParams<TUseTags>): FormatBytecodeOutputsReturnType<
+  TExtendedOutputs,
+  TUseTags
+> {
   const decoded = decodeFunctionResult({
     abi: params.contract.abi,
     data: res,
     functionName: functionName,
   })
 
-  return formatOutputs({
-    ...params,
-    res: decoded,
-  })
+  if (useTags) {
+    return formatOutputs({
+      ...params,
+      res: decoded,
+    })
+  }
+
+  return decoded as any
 }

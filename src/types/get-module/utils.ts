@@ -39,6 +39,7 @@ export type GetModuleGetRunParams<
   TInputs extends readonly ExtendedAbiParameter[],
   TOutputs extends readonly ExtendedAbiParameter[],
   TMethodKind extends MethodKind,
+  TUseTags extends boolean = true,
 > = {
   publicClient: PopPublicClient
   name: string
@@ -49,6 +50,7 @@ export type GetModuleGetRunParams<
   tagConfig?: TagConfig
   kind: TMethodKind
   self?: Inverter
+  useTags?: TUseTags
 }
 
 /**
@@ -56,15 +58,17 @@ export type GetModuleGetRunParams<
  * @template TInputs - The extended inputs
  * @template TOutputs - The extended outputs
  * @template TMethodKind - The kind of method
+ * @template TUseTags - Whether auto parse inputs, outputs and approve allowances using tag configs
  */
 export type GetModuleGetRunReturnType<
   TInputs extends readonly ExtendedAbiParameter[],
   TOutputs extends readonly ExtendedAbiParameter[],
   TMethodKind extends MethodKind,
+  TUseTags extends boolean = true,
 > = (
   args: GetMethodParams<TInputs>,
   options?: MethodOptions
-) => Promise<GetMethodReturnType<TOutputs, TMethodKind>>
+) => Promise<GetMethodReturnType<TOutputs, TMethodKind, TUseTags>>
 
 // GET ITERATE METHODS
 // ----------------------------------------------------------------------------
@@ -79,6 +83,7 @@ export type GetModuleItterateMethodsParams<
   TAbi extends ExtendedAbi,
   TAbiStateMutability extends AbiStateMutability[],
   TMethodKind extends MethodKind,
+  TUseTags extends boolean = true,
 > = {
   abi: TAbi
   type: TAbiStateMutability
@@ -88,6 +93,7 @@ export type GetModuleItterateMethodsParams<
   walletClient?: PopWalletClient
   tagConfig?: TagConfig
   self?: Inverter<any>
+  useTags?: TUseTags
 }
 
 /**
@@ -95,18 +101,21 @@ export type GetModuleItterateMethodsParams<
  * @template TAbi - The extended abi
  * @template TAbiStateMutability - The state mutability array
  * @template TMethodKind - The kind of method
+ * @template TUseTags - Whether auto parse inputs, outputs and approve allowances using tag configs
  */
 export type GetModuleIterateMethodsReturnType<
   TAbi extends ExtendedAbi,
   TAbiStateMutability extends AbiStateMutability[],
   TMethodKind extends MethodKind,
+  TUseTags extends boolean = true,
 > = Simplify<{
   [N in ExtractAbiFunctionNames<
     TAbi,
     TupleToUnion<TAbiStateMutability>
   >]: GetModuleConstructMethodReturnType<
     ExtractAbiFunction<TAbi, N>,
-    TMethodKind
+    TMethodKind,
+    TUseTags
   >
 }>
 
@@ -121,6 +130,7 @@ export type GetModuleIterateMethodsReturnType<
 export type GetModuleConstructMethodParams<
   TAbiFunction extends ExtendedAbiFunction,
   TMethodKind extends MethodKind,
+  TUseTags extends boolean = true,
 > = {
   walletClient?: PopWalletClient
   publicClient: PopPublicClient
@@ -129,16 +139,19 @@ export type GetModuleConstructMethodParams<
   tagConfig?: TagConfig
   kind: TMethodKind
   self?: Inverter
+  useTags?: TUseTags
 }
 
 /**
  * The return type for the constructMethod function
  * @template TAbiFunction - The extended abi function
  * @template TMethodKind - The kind of method
+ * @template TUseTags - Whether auto parse inputs, outputs and approve allowances using tag configs
  */
 export type GetModuleConstructMethodReturnType<
   TAbiFunction extends ExtendedAbiFunction,
   TMethodKind extends MethodKind,
+  TUseTags extends boolean = true,
 > = {
   name: TAbiFunction['name']
   description: TAbiFunction['description']
@@ -152,22 +165,28 @@ export type GetModuleConstructMethodReturnType<
   run: GetModuleGetRunReturnType<
     TAbiFunction['inputs'],
     TAbiFunction['outputs'],
-    TMethodKind
+    TMethodKind,
+    TUseTags
   >
   // If the method kind is bytecode, add the formatOutputs function
   decodeResult: TMethodKind extends 'bytecode'
-    ? (res: any) => FormatBytecodeOutputsReturnType<TAbiFunction['outputs']>
+    ? (
+        res: any
+      ) => FormatBytecodeOutputsReturnType<TAbiFunction['outputs'], TUseTags>
     : never
 }
 
 // FORMAT BYTECODE OUTPUTS
 // ----------------------------------------------------------------------------
 
-export type FormatBytecodeOutputsParams = FormatGetTagCallbackParams & {
-  res: `0x${string}`
-  functionName: string
-}
+export type FormatBytecodeOutputsParams<TUseTags extends boolean = true> =
+  FormatGetTagCallbackParams & {
+    res: `0x${string}`
+    functionName: string
+    useTags?: TUseTags
+  }
 
 export type FormatBytecodeOutputsReturnType<
   TExtendedOutputs extends readonly ExtendedAbiParameter[],
-> = Promise<GetMethodReturnType<TExtendedOutputs, 'read'>>
+  TUseTags extends boolean = true,
+> = Promise<GetMethodReturnType<TExtendedOutputs, 'read', TUseTags>>
