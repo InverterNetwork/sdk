@@ -118,9 +118,16 @@ deploy_protocol() {
 
     # Capture deployment output and log to console
     local deploy_output
-    if ! deploy_output=$(DEPLOYER_PRIVATE_KEY="$DEPLOYER_PRIVATE_KEY" forge script "$DEPLOY_SCRIPT" --rpc-url "$RPC_URL" --broadcast -v 2>&1); then
-        printf "Deployment failed ❌\n" >&2
-        return 1
+    if [[ "$VERBOSE" == "true" ]]; then
+        if ! deploy_output=$(DEPLOYER_PRIVATE_KEY="$DEPLOYER_PRIVATE_KEY" forge script "$DEPLOY_SCRIPT" --rpc-url "$RPC_URL" --broadcast -v 2>&1 | tee /dev/tty); then
+            printf "Deployment failed ❌\n" >&2
+            return 1
+        fi
+    else
+        if ! deploy_output=$(DEPLOYER_PRIVATE_KEY="$DEPLOYER_PRIVATE_KEY" forge script "$DEPLOY_SCRIPT" --rpc-url "$RPC_URL" --broadcast -v 2>&1); then
+            printf "Deployment failed ❌\n" >&2
+            return 1
+        fi
     fi
 
     printf "Deployment successful ✅\n" >/dev/tty

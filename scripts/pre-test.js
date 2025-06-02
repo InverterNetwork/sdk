@@ -6,6 +6,7 @@ async function runPreTest() {
     const childProcess = spawn({
       cmd: ['./scripts/protocol-rpc.sh'],
       stdio: ['inherit', 'inherit', 'inherit'], // Explicitly set all stdio streams
+      env: process.env, // Pass through environment variables from parent process
     })
 
     // Await the child process completion before continuing

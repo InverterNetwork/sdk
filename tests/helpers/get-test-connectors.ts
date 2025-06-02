@@ -1,6 +1,6 @@
 import type { PopPublicClient, PopWalletClient } from '@/index'
 import { getChainById } from '@/index'
-import { http, createPublicClient, createWalletClient } from 'viem'
+import { createPublicClient, createWalletClient, http } from 'viem'
 import { privateKeyToAccount } from 'viem/accounts'
 
 const privKey = process.env['TEST_PRIVATE_KEY'] as `0x${string}` | undefined
