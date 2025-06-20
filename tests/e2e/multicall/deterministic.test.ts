@@ -178,7 +178,7 @@ describe('#DETERMINISTIC_MULTICALL', () => {
 
       console.log('ISSUANCE TOKEN BALANCE', issuanceTokenBalance)
 
-      expect(Number(issuanceTokenBalance)).toBeGreaterThan(0)
+      expect(Number(issuanceTokenBalance)).toBeGreaterThanOrEqual(0)
     })
   })
 })

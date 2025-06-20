@@ -4,7 +4,7 @@ import type {
   RequestedModules,
   Workflow,
 } from '@/index'
-import { beforeAll, beforeEach, describe, expect, it } from 'bun:test'
+import { beforeAll, describe, expect, it } from 'bun:test'
 import {
   GET_HUMAN_READABLE_UINT_MAX_SUPPLY,
   sdk,
@@ -73,9 +73,9 @@ describe('#ORACLE_PRICE', () => {
     })
 
     await fundingToken.write.mint.run([deployer, MINT_AMOUNT])
-  })
 
-  beforeEach(async () => {
+    // Workflow Setup
+    // ------------------------------------------------------------
     const { contractAddress: issuanceTokenAddress } = await sdk.deploy.write({
       name: 'ERC20Issuance_v1',
       args: {
@@ -119,9 +119,10 @@ describe('#ORACLE_PRICE', () => {
       ['1', '1']
     )
 
-    // Upen buy
+    // Upen buy / sell
 
     await workflow.fundingManager.write.openBuy.run()
+    await workflow.fundingManager.write.openSell.run()
 
     // Set oracle address
     // ------------------------------------------------------------
@@ -162,16 +163,17 @@ describe('#ORACLE_PRICE', () => {
   })
 
   it(`2. Should sell tokens`, async () => {
-    const sellAmount = '100'
+    const sellAmount = '50'
+
+    const issuanceTokenBalance =
+      await workflow.issuanceToken!.module.read.balanceOf.run(deployer)
+
+    console.log('issuanceTokenBalance', issuanceTokenBalance)
 
     const sellReturn =
       await workflow.fundingManager.read.calculateSaleReturn.run(sellAmount)
 
-    const getIssuanceTokenResponse =
-      await workflow.fundingManager.read.getIssuanceToken.run()
-    console.log('getIssuanceTokenResponse', getIssuanceTokenResponse)
-    console.log('issuanceTokenAddress', getIssuanceTokenResponse)
-    console.log('fundingTokenAddress', workflow.fundingToken?.address)
+    console.log('sellReturn', sellReturn)
 
     const sellHash = await workflow.fundingManager.write.sell.run([
       sellAmount,
