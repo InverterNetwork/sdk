@@ -48,12 +48,14 @@ export default async function decimals({
   )
 
   if (!!cachedToken) {
+    debug('CACHED_TOKEN')
     decimals = cachedToken.decimals
     tokenAddress = cachedToken.address
   }
   // INTERNAL CASE (NO SOURCE)
   // -------------------------------------------------------------------
   else if (!source) {
+    debug('NO_SOURCE')
     decimals = tagConfig?.decimals
     tokenAddress = tagConfig?.defaultToken
   }
@@ -61,32 +63,40 @@ export default async function decimals({
   // -------------------------------------------------------------------
   else if (source === 'extras') {
     if (location === 'issuanceToken') {
+      debug('EXTRAS:ISSUANCE_TOKEN')
       decimals = tagConfig?.issuanceTokenDecimals
       tokenAddress = tagConfig?.issuanceToken
+    } else {
+      debug('EXTRAS')
     }
   }
   // OVERWRITE CASES
   else if (tag === 'decimals' && tagConfig?.decimals) {
+    debug('OVERWRITE:DECIMALS')
     decimals = tagConfig.decimals
   } else if (
     ['issuanceToken', 'getIssuanceToken'].some((t) => tag.includes(t)) &&
     !tag.includes('approval') &&
     tagConfig?.issuanceTokenDecimals
   ) {
+    debug('OVERWRITE:ISSUANCE_TOKEN_DECIMALS')
     decimals = tagConfig.issuanceTokenDecimals
   } else if (
     ['issuanceToken', 'getIssuanceToken'].some((t) => tag.includes(t)) &&
     tagConfig?.issuanceToken &&
     tagConfig?.issuanceTokenDecimals
   ) {
+    debug('OVERWRITE:ISSUANCE_TOKEN_DECIMALS_AND_ISSUANCE_TOKEN')
     decimals = tagConfig.issuanceTokenDecimals
     tokenAddress = tagConfig.issuanceToken
   } else {
+    debug('SOURCE_PARAMS')
     // SOURCE PARAMS
     // -------------------------------------------------------------------
     if (source === 'params') {
       // EXACT LOCATION
       if (location === 'exact') {
+        debug('SOURCE_PARAMS:EXACT')
         decimals =
           // check if the value is contained by a non-tuple arg search it-
           // based on the index that is has in `inputs`
@@ -102,6 +112,7 @@ export default async function decimals({
 
       // INDIRECT LOCATION
       if (location === 'indirect') {
+        debug('SOURCE_PARAMS:INDIRECT')
         tokenAddress =
           argsOrRes[
             parameters.findIndex((parameter) => parameter.name === name)
@@ -121,6 +132,7 @@ export default async function decimals({
     // -------------------------------------------------------------------
     if (source === 'contract') {
       if (location === 'indirect') {
+        debug('SOURCE_CONTRACT:INDIRECT')
         tokenAddress = contract?.read?.[name]()
 
         if (!tokenAddress)
@@ -134,6 +146,7 @@ export default async function decimals({
       }
 
       if (location === 'exact') {
+        debug('SOURCE_CONTRACT:EXACT')
         tokenAddress = contract?.address
         if (!tokenAddress) throw new Error('No token address found')
 
