@@ -19,11 +19,13 @@ export const defineAuthorizerTemplate = <TModuleName extends AutV2ModuleName>(
   module: config.module,
   roles: config.roles.map((role) => ({
     name: role.name,
-    adminRole: role.adminRole,
+    adminRole: `0x${role.adminRole.toString().padStart(40, '0')}`,
     members: role.members || [],
     functions: role.functions.map((f) => getFunctionSelector(config.module, f)),
   })),
   publicRoles:
-    config.publicFunctions?.map((f) => getFunctionSelector(config.module, f)) ||
-    [],
+    config.publicFunctions?.map((f) => ({
+      adminRole: '0x0000000000000000000000000000000000000001' as const,
+      function: getFunctionSelector(config.module, f),
+    })) || [],
 })
