@@ -13,7 +13,6 @@ describe('#DEPLOY_ERC20_ISSUANCE_BLACKLIST', async () => {
         symbol: 'MT',
         decimals: 18,
         maxSupply: '1000000',
-        initialAdmin: deployer,
       },
     })
 

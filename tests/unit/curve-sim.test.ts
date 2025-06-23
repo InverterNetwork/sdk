@@ -32,7 +32,6 @@ describe('#CURVE_SIM', () => {
     const { contractAddress: issuanceTokenAddress } = await sdk.deploy.write({
       name: 'ERC20Issuance_v1',
       args: {
-        initialAdmin: deployer,
         symbol: 'TEST',
         name: 'Test Token',
         decimals: 18,

@@ -47,7 +47,6 @@ describe.skip('#EIP7702_Batch_Transactions', () => {
       await sdk.deploy.write({
         name: 'ERC20Issuance_v1',
         args: {
-          initialAdmin: deployer,
           decimals: 18,
           maxSupply: '1000000000000000000000000',
           name: 'Test Token',

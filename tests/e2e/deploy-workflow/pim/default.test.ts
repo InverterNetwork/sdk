@@ -67,7 +67,6 @@ describe('#PIM_DEFAULT', async () => {
         symbol: 'MT',
         decimals: 18,
         maxSupply: GET_HUMAN_READABLE_UINT_MAX_SUPPLY(18),
-        initialAdmin: walletClient.account.address,
       },
     })
 

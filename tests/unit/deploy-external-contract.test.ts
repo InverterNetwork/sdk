@@ -29,7 +29,6 @@ describe('#DEPLOY_EXTERNAL_CONTRACT', () => {
         name: 'TEST',
         decimals: 18,
         maxSupply: GET_HUMAN_READABLE_UINT_MAX_SUPPLY(18),
-        initialAdmin: factory.address,
       },
     })
 
