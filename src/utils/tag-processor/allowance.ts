@@ -9,9 +9,14 @@ export default async function allowance({
   publicClient,
   userAddress,
 }: TagProcessorAllowancesParams) {
-  if (!tokenAddress || !userAddress)
+  if (!tokenAddress)
     throw new Error(
-      'Token or user address is undefined, while trying to get required allowance.'
+      'Token address is undefined, while trying to get required allowance.'
+    )
+
+  if (!userAddress)
+    throw new Error(
+      'User address is undefined, while trying to get required allowance.'
     )
 
   const currentAllowance = <bigint>await publicClient.readContract({
