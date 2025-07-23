@@ -17,13 +17,15 @@ import type { Hex } from 'viem'
  * @description The token module data type
  * @template TModuleType - The module type
  * @template TWalletClient - The wallet client
+ * @template TUseTags - Whether auto parse inputs, outputs and approve allowances using tag configs
  */
 export type TokenModuleData<
   TModuleName extends WorkflowToken,
   TWalletClient extends PopWalletClient | undefined,
+  TUseTags extends boolean = true,
 > = {
   address: Hex
-  module: GetModuleReturnType<TModuleName, TWalletClient>
+  module: GetModuleReturnType<TModuleName, TWalletClient, undefined, TUseTags>
   decimals: number
   symbol: string
 }
@@ -33,11 +35,13 @@ export type TokenModuleData<
  * @template TRequestedModules - The requested modules
  * @template TIssuanceToken - The issuance token type
  * @template TWalletClient - The wallet client
+ * @template TUseTags - Whether auto parse inputs, outputs and approve allowances using tag configs
  */
 export type ConditionalIssuanceToken<
   TRequestedModules extends MixedRequestedModules | undefined,
   TIssuanceToken extends WorkflowIssuanceToken,
   TWalletClient extends PopWalletClient | undefined,
+  TUseTags extends boolean = true,
 > =
   TRequestedModules extends NonNullable<TRequestedModules>
     ? (
@@ -45,9 +49,9 @@ export type ConditionalIssuanceToken<
           ? FilterByPrefix<TRequestedModules['fundingManager']['name'], 'FM_BC'>
           : FilterByPrefix<TRequestedModules['fundingManager'], 'FM_BC'>
       ) extends never
-      ? TokenModuleData<TIssuanceToken, TWalletClient> | undefined
-      : TokenModuleData<TIssuanceToken, TWalletClient>
-    : TokenModuleData<TIssuanceToken, TWalletClient> | undefined
+      ? TokenModuleData<TIssuanceToken, TWalletClient, TUseTags> | undefined
+      : TokenModuleData<TIssuanceToken, TWalletClient, TUseTags>
+    : TokenModuleData<TIssuanceToken, TWalletClient, TUseTags> | undefined
 
 /**
  * @description The get workflow token params type
@@ -63,6 +67,7 @@ export type GetWorkflowTokenParams<
   publicClient: PopPublicClient
   walletClient?: TWalletClient
   self?: Inverter<TWalletClient>
+  useTags?: boolean
 }
 
 /**
@@ -73,9 +78,10 @@ export type GetWorkflowTokenParams<
 export type GetWorkflowTokenReturnType<
   TModuleName extends WorkflowToken,
   TWalletClient extends PopWalletClient | undefined,
+  TUseTags extends boolean = true,
 > = {
   address: Hex
-  module: GetModuleReturnType<TModuleName, TWalletClient>
+  module: GetModuleReturnType<TModuleName, TWalletClient, undefined, TUseTags>
   decimals: number
   symbol: string
 }

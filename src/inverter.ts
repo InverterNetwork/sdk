@@ -128,18 +128,27 @@ export class Inverter<
     TRequestedModules extends MixedRequestedModules | undefined = undefined,
     TFundingToken extends WorkflowToken | undefined = undefined,
     TIssuanceToken extends WorkflowIssuanceToken | undefined = undefined,
+    TUseTags extends boolean = true,
   >({
     orchestratorAddress,
     requestedModules,
     fundingTokenType,
     issuanceTokenType,
+    useTags,
   }: {
     orchestratorAddress: `0x${string}`
     requestedModules?: TRequestedModules
     fundingTokenType?: TFundingToken
     issuanceTokenType?: TIssuanceToken
+    useTags?: TUseTags
   }): Promise<
-    Workflow<TRequestedModules, TWalletClient, TFundingToken, TIssuanceToken>
+    Workflow<
+      TRequestedModules,
+      TWalletClient,
+      TFundingToken,
+      TIssuanceToken,
+      TUseTags
+    >
   > {
     const chainId = this.publicClient.chain.id
 
@@ -171,9 +180,10 @@ export class Inverter<
         fundingTokenType,
         issuanceTokenType,
         self: this,
+        useTags,
       })
       this.workflows.set(chainOrchestratorAddress, workflow)
-      return workflow
+      return workflow as any
     }
   }
 

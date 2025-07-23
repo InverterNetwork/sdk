@@ -59,6 +59,7 @@ export async function getWorkflow<
   TWalletClient extends PopWalletClient | undefined = undefined,
   TFundingToken extends WorkflowToken | undefined = undefined,
   TIssuanceToken extends WorkflowIssuanceToken | undefined = undefined,
+  TUseTags extends boolean = true,
 >({
   requestedModules,
   publicClient,
@@ -67,13 +68,20 @@ export async function getWorkflow<
   self,
   fundingTokenType = 'ERC20' as any,
   issuanceTokenType = 'ERC20Issuance_v1' as any,
+  useTags = true as TUseTags,
 }: GetWorkflowParams<
   TRequestedModules,
   TWalletClient,
   TFundingToken,
   TIssuanceToken
 >): Promise<
-  Workflow<TRequestedModules, TWalletClient, TFundingToken, TIssuanceToken>
+  Workflow<
+    TRequestedModules,
+    TWalletClient,
+    TFundingToken,
+    TIssuanceToken,
+    TUseTags
+  >
 > {
   if (!publicClient) throw new Error('Public client not initialized')
 
@@ -84,6 +92,7 @@ export async function getWorkflow<
     publicClient,
     walletClient,
     self,
+    useTags,
   })
 
   const fundingManagerAddress = await orchestrator.read.fundingManager.run()
@@ -94,6 +103,7 @@ export async function getWorkflow<
     publicClient,
     walletClient,
     self,
+    useTags,
   })
 
   type IssuanceTokenName = TIssuanceToken extends undefined
@@ -112,6 +122,7 @@ export async function getWorkflow<
       publicClient,
       walletClient,
       self,
+      useTags,
     })
   } catch {
     issuanceToken = null
@@ -171,6 +182,7 @@ export async function getWorkflow<
           issuanceToken: issuanceToken?.address,
         },
         self,
+        useTags,
       })
     })
 
