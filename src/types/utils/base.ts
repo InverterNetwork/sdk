@@ -45,6 +45,17 @@ export type FilterByPrefix<
 > = T extends `${Prefix}${string}` ? T : never
 
 /**
+ * Filter a string by a suffix
+ * @template T - The string to filter
+ * @template Suffix - The suffix to filter by
+ * @returns The string filtered by the suffix
+ */
+export type FilterBySuffix<
+  T,
+  Suffix extends string,
+> = T extends `${string}${Suffix}` ? T : never
+
+/**
  * Find a string by a part
  * @template T - The string to find
  * @template Part - The part to find

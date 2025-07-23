@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.5.4](https://github.com/InverterNetwork/sdk/compare/v0.5.3...v0.5.4) (2025-06-20)
+
+
+### Features
+
+* **env:** add example environment file and pass environment variables in pre-test script ([b336967](https://github.com/InverterNetwork/sdk/commit/b336967e06ad644be1754c1b0e6ff107303e455e))
+
 ### [0.5.3](https://github.com/InverterNetwork/sdk/compare/v0.5.2...v0.5.3) (2025-05-28)
 
 ### [0.5.2](https://github.com/InverterNetwork/sdk/compare/v0.5.1...v0.5.2) (2025-05-23)

@@ -13,7 +13,6 @@ describe('#DEPLOY_ERC20_ISSUANCE_BLACKLIST', async () => {
         symbol: 'MT',
         decimals: 18,
         maxSupply: '1000000',
-        initialAdmin: deployer,
       },
     })
 
@@ -34,6 +33,8 @@ describe('#DEPLOY_ERC20_ISSUANCE_BLACKLIST', async () => {
     })
 
     expect(module).toBeObject()
+
+    await module.write.setMinter.run([deployer, true])
 
     const hash = await module.write.mint.run([deployer, '1000'])
 

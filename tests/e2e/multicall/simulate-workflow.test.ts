@@ -47,7 +47,6 @@ describe('#SIMULATE_MULTICALL_WORKFLOW', () => {
         symbol: 'TIT',
         decimals: 18,
         maxSupply: GET_HUMAN_READABLE_UINT_MAX_SUPPLY(18),
-        initialAdmin: deployer,
       },
     })
 
