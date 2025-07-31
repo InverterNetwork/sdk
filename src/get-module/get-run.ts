@@ -55,7 +55,7 @@ export default function getRun<
    * @returns The response of the method
    */
   async function run(
-    args: GetMethodParams<typeof extendedInputs>,
+    args: GetMethodParams<typeof extendedInputs, TUseTags>,
     options?: MethodOptions
   ): Promise<GetMethodReturnType<ExtendedOutputs, TMethodKind, TUseTags>> {
     // Parse the inputs, from user input to contract input

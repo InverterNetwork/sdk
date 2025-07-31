@@ -153,7 +153,7 @@ export class Inverter<
     const chainId = this.publicClient.chain.id
 
     const chainOrchestratorAddress =
-      `${chainId}:${orchestratorAddress}` as const
+      `${chainId}:${orchestratorAddress}:${useTags}` as const
 
     const cachedWorkflow = this.workflows.get(chainOrchestratorAddress)
 
@@ -254,9 +254,10 @@ export class Inverter<
   getModule<
     TModuleName extends TModuleData extends ModuleData ? never : ModuleName,
     TModuleData extends ModuleData | undefined = undefined,
+    TUseTags extends boolean = true,
   >(
     params: Omit<
-      GetModuleParams<TModuleName, TWalletClient, TModuleData>,
+      GetModuleParams<TModuleName, TWalletClient, TModuleData, TUseTags>,
       'walletClient' | 'publicClient' | 'self'
     >
   ): GetModuleReturnType<TModuleName, TWalletClient, TModuleData> {

@@ -32,14 +32,16 @@ export type EstimateGasReturnType = {
  * @template I - The inputs of the method
  * @returns The parameters for the method
  */
-export type GetMethodParams<I> =
-  ExtendedParametersToPrimitiveType<I> extends infer R extends
+export type GetMethodParams<I, TUseTags extends boolean = true> =
+  ExtendedParametersToPrimitiveType<I, TUseTags> extends infer R extends
     readonly unknown[]
-    ? R['length'] extends 0
-      ? void
-      : R['length'] extends 1
-        ? R[0]
-        : R
+    ? TUseTags extends false
+      ? R
+      : R['length'] extends 0
+        ? void
+        : R['length'] extends 1
+          ? R[0]
+          : R
     : never
 
 /**

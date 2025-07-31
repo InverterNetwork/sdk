@@ -66,7 +66,7 @@ export type GetModuleGetRunReturnType<
   TMethodKind extends MethodKind,
   TUseTags extends boolean = true,
 > = (
-  args: GetMethodParams<TInputs>,
+  args: GetMethodParams<TInputs, TUseTags>,
   options?: MethodOptions
 ) => Promise<GetMethodReturnType<TOutputs, TMethodKind, TUseTags>>
 

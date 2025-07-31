@@ -1,5 +1,5 @@
 import type { GetDeployWorkflowArgs, RequestedModules, Workflow } from '@/index'
-import { beforeEach, describe, expect, it } from 'bun:test'
+import { beforeAll, describe, expect, it } from 'bun:test'
 import {
   GET_ORCHESTRATOR_ARGS,
   sdk,
@@ -32,7 +32,7 @@ describe('#USE_TAGS_FLAG', () => {
   let noTagsWorkflow: Workflow<
     typeof requestedModules,
     typeof sdk.walletClient,
-    'ERC20',
+    'ERC20Issuance_v1',
     undefined,
     false
   >
@@ -40,12 +40,12 @@ describe('#USE_TAGS_FLAG', () => {
   let tagsWorkflow: Workflow<
     typeof requestedModules,
     typeof sdk.walletClient,
-    'ERC20',
+    'ERC20Issuance_v1',
     undefined,
     true
   >
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const orchestratorAddress = (
       await (
         await sdk.deployWorkflow({
@@ -54,43 +54,56 @@ describe('#USE_TAGS_FLAG', () => {
       ).run(args)
     ).orchestratorAddress
 
-    noTagsWorkflow = await sdk.getWorkflow({
-      orchestratorAddress: orchestratorAddress,
-      requestedModules,
-      useTags: false,
-    })
-
     tagsWorkflow = await sdk.getWorkflow({
       orchestratorAddress: orchestratorAddress,
       requestedModules,
+      fundingTokenType: 'ERC20Issuance_v1',
       useTags: true,
     })
 
-    const token = sdk.getModule({
-      address: TEST_ERC20_MOCK_ADDRESS,
-      name: 'ERC20Issuance_v1',
+    noTagsWorkflow = await sdk.getWorkflow({
+      orchestratorAddress: orchestratorAddress,
+      requestedModules,
+      fundingTokenType: 'ERC20Issuance_v1',
+      useTags: false,
     })
 
-    await token.write.mint.run([deployer, '1000'])
+    await tagsWorkflow.fundingToken.module.write.mint.run([deployer, '2000'])
+    const balance =
+      await tagsWorkflow.fundingToken.module.read.balanceOf.run(deployer)
+    console.log('DEPLOYER_BALANCE', balance)
   })
 
-  it('1. Should deposit to the vault, without tags', async () => {
-    const hash = await noTagsWorkflow.fundingManager.write.deposit.run('1000')
-    const balance = await noTagsWorkflow.fundingToken.module.read.balanceOf.run(
-      noTagsWorkflow.orchestrator.address
-    )
-
-    expect(hash).toBeString()
-    expect(balance).toBe(parseUnits('1000', 18))
-  })
-
-  it('2. Should deposit to the vault, with tags', async () => {
+  it('WITH_TAGS: Should get transaction hash of deposit', async () => {
     const hash = await tagsWorkflow.fundingManager.write.deposit.run('1000')
-    const balance = await tagsWorkflow.fundingToken.module.read.balanceOf.run(
-      tagsWorkflow.orchestrator.address
-    )
-
     expect(hash).toBeString()
-    expect(balance).toBe('1000')
+  })
+
+  it('WITH_TAGS: Should have correct balance after depositing', async () => {
+    const balance = await tagsWorkflow.fundingToken.module.read.balanceOf.run(
+      tagsWorkflow.fundingManager.address
+    )
+    expect(balance).toBe('990')
+  })
+
+  it('WITHOUT_TAGS: Should get transaction hash of deposit', async () => {
+    const amount = parseUnits('1000', 18)
+    const approveHash =
+      await noTagsWorkflow.fundingToken.module.write.approve.run([
+        noTagsWorkflow.fundingManager.address,
+        amount,
+      ])
+    expect(approveHash).toBeString()
+    const depositHash = await noTagsWorkflow.fundingManager.write.deposit.run([
+      amount,
+    ])
+    expect(depositHash).toBeString()
+  })
+
+  it('WITHOUT_TAGS: Should have correct balance after depositing', async () => {
+    const balance = await noTagsWorkflow.fundingToken.module.read.balanceOf.run(
+      [noTagsWorkflow.fundingManager.address]
+    )
+    expect(balance).toBe(parseUnits(String(990 * 2), 18))
   })
 })

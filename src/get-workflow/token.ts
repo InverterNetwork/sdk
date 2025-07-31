@@ -19,13 +19,17 @@ import type { Hex } from 'viem'
 export const getFundingToken = async <
   T extends WorkflowToken,
   W extends PopWalletClient | undefined = undefined,
+  TUseTags extends boolean = true,
 >({
   tokenType,
   fundingManagerAddress,
   publicClient,
   walletClient,
   self,
-}: GetWorkflowTokenParams<T, W>): Promise<GetWorkflowTokenReturnType<T, W>> => {
+  useTags = true as TUseTags,
+}: GetWorkflowTokenParams<T, W>): Promise<
+  GetWorkflowTokenReturnType<T, W, TUseTags>
+> => {
   const { readContract } = publicClient
 
   const address = <Hex>await readContract({
@@ -52,6 +56,7 @@ export const getFundingToken = async <
         decimals,
       },
       self,
+      useTags,
     })
 
   return {
