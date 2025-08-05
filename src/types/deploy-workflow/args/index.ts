@@ -24,6 +24,7 @@ export * from './static'
  */
 export type GetDeployWorkflowModuleArg<
   TModuleName extends ModuleName | ModuleData = ModuleName,
+  TUseTags extends boolean = true,
   TConfigData = TModuleName extends ModuleData
     ? TModuleName['deploymentInputs'] extends NonNullable<
         ModuleData['deploymentInputs']
@@ -36,7 +37,8 @@ export type GetDeployWorkflowModuleArg<
 > = EmptyObjectToNever<{
   // @ts-expect-error - TS cant resolve name
   [PN in TConfigData['name']]: ExtendedParameterToPrimitiveType<
-    Extract<TConfigData, { name: PN }>
+    Extract<TConfigData, { name: PN }>,
+    TUseTags
   >
 }>
 
@@ -52,8 +54,10 @@ type GetModuleName<T> = T extends ModuleData
 /**
  * @description Helper type to get module args from either ModuleName or ModuleData
  */
-type GetModuleArgs<T> = T extends ModuleData | ModuleName
-  ? GetDeployWorkflowModuleArg<T>
+type GetModuleArgs<T, TUseTags extends boolean = true> = T extends
+  | ModuleData
+  | ModuleName
+  ? GetDeployWorkflowModuleArg<T, TUseTags>
   : never
 
 /**
@@ -63,11 +67,12 @@ type GetModuleArgs<T> = T extends ModuleData | ModuleName
  */
 export type GetDeployWorkflowOptionalArgsBase<
   TRequestedModules extends MixedRequestedModules['optionalModules'],
+  TUseTags extends boolean = true,
 > = TRequestedModules extends undefined
   ? never
   : NonNullable<TRequestedModules>[number] extends infer N
     ? {
-        [K in GetModuleName<N>]: GetModuleArgs<N>
+        [K in GetModuleName<N>]: GetModuleArgs<N, TUseTags>
       }
     : never
 
@@ -78,7 +83,8 @@ export type GetDeployWorkflowOptionalArgsBase<
  */
 export type GetDeployWorkflowOptionalArgs<
   TRequestedModules extends MixedRequestedModules['optionalModules'],
-  R = GetDeployWorkflowOptionalArgsBase<TRequestedModules>,
+  TUseTags extends boolean = true,
+  R = GetDeployWorkflowOptionalArgsBase<TRequestedModules, TUseTags>,
 > = EmptyObjectToNever<
   OmitNever<{
     [K in keyof R]: IsEmptyObject<R[K]> extends true ? never : R[K]
@@ -88,22 +94,30 @@ export type GetDeployWorkflowOptionalArgs<
 /**
  * @description Get the user arguments for a given requested modules and factory type
  * @param TRequestedModules - The requested modules
+ * @param TUseTags - Whether to use tags
  * @returns The user arguments
  */
 export type GetDeployWorkflowArgs<
   TRequestedModules extends MixedRequestedModules = RequestedModules,
+  TUseTags extends boolean = true,
 > = Simplify<
   OmitNever<{
     orchestrator?: OrchestratorArgs
     fundingManager: GetDeployWorkflowModuleArg<
-      TRequestedModules['fundingManager']
+      TRequestedModules['fundingManager'],
+      TUseTags
     >
-    authorizer: GetDeployWorkflowModuleArg<TRequestedModules['authorizer']>
+    authorizer: GetDeployWorkflowModuleArg<
+      TRequestedModules['authorizer'],
+      TUseTags
+    >
     paymentProcessor: GetDeployWorkflowModuleArg<
-      TRequestedModules['paymentProcessor']
+      TRequestedModules['paymentProcessor'],
+      TUseTags
     >
     optionalModules: GetDeployWorkflowOptionalArgs<
-      TRequestedModules['optionalModules']
+      TRequestedModules['optionalModules'],
+      TUseTags
     >
   }>
 >

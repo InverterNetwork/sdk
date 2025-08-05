@@ -190,10 +190,11 @@ export const constructArgs = async ({
  */
 export default async function getArgs<
   TRequestedModules extends MixedRequestedModules,
+  TUseTags extends boolean = true,
 >(
   params: {
     requestedModules: TRequestedModules
-    userArgs: GetDeployWorkflowArgs<TRequestedModules>
+    userArgs: GetDeployWorkflowArgs<TRequestedModules, TUseTags>
   } & DeployWorkflowGetArgsSharedParams
 ) {
   // If tagConfig is provided, set it

@@ -48,8 +48,12 @@ const debug = d('inverter:get-simulated-workflow')
  */
 export async function getSimulatedWorkflow<
   TRequestedModules extends MixedRequestedModules,
-  TDeployWorkflowArgs extends GetDeployWorkflowArgs<TRequestedModules>,
+  TDeployWorkflowArgs extends GetDeployWorkflowArgs<
+    TRequestedModules,
+    TUseTags
+  >,
   TTokenBytecode extends DeployBytecodeReturnType | undefined = undefined,
+  TUseTags extends boolean = true,
 >({
   requestedModules,
   args,
@@ -57,10 +61,12 @@ export async function getSimulatedWorkflow<
   walletClient,
   tokenBytecode,
   tagConfig,
+  useTags,
 }: GetSimulatedWorkflowParams<
   TRequestedModules,
   TDeployWorkflowArgs,
-  TTokenBytecode
+  TTokenBytecode,
+  TUseTags
 >): Promise<GetSimulatedWorkflowReturnType> {
   // Get the bytecode method of the deployWorkflow function
   const { bytecode, simulate } = await deployWorkflow({
@@ -71,13 +77,14 @@ export async function getSimulatedWorkflow<
   })
 
   // Get the result of the deployWorkflow.bytecode method
-  const deployBytecode = await bytecode(args)
+  const deployBytecode = await bytecode(args as any)
   // Get the factory module
   const factory = getModule({
     name: 'OrchestratorFactory_v1',
     address: deployBytecode.factoryAddress,
     publicClient,
     walletClient,
+    useTags: useTags as false,
   })
 
   // Retreive the trusted forwarder address from the factory module
@@ -111,7 +118,7 @@ export async function getSimulatedWorkflow<
       )
     }
 
-    return (await simulate(args)).result
+    return (await simulate(args as any)).result
   })()
 
   // Get the orchestrator module
@@ -120,6 +127,7 @@ export async function getSimulatedWorkflow<
     address: orchestratorAddress,
     publicClient,
     walletClient,
+    useTags: useTags as false,
   })
 
   // Get the bytecode of the listModules method

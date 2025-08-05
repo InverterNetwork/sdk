@@ -26,8 +26,12 @@ export type SimulatedWorkflowToken =
  */
 export type GetSimulatedWorkflowParams<
   TRequestedModules extends MixedRequestedModules,
-  TDeployWorkflowArgs extends GetDeployWorkflowArgs<TRequestedModules>,
+  TDeployWorkflowArgs extends GetDeployWorkflowArgs<
+    TRequestedModules,
+    TUseTags
+  >,
   TTokenBytecode extends DeployBytecodeReturnType | undefined = undefined,
+  TUseTags extends boolean = true,
 > = {
   requestedModules: TRequestedModules
   args: TDeployWorkflowArgs
@@ -35,6 +39,7 @@ export type GetSimulatedWorkflowParams<
   walletClient: PopWalletClient
   tagConfig?: TagConfig
   tokenBytecode?: TTokenBytecode
+  useTags?: TUseTags
 }
 
 /**
