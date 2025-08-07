@@ -96,7 +96,6 @@ export const handleError = (
     if ('requestedModules' in params)
       abis = [
         getModuleData('OrchestratorFactory_v1').abi,
-        getModuleData('Restricted_PIM_Factory_v1').abi,
         ...abis,
         ...Object.values(params.requestedModules)
           .flat()
