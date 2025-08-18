@@ -7,7 +7,6 @@ import type {
   GetModuleGetRunParams,
   MethodKind,
   MethodOptions,
-  RequiredAllowances,
 } from '@/types'
 // sdk utils
 import {
@@ -59,24 +58,17 @@ export default function getRun<
     options?: MethodOptions
   ): Promise<GetMethodReturnType<ExtendedOutputs, TMethodKind, TUseTags>> {
     // Parse the inputs, from user input to contract input
-    let processedInputs = args as unknown as any[]
-    let requiredAllowances: RequiredAllowances[] = []
-
-    if (useTags) {
-      const result = await processInputs({
-        extendedInputs,
-        args,
-        tagConfig,
-        publicClient,
-        walletClient,
-        contract,
-        self,
-        kind,
-      })
-
-      processedInputs = result.processedInputs
-      requiredAllowances = result.requiredAllowances
-    }
+    const { processedInputs, requiredAllowances } = await processInputs({
+      extendedInputs,
+      args,
+      tagConfig,
+      publicClient,
+      walletClient,
+      contract,
+      self,
+      kind,
+      useTags,
+    })
 
     const actions = {
       // If the kind is simulate, use the simulate method
@@ -178,16 +170,15 @@ export default function getRun<
 
     // Format the outputs, from contract output to user output-
     // and pass the return type to type param
-    const formattedRes = useTags
-      ? await formatOutputs({
-          extendedOutputs,
-          res: resByKind,
-          tagConfig,
-          publicClient,
-          contract,
-          self,
-        })
-      : resByKind
+    const formattedRes = await formatOutputs({
+      extendedOutputs,
+      res: resByKind,
+      tagConfig,
+      publicClient,
+      contract,
+      self,
+      useTags,
+    })
 
     // Assign the response based on the kind
     const result = {

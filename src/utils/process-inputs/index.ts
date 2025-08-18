@@ -17,6 +17,10 @@ export async function processInputs(params: ProcessInputsParams) {
     extendedInputs.map(async (input, index) => {
       // get the argument of the same index
       const arg = Array.isArray(args) ? args[index] : args
+      // if useTags is false, return the argument as is
+      if (params.useTags === false) {
+        return arg
+      }
       // parse the input with the argument
       return await parse({
         input,

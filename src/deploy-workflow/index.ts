@@ -25,11 +25,13 @@ import getMethods from './get-methods'
  */
 export async function deployWorkflow<
   TRequestedModules extends MixedRequestedModules,
+  TUseTags extends boolean = true,
 >({
   requestedModules,
+  useTags = true as TUseTags,
   ...params
-}: DeployWorkflowParams<TRequestedModules>): Promise<
-  DeployWorkflowReturnType<TRequestedModules>
+}: DeployWorkflowParams<TRequestedModules, TUseTags>): Promise<
+  DeployWorkflowReturnType<TRequestedModules, TUseTags>
 > {
   const inputs = getDeployWorkflowInputs(requestedModules)
 
@@ -41,6 +43,7 @@ export async function deployWorkflow<
     publicClient,
     walletClient,
     tagConfig,
+    useTags,
   })
 
   return {
@@ -49,5 +52,5 @@ export async function deployWorkflow<
     simulate,
     estimateGas,
     bytecode,
-  }
+  } as DeployWorkflowReturnType<TRequestedModules, TUseTags>
 }

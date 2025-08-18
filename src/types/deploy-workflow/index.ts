@@ -24,12 +24,14 @@ export * from './get-methods'
  */
 export type DeployWorkflowParams<
   TRequestedModules extends MixedRequestedModules,
+  TUseTags extends boolean = true,
 > = {
   publicClient: PublicClient
   walletClient: PopWalletClient
   requestedModules: TRequestedModules
   self?: Inverter
   tagConfig?: TagConfig
+  useTags?: TUseTags
 }
 
 /**
@@ -38,6 +40,7 @@ export type DeployWorkflowParams<
  */
 export type DeployWorkflowReturnType<
   TRequestedModules extends MixedRequestedModules,
+  TUseTags extends boolean = true,
 > = {
   inputs: GetDeployWorkflowInputs<TRequestedModules>
-} & GetDeployWorkflowMethodsReturnType<TRequestedModules>
+} & GetDeployWorkflowMethodsReturnType<TRequestedModules, TUseTags>

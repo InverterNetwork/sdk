@@ -192,10 +192,15 @@ export class Inverter<
   /**
    * @see {@link deployWorkflow}
    */
-  deployWorkflow<TRequestedModules extends MixedRequestedModules>({
+  deployWorkflow<
+    TRequestedModules extends MixedRequestedModules,
+    TUseTags extends boolean = true,
+  >({
     requestedModules,
+    useTags = true as TUseTags,
   }: {
     requestedModules: TRequestedModules
+    useTags?: TUseTags
   }) {
     if (!this.walletClient)
       throw new Error('Wallet client is required for deploy')
@@ -206,6 +211,7 @@ export class Inverter<
       requestedModules,
       // @ts-ignore
       self: this,
+      useTags,
     })
 
     return result as TWalletClient extends undefined ? never : typeof result
