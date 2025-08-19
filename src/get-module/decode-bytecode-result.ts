@@ -24,12 +24,9 @@ export default function decodeBytecodeResult<
     functionName: functionName,
   })
 
-  if (useTags) {
-    return formatOutputs({
-      ...params,
-      res: decoded,
-    })
-  }
-
-  return decoded as any
+  return formatOutputs({
+    ...params,
+    res: decoded,
+    useTags,
+  })
 }
