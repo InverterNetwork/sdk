@@ -74,6 +74,7 @@ export async function getSimulatedWorkflow<
     publicClient,
     walletClient,
     tagConfig,
+    useTags,
   })
 
   // Get the result of the deployWorkflow.bytecode method

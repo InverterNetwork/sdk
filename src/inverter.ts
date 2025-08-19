@@ -221,12 +221,12 @@ export class Inverter<
    * @see {@link deploy}
    */
   deploy: {
-    write: <T extends DeployableContracts>(
-      params: Omit<DeployParams<T>, 'walletClient' | 'publicClient'>,
+    write: <T extends DeployableContracts, TUseTags extends boolean = true>(
+      params: Omit<DeployParams<T, TUseTags>, 'walletClient' | 'publicClient'>,
       options?: MethodOptions
     ) => Promise<DeployWriteReturnType>
-    bytecode: <T extends DeployableContracts>(
-      params: Omit<DeployParams<T>, 'publicClient' | 'walletClient'>
+    bytecode: <T extends DeployableContracts, TUseTags extends boolean = true>(
+      params: Omit<DeployParams<T, TUseTags>, 'publicClient' | 'walletClient'>
     ) => Promise<DeployBytecodeReturnType>
   } = {
     write: (params, options) => {
@@ -317,14 +317,19 @@ export class Inverter<
    */
   async getSimulatedWorkflow<
     TRequestedModules extends MixedRequestedModules,
-    TDeployWorkflowArgs extends GetDeployWorkflowArgs<TRequestedModules>,
+    TDeployWorkflowArgs extends GetDeployWorkflowArgs<
+      TRequestedModules,
+      TUseTags
+    >,
     TTokenBytecode extends DeployBytecodeReturnType | undefined = undefined,
+    TUseTags extends boolean = true,
   >(
     params: Omit<
       GetSimulatedWorkflowParams<
         TRequestedModules,
         TDeployWorkflowArgs,
-        TTokenBytecode
+        TTokenBytecode,
+        TUseTags
       >,
       'publicClient' | 'walletClient'
     >

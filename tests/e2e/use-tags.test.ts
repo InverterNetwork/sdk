@@ -1,4 +1,9 @@
-import type { GetDeployWorkflowArgs, RequestedModules, Workflow } from '@/index'
+import {
+  UINT_MAX_SUPPLY,
+  type GetDeployWorkflowArgs,
+  type RequestedModules,
+  type Workflow,
+} from '@/index'
 import { describe, expect, it } from 'bun:test'
 import {
   GET_HUMAN_READABLE_UINT_MAX_SUPPLY,
@@ -64,19 +69,28 @@ describe('#USE_TAGS_FLAG', () => {
     true
   >
 
-  const deployToken = () =>
+  const deployToken = <TUseTags extends boolean>(useTags: TUseTags) =>
     sdk.deploy.write({
       name: 'ERC20Issuance_v1',
+      useTags,
       args: {
         decimals: 18,
-        maxSupply: GET_HUMAN_READABLE_UINT_MAX_SUPPLY(18),
+        // @ts-expect-error - This is a workaround to allow the test to pass
+        maxSupply: useTags
+          ? GET_HUMAN_READABLE_UINT_MAX_SUPPLY(18)
+          : UINT_MAX_SUPPLY,
         symbol: 'TEST',
         name: 'TestToken',
       },
     })
 
-  it('WITH_TAGS: Should deploy token & workflow', async () => {
-    const { contractAddress: tagsIssuanceTokenAddress } = await deployToken()
+  let tagsIssuanceTokenAddress: `0x${string}`
+  it('WITH_TAGS: Should deploy token', async () => {
+    tagsIssuanceTokenAddress = (await deployToken(true)).contractAddress
+    expect(tagsIssuanceTokenAddress).toBeString()
+  })
+
+  it('WITH_TAGS: Should deploy workflow', async () => {
     const tagsOrchestratorAddress = (
       await (
         await sdk.deployWorkflow({
@@ -92,8 +106,18 @@ describe('#USE_TAGS_FLAG', () => {
     })
   })
 
-  it('WITHOUT_TAGS: Should deploy token & workflow', async () => {
-    const { contractAddress: noTagsIssuanceTokenAddress } = await deployToken()
+  it('WITH_TAGS: Should confirm token max supply', async () => {
+    const maxSupply = await tagsWorkflow.issuanceToken.module.read.cap.run()
+    expect(maxSupply).toBe(GET_HUMAN_READABLE_UINT_MAX_SUPPLY(18))
+  })
+
+  let noTagsIssuanceTokenAddress: `0x${string}`
+  it('WITHOUT_TAGS: Should deploy token', async () => {
+    noTagsIssuanceTokenAddress = (await deployToken(false)).contractAddress
+    expect(noTagsIssuanceTokenAddress).toBeString()
+  })
+
+  it('WITHOUT_TAGS: Should deploy workflow', async () => {
     const noTagsOrchestratorAddress = (
       await (
         await sdk.deployWorkflow({
@@ -109,6 +133,11 @@ describe('#USE_TAGS_FLAG', () => {
       issuanceTokenType: 'ERC20Issuance_v1',
       useTags: false,
     })
+  })
+
+  it('WITHOUT_TAGS: Should confirm token max supply', async () => {
+    const maxSupply = await noTagsWorkflow.issuanceToken.module.read.cap.run()
+    expect(maxSupply).toBe(UINT_MAX_SUPPLY)
   })
 
   it('INTERMEDIATE: Should mint funding token', async () => {
