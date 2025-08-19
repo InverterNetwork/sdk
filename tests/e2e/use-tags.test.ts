@@ -4,7 +4,7 @@ import {
   type RequestedModules,
   type Workflow,
 } from '@/index'
-import { describe, expect, it } from 'bun:test'
+import { beforeAll, describe, expect, it } from 'bun:test'
 import {
   GET_HUMAN_READABLE_UINT_MAX_SUPPLY,
   GET_ORCHESTRATOR_ARGS,
@@ -51,22 +51,21 @@ describe('#USE_TAGS_FLAG', () => {
     } as GetDeployWorkflowArgs<typeof requestedModules, TUseTags>
   }
 
-  // VARIABLES
+  // STATE
   // --------------------------------------------------
-  let noTagsWorkflow: Workflow<
-    typeof requestedModules,
-    typeof sdk.walletClient,
-    'ERC20Issuance_v1',
-    undefined,
-    false
-  >
-
-  let tagsWorkflow: Workflow<
+  let withTagsWorkflow: Workflow<
     typeof requestedModules,
     typeof sdk.walletClient,
     'ERC20Issuance_v1',
     undefined,
     true
+  >
+  let withoutTagsWorkflow: Workflow<
+    typeof requestedModules,
+    typeof sdk.walletClient,
+    'ERC20Issuance_v1',
+    undefined,
+    false
   >
 
   const deployToken = <TUseTags extends boolean>(useTags: TUseTags) =>
@@ -84,50 +83,40 @@ describe('#USE_TAGS_FLAG', () => {
       },
     })
 
-  let tagsIssuanceTokenAddress: `0x${string}`
-  it('WITH_TAGS: Should deploy token', async () => {
-    tagsIssuanceTokenAddress = (await deployToken(true)).contractAddress
-    expect(tagsIssuanceTokenAddress).toBeString()
-  })
+  let withTagsIssuanceTokenAddress: `0x${string}`
+  let withoutTagsIssuanceTokenAddress: `0x${string}`
 
-  it('WITH_TAGS: Should deploy workflow', async () => {
-    const tagsOrchestratorAddress = (
+  // SETUP
+  // --------------------------------------------------
+  beforeAll(async () => {
+    // WITH_TAGS deployment
+    withTagsIssuanceTokenAddress = (await deployToken(true)).contractAddress
+    const withTagsOrchestratorAddress = (
       await (
         await sdk.deployWorkflow({
           requestedModules,
         })
-      ).run(getArgs(tagsIssuanceTokenAddress, true))
+      ).run(getArgs(withTagsIssuanceTokenAddress, true))
     ).orchestratorAddress
-    tagsWorkflow = await sdk.getWorkflow({
-      orchestratorAddress: tagsOrchestratorAddress,
+    withTagsWorkflow = await sdk.getWorkflow({
+      orchestratorAddress: withTagsOrchestratorAddress,
       requestedModules,
       fundingTokenType: 'ERC20Issuance_v1',
       useTags: true,
     })
-  })
 
-  it('WITH_TAGS: Should confirm token max supply', async () => {
-    const maxSupply = await tagsWorkflow.issuanceToken.module.read.cap.run()
-    expect(maxSupply).toBe(GET_HUMAN_READABLE_UINT_MAX_SUPPLY(18))
-  })
-
-  let noTagsIssuanceTokenAddress: `0x${string}`
-  it('WITHOUT_TAGS: Should deploy token', async () => {
-    noTagsIssuanceTokenAddress = (await deployToken(false)).contractAddress
-    expect(noTagsIssuanceTokenAddress).toBeString()
-  })
-
-  it('WITHOUT_TAGS: Should deploy workflow', async () => {
-    const noTagsOrchestratorAddress = (
+    // WITHOUT_TAGS deployment
+    withoutTagsIssuanceTokenAddress = (await deployToken(false)).contractAddress
+    const withoutTagsOrchestratorAddress = (
       await (
         await sdk.deployWorkflow({
           requestedModules,
           useTags: false,
         })
-      ).run(getArgs(noTagsIssuanceTokenAddress, false))
+      ).run(getArgs(withoutTagsIssuanceTokenAddress, false))
     ).orchestratorAddress
-    noTagsWorkflow = await sdk.getWorkflow({
-      orchestratorAddress: noTagsOrchestratorAddress,
+    withoutTagsWorkflow = await sdk.getWorkflow({
+      orchestratorAddress: withoutTagsOrchestratorAddress,
       requestedModules,
       fundingTokenType: 'ERC20Issuance_v1',
       issuanceTokenType: 'ERC20Issuance_v1',
@@ -135,174 +124,188 @@ describe('#USE_TAGS_FLAG', () => {
     })
   })
 
-  it('WITHOUT_TAGS: Should confirm token max supply', async () => {
-    const maxSupply = await noTagsWorkflow.issuanceToken.module.read.cap.run()
-    expect(maxSupply).toBe(UINT_MAX_SUPPLY)
-  })
-
-  it('INTERMEDIATE: Should mint funding token', async () => {
-    // MINT FUNDING TOKEN
-    await tagsWorkflow.fundingToken.module.write.mint.run([deployer, '4000'])
-    // --------------------------------------------------
-    // SET MINTER FOR BOTH WORKFLOWS
-    await tagsWorkflow.issuanceToken.module.write.setMinter.run([
-      tagsWorkflow.fundingManager.address,
+  beforeAll(async () => {
+    // Mint funding token for WITH_TAGS and set minters for both workflows
+    await withTagsWorkflow.fundingToken.module.write.mint.run([
+      deployer,
+      '4000',
+    ])
+    await withTagsWorkflow.issuanceToken.module.write.setMinter.run([
+      withTagsWorkflow.fundingManager.address,
       true,
     ])
-    await noTagsWorkflow.issuanceToken.module.write.setMinter.run([
-      noTagsWorkflow.fundingManager.address,
+    await withoutTagsWorkflow.issuanceToken.module.write.setMinter.run([
+      withoutTagsWorkflow.fundingManager.address,
       true,
     ])
   })
 
+  // TESTS
   // --------------------------------------------------
-  // WITH_TAGS
-  let withTagsPurchaseReturn: string
-  it('WITH_TAGS: Should read purchase return', async () => {
-    withTagsPurchaseReturn =
-      await tagsWorkflow.fundingManager.read.calculatePurchaseReturn.run('1000')
-    expect(Number(withTagsPurchaseReturn)).toBeGreaterThan(0)
-    expect(typeof withTagsPurchaseReturn).toBe('string')
-  })
-
-  it('WITH_TAGS: Should get transaction hash of a buy', async () => {
-    const hash = await tagsWorkflow.fundingManager.write.buy.run([
-      '1000',
-      withTagsPurchaseReturn,
-    ])
-    expect(hash).toBeString()
-  })
-
-  it('WITH_TAGS: Should deploy with multicall', async () => {
-    const args = getArgs(tagsIssuanceTokenAddress, true)
-    const simulatedWorkflow = await sdk.getSimulatedWorkflow({
-      requestedModules,
-      args,
+  describe('WITH_TAGS', () => {
+    it('Should confirm token max supply', async () => {
+      const maxSupply =
+        await withTagsWorkflow.issuanceToken.module.read.cap.run()
+      expect(maxSupply).toBe(GET_HUMAN_READABLE_UINT_MAX_SUPPLY(18))
     })
 
-    await tagsWorkflow.issuanceToken.module.write.setMinter.run([
-      simulatedWorkflow.fundingManagerAddress,
-      true,
-    ])
+    let withTagsPurchaseReturn: string
 
-    await tagsWorkflow.fundingToken.module.write.approve.run([
-      simulatedWorkflow.fundingManagerAddress,
-      '1000',
-    ])
-
-    const result = await sdk.moduleMulticall.write({
-      trustedForwarderAddress: simulatedWorkflow.trustedForwarderAddress,
-      calls: [
-        {
-          address: simulatedWorkflow.factoryAddress,
-          allowFailure: false,
-          callData: simulatedWorkflow.bytecode,
-        },
-        {
-          address: simulatedWorkflow.fundingManagerAddress,
-          allowFailure: false,
-          callData: await tagsWorkflow.fundingManager.bytecode.buy.run([
-            '1000',
-            '1',
-          ]),
-        },
-        {
-          address: simulatedWorkflow.fundingManagerAddress,
-          allowFailure: false,
-          callData:
-            await tagsWorkflow.fundingManager.bytecode.calculatePurchaseReturn.run(
-              '1000'
-            ),
-        },
-      ],
+    it('Should read purchase return', async () => {
+      withTagsPurchaseReturn =
+        await withTagsWorkflow.fundingManager.read.calculatePurchaseReturn.run(
+          '1000'
+        )
+      expect(Number(withTagsPurchaseReturn)).toBeGreaterThan(0)
+      expect(typeof withTagsPurchaseReturn).toBe('string')
     })
 
-    expect(result.returnDatas[0]).toBeString()
-    expect(
-      typeof (await tagsWorkflow.fundingManager.bytecode.calculatePurchaseReturn.decodeResult(
-        result.returnDatas[2]
-      ))
-    ).toBe('string')
+    it('Should get transaction hash of a buy', async () => {
+      const hash = await withTagsWorkflow.fundingManager.write.buy.run([
+        '1000',
+        withTagsPurchaseReturn,
+      ])
+      expect(hash).toBeString()
+    })
+
+    it('Should deploy with multicall', async () => {
+      const args = getArgs(withTagsIssuanceTokenAddress, true)
+      const simulatedWorkflow = await sdk.getSimulatedWorkflow({
+        requestedModules,
+        args,
+      })
+
+      await withTagsWorkflow.issuanceToken.module.write.setMinter.run([
+        simulatedWorkflow.fundingManagerAddress,
+        true,
+      ])
+
+      await withTagsWorkflow.fundingToken.module.write.approve.run([
+        simulatedWorkflow.fundingManagerAddress,
+        '1000',
+      ])
+
+      const result = await sdk.moduleMulticall.write({
+        trustedForwarderAddress: simulatedWorkflow.trustedForwarderAddress,
+        calls: [
+          {
+            address: simulatedWorkflow.factoryAddress,
+            allowFailure: false,
+            callData: simulatedWorkflow.bytecode,
+          },
+          {
+            address: simulatedWorkflow.fundingManagerAddress,
+            allowFailure: false,
+            callData: await withTagsWorkflow.fundingManager.bytecode.buy.run([
+              '1000',
+              '1',
+            ]),
+          },
+          {
+            address: simulatedWorkflow.fundingManagerAddress,
+            allowFailure: false,
+            callData:
+              await withTagsWorkflow.fundingManager.bytecode.calculatePurchaseReturn.run(
+                '1000'
+              ),
+          },
+        ],
+      })
+
+      expect(result.returnDatas[0]).toBeString()
+      expect(
+        typeof (await withTagsWorkflow.fundingManager.bytecode.calculatePurchaseReturn.decodeResult(
+          result.returnDatas[2]
+        ))
+      ).toBe('string')
+    })
   })
 
-  // --------------------------------------------------
-  // WITHOUT_TAGS
-  let withoutTagsPurchaseReturn: bigint
-  it('WITHOUT_TAGS: Should read purchase return', async () => {
-    withoutTagsPurchaseReturn =
-      await noTagsWorkflow.fundingManager.read.calculatePurchaseReturn.run([
+  describe('WITHOUT_TAGS', () => {
+    it('Should confirm token max supply', async () => {
+      const maxSupply =
+        await withoutTagsWorkflow.issuanceToken.module.read.cap.run()
+      expect(maxSupply).toBe(UINT_MAX_SUPPLY)
+    })
+
+    let withoutTagsPurchaseReturn: bigint
+
+    it('Should read purchase return', async () => {
+      withoutTagsPurchaseReturn =
+        await withoutTagsWorkflow.fundingManager.read.calculatePurchaseReturn.run(
+          [parseUnits('1000', 18)]
+        )
+      expect(Number(withoutTagsPurchaseReturn)).toBeGreaterThan(0)
+      expect(typeof withoutTagsPurchaseReturn).toBe('bigint')
+    })
+
+    it('Should approve funding token', async () => {
+      const hash =
+        await withoutTagsWorkflow.fundingToken.module.write.approve.run([
+          withoutTagsWorkflow.fundingManager.address,
+          parseUnits('1000', 18),
+        ])
+      expect(hash).toBeString()
+    })
+
+    it('Should get transaction hash of a buy', async () => {
+      const hash = await withoutTagsWorkflow.fundingManager.write.buy.run([
+        parseUnits('1000', 18),
+        withoutTagsPurchaseReturn,
+      ])
+      expect(hash).toBeString()
+    })
+
+    it('Should deploy with multicall', async () => {
+      const args = getArgs(withoutTagsIssuanceTokenAddress, false)
+      const simulatedWorkflow = await sdk.getSimulatedWorkflow({
+        requestedModules,
+        useTags: false,
+        args,
+      })
+
+      await withoutTagsWorkflow.issuanceToken.module.write.setMinter.run([
+        simulatedWorkflow.fundingManagerAddress,
+        true,
+      ])
+
+      await withoutTagsWorkflow.fundingToken.module.write.approve.run([
+        simulatedWorkflow.fundingManagerAddress,
         parseUnits('1000', 18),
       ])
-    expect(Number(withoutTagsPurchaseReturn)).toBeGreaterThan(0)
-    expect(typeof withoutTagsPurchaseReturn).toBe('bigint')
-  })
 
-  it('WITHOUT_TAGS: Should approve funding token', async () => {
-    const hash = await noTagsWorkflow.fundingToken.module.write.approve.run([
-      noTagsWorkflow.fundingManager.address,
-      parseUnits('1000', 18),
-    ])
-    expect(hash).toBeString()
-  })
-
-  it('WITHOUT_TAGS: Should get transaction hash of a buy', async () => {
-    const hash = await noTagsWorkflow.fundingManager.write.buy.run([
-      parseUnits('1000', 18),
-      withoutTagsPurchaseReturn,
-    ])
-    expect(hash).toBeString()
-  })
-
-  it('WITHOUT_TAGS: Should deploy with multicall', async () => {
-    const args = getArgs(noTagsIssuanceTokenAddress, false)
-    const simulatedWorkflow = await sdk.getSimulatedWorkflow({
-      requestedModules,
-      useTags: false,
-      args,
-    })
-
-    await noTagsWorkflow.issuanceToken.module.write.setMinter.run([
-      simulatedWorkflow.fundingManagerAddress,
-      true,
-    ])
-
-    await noTagsWorkflow.fundingToken.module.write.approve.run([
-      simulatedWorkflow.fundingManagerAddress,
-      parseUnits('1000', 18),
-    ])
-
-    const result = await sdk.moduleMulticall.write({
-      trustedForwarderAddress: simulatedWorkflow.trustedForwarderAddress,
-      calls: [
-        {
-          address: simulatedWorkflow.factoryAddress,
-          allowFailure: false,
-          callData: simulatedWorkflow.bytecode,
-        },
-        {
-          address: simulatedWorkflow.fundingManagerAddress,
-          allowFailure: false,
-          callData: await noTagsWorkflow.fundingManager.bytecode.buy.run([
-            parseUnits('1000', 18),
-            parseUnits('1', 18),
-          ]),
-        },
-        {
-          address: simulatedWorkflow.fundingManagerAddress,
-          allowFailure: false,
-          callData:
-            await noTagsWorkflow.fundingManager.bytecode.calculatePurchaseReturn.run(
-              [parseUnits('1000', 18)]
+      const result = await sdk.moduleMulticall.write({
+        trustedForwarderAddress: simulatedWorkflow.trustedForwarderAddress,
+        calls: [
+          {
+            address: simulatedWorkflow.factoryAddress,
+            allowFailure: false,
+            callData: simulatedWorkflow.bytecode,
+          },
+          {
+            address: simulatedWorkflow.fundingManagerAddress,
+            allowFailure: false,
+            callData: await withoutTagsWorkflow.fundingManager.bytecode.buy.run(
+              [parseUnits('1000', 18), parseUnits('1', 18)]
             ),
-        },
-      ],
-    })
+          },
+          {
+            address: simulatedWorkflow.fundingManagerAddress,
+            allowFailure: false,
+            callData:
+              await withoutTagsWorkflow.fundingManager.bytecode.calculatePurchaseReturn.run(
+                [parseUnits('1000', 18)]
+              ),
+          },
+        ],
+      })
 
-    expect(result.returnDatas[0]).toBeString()
-    expect(
-      typeof (await noTagsWorkflow.fundingManager.bytecode.calculatePurchaseReturn.decodeResult(
-        result.returnDatas[2]
-      ))
-    ).toBe('bigint')
+      expect(result.returnDatas[0]).toBeString()
+      expect(
+        typeof (await withoutTagsWorkflow.fundingManager.bytecode.calculatePurchaseReturn.decodeResult(
+          result.returnDatas[2]
+        ))
+      ).toBe('bigint')
+    })
   })
 })
