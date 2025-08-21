@@ -37,6 +37,7 @@ export type DeployWorkflowGetArgsSharedParams = {
   kind: DeployMethodKind
   self?: Inverter
   tagConfig?: TagConfig
+  useTags?: boolean
 }
 
 /**
@@ -130,6 +131,7 @@ export const constructArgs = async ({
 
   // Get the default token if the funding manager is provided
   if (
+    rest.useTags &&
     userArgs.fundingManager &&
     !tagConfig?.defaultToken &&
     !tagConfig?.decimals
@@ -190,10 +192,11 @@ export const constructArgs = async ({
  */
 export default async function getArgs<
   TRequestedModules extends MixedRequestedModules,
+  TUseTags extends boolean = true,
 >(
   params: {
     requestedModules: TRequestedModules
-    userArgs: GetDeployWorkflowArgs<TRequestedModules>
+    userArgs: GetDeployWorkflowArgs<TRequestedModules, TUseTags>
   } & DeployWorkflowGetArgsSharedParams
 ) {
   // If tagConfig is provided, set it

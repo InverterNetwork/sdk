@@ -128,23 +128,32 @@ export class Inverter<
     TRequestedModules extends MixedRequestedModules | undefined = undefined,
     TFundingToken extends WorkflowToken | undefined = undefined,
     TIssuanceToken extends WorkflowIssuanceToken | undefined = undefined,
+    TUseTags extends boolean = true,
   >({
     orchestratorAddress,
     requestedModules,
     fundingTokenType,
     issuanceTokenType,
+    useTags,
   }: {
     orchestratorAddress: `0x${string}`
     requestedModules?: TRequestedModules
     fundingTokenType?: TFundingToken
     issuanceTokenType?: TIssuanceToken
+    useTags?: TUseTags
   }): Promise<
-    Workflow<TRequestedModules, TWalletClient, TFundingToken, TIssuanceToken>
+    Workflow<
+      TRequestedModules,
+      TWalletClient,
+      TFundingToken,
+      TIssuanceToken,
+      TUseTags
+    >
   > {
     const chainId = this.publicClient.chain.id
 
     const chainOrchestratorAddress =
-      `${chainId}:${orchestratorAddress}` as const
+      `${chainId}:${orchestratorAddress}:${useTags}` as const
 
     const cachedWorkflow = this.workflows.get(chainOrchestratorAddress)
 
@@ -171,9 +180,10 @@ export class Inverter<
         fundingTokenType,
         issuanceTokenType,
         self: this,
+        useTags,
       })
       this.workflows.set(chainOrchestratorAddress, workflow)
-      return workflow
+      return workflow as any
     }
   }
 
@@ -182,10 +192,15 @@ export class Inverter<
   /**
    * @see {@link deployWorkflow}
    */
-  deployWorkflow<TRequestedModules extends MixedRequestedModules>({
+  deployWorkflow<
+    TRequestedModules extends MixedRequestedModules,
+    TUseTags extends boolean = true,
+  >({
     requestedModules,
+    useTags = true as TUseTags,
   }: {
     requestedModules: TRequestedModules
+    useTags?: TUseTags
   }) {
     if (!this.walletClient)
       throw new Error('Wallet client is required for deploy')
@@ -196,6 +211,7 @@ export class Inverter<
       requestedModules,
       // @ts-ignore
       self: this,
+      useTags,
     })
 
     return result as TWalletClient extends undefined ? never : typeof result
@@ -205,12 +221,12 @@ export class Inverter<
    * @see {@link deploy}
    */
   deploy: {
-    write: <T extends DeployableContracts>(
-      params: Omit<DeployParams<T>, 'walletClient' | 'publicClient'>,
+    write: <T extends DeployableContracts, TUseTags extends boolean = true>(
+      params: Omit<DeployParams<T, TUseTags>, 'walletClient' | 'publicClient'>,
       options?: MethodOptions
     ) => Promise<DeployWriteReturnType>
-    bytecode: <T extends DeployableContracts>(
-      params: Omit<DeployParams<T>, 'publicClient' | 'walletClient'>
+    bytecode: <T extends DeployableContracts, TUseTags extends boolean = true>(
+      params: Omit<DeployParams<T, TUseTags>, 'publicClient' | 'walletClient'>
     ) => Promise<DeployBytecodeReturnType>
   } = {
     write: (params, options) => {
@@ -244,9 +260,10 @@ export class Inverter<
   getModule<
     TModuleName extends TModuleData extends ModuleData ? never : ModuleName,
     TModuleData extends ModuleData | undefined = undefined,
+    TUseTags extends boolean = true,
   >(
     params: Omit<
-      GetModuleParams<TModuleName, TWalletClient, TModuleData>,
+      GetModuleParams<TModuleName, TWalletClient, TModuleData, TUseTags>,
       'walletClient' | 'publicClient' | 'self'
     >
   ): GetModuleReturnType<TModuleName, TWalletClient, TModuleData> {
@@ -300,14 +317,19 @@ export class Inverter<
    */
   async getSimulatedWorkflow<
     TRequestedModules extends MixedRequestedModules,
-    TDeployWorkflowArgs extends GetDeployWorkflowArgs<TRequestedModules>,
+    TDeployWorkflowArgs extends GetDeployWorkflowArgs<
+      TRequestedModules,
+      TUseTags
+    >,
     TTokenBytecode extends DeployBytecodeReturnType | undefined = undefined,
+    TUseTags extends boolean = true,
   >(
     params: Omit<
       GetSimulatedWorkflowParams<
         TRequestedModules,
         TDeployWorkflowArgs,
-        TTokenBytecode
+        TTokenBytecode,
+        TUseTags
       >,
       'publicClient' | 'walletClient'
     >

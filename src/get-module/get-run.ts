@@ -30,6 +30,7 @@ export default function getRun<
   ExtendedInputs extends readonly ExtendedAbiParameter[],
   ExtendedOutputs extends readonly ExtendedAbiParameter[],
   TMethodKind extends MethodKind,
+  TUseTags extends boolean = true,
 >({
   publicClient,
   walletClient,
@@ -40,16 +41,22 @@ export default function getRun<
   tagConfig,
   kind,
   self,
-}: GetModuleGetRunParams<ExtendedInputs, ExtendedOutputs, TMethodKind>) {
+  useTags = true as TUseTags,
+}: GetModuleGetRunParams<
+  ExtendedInputs,
+  ExtendedOutputs,
+  TMethodKind,
+  TUseTags
+>) {
   /**
    * The run function of a kind of method
    * @param args The arguments of the method
    * @returns The response of the method
    */
   async function run(
-    args: GetMethodParams<typeof extendedInputs>,
+    args: GetMethodParams<typeof extendedInputs, TUseTags>,
     options?: MethodOptions
-  ): Promise<GetMethodReturnType<ExtendedOutputs, TMethodKind>> {
+  ): Promise<GetMethodReturnType<ExtendedOutputs, TMethodKind, TUseTags>> {
     // Parse the inputs, from user input to contract input
     const { processedInputs, requiredAllowances } = await processInputs({
       extendedInputs,
@@ -60,6 +67,7 @@ export default function getRun<
       contract,
       self,
       kind,
+      useTags,
     })
 
     const actions = {
@@ -120,6 +128,7 @@ export default function getRun<
       try {
         // If the kind is not read, approve the required allowances
         if (
+          useTags &&
           !!requiredAllowances.length &&
           kind !== 'read' &&
           options?.skipApprove !== true
@@ -168,6 +177,7 @@ export default function getRun<
       publicClient,
       contract,
       self,
+      useTags,
     })
 
     // Assign the response based on the kind

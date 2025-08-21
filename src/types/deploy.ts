@@ -21,11 +21,15 @@ export type DeployableContracts = Extract<
  * @param publicClient - The public client
  * @param args - The arguments for the deploy function
  */
-export type DeployParams<T extends DeployableContracts> = {
+export type DeployParams<
+  T extends DeployableContracts,
+  TUseTags extends boolean = true,
+> = {
   name: T
   walletClient: PopWalletClient
   publicClient: PopPublicClient
-  args: GetDeployWorkflowModuleArg<T>
+  useTags?: TUseTags
+  args: GetDeployWorkflowModuleArg<T, TUseTags>
 }
 
 /**
@@ -49,11 +53,11 @@ export type DeployBytecodeReturnType = {
  * @description The deploy object
  */
 export type Deploy = {
-  write: <T extends DeployableContracts>(
-    params: DeployParams<T>,
+  write: <T extends DeployableContracts, TUseTags extends boolean = true>(
+    params: DeployParams<T, TUseTags>,
     options?: MethodOptions
   ) => Promise<DeployWriteReturnType>
-  bytecode: <T extends DeployableContracts>(
-    params: DeployParams<T>
+  bytecode: <T extends DeployableContracts, TUseTags extends boolean = true>(
+    params: DeployParams<T, TUseTags>
   ) => Promise<DeployBytecodeReturnType>
 }

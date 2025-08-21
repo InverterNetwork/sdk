@@ -42,6 +42,7 @@ export type GetWorkflowParams<
   fundingTokenType?: TFundingToken
   issuanceTokenType?: TIssuanceToken
   self?: Inverter<TWalletClient>
+  useTags?: boolean
 }
 
 /**
@@ -50,24 +51,33 @@ export type GetWorkflowParams<
  * @template TWalletClient - The wallet client
  * @template TFundingToken - The funding token type
  * @template TIssuanceToken - The issuance token type
+ * @template TUseTags - Whether auto parse inputs, outputs and approve allowances using tag configs
  */
 export type Workflow<
   TRequestedModules extends MixedRequestedModules | undefined,
   TWalletClient extends PopWalletClient | undefined,
   TFundingToken extends WorkflowToken | undefined = undefined,
   TIssuanceToken extends WorkflowIssuanceToken | undefined = undefined,
+  TUseTags extends boolean = true,
 > = Merge<
-  MendatoryAndOptionalWorkflow<TRequestedModules, TWalletClient>,
+  MendatoryAndOptionalWorkflow<TRequestedModules, TWalletClient, TUseTags>,
   {
-    orchestrator: GetModuleReturnType<'Orchestrator_v1', TWalletClient>
+    orchestrator: GetModuleReturnType<
+      'Orchestrator_v1',
+      TWalletClient,
+      undefined,
+      TUseTags
+    >
     fundingToken: TokenModuleData<
       TFundingToken extends undefined ? 'ERC20' : TFundingToken,
-      TWalletClient
+      TWalletClient,
+      TUseTags
     >
     issuanceToken: ConditionalIssuanceToken<
       TRequestedModules,
       TIssuanceToken extends undefined ? 'ERC20Issuance_v1' : TIssuanceToken,
-      TWalletClient
+      TWalletClient,
+      TUseTags
     >
   }
 >
@@ -81,31 +91,50 @@ export type WorkflowModuleType = Exclude<UserFacingModuleType, 'orchestrator'>
  * @description The mandatory result type
  * @template TRequestedModules - The requested modules
  * @template TWalletClient - The wallet client
+ * @template TUseTags - Whether auto parse inputs, outputs and approve allowances using tag configs
  */
 type MandatoryResult<
   TRequestedModules extends MixedRequestedModules | undefined,
   TWalletClient extends PopWalletClient | undefined,
+  TUseTags extends boolean = true,
 > = {
   [K in Exclude<
     WorkflowModuleType,
     'optionalModule'
   >]: TRequestedModules extends NonNullable<TRequestedModules>
     ? TRequestedModules[K] extends ModuleData
-      ? GetModuleReturnType<never, TWalletClient, TRequestedModules[K]>
+      ? GetModuleReturnType<
+          never,
+          TWalletClient,
+          TRequestedModules[K],
+          TUseTags
+        >
       : TRequestedModules[K] extends ModuleName
-        ? GetModuleReturnType<TRequestedModules[K], TWalletClient>
+        ? GetModuleReturnType<
+            TRequestedModules[K],
+            TWalletClient,
+            undefined,
+            TUseTags
+          >
         : never
-    : GetModuleReturnType<RequestedModules[K], TWalletClient>
+    : GetModuleReturnType<
+        RequestedModules[K],
+        TWalletClient,
+        undefined,
+        TUseTags
+      >
 }
 
 /**
  * @description The optional result type
  * @template TRequestedModules - The requested modules
  * @template TWalletClient - The wallet client
+ * @template TUseTags - Whether auto parse inputs, outputs and approve allowances using tag configs
  */
 type OptionalResult<
   TRequestedModules extends MixedRequestedModules | undefined,
   TWalletClient extends PopWalletClient | undefined,
+  TUseTags extends boolean = true,
 > = OmitNever<{
   // 1. Check if the requested modules are non-nullable
   optionalModule: TRequestedModules extends NonNullable<TRequestedModules>
@@ -117,7 +146,7 @@ type OptionalResult<
         {
           [K in TRequestedModules['optionalModules'][number] extends ModuleName
             ? TRequestedModules['optionalModules'][number]
-            : never]: GetModuleReturnType<K, TWalletClient>
+            : never]: GetModuleReturnType<K, TWalletClient, undefined, TUseTags>
         } & {
           // 4. Second part is the module with passed data
           [K in TRequestedModules['optionalModules'][number] extends ModuleData
@@ -137,7 +166,7 @@ type OptionalResult<
     : {
         [K in NonNullable<
           RequestedModules['optionalModules']
-        >[number]]: GetModuleReturnType<K, TWalletClient>
+        >[number]]: GetModuleReturnType<K, TWalletClient, undefined, TUseTags>
       }
 }>
 
@@ -145,9 +174,11 @@ type OptionalResult<
  * @description The mendatory and optional workflow type
  * @template TRequestedModules - The requested modules
  * @template TWalletClient - The wallet client
+ * @template TUseTags - Whether auto parse inputs, outputs and approve allowances using tag configs
  */
 export type MendatoryAndOptionalWorkflow<
   TRequestedModules extends MixedRequestedModules | undefined,
   TWalletClient extends PopWalletClient | undefined,
-> = MandatoryResult<TRequestedModules, TWalletClient> &
-  OptionalResult<TRequestedModules, TWalletClient>
+  TUseTags extends boolean = true,
+> = MandatoryResult<TRequestedModules, TWalletClient, TUseTags> &
+  OptionalResult<TRequestedModules, TWalletClient, TUseTags>

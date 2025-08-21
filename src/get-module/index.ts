@@ -19,6 +19,7 @@ import iterateMethods from './iterate-methods'
  * @template TModuleName - The module name
  * @template TModuleData - The module data
  * @template TWalletClient - The wallet client
+ * @template TUseTags - Whether auto parse inputs, outputs and approve allowances using tag configs
  * @param params - The parameters for the module
  * @param params.address - The address of the module
  * @param params.publicClient - The public client
@@ -42,6 +43,7 @@ export function getModule<
   TModuleName extends TModuleData extends ModuleData ? never : ModuleName,
   TWalletClient extends PopWalletClient | undefined = undefined,
   TModuleData extends ModuleData | undefined = undefined,
+  TUseTags extends boolean = true,
 >({
   address,
   publicClient,
@@ -49,12 +51,14 @@ export function getModule<
   tagConfig,
   self,
   moduleData: mD,
+  useTags = true as TUseTags,
   ...rest
 }: GetModuleParams<
   TModuleName,
   TWalletClient,
-  TModuleData
->): GetModuleReturnType<TModuleName, TWalletClient, TModuleData> {
+  TModuleData,
+  TUseTags
+>): GetModuleReturnType<TModuleName, TWalletClient, TModuleData, TUseTags> {
   if (!mD && !(rest as any).name)
     throw new Error('Module name is required when moduleData is not provided')
 
@@ -99,6 +103,7 @@ export function getModule<
       kind: 'read',
       self,
       walletClient,
+      useTags,
     }),
     // Prepare the simulate functions
     simulate = iterateMethods({
@@ -110,6 +115,7 @@ export function getModule<
       kind: 'simulate',
       self,
       walletClient,
+      useTags,
     }),
     // Prepare estimateGas functions
     estimateGas = iterateMethods({
@@ -121,6 +127,7 @@ export function getModule<
       kind: 'estimateGas',
       self,
       walletClient,
+      useTags,
     }),
     // Prepare the bytecode functions
     bytecode = iterateMethods({
@@ -132,6 +139,7 @@ export function getModule<
       kind: 'bytecode',
       self,
       walletClient,
+      useTags,
     }),
     // Prepare the write functions if the walletClient is valid
     write = !!walletClient
@@ -144,6 +152,7 @@ export function getModule<
           kind: 'write',
           self,
           walletClient,
+          useTags,
         })
       : undefined
 

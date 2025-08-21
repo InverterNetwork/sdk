@@ -32,14 +32,20 @@ export type EstimateGasReturnType = {
  * @template I - The inputs of the method
  * @returns The parameters for the method
  */
-export type GetMethodParams<I> =
-  ExtendedParametersToPrimitiveType<I> extends infer R extends
-    readonly unknown[]
-    ? R['length'] extends 0
-      ? void
-      : R['length'] extends 1
-        ? R[0]
-        : R
+export type GetMethodParams<
+  I,
+  TUseTags extends boolean = true,
+> = I extends readonly []
+  ? void
+  : ExtendedParametersToPrimitiveType<I, TUseTags> extends infer R extends
+        readonly unknown[]
+    ? TUseTags extends false
+      ? R
+      : R['length'] extends 0
+        ? void
+        : R['length'] extends 1
+          ? R[0]
+          : R
     : never
 
 /**
@@ -59,8 +65,8 @@ export type MethodOptions = {
 }
 
 // Deduper util for getting the return type
-type InferReturn<O> =
-  ExtendedParametersToPrimitiveType<O> extends infer R
+type InferReturn<O, TUseTags extends boolean = true> =
+  ExtendedParametersToPrimitiveType<O, TUseTags> extends infer R
     ? R extends readonly unknown[]
       ? R['length'] extends 1
         ? R[0]
@@ -72,15 +78,20 @@ type InferReturn<O> =
  * @description The return type for the method
  * @template O - The outputs of the method
  * @template T - The kind of method
+ * @template TUseTags - Whether auto parse inputs, outputs and approve allowances using tag configs
  * @returns The return type for the method
  */
 export type GetMethodReturnType<
   O,
   T extends MethodKind,
+  TUseTags extends boolean = true,
 > = T extends 'estimateGas'
   ? EstimateGasReturnType
   : T extends 'simulate'
-    ? { result: InferReturn<O>; request: SimulateContractReturnType['request'] }
+    ? {
+        result: InferReturn<O, TUseTags>
+        request: SimulateContractReturnType['request']
+      }
     : T extends 'write' | 'bytecode'
       ? `0x${string}`
-      : InferReturn<O>
+      : InferReturn<O, TUseTags>

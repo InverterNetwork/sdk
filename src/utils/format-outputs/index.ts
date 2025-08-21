@@ -11,6 +11,8 @@ const debug = d('inverter:sdk:format-outputs')
 export async function formatOutputs(props: FormatGetTagCallbackParams) {
   const { extendedOutputs, res, tagConfig } = props
 
+  const useTags = props.useTags ?? true
+
   // format the outputs
   const mapped = await Promise.all(
     extendedOutputs.map(async (output) => {
@@ -26,6 +28,10 @@ export async function formatOutputs(props: FormatGetTagCallbackParams) {
         // if name is not defined or the result is not an object or array
         return res
       })()
+
+      if (!useTags) {
+        return selectedRes
+      }
 
       // format the output with the argument
       const formatted = await format({

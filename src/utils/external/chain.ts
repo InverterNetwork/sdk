@@ -3,6 +3,34 @@ import { http } from 'viem'
 import * as chains from 'viem/chains'
 
 /**
+ * Mainnet chains with protocol deployments
+ * Based on ProtocolConstants_v1.s.sol deployedMainnets
+ */
+export const mainnetChains = [
+  chains.optimism, // Chain ID: 10
+  chains.polygon, // Chain ID: 137
+  chains.polygonZkEvm, // Chain ID: 1101
+  chains.avalanche, // Chain ID: 43114
+] as Array<Chain>
+
+/**
+ * Testnet chains with protocol deployments
+ * Based on ProtocolConstants_v1.s.sol deployedTestnets
+ */
+export const testnetChains = [
+  chains.polygonZkEvmCardona, // Chain ID: 2442
+  chains.polygonAmoy, // Chain ID: 80002
+  chains.baseSepolia, // Chain ID: 84532
+  chains.sepolia, // Chain ID: 11155111
+  chains.optimismSepolia, // Chain ID: 11155420
+] as Array<Chain>
+
+/**
+ * All supported chains (mainnet + testnet)
+ */
+export const supportedChains = [...mainnetChains, ...testnetChains]
+
+/**
  * Get a chain by its id
  */
 export const getChainById = (chainId: number): Chain => {

@@ -2,71 +2,70 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-### [0.5.6](https://github.com/InverterNetwork/sdk/compare/v0.5.5...v0.5.6) (2025-08-07)
-
-### [0.5.5](https://github.com/InverterNetwork/sdk/compare/v0.5.4...v0.5.5) (2025-07-31)
-
-### [0.5.4](https://github.com/InverterNetwork/sdk/compare/v0.5.3...v0.5.4) (2025-06-20)
-
+## [0.9.0](https://github.com/InverterNetwork/sdk/compare/v0.5.4...v0.9.0) (2025-08-21)
 
 ### Features
 
-* **env:** add example environment file and pass environment variables in pre-test script ([b336967](https://github.com/InverterNetwork/sdk/commit/b336967e06ad644be1754c1b0e6ff107303e455e))
+- add useTags parameter to workflows and related types ([5bd4c7b](https://github.com/InverterNetwork/sdk/commit/5bd4c7ba2cae628dadccd82de4d24d9d838402ad))
+- **get-module:** introduce TUseTags generic for input/output processing ([64095f8](https://github.com/InverterNetwork/sdk/commit/64095f8bbe24c21b451dc035d1ece3574573fccf))
+- **types:** add new utility types for output formatting and input processing ([14738d1](https://github.com/InverterNetwork/sdk/commit/14738d12765c9b3f782a5fa63706eb020f8a5520))
+
+### [0.5.4](https://github.com/InverterNetwork/sdk/compare/v0.5.3...v0.5.4) (2025-06-20)
+
+### Features
+
+- **env:** add example environment file and pass environment variables in pre-test script ([b336967](https://github.com/InverterNetwork/sdk/commit/b336967e06ad644be1754c1b0e6ff107303e455e))
 
 ### [0.5.3](https://github.com/InverterNetwork/sdk/compare/v0.5.2...v0.5.3) (2025-05-28)
 
 ### [0.5.2](https://github.com/InverterNetwork/sdk/compare/v0.5.1...v0.5.2) (2025-05-23)
 
-
 ### Features
 
-* **deploy-workflow:** introduce tagConfig parameter for enhanced workflow customization ([e7cf240](https://github.com/InverterNetwork/sdk/commit/e7cf240b63a19b9804137d4475cb05e1084fa5b0))
-* **deploy:** enhance bytecode deployment with wallet client integration ([74e49d1](https://github.com/InverterNetwork/sdk/commit/74e49d147e4b86fbb49c189e7565d50c88203a97))
-* **deploy:** implement contract deployment functions for enhanced workflow ([0ff60b2](https://github.com/InverterNetwork/sdk/commit/0ff60b2397cfc649ed7e1b9bf205e7409316796c))
-* **documentation:** enhance JSDoc comments across multiple files for improved clarity ([7fe8dd3](https://github.com/InverterNetwork/sdk/commit/7fe8dd3abb02e7d14ae93f6b0b26f8431ca8c608))
-* **get-simulated-workflow:** add bytecode and factory address to parameters ([6c957ee](https://github.com/InverterNetwork/sdk/commit/6c957eeb0da7ff735f96d96ca1b838260e698652))
-* **get-simulated-workflow:** add detailed documentation and type definitions for getSimulatedWorkflow ([c983052](https://github.com/InverterNetwork/sdk/commit/c983052a7fd694acac98f10cdfad819a1f88a90d))
-* **get-simulated-workflow:** enhance workflow simulation with token support and debug logging ([a64a718](https://github.com/InverterNetwork/sdk/commit/a64a718c94b55b9592a1454a2c28bc7b720d0051))
-* **get-simulated-workflow:** implement and enhance getSimulatedWorkflow function ([f74c904](https://github.com/InverterNetwork/sdk/commit/f74c9046c2680d3710ba23a3eb10bf9cdcc2a3d5))
-* **get-simulated-workflow:** integrate trusted forwarder address into return type ([a730201](https://github.com/InverterNetwork/sdk/commit/a7302016300f3513619d7d9b12bebbe86c4740cb))
-* **get-simulated-workflow:** refactor to retrieve trusted forwarder address dynamically ([6dad067](https://github.com/InverterNetwork/sdk/commit/6dad06706de07221d25ecf4bf1d3ee777f1e4a8b))
-* **index:** export multicall function from index.ts ([9d5c07d](https://github.com/InverterNetwork/sdk/commit/9d5c07d42b285acbb7a94b691829ad5f1dda8fdd))
-* **inverter:** add multicall method for batch execution of module write methods ([69af87b](https://github.com/InverterNetwork/sdk/commit/69af87b8aea443b8b76aa872ff267326afd4dcb8))
-* **multicall:** add debugging support and enhance bytecode handling ([78edeac](https://github.com/InverterNetwork/sdk/commit/78edeac324b8b24c88255c5b582e720085cffc18))
-* **multicall:** add support for failed purchase calls in multicall tests ([0958490](https://github.com/InverterNetwork/sdk/commit/095849018d30a5f2f6c659739ff0b75c8c6d1509))
-* **multicall:** add TRUSTED_FORWARDER_ADDRESS constant and clean up test setup ([424db2c](https://github.com/InverterNetwork/sdk/commit/424db2c9ac73e5a1e978fcf6d144726223226dc6))
-* **multicall:** enhance multicall functionality with improved logging and return structure ([c518345](https://github.com/InverterNetwork/sdk/commit/c5183457bfac122db070fb0fa6ab9ceccd4bb582))
-* **multicall:** enhance writeMulticall with error handling and options support ([46d6768](https://github.com/InverterNetwork/sdk/commit/46d6768beadb32bf4c36c23cec73a5f8bd86d89c))
-* **multicall:** implement moduleMulticall for batch operations and refactor related components ([c3126fa](https://github.com/InverterNetwork/sdk/commit/c3126fa6c765c16983d94a3fbe6455414a658436))
-* **multicall:** implement multicall functionality for batch transactions ([27c749d](https://github.com/InverterNetwork/sdk/commit/27c749dba1c61d95b558b8622d32b4fa2bd5e359))
-* **multicall:** introduce bytecode handling in deploy workflow ([9410942](https://github.com/InverterNetwork/sdk/commit/941094299d16e4df4200ace91f7fc8cadd25c088))
-* **multicall:** refactor multicall functionality to writeMulticall ([cbbc91d](https://github.com/InverterNetwork/sdk/commit/cbbc91dac53419451e82649e84bea1d5beaa46fc))
-* **multicall:** update multicall method to return structured results ([bb751f9](https://github.com/InverterNetwork/sdk/commit/bb751f90818bcc0652ca71151e03e1c4db0cd975))
-* **prettier:** add import sorting plugin and update configuration ([5060e24](https://github.com/InverterNetwork/sdk/commit/5060e248afcc3d262f3215b578330c839cbbf85e))
-* **tests:** add end-to-end tests for multicall workflows ([acad95a](https://github.com/InverterNetwork/sdk/commit/acad95ad969baa0758864dbd9df0d5a668f06f68))
-* **tests:** add end-to-end tests for one-click and simulate multicall workflows ([8b2286a](https://github.com/InverterNetwork/sdk/commit/8b2286ac22c7f3fecc93c38e47cb2e471400a90f))
-* **tests:** add new e2e tests for deploy-workflow with various configurations ([7753fa9](https://github.com/InverterNetwork/sdk/commit/7753fa931afdad2c443c2ed27bfa430d45c724b7))
-
+- **deploy-workflow:** introduce tagConfig parameter for enhanced workflow customization ([e7cf240](https://github.com/InverterNetwork/sdk/commit/e7cf240b63a19b9804137d4475cb05e1084fa5b0))
+- **deploy:** enhance bytecode deployment with wallet client integration ([74e49d1](https://github.com/InverterNetwork/sdk/commit/74e49d147e4b86fbb49c189e7565d50c88203a97))
+- **deploy:** implement contract deployment functions for enhanced workflow ([0ff60b2](https://github.com/InverterNetwork/sdk/commit/0ff60b2397cfc649ed7e1b9bf205e7409316796c))
+- **documentation:** enhance JSDoc comments across multiple files for improved clarity ([7fe8dd3](https://github.com/InverterNetwork/sdk/commit/7fe8dd3abb02e7d14ae93f6b0b26f8431ca8c608))
+- **get-simulated-workflow:** add bytecode and factory address to parameters ([6c957ee](https://github.com/InverterNetwork/sdk/commit/6c957eeb0da7ff735f96d96ca1b838260e698652))
+- **get-simulated-workflow:** add detailed documentation and type definitions for getSimulatedWorkflow ([c983052](https://github.com/InverterNetwork/sdk/commit/c983052a7fd694acac98f10cdfad819a1f88a90d))
+- **get-simulated-workflow:** enhance workflow simulation with token support and debug logging ([a64a718](https://github.com/InverterNetwork/sdk/commit/a64a718c94b55b9592a1454a2c28bc7b720d0051))
+- **get-simulated-workflow:** implement and enhance getSimulatedWorkflow function ([f74c904](https://github.com/InverterNetwork/sdk/commit/f74c9046c2680d3710ba23a3eb10bf9cdcc2a3d5))
+- **get-simulated-workflow:** integrate trusted forwarder address into return type ([a730201](https://github.com/InverterNetwork/sdk/commit/a7302016300f3513619d7d9b12bebbe86c4740cb))
+- **get-simulated-workflow:** refactor to retrieve trusted forwarder address dynamically ([6dad067](https://github.com/InverterNetwork/sdk/commit/6dad06706de07221d25ecf4bf1d3ee777f1e4a8b))
+- **index:** export multicall function from index.ts ([9d5c07d](https://github.com/InverterNetwork/sdk/commit/9d5c07d42b285acbb7a94b691829ad5f1dda8fdd))
+- **inverter:** add multicall method for batch execution of module write methods ([69af87b](https://github.com/InverterNetwork/sdk/commit/69af87b8aea443b8b76aa872ff267326afd4dcb8))
+- **multicall:** add debugging support and enhance bytecode handling ([78edeac](https://github.com/InverterNetwork/sdk/commit/78edeac324b8b24c88255c5b582e720085cffc18))
+- **multicall:** add support for failed purchase calls in multicall tests ([0958490](https://github.com/InverterNetwork/sdk/commit/095849018d30a5f2f6c659739ff0b75c8c6d1509))
+- **multicall:** add TRUSTED_FORWARDER_ADDRESS constant and clean up test setup ([424db2c](https://github.com/InverterNetwork/sdk/commit/424db2c9ac73e5a1e978fcf6d144726223226dc6))
+- **multicall:** enhance multicall functionality with improved logging and return structure ([c518345](https://github.com/InverterNetwork/sdk/commit/c5183457bfac122db070fb0fa6ab9ceccd4bb582))
+- **multicall:** enhance writeMulticall with error handling and options support ([46d6768](https://github.com/InverterNetwork/sdk/commit/46d6768beadb32bf4c36c23cec73a5f8bd86d89c))
+- **multicall:** implement moduleMulticall for batch operations and refactor related components ([c3126fa](https://github.com/InverterNetwork/sdk/commit/c3126fa6c765c16983d94a3fbe6455414a658436))
+- **multicall:** implement multicall functionality for batch transactions ([27c749d](https://github.com/InverterNetwork/sdk/commit/27c749dba1c61d95b558b8622d32b4fa2bd5e359))
+- **multicall:** introduce bytecode handling in deploy workflow ([9410942](https://github.com/InverterNetwork/sdk/commit/941094299d16e4df4200ace91f7fc8cadd25c088))
+- **multicall:** refactor multicall functionality to writeMulticall ([cbbc91d](https://github.com/InverterNetwork/sdk/commit/cbbc91dac53419451e82649e84bea1d5beaa46fc))
+- **multicall:** update multicall method to return structured results ([bb751f9](https://github.com/InverterNetwork/sdk/commit/bb751f90818bcc0652ca71151e03e1c4db0cd975))
+- **prettier:** add import sorting plugin and update configuration ([5060e24](https://github.com/InverterNetwork/sdk/commit/5060e248afcc3d262f3215b578330c839cbbf85e))
+- **tests:** add end-to-end tests for multicall workflows ([acad95a](https://github.com/InverterNetwork/sdk/commit/acad95ad969baa0758864dbd9df0d5a668f06f68))
+- **tests:** add end-to-end tests for one-click and simulate multicall workflows ([8b2286a](https://github.com/InverterNetwork/sdk/commit/8b2286ac22c7f3fecc93c38e47cb2e471400a90f))
+- **tests:** add new e2e tests for deploy-workflow with various configurations ([7753fa9](https://github.com/InverterNetwork/sdk/commit/7753fa931afdad2c443c2ed27bfa430d45c724b7))
 
 ### Bug Fixes
 
-* **deploy:** update default calls parameter to an empty array for consistency ([101e512](https://github.com/InverterNetwork/sdk/commit/101e512b991a935a763ab39d8d4585f195619c7d))
-* **get-simulated-workflow:** correct logicModulesAddresses to logicModuleAddresses ([b667b9c](https://github.com/InverterNetwork/sdk/commit/b667b9c093e8076f870fd05e0414d7502a2bee8d))
-* **multicall:** improve error handling and logging in writeMulticall function ([3d87e8a](https://github.com/InverterNetwork/sdk/commit/3d87e8a797e5f1b5d05bcbaa2c726b84d0f30a21))
-* **multicall:** update skipApprove option in multicall test ([eae48b5](https://github.com/InverterNetwork/sdk/commit/eae48b52a03420cf51bc6f57e954aac936067b1a))
-* **tag-processor:** enhance token address retrieval and decimals handling ([c4375e6](https://github.com/InverterNetwork/sdk/commit/c4375e65c984c9aed24f8ef13e181e028ee2e54e))
+- **deploy:** update default calls parameter to an empty array for consistency ([101e512](https://github.com/InverterNetwork/sdk/commit/101e512b991a935a763ab39d8d4585f195619c7d))
+- **get-simulated-workflow:** correct logicModulesAddresses to logicModuleAddresses ([b667b9c](https://github.com/InverterNetwork/sdk/commit/b667b9c093e8076f870fd05e0414d7502a2bee8d))
+- **multicall:** improve error handling and logging in writeMulticall function ([3d87e8a](https://github.com/InverterNetwork/sdk/commit/3d87e8a797e5f1b5d05bcbaa2c726b84d0f30a21))
+- **multicall:** update skipApprove option in multicall test ([eae48b5](https://github.com/InverterNetwork/sdk/commit/eae48b52a03420cf51bc6f57e954aac936067b1a))
+- **tag-processor:** enhance token address retrieval and decimals handling ([c4375e6](https://github.com/InverterNetwork/sdk/commit/c4375e65c984c9aed24f8ef13e181e028ee2e54e))
 
 ### [0.5.1](https://github.com/InverterNetwork/sdk/compare/v0.5.0...v0.5.1) (2025-05-14)
 
-
 ### Features
 
-* **scripts:** add new utility scripts for deployment and logging ([aa716ad](https://github.com/InverterNetwork/sdk/commit/aa716ad1fb424c54f15be04f089904468b4f6981))
-
+- **scripts:** add new utility scripts for deployment and logging ([aa716ad](https://github.com/InverterNetwork/sdk/commit/aa716ad1fb424c54f15be04f089904468b4f6981))
 
 ### Bug Fixes
 
-* **scripts:** update script paths for consistency ([7bb2647](https://github.com/InverterNetwork/sdk/commit/7bb26477ff5c841e1e4c19a645f074244e2430f1))
+- **scripts:** update script paths for consistency ([7bb2647](https://github.com/InverterNetwork/sdk/commit/7bb26477ff5c841e1e4c19a645f074244e2430f1))
 
 ## [0.5.0](https://github.com/InverterNetwork/sdk/compare/v0.5.0-alpha.4...v0.5.0) (2025-05-13)
 
@@ -78,10 +77,9 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### [0.4.2](https://github.com/InverterNetwork/sdk/compare/v0.4.1...v0.4.2) (2025-03-10)
 
-
 ### Features
 
-* **workflow:** add support for custom token types ([2b6e341](https://github.com/InverterNetwork/sdk/commit/2b6e3416d8d22ce917ef48e71b81765fbaf9fadc))
+- **workflow:** add support for custom token types ([2b6e341](https://github.com/InverterNetwork/sdk/commit/2b6e3416d8d22ce917ef48e71b81765fbaf9fadc))
 
 ### [0.4.1](https://github.com/InverterNetwork/sdk/compare/v0.4.0...v0.4.1) (2025-03-03)
 
@@ -95,10 +93,9 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### [0.3.16](https://github.com/InverterNetwork/sdk/compare/v0.3.15...v0.3.16) (2025-01-30)
 
-
 ### Features
 
-* add issuance token address to workflow details ([e6407f2](https://github.com/InverterNetwork/sdk/commit/e6407f28f24397f44a3606acb56e2113aa3d1845))
+- add issuance token address to workflow details ([e6407f2](https://github.com/InverterNetwork/sdk/commit/e6407f28f24397f44a3606acb56e2113aa3d1845))
 
 ### [0.3.15](https://github.com/InverterNetwork/sdk/compare/v0.3.14...v0.3.15) (2025-01-29)
 
@@ -106,24 +103,21 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### [0.3.13](https://github.com/InverterNetwork/sdk/compare/v0.3.12...v0.3.13) (2024-12-23)
 
-
 ### Bug Fixes
 
-* chain names and time util ([3f8b634](https://github.com/InverterNetwork/sdk/commit/3f8b634a6a8009fbe21108d98bcdbe4f2f41256d))
+- chain names and time util ([3f8b634](https://github.com/InverterNetwork/sdk/commit/3f8b634a6a8009fbe21108d98bcdbe4f2f41256d))
 
 ### [0.3.12](https://github.com/InverterNetwork/sdk/compare/v0.3.11...v0.3.12) (2024-12-23)
 
-
 ### Bug Fixes
 
-* missing export at utils ([673ee5d](https://github.com/InverterNetwork/sdk/commit/673ee5d1dd462e3e8cd45172eba8d7e15df32bb7))
+- missing export at utils ([673ee5d](https://github.com/InverterNetwork/sdk/commit/673ee5d1dd462e3e8cd45172eba8d7e15df32bb7))
 
 ### [0.3.11](https://github.com/InverterNetwork/sdk/compare/v0.3.10...v0.3.11) (2024-12-23)
 
-
 ### Features
 
-* external utils ([f98b9d6](https://github.com/InverterNetwork/sdk/commit/f98b9d681767c0531f88c37696f426f35dac2193))
+- external utils ([f98b9d6](https://github.com/InverterNetwork/sdk/commit/f98b9d681767c0531f88c37696f426f35dac2193))
 
 ### [0.3.10](https://github.com/InverterNetwork/sdk/compare/v0.3.9...v0.3.10) (2024-12-20)
 
@@ -135,35 +129,31 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### [0.3.6](https://github.com/InverterNetwork/sdk/compare/v0.3.5...v0.3.6) (2024-10-26)
 
-
 ### Bug Fixes
 
-* update workflow cache if wallet client is present or not ([739a3d2](https://github.com/InverterNetwork/sdk/commit/739a3d28bfeb6d14d37440dd51f82514a2bcd15f))
+- update workflow cache if wallet client is present or not ([739a3d2](https://github.com/InverterNetwork/sdk/commit/739a3d28bfeb6d14d37440dd51f82514a2bcd15f))
 
 ### [0.3.5](https://github.com/InverterNetwork/sdk/compare/v0.3.5-alpha.2...v0.3.5) (2024-10-26)
 
 ### [0.3.4](https://github.com/InverterNetwork/sdk/compare/v0.3.3...v0.3.4) (2024-10-19)
 
-
 ### Bug Fixes
 
-* missing issuance token at default pim ([60284f2](https://github.com/InverterNetwork/sdk/commit/60284f29bb6e26cf9269fa944fca10e99cc63213))
+- missing issuance token at default pim ([60284f2](https://github.com/InverterNetwork/sdk/commit/60284f29bb6e26cf9269fa944fca10e99cc63213))
 
 ### [0.3.3](https://github.com/InverterNetwork/sdk/compare/v0.3.2...v0.3.3) (2024-10-19)
 
 ### [0.3.2](https://github.com/InverterNetwork/sdk/compare/v0.3.1...v0.3.2) (2024-10-15)
 
-
 ### Bug Fixes
 
-* excessive type dec at workflow tokens ([7cb7c97](https://github.com/InverterNetwork/sdk/commit/7cb7c972813206ec27a0b0cf660bf9d10f0fb58a))
+- excessive type dec at workflow tokens ([7cb7c97](https://github.com/InverterNetwork/sdk/commit/7cb7c972813206ec27a0b0cf660bf9d10f0fb58a))
 
 ### [0.3.1](https://github.com/InverterNetwork/sdk/compare/v0.3.0...v0.3.1) (2024-10-15)
 
-
 ### Bug Fixes
 
-* named import of lodash ([cd94f53](https://github.com/InverterNetwork/sdk/commit/cd94f53599eda7615414811a3515b329087cfc59))
+- named import of lodash ([cd94f53](https://github.com/InverterNetwork/sdk/commit/cd94f53599eda7615414811a3515b329087cfc59))
 
 ## [0.3.0](https://github.com/InverterNetwork/sdk/compare/v0.3.0-alpha.8...v0.3.0) (2024-10-14)
 

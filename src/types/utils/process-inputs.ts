@@ -27,7 +27,9 @@ export type ProcessInputsBaseParams = {
 export type ProcessInputsParams = Omit<
   ParseGetTagCallbackParams,
   'requiredAllowances'
->
+> & {
+  useTags?: boolean
+}
 
 /**
  * @description The parameters for the parseGetTagCallback function

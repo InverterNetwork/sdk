@@ -4,10 +4,9 @@ import type {
   TagCallback,
 } from '@/types'
 import d from 'debug'
+import { parseUnits } from 'viem'
 
 import tagProcessor from '@/utils/tag-processor'
-
-import { parseDecimals } from './parse'
 
 const debug = d('inverter:process-inputs:get-tag-callback')
 
@@ -37,7 +36,7 @@ export default function getTagCallback({
         self,
       })
 
-      parsedAmount = parseDecimals(arg, decimalsRes.decimals)
+      parsedAmount = parseUnits(arg, decimalsRes.decimals)
 
       debug(`ARG + DECIMALS_RES + PARSED_AMOUNT:`, {
         arg,

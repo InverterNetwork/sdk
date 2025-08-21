@@ -19,13 +19,17 @@ import type { Hex } from 'viem'
 export const getFundingToken = async <
   T extends WorkflowToken,
   W extends PopWalletClient | undefined = undefined,
+  TUseTags extends boolean = true,
 >({
   tokenType,
   fundingManagerAddress,
   publicClient,
   walletClient,
   self,
-}: GetWorkflowTokenParams<T, W>): Promise<GetWorkflowTokenReturnType<T, W>> => {
+  useTags = true as TUseTags,
+}: GetWorkflowTokenParams<T, W>): Promise<
+  GetWorkflowTokenReturnType<T, W, TUseTags>
+> => {
   const { readContract } = publicClient
 
   const address = <Hex>await readContract({
@@ -52,6 +56,7 @@ export const getFundingToken = async <
         decimals,
       },
       self,
+      useTags,
     })
 
   return {
@@ -65,20 +70,23 @@ export const getFundingToken = async <
 /**
  * @description Get the issuance token results
  * @template W - The wallet client
+ * @template TUseTags - Whether auto parse inputs, outputs and approve allowances using tag configs
  * @param params - The parameters for the getIssuanceTokenResults function
  * @returns The issuance token results
  */
 export const getIssuanceToken = async <
   IT extends WorkflowIssuanceToken,
   W extends PopWalletClient | undefined = undefined,
+  TUseTags extends boolean = true,
 >({
   tokenType,
   fundingManagerAddress,
   publicClient,
   walletClient,
   self,
+  useTags,
 }: GetWorkflowTokenParams<IT, W>): Promise<
-  GetWorkflowTokenReturnType<IT, W>
+  GetWorkflowTokenReturnType<IT, W, TUseTags>
 > => {
   const { readContract } = publicClient
 
@@ -106,6 +114,7 @@ export const getIssuanceToken = async <
         decimals,
       },
       self,
+      useTags,
     })
 
   return {

@@ -29,9 +29,10 @@ const debug = d('inverter:sdk:deploy-workflow:get-methods')
  */
 export default async function getMethods<
   TRequestedModules extends MixedRequestedModules,
+  TUseTags extends boolean = true,
 >(
-  params: GetDeployWorkflowMethodsParams<TRequestedModules>
-): Promise<GetDeployWorkflowMethodsReturnType<TRequestedModules>> {
+  params: GetDeployWorkflowMethodsParams<TRequestedModules, TUseTags>
+): Promise<GetDeployWorkflowMethodsReturnType<TRequestedModules, TUseTags>> {
   const { publicClient, walletClient, requestedModules } = params
 
   const {
@@ -46,7 +47,7 @@ export default async function getMethods<
     version: 'v1.0.0',
   })
 
-  type Args = GetDeployWorkflowArgs<TRequestedModules>
+  type Args = GetDeployWorkflowArgs<TRequestedModules, TUseTags>
 
   async function handleDeployment<TMethodKind extends DeployMethodKind>(
     kind: TMethodKind,

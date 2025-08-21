@@ -39,4 +39,5 @@ export type FormatGetTagCallbackParams = {
   publicClient: PublicClient
   contract?: any
   self?: Inverter
+  useTags?: boolean
 }

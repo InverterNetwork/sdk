@@ -38,13 +38,15 @@ const debug = d('inverter:sdk:deploy')
  */
 export async function deployWrite<
   TDeployableContracts extends DeployableContracts,
+  TUseTags extends boolean = true,
 >(
   {
     name,
     walletClient,
     publicClient,
     args,
-  }: DeployParams<TDeployableContracts>,
+    useTags,
+  }: DeployParams<TDeployableContracts, TUseTags>,
   options?: MethodOptions
 ): Promise<DeployWriteReturnType> {
   // Get the module data
@@ -62,6 +64,7 @@ export async function deployWrite<
     extendedInputs: moduleData.deploymentInputs.configData,
     publicClient,
     kind: 'write',
+    useTags,
   })
   // Deploy the contract
   const transactionHash = await walletClient.deployContract({
@@ -119,12 +122,14 @@ export async function deployWrite<
  */
 export async function deployBytecode<
   TDeployableContracts extends DeployableContracts,
+  TUseTags extends boolean = true,
 >({
   name,
   args,
   publicClient,
   walletClient,
-}: DeployParams<TDeployableContracts>) {
+  useTags,
+}: DeployParams<TDeployableContracts, TUseTags>) {
   const moduleData = getModuleData<TDeployableContracts>(name)
   if (!('deploymentInputs' in moduleData)) {
     throw new Error('Invalid module data')
@@ -152,6 +157,7 @@ export async function deployBytecode<
     extendedInputs: moduleData.deploymentInputs.configData,
     publicClient,
     kind: 'write',
+    useTags,
   })
 
   // Encoding constructor arguments with the bytecode

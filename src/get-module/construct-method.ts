@@ -25,6 +25,7 @@ import getRun from './get-run'
 export default function constructMethod<
   TAbiFunction extends ExtendedAbiFunction,
   TMethodKind extends MethodKind,
+  TUseTags extends boolean = true,
 >({
   abiFunction,
   contract,
@@ -33,10 +34,12 @@ export default function constructMethod<
   publicClient,
   self,
   walletClient,
+  useTags = true as TUseTags,
 }: GetModuleConstructMethodParams<
   TAbiFunction,
-  TMethodKind
->): GetModuleConstructMethodReturnType<TAbiFunction, TMethodKind> {
+  TMethodKind,
+  TUseTags
+>): GetModuleConstructMethodReturnType<TAbiFunction, TMethodKind, TUseTags> {
   // Construct the data preserving the type properties of the abiFunction
   const {
     description,
@@ -68,6 +71,7 @@ export default function constructMethod<
     walletClient,
     publicClient,
     self,
+    useTags,
   })
 
   const decodeResult = (res: any) =>
@@ -79,6 +83,7 @@ export default function constructMethod<
       contract,
       self,
       functionName: name,
+      useTags,
     })
 
   const baseReturn = {
@@ -95,6 +100,7 @@ export default function constructMethod<
 
   return baseReturn as GetModuleConstructMethodReturnType<
     TAbiFunction,
-    TMethodKind
+    TMethodKind,
+    TUseTags
   >
 }
