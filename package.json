@@ -4,30 +4,26 @@
   "version": "0.9.1",
   "exports": {
     ".": {
-      "types": "./dist/types/index.d.ts",
-      "import": "./dist/esm/index.js",
-      "default": "./dist/cjs/index.js"
+      "types": "./dist/src/index.d.ts",
+      "import": "./src/index.ts",
+      "default": "./src/index.ts",
+      "production": {
+        "types": "./dist/types/index.d.ts",
+        "import": "./dist/esm/index.js",
+        "default": "./dist/cjs/index.js"
+      }
     },
     "./package.json": "./package.json"
-  },
-  "main": "./dist/cjs/index.js",
-  "module": "./dist/esm/index.js",
-  "types": "./dist/types/index.d.ts",
-  "typings": "./dist/types/index.d.ts",
-  "sideEffects": false,
-  "directories": {
-    "tool": "tools",
-    "test": "tests"
   },
   "files": [
     "dist"
   ],
+  "sideEffects": false,
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
-    "watch": "tsc -w",
-    "dev": "nodemon",
+    "watch": "bun scripts/watch-with-alias.js",
     "type-check": "tsc-files --pretty --project ./tsconfig.build.json --noEmit --module ESNext --declaration",
     "build": "bun clean && bun build:cjs && bun build:esm && bun build:types",
     "build:cjs": "tsc --project ./tsconfig.build.json --module commonjs --outDir ./dist/cjs --removeComments --verbatimModuleSyntax false && printf '{\"type\":\"commonjs\"}' > ./dist/cjs/package.json && tsc-alias --outDir ./dist/cjs && ts-add-js-extension --dir=dist/cjs --showchanges=false",
@@ -75,7 +71,6 @@
     "eslint-plugin-prettier": "^5.2.1",
     "husky": "^9.1.5",
     "lint-staged": "^15.2.10",
-    "nodemon": "^3.1.7",
     "pinst": "^3.0.0",
     "prettier": "^3.3.3",
     "standard-version": "^9.5.0",

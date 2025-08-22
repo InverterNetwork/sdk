@@ -1,6 +1,0 @@
-{
-  "watch": ["src/**/*.{ts,js}"],
-  "ext": "ts,js",
-  "ignore": ["dist/**/*"],
-  "exec": "bun run build:esm && bun run build:types"
-}
