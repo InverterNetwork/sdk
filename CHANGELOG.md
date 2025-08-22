@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-### [0.9.1](https://github.com/InverterNetwork/sdk/compare/v0.9.0...v0.9.1) (2025-08-21)
+### [0.9.1](https://github.com/InverterNetwork/sdk/compare/v0.9.0...v0.9.1) (2025-08-22)
 
 ### [0.5.6](https://github.com/InverterNetwork/sdk/compare/v0.5.5...v0.5.6) (2025-08-07)
 
@@ -15,6 +15,10 @@ All notable changes to this project will be documented in this file. See [standa
 - add useTags parameter to workflows and related types ([5bd4c7b](https://github.com/InverterNetwork/sdk/commit/5bd4c7ba2cae628dadccd82de4d24d9d838402ad))
 - **get-module:** introduce TUseTags generic for input/output processing ([64095f8](https://github.com/InverterNetwork/sdk/commit/64095f8bbe24c21b451dc035d1ece3574573fccf))
 - **types:** add new utility types for output formatting and input processing ([14738d1](https://github.com/InverterNetwork/sdk/commit/14738d12765c9b3f782a5fa63706eb020f8a5520))
+
+### [0.5.6](https://github.com/InverterNetwork/sdk/compare/v0.5.5...v0.5.6) (2025-08-07)
+
+### [0.5.5](https://github.com/InverterNetwork/sdk/compare/v0.5.4...v0.5.5) (2025-07-31)
 
 ### [0.5.4](https://github.com/InverterNetwork/sdk/compare/v0.5.3...v0.5.4) (2025-06-20)
 
